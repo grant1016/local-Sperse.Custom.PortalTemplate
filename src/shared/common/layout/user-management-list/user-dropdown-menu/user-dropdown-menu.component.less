@@ -1,0 +1,190 @@
+:host {
+    width: 55px;
+
+    .m-card-user {
+        .m-card-user__details {
+            padding: 0 15px 0 0;
+        }
+
+        .m-card-user__pic {
+            padding: 0;
+            vertical-align: baseline;
+        }
+    }
+
+    .user-info {
+        color: #fff;
+        font-size: 1.1rem;
+        font-weight: 400;
+        display: block;
+        word-break: break-word;
+
+        &.fullName {
+            font-weight: 600;
+            text-transform: capitalize;
+            font-size: 22px;
+            line-height: 26px;
+        }
+
+        &.email {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            text-align: left;
+            height: 20px;
+        }
+
+        &.tenantName {
+            display: none;
+            text-align: left;
+            margin-top: 15px;
+            font-size: 22px;
+            font-weight: 600;
+        }
+    }
+
+    .m-dropdown__arrow .user-info-drop-down-arrow {
+        color: #43383b !important;
+    }
+
+    .m-dropdown__inner {
+        @media (max-width: 400px) {
+            transform: scale(0.8);
+            transform-origin: top right;
+        }
+
+        .m-dropdown__header {
+            padding: 30px 25px 26px;
+            display: flex;
+            justify-content: space-between;
+            background: linear-gradient(to right, #43383b 60%, gray);
+            box-shadow: inset 2px 5px 12px 2px #43383b;
+            .bank-code-section {
+                text-align: right;
+                display: flex;
+                flex-direction: column;
+                justify-content: flex-end;
+                div {
+                    text-transform: uppercase;
+                    font-size: 14px;
+                    font-weight: bold;
+                    letter-spacing: 0.4px;
+                    color: #ffffff;
+                    margin-bottom: 4px;
+                }
+                a {
+                    font-size: 13px;
+                    font-weight: 500;
+                    line-height: 1.85;
+                    letter-spacing: normal;
+                    color: #ffffff;
+                    &:after {
+                        margin-left: 3px;
+                    }
+                }
+            }
+        }
+    }
+
+    .header-profile-picture,
+    ::ng-deep #header_notification_bar .header-profile-picture{
+        width: 41px;
+        height: 41px;
+        max-width: 41px!important;
+        object-fit: cover;
+        &[src*="/avatar"] {
+            padding: 8px;
+            background: #f0d500;
+        }
+    }
+
+    .m-nav__item {
+        &.bottom-logout {
+            display: inline-block;
+            width: 121px;
+            .m-nav__link-text {
+                color: #3463ae;
+            }
+        }
+        .m-nav__separator {
+            height: 1px;
+            background: #f4f5f8;
+        }
+    }
+
+    .m-nav .m-nav__item > .m-nav__link {
+
+        .m-nav__link-icon {
+            width: 18px;
+            height: 20px;
+            display: inline-block;
+            margin: 5px 15px 5px 0;
+            vertical-align: middle;
+            background-size: contain !important;
+            background-repeat: no-repeat !important;
+        }
+
+        .m-nav__link-title {
+            display: inline-block;
+        }
+    }
+
+    .m-dropdown__wrapper {
+        @media (max-height: 800px) {
+            top: -15px;
+            right: 35px;
+        }
+        &.bank-code {
+            .m-card-user,
+            .m-card-user .m-card-user__details {
+                display: block;
+            }
+            @media (min-width: 1025px) {
+                width: 350px;
+            }
+        }
+    }
+
+    @media (max-width: 768px) {
+        .m-dropdown__wrapper {
+            left: auto;
+            right: 0;
+            .m-nav .m-nav__item > .m-nav__link {
+                table-layout: auto;
+
+                .m-nav__link-text {
+                    font-size: 16px;
+                }
+            }
+        }
+    }
+
+    ::ng-deep .order-history {
+        margin-left: 5px !important;
+        margin-right: 10px !important;
+        &:before {
+            content: '\f155';
+            font-family: FontAwesome;
+            line-height: 20px;
+            font-style: normal;
+        }
+    }
+}
+
+::ng-deep body.lend-space {
+    .page-header .page-top {
+        ::ng-deep .m-nav__item {
+            .m-nav__link-title {
+                .m-nav__link-text {
+                    font-family: Poppins;
+                    font-size: 15px;
+                    font-weight: 500;
+                    font-style: normal;
+                    font-stretch: normal;
+                    line-height: 1.67;
+                    letter-spacing: normal;
+                }
+            }
+        }
+    }
+}

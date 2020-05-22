@@ -1,0 +1,44 @@
+<div class="close-button" (click)="close(true)"></div>
+<div class="mat-dialog-header">
+    <div class="title-wrapper">
+        <dx-text-box #titleComponent
+            *ngIf="title != undefined"
+            name="title"
+            [readOnly]="!editTitle"
+            [showClearButton]="titleClearButton"
+            [placeholder]="placeholder"
+            [value]="title"
+            [isValid]="isTitleValid == undefined || isTitleValid"
+            (onInput)="titleChanged($event)"
+            (onKeyUp)="titleKeyUp($event)">
+        </dx-text-box>
+        <ng-content select="[headerContent]"></ng-content>
+    </div>
+    <mat-dialog-actions>
+        <div class="mat-dialog-options" *ngIf="options">
+            <ng-template ngFor let-option [ngForOf]="options" let-i="index">
+                <dx-check-box class="mat-dialog-option pull-right"
+                              [text]="option.text"
+                              [(value)]="option.value"
+                              (onValueChanged)="option.onValueChanged && option.onValueChanged($event)">
+                </dx-check-box>
+            </ng-template>
+        </div>
+        <div class="mat-dialog-buttons" *ngIf="buttons">
+            <ng-template ngFor let-button [ngForOf]="buttons" let-i="index">
+                <button mat-button
+                        [id]="button?.id"
+                        [disabled]="button?.disabled"
+                        [title]="button.hint ? button.hint : ''"
+                        class="button-layout button-{{button.class}}"
+                        (click)="button.action($event)">
+                    <span *ngIf="!!button.title">{{ ls.l(button.title )}}</span>
+                    <img *ngIf="!!button.iconName" [src]="'./assets/common/icons/' + button.iconName" />
+                </button>
+            </ng-template>
+        </div>
+    </mat-dialog-actions>
+</div>
+<mat-dialog-content>
+    <ng-content></ng-content>
+</mat-dialog-content>

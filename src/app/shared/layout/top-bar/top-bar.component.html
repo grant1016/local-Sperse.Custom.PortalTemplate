@@ -1,0 +1,34 @@
+﻿<div class="top-bar-nav" [ngStyle]="{ 'visibility': lastInnerWidth && navbarItems.length ? 'visible' : 'hidden' }">
+    <dx-nav-bar
+        height="74px"
+        [items]="navbarItems"
+        [hoverStateEnabled]="true"
+        [selectedIndex]="selectedIndex"
+        itemTemplate="navBarItem"
+        selectionMode="single"
+        (onInitialized)="onNavBarInitialized()">
+        <div *dxTemplate="let link of 'navBarItem'">
+            <dx-menu
+                [dataSource]="[link]"
+                selectionMode="none"
+                [hoverStateEnabled]="true"
+                [hideSubmenuOnMouseLeave]="true"
+                [showFirstSubmenuMode]="{ name: 'onHover', delay: { hide: 0, show: 0 }}"
+                [showSubmenuMode]="{ name: 'onHover', delay: { hide: 0, show: 0 }}"
+                (onItemClick)="navigate($event)">
+            </dx-menu>
+        </div>
+    </dx-nav-bar>
+</div>
+
+<div class="adaptive-menu" *ngIf="adaptiveMenuItems.length">
+    <dx-menu
+        accessKey="nav-menu"
+        [dataSource]="adaptiveMenuItems"
+        [hideSubmenuOnMouseLeave]="true"
+        [adaptivityEnabled]="true"
+        [showFirstSubmenuMode]="{ name: 'onHover', delay: { hide:0, show: 0 }}"
+        [showSubmenuMode]="{ name: 'onHover', delay: { hide:0, show: 0 }}"
+        (onItemClick)="navigate($event)">
+    </dx-menu>
+</div>

@@ -1,0 +1,115 @@
+import {
+    Component,
+    OnInit,
+    ViewChild,
+} from '@angular/core';
+import { accountModuleAnimation } from '@shared/animations/routerTransition';
+import { AppSessionService } from '@shared/common/session/app-session.service';
+import {
+    AccountServiceProxy,
+    PasswordComplexitySetting,
+    ProfileServiceProxy, GetResetPasswordCodeInfoInput, GetResetPasswordCodeInfoOutput, ResetPasswordOutput
+} from '@shared/service-proxies/service-proxies';
+import { LoginService } from '../login/login.service';
+import { ResetPasswordModel } from './reset-password.model';
+import { ActivatedRoute, Router } from '@angular/router';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+
+@Component({
+    templateUrl: './reset-password.component.html',
+    animations: [accountModuleAnimation()],
+    styleUrls: [
+        './reset-password.component.less'
+    ],
+})
+export class ResetPasswordComponent implements OnInit {
+    @ViewChild('resetPassForm', { static: false }) form;
+    model: ResetPasswordModel = new ResetPasswordModel();
+    passwordComplexitySetting: PasswordComplexitySetting = new PasswordComplexitySetting();
+    saving = false;
+
+    constructor(
+        private accountService: AccountServiceProxy,
+        private loginService: LoginService,
+        private appSessionService: AppSessionService,
+        private profileService: ProfileServiceProxy,
+        private router: Router,
+        private activatedRoute: ActivatedRoute,
+        public ls: AppLocalizationService
+    ) {}
+
+    ngOnInit(): void {
+        let tenantId: number = abp.session.tenantId,
+            tenantIdStr = this.activatedRoute.snapshot.queryParams['tenantId'];
+        tenantId = this.parseTenantId(tenantIdStr) || tenantId;
+        this.appSessionService.changeTenantIfNeeded(
+            tenantId, false
+        );
+
+        if (this.activatedRoute.snapshot.queryParams['c']) {
+            this.model.c = this.activatedRoute.snapshot.queryParams['c'];
+        } else {
+            this.model.userId = this.activatedRoute.snapshot.queryParams['userId'];
+            this.model.resetCode = this.activatedRoute.snapshot.queryParams['resetCode'];
+        }
+
+        let infoInput = new GetResetPasswordCodeInfoInput({
+            userId: this.model.userId,
+            resetCode: this.model.resetCode,
+            c: this.model.c
+        });
+
+        this.accountService.getResetPasswordCodeInfo(infoInput).subscribe((result: GetResetPasswordCodeInfoOutput) => {
+            this.appSessionService.changeTenantIfNeeded(
+                result.tenantId, false
+            );
+
+            if (!result.isValid) {
+                abp.message.error(this.ls.l('InvalidPasswordResetCode_Detail'), this.ls.l('InvalidPasswordResetCode')).done(() => {
+                    this.router.navigate(['account/login']);
+                });
+                return;
+            }
+
+            this.profileService.getPasswordComplexitySetting().subscribe(result => {
+                this.passwordComplexitySetting = result.setting;
+            });
+        });
+    }
+
+    save(): void {
+        if (this.form.valid) {
+            this.saving = true;
+            this.accountService.resetPassword(this.model)
+                .subscribe(
+                    (result: ResetPasswordOutput) => {
+                        if (!result.canLogin) {
+                            this.router.navigate(['account/login']);
+                            return;
+                        }
+
+                        // Autheticate
+                        this.saving = true;
+                        this.loginService.authenticateModel.userNameOrEmailAddress = result.userName;
+                        this.loginService.authenticateModel.password = this.model.password;
+                        this.loginService.authenticate(() => {
+                            this.saving = false;
+                        }, undefined, !this.model.resetCode);
+                    },
+                    () => { this.saving = false; }
+                );
+        }
+    }
+
+    parseTenantId(tenantIdAsStr?: string): number {
+        let tenantId = parseInt(tenantIdAsStr);
+        return isNaN(tenantId) ? undefined : tenantId;
+    }
+
+    togglePasswordVisibe(event, input) {
+        let native = input.valueAccessor._elementRef.nativeElement,
+            visible = native.type == 'text';
+        native.type = visible ? 'password' : 'text';
+        event.currentTarget.text = this.ls.l(visible ? 'Show' : 'Hide');
+    }
+}
