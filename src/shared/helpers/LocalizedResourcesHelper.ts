@@ -3,7 +3,7 @@ import * as rtlDetect from 'rtl-detect';
 export class LocalizedResourcesHelper {
 
     static loadResources(callback: () => void): void {
-        $.when(LocalizedResourcesHelper.loadLocalizedStlyes(), LocalizedResourcesHelper.loadLocalizedScripts()).done(() => {
+        $.when(LocalizedResourcesHelper.loadLocalizedStlyes()).done(() => {
             callback();
         });
     }
@@ -29,22 +29,6 @@ export class LocalizedResourcesHelper {
         $('head').append($('<link rel="stylesheet" type="text/css" />').attr('href', './assets/metronic/dist/html/blue/assets/demo/blue/base/style.bundle.light.css'));
 
         return $.Deferred().resolve().promise();
-    }
-
-    private static loadLocalizedScripts(): JQueryPromise<any> {
-        if (!abp.session.userId) {
-            return $.Deferred().resolve().promise();
-        }
-
-        const currentCulture = abp.localization.currentLanguage.name;
-
-        const bootstrapSelect = './assets/localization/bootstrap-select/defaults-{0}.js';
-        const jqueryTimeago = './assets/localization/jquery-timeago/jquery.timeago.{0}.js';
-
-        return $.when(
-            jQuery.getScript(abp.utils.formatString(bootstrapSelect, LocalizedResourcesHelper.findBootstrapSelectLocalization(currentCulture))),
-            jQuery.getScript(abp.utils.formatString(jqueryTimeago, LocalizedResourcesHelper.findTimeagoLocalization(currentCulture)))
-        );
     }
 
     private static mapCultureForBootstrapSelect(currentCulture: string): string {

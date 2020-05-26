@@ -9,6 +9,7 @@ import * as _ from 'underscore';
 import { filter, takeUntil } from 'rxjs/operators';
 
 /** Application imports */
+import { AppConsts } from '@shared/AppConsts';
 import { PanelMenu } from './panel-menu';
 import { AppService } from '@app/app.service';
 import { PanelMenuItem } from './panel-menu-item';
@@ -120,8 +121,12 @@ export class TopBarComponent implements OnDestroy {
         if (route && location.pathname !== event.itemData.route) {
             if (route.startsWith('/'))
                 this.router.navigate([event.itemData.route]);
-            else
-                window.open(route, '_blank');
+            else {
+                if (route.indexOf('platform'))
+                    location.href = AppConsts.remoteServiceBaseUrl;
+                else
+                    window.open(route, '_blank');
+            }
         }
     }
 

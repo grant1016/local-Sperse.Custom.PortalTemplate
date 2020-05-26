@@ -4,15 +4,21 @@ import { ConfigInterface } from '@app/shared/common/config.interface';
 import { ConfigNavigation } from '@app/shared/common/config-navigation.interface';
 
 export class MainConfig implements ConfigInterface {
-    code = 'CRM';
-    name = 'CRM';
-    requiredFeature = AppFeatures.CRM;
-    requiredPermission = AppPermissions.CRM;
+    code = 'Main';
+    name = 'Main';
+    requiredFeature;
+    requiredPermission;
     localizationSource = 'CRM';
     navigation: ConfigNavigation[] = [
         {
-            text: 'Dashboard',
+            text: 'Home',
             route: '/app/dashboard'
+        },
+        {
+            text: 'CRM',
+            route: 'platform',
+            permission: AppPermissions.CRM,
+            feature: AppFeatures.CRM
         }
     ];
 }
