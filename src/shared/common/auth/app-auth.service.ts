@@ -36,9 +36,7 @@ export class AppAuthService implements OnDestroy {
 
     setTokenBeforeRedirect() {
         document.cookie = this.REDIRECT_AUTH_DATA + '=' + JSON.stringify({
-            accessToken: abp.auth.getToken(),
-            expireInSeconds: 3600,
-            rememberClient: true
+            accessToken: abp.auth.getToken()
         }) + '; path=/; domain=' + this.getTopLevelDomain();
     }
 
