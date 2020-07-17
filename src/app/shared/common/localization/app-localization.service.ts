@@ -34,13 +34,13 @@ export class AppLocalizationService extends LocalizationService {
         if (!source || !source[key])
             sourcename = AppConsts.localization.defaultLocalizationSourceName;
 
-        let localizedText = this.localize(key, sourcename);
-        if (!localizedText || localizedText == key) {
-            let fullKey = sourcename + '.' + key;
+        let fullKey = sourcename + '.' + key,
             localizedText = this.translate.instant(fullKey);
-            if (localizedText == fullKey)
-                localizedText = key;
-        }
+        if (localizedText == fullKey)
+            localizedText = key;
+
+        if (!localizedText || localizedText == key)
+            localizedText = this.localize(key, sourcename);
 
         if (args && args.length) {
             args.unshift(localizedText);
