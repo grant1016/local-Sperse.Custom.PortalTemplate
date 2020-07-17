@@ -35,8 +35,12 @@ export class AppLocalizationService extends LocalizationService {
             sourcename = AppConsts.localization.defaultLocalizationSourceName;
 
         let localizedText = this.localize(key, sourcename);
-        if (!localizedText || localizedText == key)
-            localizedText = this.translate.instant(sourcename + '.' + key);
+        if (!localizedText || localizedText == key) {
+            let fullKey = sourcename + '.' + key;
+            localizedText = this.translate.instant(fullKey);
+            if (localizedText == fullKey)
+                localizedText = key;
+        }
 
         if (args && args.length) {
             args.unshift(localizedText);
