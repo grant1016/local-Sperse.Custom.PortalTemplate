@@ -20,6 +20,7 @@ import { TenantChangeModalComponent } from './shared/tenant-change-modal.compone
 import { TenantChangeComponent } from './shared/tenant-change.component';
 import { SelectTenantComponent } from './login/select-tenant.component';
 import { ApplicationServiceProxy } from '@shared/service-proxies/service-proxies';
+import { TranslateModule } from '@ngx-translate/core';
 
 @NgModule({
     imports: [
@@ -28,7 +29,10 @@ import { ApplicationServiceProxy } from '@shared/service-proxies/service-proxies
         SignupModule,
         ModalModule.forRoot(),
         UtilsModule,
-        AccountRoutingModule
+        AccountRoutingModule,
+        TranslateModule.forChild({
+            extend: true
+        })
     ],
     declarations: [
         AccountComponent,

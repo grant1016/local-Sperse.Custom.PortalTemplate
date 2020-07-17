@@ -3,13 +3,15 @@ import { APP_INITIALIZER, LOCALE_ID, Injector, NgModule, ErrorHandler } from '@a
 import { HAMMER_GESTURE_CONFIG } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { APP_BASE_HREF, PlatformLocation, registerLocaleData } from '@angular/common';
-import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClient, HttpClientModule } from '@angular/common/http';
 import { RouteReuseStrategy, Router } from '@angular/router';
 
 /** Third party imports */
 import { AbpModule } from '@abp/abp.module';
 import { GestureConfig } from '@angular/material';
 import { BugsnagErrorHandler } from '@bugsnag/plugin-angular';
+import { TranslateLoader, TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 
 /** Application imports */
 import { AppPermissionService } from '@shared/common/auth/permission.service';
@@ -151,6 +153,10 @@ export function getBaseHref(platformLocation: PlatformLocation): string {
     return (/http[s]{0,1}:\/\//g).test(baseUrl) ? baseUrl : getDocumentOrigin() + baseUrl;
 }
 
+export function HttpLoaderFactory(http: HttpClient) {
+    return new TranslateHttpLoader(http);
+}
+
 function handleLogoutRequest(authService: AppAuthService) {
     let currentUrl = UrlHelper.initialUrl;
     let returnUrl = UrlHelper.getReturnUrl();
@@ -166,7 +172,14 @@ function handleLogoutRequest(authService: AppAuthService) {
         HttpClientModule,
         RootRoutingModule,
         BrowserAnimationsModule,
-        LoadingSpinnerModule
+        LoadingSpinnerModule,
+        TranslateModule.forRoot({
+            loader: {
+                provide: TranslateLoader,
+                useFactory: HttpLoaderFactory,
+                deps: [HttpClient]
+            }
+        })
     ],
     declarations: [
         RootComponent

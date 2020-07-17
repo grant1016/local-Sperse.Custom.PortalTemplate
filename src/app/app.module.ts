@@ -3,6 +3,7 @@ import { ComponentFactoryResolver, NgModule } from '@angular/core';
 import * as ngCommon from '@angular/common';
 
 /** Third party modules */
+import { TranslateModule } from '@ngx-translate/core';
 
 /** Application imports */
 import { LayoutModule } from './shared/layout/layout.module';
@@ -28,7 +29,10 @@ import {
         ngCommon.CommonModule,
         CommonModule,
         AppRoutingModule,
-        LayoutModule
+        LayoutModule,
+        TranslateModule.forChild({
+            extend: true
+        })
     ],
     providers: [
         AppService,
@@ -37,8 +41,4 @@ import {
         TenantSubscriptionServiceProxy
     ]
 })
-export class AppModule {
-    constructor(
-    ) {
-    }
-}
+export class AppModule {}
