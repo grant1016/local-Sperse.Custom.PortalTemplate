@@ -16,7 +16,6 @@ export class AppLocalizationService extends LocalizationService {
         private translate: TranslateService
     ) {
         super();
-        translate.setDefaultLang('en');
     }
 
     l(key: string, ...args: any[]): string {

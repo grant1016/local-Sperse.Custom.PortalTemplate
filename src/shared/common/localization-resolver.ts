@@ -3,8 +3,9 @@ import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, RouterStateSnapshot, CanActivate, CanActivateChild } from '@angular/router';
 
 /** Third party imports */
-import { Observable, of } from 'rxjs';
-import { tap, take, mergeMap } from 'rxjs/operators';
+import { Observable, of, zip } from 'rxjs';
+import { tap, take, mergeMap, map } from 'rxjs/operators';
+import { TranslateService } from '@ngx-translate/core';
 
 /** Application imports */
 import { LocalizationServiceProxy } from '@shared/service-proxies/service-proxies';
@@ -15,11 +16,16 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 
 @Injectable()
 export class LocalizationResolver implements CanActivate, CanActivateChild {
+    DEFAULT_LANGUAGE = 'en';
+
     constructor(
         private session: AppSessionService,
+        private translateService: TranslateService,
         private localizationServiceProxy: LocalizationServiceProxy,
         private ls: AppLocalizationService
-    ) {}
+    ) {
+        this.translateService.setDefaultLang(this.DEFAULT_LANGUAGE);
+    }
 
     canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
         return this.canActivateChild(route, state);
@@ -27,12 +33,18 @@ export class LocalizationResolver implements CanActivate, CanActivateChild {
 
     canActivateChild(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
         let defaultLocalization = AppConsts.localization.defaultLocalizationSourceName;
-        return this.checkLoadLocalization(route.data.localizationSource || defaultLocalization).pipe(
-            tap(() => {
-                if (route.data.localizationSource)
-                    this.ls.localizationSourceName = route.data.localizationSource;
-            })
-        );
+        return zip(
+            this.translateService.translations[this.DEFAULT_LANGUAGE] ? 
+                of(true) : this.translateService.getTranslation(this.DEFAULT_LANGUAGE),
+            this.checkLoadLocalization(route.data.localizationSource || defaultLocalization).pipe(
+                tap(() => {
+                    if (route.data.localizationSource)
+                        this.ls.localizationSourceName = route.data.localizationSource;
+                })
+            )
+        ).pipe(map(results => {
+            return results.every(Boolean);
+        }));
     }
 
     checkLoadLocalization(sourceName) {
