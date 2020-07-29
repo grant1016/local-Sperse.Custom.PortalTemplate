@@ -4,7 +4,7 @@ export const environment = {
     hmr: false,
     appConfig: 'appconfig.staging.json',
     publicUrl: 'https://test.sperse.com',
-    appBaseUrl: 'https://testadmin.sperse.com',
+    remoteServiceBaseUrl: 'https://testadmin.sperse.com',
     appBaseHref: 'https://testuicdn.azureedge.net/current/',
     releaseStage: 'staging',
 };
