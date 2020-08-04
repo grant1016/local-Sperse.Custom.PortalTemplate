@@ -25,7 +25,7 @@ try
     Write-Host "Checking container '$ContainerName' exists ..."
     $Container = Get-AzureStorageContainer -Context $StorageContext -ErrorAction Stop | where-object {$_.Name -eq $ContainerName}
      
-    Write-Host "Copying blobs of container '$ContainerName' from '$SourcePath' to '$DestPath' ..."
+    Write-Host "Copying blob '$SrcBlob' to '$DestBlob' ..."
     Start-AzureStorageBlobCopy -Context $StorageContext -SrcContainer $ContainerName -DestContainer $ContainerName -SrcBlob $SrcBlob -DestBlob $DestBlob -Force
     
     Write-Host "Done"
