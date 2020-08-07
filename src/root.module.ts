@@ -148,13 +148,18 @@ export function getCurrentLanguage(): string {
     return abp.localization.currentLanguage.name;
 }
 
+export function getDocumentBaseHref(uri = ''): string {
+    let base = document.head.getElementsByTagName('base')[0];
+    return (base ? base.href : '') + uri;
+}
+
 export function getBaseHref(platformLocation: PlatformLocation): string {
-    let baseUrl = document.head.getElementsByTagName('base')[0].href;  //platformLocation.getBaseHrefFromDOM();
+    let baseUrl = getDocumentBaseHref();  //platformLocation.getBaseHrefFromDOM();
     return (/http[s]{0,1}:\/\//g).test(baseUrl) ? baseUrl : getDocumentOrigin() + baseUrl;
 }
 
 export function HttpLoaderFactory(http: HttpClient) {
-    return new TranslateHttpLoader(http);
+    return new TranslateHttpLoader(http, getDocumentBaseHref('assets/i18n/'), '.json');
 }
 
 function handleLogoutRequest(authService: AppAuthService) {
