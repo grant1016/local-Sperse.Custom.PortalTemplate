@@ -1,0 +1,33 @@
+<div class="wrapper">
+    <header>
+        <h2 class="title">
+            <dx-select-box
+                [items]="selectItems"
+                [displayExpr]="'name'"
+                [value]="selectedItem.value"
+                (onSelectionChanged)="onSelectionChanged($event)">
+            </dx-select-box>
+            <span>{{selectedItem.value.message}}</span>
+            <a [routerLink]="selectedItem.value.allRecordsLink">{{ls.ls(localization, 'CRMDashboard_SeeAllRecords')}}<i class="fa fa-angle-right"></i></a>
+        </h2>
+    </header>
+
+    <ng-container *ngIf="recentlyCreatedCustomers$ | async as recentlyCreatedCustomers">
+        <div class="grid-wrapper" *ngIf="recentlyCreatedCustomers && recentlyCreatedCustomers.length; else noData">
+            <dx-data-grid id="gridContainer" class="grid-compact-view"
+                          [dataSource]="recentlyCreatedCustomers"
+                          (onDataErrorOccurred)="httpInterceptor.handleError($event.error)"
+                          (onCellClick)="onCellClick($event)">
+                <dxi-column dataField="fullName" [caption]="ls.ls(localization, 'Customer.Name')"></dxi-column>
+                <dxi-column dataField="creationTime" [caption]="ls.ls(localization, 'Created')" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
+                <div *dxTemplate="let cellData of 'dateCell'">
+                    {{cellData.value | date: formatting.dateTime : userTimezone}}
+                </div>
+                <dxo-paging [pageSize]="10"></dxo-paging>
+            </dx-data-grid>
+        </div>
+    </ng-container>
+</div>
+<ng-template #noData>
+    <app-no-data [showLink]="false"></app-no-data>
+</ng-template>

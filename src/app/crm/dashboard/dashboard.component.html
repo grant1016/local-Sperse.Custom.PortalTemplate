@@ -1,0 +1,46 @@
+<div [@routerTransition]>
+  <div class="head-wrapper">
+      <h2>{{ls.ls(localization, 'Dashboard')}}</h2><calendar-button></calendar-button>
+  </div>  
+  <div class="widgets-wrapper">
+      <div class="wrapper">
+          <div class="dashboard-stub" *ngIf="showWelcomeSection$ | async">
+              <div>
+                  <img class="logo-crm" alt="CRM Logo" src="./assets/common/icons/cfo.png" />
+                  <span class="sperse-crm big-gray-text">{{ls.ls(localization, 'CRM')}}</span>
+              </div>
+              <p class="second-line big-gray-text">{{ls.ls(localization, 'CRM_Long')}}</p>
+              <p class="welcome-crm">{{ls.ls(localization, 'CRMDashboard_WelcomeText')}}</p>
+              <p class="text-crm">{{ls.ls(localization, 'CRMDashboard_StartText')}}</p>
+              <p class="manage-crm" *ngIf="hasCustomersPermission || hasOrdersPermission">
+                  {{ls.ls(localization, 'CRMDashboard_ManageText')}}
+                  <ng-container *ngIf="hasCustomersPermission">
+                      <a [routerLink]="['/app/crm/leads']">{{ls.ls(localization, 'Leads')}}</a>, <a [routerLink]="['/app/crm/clients']">{{ls.ls(localization, 'Clients')}}</a>
+                  </ng-container>
+                  <ng-container *ngIf="hasCustomersPermission && hasOrdersPermission"> and </ng-container>
+                  <a *ngIf="hasOrdersPermission" [routerLink]="['/app/crm/orders']">{{ls.ls(localization, 'Orders')}}</a>
+              </p>
+              <button *ngIf="hasPermissionToAddClient" (click)="addClient()" class="btn btn-layout add-client">{{ ls.ls(localization, 'CRMDashboard_AddClient') }}</button>
+          </div>
+          <dx-scroll-view *ngIf="showDefaultSection$ | async" showScrollbar="onHover">
+              <div class="dashboard-widgets">
+                  <counts-and-totals *ngIf="isGrantedCustomers || isGrantedOrders"></counts-and-totals>
+                  <div class="analytics-wrap">
+                      <div class="left-side col-xl-4">
+                          <new-items-totals *ngIf="isGrantedCustomers || isGrantedOrders"></new-items-totals>
+                          <totals-by-source *ngIf="isGrantedCustomers"></totals-by-source>
+                      </div>
+                      <div class="right-side col-xl-8">
+                          <ng-container *ngIf="isGrantedCustomers">
+                              <totals-by-period></totals-by-period>
+                              <recent-clients></recent-clients>
+                          </ng-container>
+                      </div>
+                  </div>
+                  <clients-by-region *ngIf="isGrantedCustomers"></clients-by-region>
+              </div>
+          </dx-scroll-view>
+          <loading-spinner *ngIf="showLoadingSpinner"></loading-spinner>
+      </div>
+  </div>
+</div>

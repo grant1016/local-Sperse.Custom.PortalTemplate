@@ -1,0 +1,123 @@
+﻿:host {
+    display: block;
+    padding-bottom: 10px;
+
+    header {
+        padding-left: 10px;
+        padding-top: 15px;
+        display: inline-block;
+        width: 100%;
+    }
+
+    .title {
+        width: 100%;
+        font-size: 20px;
+        font-weight: 700;
+        letter-spacing: normal;
+        color: #212c36;
+        float: left;
+        line-height: 34px;
+        display: flex;
+        align-items: center;
+        margin-bottom: 3px;
+
+        ::ng-deep .dx-selectbox {
+            width: 210px;
+
+            input {
+                padding-right: 0;
+            }
+
+            .dx-texteditor-input {
+                border: 0;
+                font-weight: bold;
+                padding-left: 0;
+                font-size: 20px;
+            }
+
+            .dx-dropdowneditor-button {
+                width: 10px;
+                padding: 0;
+                border-radius: 0;
+
+                .dx-dropdowneditor-icon {
+                    background-color: transparent !important;
+
+                    &::before {
+                        content: '\f107';
+                        font-family: FontAwesome !important;
+                    }
+                }
+            }
+        }
+
+        span {
+            font-size: 14px;
+            font-weight: 500;
+            padding-left: 40px;
+            color: #677380;
+            height: 31px;
+        }
+
+        a {
+            font-size: 15px;
+            font-weight: 500;
+            color: #17AEEB;
+            float: right;
+            padding-right: 20px;
+            margin-left: auto;
+            cursor: pointer;
+            letter-spacing: 0.3px;
+
+            i {
+                margin-left: 8px;
+            }
+        }
+    }
+
+    .wrapper {
+        max-height: 520px;
+        overflow: hidden;
+        position: relative;
+    }
+
+    ::ng-deep dx-data-grid {
+        .dx-datagrid-headers {
+            border: none;
+
+            .dx-datagrid-content {
+                border-bottom: none !important;
+            }
+
+            .dx-column-lines td {
+                height: 25px!important;
+                padding-left: 10px;
+                .dx-datagrid-text-content {
+                    color: #4a4a4a!important;
+                }
+            }
+        }
+        .dx-datagrid-rowsview {
+            border-top: none;
+            .dx-row {
+                &:nth-child(odd) {
+                    background-color: rgba(243, 247, 250, 0.7);
+                }
+
+                td {
+                    cursor: pointer;
+                    padding: 8px 10px!important;
+                    border-bottom: none !important;
+                    font-weight: 500 !important;
+                    font-size: 15px !important;
+                    height: 21px !important;
+                    letter-spacing: 0.3px;
+                }
+            }
+        }
+    }
+
+    @media (min-width: 1200px) {
+        min-height: 330px;
+    }
+}

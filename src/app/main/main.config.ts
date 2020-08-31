@@ -12,6 +12,10 @@ export class MainConfig implements ConfigInterface {
     navigation: ConfigNavigation[] = [
         {
             text: 'Home',
+            route: '/app/home'
+        },
+        {
+            text: 'Dashboard',
             route: '/app/dashboard'
         },
         {

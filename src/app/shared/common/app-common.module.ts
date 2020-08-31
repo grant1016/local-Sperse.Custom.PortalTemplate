@@ -67,6 +67,9 @@ import { DatePickerDirective } from './timing/date-picker.component';
 import { LoadingSpinnerModule } from '@app/shared/common/loading-spinner/loading-spinner.module';
 import { InplaceEditModule } from '@app/shared/common/inplace-edit/inplace-edit.module';
 import { CommonLookupModalComponent } from './lookup/common-lookup-modal.component';
+import { CalendarButtonComponent } from '@app/shared/common/calendar-button/calendar-button.component';
+import { CalendarDialogComponent } from './dialogs/calendar/calendar-dialog.component';
+import { PeriodComponent } from './period/period.component';
 
 @NgModule({
     imports: [
@@ -135,6 +138,7 @@ import { CommonLookupModalComponent } from './lookup/common-lookup-modal.compone
     ],
     declarations: [
         TimeAgoPipe,
+        PeriodComponent,
         TimeZoneComboComponent,
         JqPluginDirective,
         DateRangePickerComponent,
@@ -142,10 +146,13 @@ import { CommonLookupModalComponent } from './lookup/common-lookup-modal.compone
         HeadLineComponent,
         UploadPhotoDialogComponent,
         ConfirmDialogComponent,
-        CommonLookupModalComponent
+        CommonLookupModalComponent,
+        CalendarButtonComponent,
+        CalendarDialogComponent
     ],
     exports: [
         TimeAgoPipe,
+        PeriodComponent,
         TimeZoneComboComponent,
         JqPluginDirective,
         DateRangePickerComponent,
@@ -153,10 +160,13 @@ import { CommonLookupModalComponent } from './lookup/common-lookup-modal.compone
         HeadLineComponent,
         UploadPhotoDialogComponent,
         ConfirmDialogComponent,
-        CommonLookupModalComponent
+        CommonLookupModalComponent,
+        CalendarButtonComponent,
+        CalendarDialogComponent
     ],
     providers: [],
     entryComponents: [
+        CalendarDialogComponent,
         UploadPhotoDialogComponent,
         ConfirmDialogComponent,
         CommonLookupModalComponent

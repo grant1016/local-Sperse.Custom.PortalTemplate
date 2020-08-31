@@ -1,0 +1,24 @@
+import { FilterItemModel, DisplayElement } from '@shared/filters/models/filter-item.model';
+
+export class FilterRadioGroupModel extends FilterItemModel {
+    list: any[];
+
+    public constructor(init?: Partial<FilterRadioGroupModel>) {
+        super(init, true);
+    }
+
+    getDisplayElements(): DisplayElement[] {
+        let result: DisplayElement[] = [];
+        this.list.every((item: any) => {
+            let selected = item.id == this.value;
+            if (selected)
+                result.push(<DisplayElement>{
+                    item: this,
+                    displayValue: item.displayName || item.name
+                });
+            return !selected;
+        });
+
+        return result;
+    }
+}

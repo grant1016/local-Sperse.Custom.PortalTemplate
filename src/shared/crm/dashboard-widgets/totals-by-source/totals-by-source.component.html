@@ -1,0 +1,35 @@
+<div class="wrapper">
+    <header>
+        <h2 class="title">{{ ls.ls(localization, 'TotalsBy') }}</h2>
+        <dx-select-box [items]="totalsOptions"
+                       displayExpr="label"
+                       [value]="selectedTotal$ | async"
+                       (onValueChanged)="selectedTotal.next($event.value)">
+        </dx-select-box>
+    </header>
+    <ng-container *ngIf="data$ | async as data">
+        <div *ngIf="totalCount$ | async as totalCount; else noData">
+            <div *ngIf="!loading && totalNumbersTop" class="totalsNumbers" [ngStyle]="{ top: totalNumbersTop }">
+                <span class="range-name" [ngStyle]="{color: rangeColor}">{{percentage && rangeName}}</span>
+                <span class="total-count" [ngStyle]="{color: rangeColor}">{{rangeCount || totalCount}}</span>
+                <span class="percentage" [ngStyle]="{color: rangeColor}">{{percentage}}</span>
+            </div>
+            <div class="round-progress">
+                <dx-pie-chart [dataSource]="data"
+                              [type]="'doughnut'"
+                              [innerRadius]="0.9"
+                              [customizePoint]="customizePoint"
+                              (onPointHoverChanged)="onPointHoverChanged($event)"
+                              [legend]="{verticalAlignment: 'bottom', horizontalAlignment: 'center'}"
+                              (onDrawn)="onDrawn($event)">
+                    <dxo-common-series-settings [argumentField]="selectedArgumentField$ | async"></dxo-common-series-settings>
+                    <dxi-series [valueField]="selectedValueField$ | async"></dxi-series>
+                    <dxo-animation [enabled]="false"></dxo-animation>
+                </dx-pie-chart>
+            </div>
+        </div>
+        <ng-template #noData>
+            <app-no-data></app-no-data>
+        </ng-template>
+    </ng-container>
+</div>

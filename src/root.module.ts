@@ -9,6 +9,7 @@ import { RouteReuseStrategy, Router } from '@angular/router';
 /** Third party imports */
 import { AbpModule } from '@abp/abp.module';
 import { GestureConfig } from '@angular/material';
+import { CacheService } from 'ng2-cache-service';
 import { BugsnagErrorHandler } from '@bugsnag/plugin-angular';
 import { TranslateLoader, TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
@@ -37,6 +38,7 @@ import { TitleService } from '@shared/common/title/title.service';
 import { LoadingSpinnerModule } from '@app/shared/common/loading-spinner/loading-spinner.module';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { ProfileService } from '@shared/common/profile-service/profile.service';
+import { RootStoreModule } from '@root/store';
 
 export function errorHandlerFactory(
     bugsnagService: BugsnagService
@@ -176,6 +178,7 @@ function handleLogoutRequest(authService: AppAuthService) {
         ServiceProxyModule,
         HttpClientModule,
         RootRoutingModule,
+        RootStoreModule,
         BrowserAnimationsModule,
         LoadingSpinnerModule,
         TranslateModule.forRoot({
@@ -204,6 +207,7 @@ function handleLogoutRequest(authService: AppAuthService) {
         TitleService,
         FullScreenService,
         FaviconService,
+        CacheService,
         { provide: HTTP_INTERCEPTORS, useClass: AppHttpInterceptor, multi: true },
         { provide: API_BASE_URL, useFactory: getRemoteServiceBaseUrl },
         { provide: APP_BASE_HREF, useValue: getDocumentOrigin() },

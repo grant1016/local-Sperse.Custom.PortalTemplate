@@ -71,7 +71,7 @@ export class RouteGuard implements CanActivate, CanActivateChild {
         let tenant = this.sessionService.tenant,
             user = this.sessionService.user;
 
-        return '/app/dashboard';
+        return '/app/home';
     }
 
     getBestRouteForHost(): string {

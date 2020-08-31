@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { DashboardComponent } from '@app/main/dashboard/dashboard.component';
+import { CrmDashboardComponent } from '@app/crm/dashboard/dashboard.component';
 import { RedirectGuard } from '@shared/common/redirect-guard/redirect-guard';
 import { AppComponent } from './app.component';
 
@@ -19,8 +20,12 @@ import { AppComponent } from './app.component';
                         pathMatch: 'full'
                     },
                     {
-                        path: 'dashboard',
+                        path: 'home',
                         component: DashboardComponent
+                    },
+                    {
+                        path: 'dashboard',
+                        component: CrmDashboardComponent
                     }
                 ]
             }

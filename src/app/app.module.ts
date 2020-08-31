@@ -6,13 +6,18 @@ import * as ngCommon from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 
 /** Application imports */
+import { AppStoreModule } from '@app/store/app-store.module';
 import { LayoutModule } from './shared/layout/layout.module';
 import { CommonModule } from '@shared/common/common.module';
+import { MapModule } from '@app/shared/common/slice/map/map.module';
+import { CrmModule } from '@app/crm/crm.module';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { DashboardComponent } from '@app/main/dashboard/dashboard.component';
 import { MemberSubscriptionServiceProxy } from '@shared/service-proxies/service-proxies';
 import { AccessDeniedComponent } from './main/access-denied/access-denied.component';
+import { ExportGoogleSheetService } from '@shared/common/export/export-google-sheets/export-google-sheets';
+import { ExportService } from '@shared/common/export/export.service';
 import { AppService } from './app.service';
 import {
     InstanceServiceProxy, ContactServiceProxy, BankAccountsServiceProxy,
@@ -21,22 +26,27 @@ import {
 
 @NgModule({
     declarations: [
-        DashboardComponent,
         AppComponent,
+        DashboardComponent,
         AccessDeniedComponent
     ],
     imports: [
         ngCommon.CommonModule,
-        CommonModule,
-        AppRoutingModule,
         LayoutModule,
+        CommonModule,
+        MapModule,
+        CrmModule,
+        AppRoutingModule,
+        AppStoreModule,
         TranslateModule.forChild({
             extend: true
         })
     ],
     providers: [
         AppService,
+        ExportService,
         InstanceServiceProxy,
+        ExportGoogleSheetService,
         MemberSubscriptionServiceProxy,
         TenantSubscriptionServiceProxy
     ]

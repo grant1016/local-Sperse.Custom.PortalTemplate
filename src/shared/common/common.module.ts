@@ -8,6 +8,8 @@ import { FormsModule } from '@angular/forms';
 import { MatDialogModule } from '@angular/material/dialog';
 
 /** Application imports */
+import { CacheHelper } from '@shared/common/cache-helper/cache-helper';
+import { CalendarComponent } from './widgets/calendar/calendar.component';
 import { ConditionsModalComponent } from '@shared/common/conditions-modal/conditions-modal.component';
 import { ZipCodeFormatterPipe } from '@shared/common/pipes/zip-code-formatter/zip-code-formatter.pipe';
 import { InfoComponent } from '@shared/common/widgets/info/info.component';
@@ -31,7 +33,8 @@ import { CountryPhoneNumberModule } from './phone-numbers/country-phone-number.m
         InfoComponent,
         TitleCasePipe,
         RegisterConfirmComponent,
-        ConditionsModalComponent
+        ConditionsModalComponent,
+        CalendarComponent
     ],
     exports: [
         CustomNumberPipe,
@@ -41,6 +44,7 @@ import { CountryPhoneNumberModule } from './phone-numbers/country-phone-number.m
         InfoComponent,
         TitleCasePipe,
         NoDataModule,
+        CalendarComponent,
         RegisterConfirmComponent
     ],
     imports: [
@@ -55,7 +59,8 @@ import { CountryPhoneNumberModule } from './phone-numbers/country-phone-number.m
     entryComponents: [],
     providers: [
         AppUrlService,
-        PrimengTableHelper
+        PrimengTableHelper,
+        CacheHelper
     ]
 })
 export class CommonModule {}
