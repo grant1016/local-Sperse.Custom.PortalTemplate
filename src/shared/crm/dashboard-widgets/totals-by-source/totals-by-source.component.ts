@@ -66,6 +66,21 @@ export class TotalsBySourceComponent implements OnInit, OnDestroy {
     rangeColor: string;
     totalNumbersTop: string;
     totalsOptions: ITotalOption[] = [{
+        key: 'star',
+        label: this.ls.l('TotalsByStar/CreditRating'),
+        method: this.dashboardServiceProxy.getContactsByStar,
+        argumentField: 'key',
+        valueField: 'count',
+        getColor: (item) => {
+            return StarsHelper.getStarColorByType(this.rawData[item.index].colorType);
+        }
+    }, {
+        key: 'ageDistribution',
+        label: this.ls.l('TotalsByLeadAgeDistribution'),
+        method: this.dashboardServiceProxy.getLeadsCountByAge,
+        argumentField: 'key',
+        valueField: 'count'
+    }, {
         key: 'companySize',
         label: this.ls.l('TotalsByCompanySize'),
         method: this.dashboardServiceProxy.getContactsByCompanySize,
@@ -74,6 +89,12 @@ export class TotalsBySourceComponent implements OnInit, OnDestroy {
         sorting: (a, b) => {
             return (parseInt(a.companySizeRange) || Infinity) > (parseInt(b.companySizeRange) || Infinity) ? 1 : -1;
         }
+    }, {
+        key: 'rating',
+        label: this.ls.l('TotalsByRating'),
+        method: this.dashboardServiceProxy.getContactsByRating,
+        argumentField: 'key',
+        valueField: 'count'
     }];
     selectedTotal: BehaviorSubject<ITotalOption> = new BehaviorSubject<ITotalOption>(
         this.totalsOptions.find(option => option.key === 'companySize')

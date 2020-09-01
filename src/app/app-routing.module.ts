@@ -1,5 +1,9 @@
+/** Core imports */
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
+
+/** Application imports */
+import { AppConsts } from '@shared/AppConsts';
 import { DashboardComponent } from '@app/main/dashboard/dashboard.component';
 import { CrmDashboardComponent } from '@app/crm/dashboard/dashboard.component';
 import { RedirectGuard } from '@shared/common/redirect-guard/redirect-guard';
@@ -25,7 +29,8 @@ import { AppComponent } from './app.component';
                     },
                     {
                         path: 'dashboard',
-                        component: CrmDashboardComponent
+                        component: CrmDashboardComponent,
+                        data: { localizationSource: AppConsts.localization.CRMLocalizationSourceName }
                     }
                 ]
             }
