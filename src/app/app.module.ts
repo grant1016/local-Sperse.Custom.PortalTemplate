@@ -32,12 +32,12 @@ import {
     ],
     imports: [
         ngCommon.CommonModule,
+        AppStoreModule,
         LayoutModule,
         CommonModule,
         MapModule,
         CrmModule,
         AppRoutingModule,
-        AppStoreModule,
         TranslateModule.forChild({
             extend: true
         })

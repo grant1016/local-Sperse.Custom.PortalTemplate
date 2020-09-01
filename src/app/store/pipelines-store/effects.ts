@@ -26,7 +26,6 @@ export class PipelinesStoreEffects {
         ofType<pipelinesActions.LoadRequestAction>(pipelinesActions.ActionTypes.LOAD_REQUEST),
         withLatestFrom(this.store$.pipe(select(getLoadedTime))),
         exhaustMap(([action, loadedTime]) => {
-
             if (!action.payload && StoreHelper.dataLoadingIsNotNeeded(loadedTime, AppConsts.generalDictionariesCacheLifetime)) {
                 return empty();
             }

@@ -10,6 +10,9 @@ import {
 import { RouteReuseStrategy, ActivatedRoute, Router } from '@angular/router';
 
 /** Third party imports */
+import DataSource from 'devextreme/data/data_source';
+import ODataStore from 'devextreme/data/odata/store';
+import { DxDropDownBoxComponent } from 'devextreme-angular/ui/drop-down-box';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import { CacheService } from 'ng2-cache-service';
@@ -32,16 +35,18 @@ import { ClientsByRegionComponent } from '@shared/crm/dashboard-widgets/clients-
 import { CustomReuseStrategy } from '@shared/common/custom-reuse-strategy/custom-reuse-strategy.service.ts';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 import { PeriodService } from '@app/shared/common/period/period.service';
+import { ODataService } from '@shared/common/odata/odata.service';
 import { AppPermissions } from '@shared/AppPermissions';
 
 @Component({
     templateUrl: './dashboard.component.html',
     animations: [appModuleAnimation()],
     styleUrls: ['./dashboard.component.less'],
-    providers: [ DashboardWidgetsService, LifecycleSubjectsService ],
+    providers: [ DashboardWidgetsService, LifecycleSubjectsService, ODataService ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CrmDashboardComponent implements AfterViewInit, OnInit {
+    @ViewChild(DxDropDownBoxComponent, { static: false }) dropDown: DxDropDownBoxComponent;
     @ViewChild(ClientsByRegionComponent, { static: false }) clientsByRegion: ClientsByRegionComponent;
     @ViewChild(TotalsBySourceComponent, { static: false }) totalsBySource: TotalsBySourceComponent;
 
@@ -50,7 +55,12 @@ export class CrmDashboardComponent implements AfterViewInit, OnInit {
     showDefaultSection$: Observable<boolean> = this.showWelcomeSection$.pipe(
         map((showWelcomeSection: boolean) => showWelcomeSection === false)
     );
+    search: string;
+    searchTimeout: any;
+    selectedAccount: any;
+    contactAccounts: any[];
     showLoadingSpinner = true;
+    userInfo = this.appSessionService.getShownLoginInfo();
     private introAcceptedCacheKey: string = this.cacheHelper.getCacheKey('CRMIntro', 'IntroAccepted');
     dialogConfig = new MatDialogConfig();
     isGrantedCustomers = this.permission.isGranted(AppPermissions.CRMCustomers);
@@ -59,6 +69,30 @@ export class CrmDashboardComponent implements AfterViewInit, OnInit {
     hasOrdersPermission: boolean = this.permission.isGranted(AppPermissions.CRMOrders);
     hasPermissionToAddClient: boolean = this.permission.isGranted(AppPermissions.CRMCustomersManage);
     localization = AppConsts.localization.CRMLocalizationSourceName;
+    contactsDataSource = new DataSource({
+        pageSize: 50,
+        sort: [{ selector: 'CompanyName', desc: false }, { selector: 'Name', desc: false }],
+        filter: [['StatusId', '=', 'A'], ['GroupId', '=', 'C'], ['ParentId', '=', null]],
+        select: ['Id', 'Name', 'CompanyName', 'Email'],
+        store: new ODataStore({
+            key: 'ContactId',
+            url: this.oDataService.getODataUrl('Contact'),
+            version: AppConsts.ODataVersion,
+            beforeSend: (request) => {
+                request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
+                if (this.search) {
+                    request.params.quickSearchString = this.search;
+                }
+            },
+            onLoaded: (accounts: any[]) => {
+                this.contactAccounts = accounts;
+                if (!this.selectedAccount && this.contactAccounts.length)
+                    this.selectedAccount = accounts[0];
+                this.changeDetectorRef.detectChanges();
+            },
+            deserializeDates: false
+        })
+    });
 
     constructor(
         private router: Router,
@@ -72,6 +106,7 @@ export class CrmDashboardComponent implements AfterViewInit, OnInit {
         private lifeCycleSubject: LifecycleSubjectsService,
         private dashboardServiceProxy: DashboardServiceProxy,
         private activatedRoute: ActivatedRoute,
+        private oDataService: ODataService,
         public ui: AppUiCustomizationService,
         public permission: AppPermissionService,
         public cacheHelper: CacheHelper,
@@ -81,6 +116,7 @@ export class CrmDashboardComponent implements AfterViewInit, OnInit {
 
     ngOnInit() {
         this.loadStatus();
+        this.contactsDataSource.load();
     }
 
     ngAfterViewInit(): void {
@@ -145,6 +181,25 @@ export class CrmDashboardComponent implements AfterViewInit, OnInit {
     private refreshTotalsBySource() {
         if (this.totalsBySource && this.totalsBySource.chartComponent)
             setTimeout(() => this.totalsBySource.chartComponent.instance.refresh());
+    }
+
+    valueChanged(event) {
+        this.selectedAccount = event.itemData;
+        this.dropDown.instance.close();
+    }
+
+    getSelectedName() {
+        return this.selectedAccount ? 
+            this.selectedAccount.CompanyName || this.selectedAccount.Name || this.selectedAccount.Email
+                : this.userInfo.fullName;
+    }
+
+    searchChanged = (e) => {
+        clearTimeout(this.searchTimeout);
+        this.searchTimeout = setTimeout(() => {
+            this.search = e.component.option('value');
+            this.contactsDataSource.load();
+        }, 500);
     }
 
     invalidate() {

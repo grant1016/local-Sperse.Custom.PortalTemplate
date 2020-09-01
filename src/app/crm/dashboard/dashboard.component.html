@@ -1,6 +1,29 @@
 <div [@routerTransition]>
   <div class="head-wrapper">
-      <h2>{{ls.ls(localization, 'Dashboard')}}</h2><calendar-button></calendar-button>
+      <div class="title">
+          <dx-drop-down-box accessKey="accounts-dropdown" [fieldTemplate]="'field'" width="350px">
+              <div *dxTemplate="let data of 'content'" class="accounts-dropdown">
+                  <dx-list [items]="contactAccounts"
+                           [searchEnabled]="true"
+                           [searchEditorOptions]="{
+                               onKeyUp: searchChanged
+                           }"
+                           [selectedItemKeys]="[selectedAccount]"
+                           selectionMode="single"
+                           (onItemClick)="valueChanged($event)">
+                      <div *dxTemplate="let account of 'item'">
+                          <div class="name" *ngIf="account.CompanyName" [title]="account?.CompanyName">{{ account?.CompanyName }}</div>
+                          <div class="company" *ngIf="account.Name" [title]="account?.Name">{{ account?.Name }}</div>
+                          <div class="company" *ngIf="!account.CompanyName && !account.Name" [title]="account?.Email">{{ account?.Email }}</div>
+                      </div>
+                  </dx-list>
+              </div>
+              <div *dxTemplate="let data of 'field'">
+                  <dx-text-box [value]="getSelectedName()" [hint]="getSelectedName()" [readOnly]="true"></dx-text-box>
+              </div>
+          </dx-drop-down-box>
+      </div>
+      <calendar-button></calendar-button>        
   </div>  
   <div class="widgets-wrapper">
       <div class="wrapper">

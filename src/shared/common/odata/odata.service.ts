@@ -31,11 +31,13 @@ export class ODataService {
         private messageService: MessageService,
         private ls: AppLocalizationService
     ) {
-        dxAjax.setStrategy((options) => {
-            options.responseType = 'application/json';
-            let key = (options.url.match(/odata\/([\w|\/|\$]+)[\?|$]?/) || []).pop() + (options.headers.context || '');
-            return (this.dxRequestPool[key] = dxAjax.sendRequest(options));
-        });
+        /*!!VP need looking for solution to avoid editing DevExtrime level
+            dxAjax.setStrategy((options) => {
+                options.responseType = 'application/json';
+                let key = (options.url.match(/odata\/([\w|\/|\$]+)[\?|$]?/) || []).pop() + (options.headers.context || '');
+                return (this.dxRequestPool[key] = dxAjax.sendRequest(options));
+            });
+        */
     }
 
     loadDataSource(dataSource, uri: string, url?: string): Promise<any> {
