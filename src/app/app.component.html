@@ -1,2 +1,19 @@
 <app-header></app-header>
-<router-outlet></router-outlet>
+
+<div class="clearfix"></div>
+<div class="page-container">
+    <div class="page-sidebar-wrapper" [ngClass]="{'show-sidebar-wrapper': filtersService.enabled}">
+        <side-bar [ngClass]="{
+            fullscreen: isFullscreenMode,
+            toolbarIsHidden: appService.toolbarIsHidden$ | async
+        }">
+        </side-bar>
+    </div>
+
+    <div class="page-content-wrapper">
+        <div class="page-content"
+            [ngClass]="{'fixed-filters': filtersService.fixed}">
+            <router-outlet></router-outlet>
+        </div>
+    </div>
+</div>

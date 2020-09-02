@@ -6,24 +6,21 @@
         max-width: 100%!important;
         height: 100%;
     }
-    .head-wrapper {
-        display: flex;
-        padding: 20px;
-        background-color: #f3f7fa;
-        border-bottom: 1px solid #dfdfdf;
-        justify-content: space-between;
-        .title {
-            h2, dx-drop-down-box {
-                display: inline-block;
-            }
-            ::ng-deep dx-drop-down-box {
-                margin-left: 20px;
-                input {
-                    border: none!important;
-                }
+
+    .title {
+        position: absolute;
+        left: 0px;
+        h2, dx-drop-down-box {
+            display: inline-block;
+        }
+        ::ng-deep dx-drop-down-box {
+            margin-left: 20px;
+            input {
+                border: none!important;
             }
         }
     }
+
     .widgets-wrapper {
         height: calc(~"100vh - 170px");
     }

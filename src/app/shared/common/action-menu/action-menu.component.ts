@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Output, Input, ViewChild } from '@angular/core';
 import { DxTooltipComponent } from 'devextreme-angular/ui/tooltip';
 import { ActionMenuItem } from '@app/shared/common/action-menu/action-menu-item.interface';
+import { ActionMenuGroup } from '@app/shared/common/action-menu/action-menu-group.interface';
 
 @Component({
     selector: 'action-menu',
@@ -8,10 +9,12 @@ import { ActionMenuItem } from '@app/shared/common/action-menu/action-menu-item.
     styleUrls: ['./action-menu.component.less']
 })
 export class ActionMenuComponent {
-    @Input() items: ActionMenuItem[];
+    @Input() items: ActionMenuItem[] | ActionMenuGroup[];
     @Input() visible = false;
     @Input() width = '200px';
     @Input() target = '.dx-state-hover .dx-link.dx-link-edit';
+    @Input() grouped = false;
+    @Input() class = '';
     @Output() onItemClick: EventEmitter<any> = new EventEmitter<any>();
     @Output() onHidden: EventEmitter<any> = new EventEmitter<any>();
     @ViewChild(DxTooltipComponent, { static: false }) actionsTooltip: DxTooltipComponent;
@@ -31,6 +34,12 @@ export class ActionMenuComponent {
                     this.show(target);
                 }
             });
+        }
+    }
+
+    onTooltipShowing(e) {
+        if (this.class) {
+            e.component.$content()[0].classList.add(this.class);
         }
     }
 

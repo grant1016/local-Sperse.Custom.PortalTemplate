@@ -9,6 +9,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { AppStoreModule } from '@app/store/app-store.module';
 import { LayoutModule } from './shared/layout/layout.module';
 import { CommonModule } from '@shared/common/common.module';
+import { FiltersModule } from '@shared/filters/filters.module';
 import { MapModule } from '@app/shared/common/slice/map/map.module';
 import { CrmModule } from '@app/crm/crm.module';
 import { AppComponent } from './app.component';
@@ -18,6 +19,7 @@ import { MemberSubscriptionServiceProxy } from '@shared/service-proxies/service-
 import { AccessDeniedComponent } from './main/access-denied/access-denied.component';
 import { ExportGoogleSheetService } from '@shared/common/export/export-google-sheets/export-google-sheets';
 import { ExportService } from '@shared/common/export/export.service';
+import { AppStoreService } from '@app/store/app-store.service';
 import { AppService } from './app.service';
 import {
     InstanceServiceProxy, ContactServiceProxy, BankAccountsServiceProxy,
@@ -38,6 +40,7 @@ import {
         MapModule,
         CrmModule,
         AppRoutingModule,
+        FiltersModule.forRoot(),
         TranslateModule.forChild({
             extend: true
         })
@@ -45,6 +48,7 @@ import {
     providers: [
         AppService,
         ExportService,
+        AppStoreService,
         InstanceServiceProxy,
         ExportGoogleSheetService,
         MemberSubscriptionServiceProxy,

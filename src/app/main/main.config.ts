@@ -19,6 +19,10 @@ export class MainConfig implements ConfigInterface {
             route: '/app/dashboard'
         },
         {
+            text: 'Leads',
+            route: '/app/leads'
+        },
+        {
             text: 'CRM',
             route: 'platform',
             permission: AppPermissions.CRM,

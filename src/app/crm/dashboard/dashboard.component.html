@@ -1,5 +1,7 @@
-<div [@routerTransition]>
-  <div class="head-wrapper">
+<app-headline 
+    [showReloadButton]="ui.showReload"
+    (onToggleLeftMenu)="repaint()"
+    (onReload)="refresh()">
       <div class="title">
           <dx-drop-down-box accessKey="accounts-dropdown" [fieldTemplate]="'field'" width="350px">
               <div *dxTemplate="let data of 'content'" class="accounts-dropdown">
@@ -23,8 +25,9 @@
               </div>
           </dx-drop-down-box>
       </div>
-      <calendar-button></calendar-button>        
-  </div>  
+      <calendar-button></calendar-button>
+</app-headline>
+<div [@routerTransition]>
   <div class="widgets-wrapper">
       <div class="wrapper">
           <div class="dashboard-stub" *ngIf="showWelcomeSection$ | async">

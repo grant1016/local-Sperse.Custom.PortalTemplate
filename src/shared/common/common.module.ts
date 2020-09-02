@@ -23,6 +23,7 @@ import { NoDataModule } from '@shared/common/widgets/no-data/no-data.module';
 import { PrimengTableHelper } from '@shared/helpers/PrimengTableHelper';
 import { ModalDialogModule } from './dialogs/modal/modal-dialog.module';
 import { CountryPhoneNumberModule } from './phone-numbers/country-phone-number.module';
+import { PhoneFormatModule } from '@shared/common/pipes/phone-format/phone-format.module';
 
 @NgModule({
     declarations: [
@@ -54,6 +55,7 @@ import { CountryPhoneNumberModule } from './phone-numbers/country-phone-number.m
         FormsModule,
         MatDialogModule,
         ModalDialogModule,
+        PhoneFormatModule,
         CountryPhoneNumberModule
     ],
     entryComponents: [],

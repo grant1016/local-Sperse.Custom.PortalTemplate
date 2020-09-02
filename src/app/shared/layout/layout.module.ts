@@ -7,6 +7,7 @@ import { FormsModule } from '@angular/forms';
 /** Third party modules */
 import { MatTabsModule } from '@angular/material/tabs';
 import { DxMenuModule } from 'devextreme-angular/ui/menu';
+import { DxTooltipModule } from 'devextreme-angular/ui/tooltip';
 import { DxButtonModule } from 'devextreme-angular/ui/button';
 import { DxDropDownBoxModule } from 'devextreme-angular/ui/drop-down-box';
 import { DxListModule } from 'devextreme-angular/ui/list';
@@ -19,8 +20,10 @@ import { ProgressBarModule } from 'primeng/progressbar';
 import { PaginatorModule } from 'primeng/paginator';
 
 /** Application imports */
+import { FiltersModule } from '@shared/filters/filters.module';
 import { LayoutCommonModule } from './layout-common.module';
 import { HeaderComponent } from './header/header.component';
+import { SideBarComponent } from './side-bar/side-bar.component';
 import { TopBarComponent } from './top-bar/top-bar.component';
 import { UtilsModule } from '@shared/utils/utils.module';
 import { LayoutService } from '@app/shared/layout/layout.service';
@@ -36,6 +39,7 @@ import { ContactInfoPanelComponent } from '@app/shared/common/contact-info-panel
 let COMPONENTS = [
     HeaderComponent,
     TopBarComponent,
+    SideBarComponent,
     ContactInfoPanelComponent
 ];
 
@@ -49,10 +53,12 @@ let COMPONENTS = [
         TabsModule.forRoot(),
         PopoverModule.forRoot(),
         UtilsModule,
+        FiltersModule,
         LayoutCommonModule,
 
         DxListModule,
         DxMenuModule,
+        DxTooltipModule,
         DxScrollViewModule,
         DxButtonModule,
         DxNavBarModule,

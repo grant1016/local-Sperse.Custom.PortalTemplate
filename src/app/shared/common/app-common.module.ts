@@ -70,6 +70,7 @@ import { CommonLookupModalComponent } from './lookup/common-lookup-modal.compone
 import { CalendarButtonComponent } from '@app/shared/common/calendar-button/calendar-button.component';
 import { CalendarDialogComponent } from './dialogs/calendar/calendar-dialog.component';
 import { PeriodComponent } from './period/period.component';
+import { ToolBarComponent } from './toolbar/toolbar.component';
 
 @NgModule({
     imports: [
@@ -139,6 +140,7 @@ import { PeriodComponent } from './period/period.component';
     declarations: [
         TimeAgoPipe,
         PeriodComponent,
+        ToolBarComponent,
         TimeZoneComboComponent,
         JqPluginDirective,
         DateRangePickerComponent,
@@ -153,6 +155,7 @@ import { PeriodComponent } from './period/period.component';
     exports: [
         TimeAgoPipe,
         PeriodComponent,
+        ToolBarComponent,
         TimeZoneComboComponent,
         JqPluginDirective,
         DateRangePickerComponent,
