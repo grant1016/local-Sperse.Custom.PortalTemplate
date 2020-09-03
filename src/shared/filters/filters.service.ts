@@ -61,6 +61,15 @@ export class FiltersService {
         })
     );
 
+    static filterByRating(filter: FilterModel) {
+        let data = {};
+        data[filter.field] = {};
+        _.each(filter.items, (item: FilterItemModel, key) => {
+            item && item.value && (data[filter.field][filter.operator[key]] = +item.value);
+        });
+        return data;
+    }
+
     static filterByAmount(filter) {
         let data = {};
         data[filter.field] = {};
@@ -70,24 +79,91 @@ export class FiltersService {
         return data;
     }
 
-    static filterByFee(filter) {
-        return FiltersService.filterByAmount(filter);
+    static filterByStates(filter: FilterModel) {
+        let data = {};
+        let filterData = [];
+        if (filter.items.countryStates && filter.items.countryStates.value) {
+            filter.items.countryStates.value.forEach((val) => {
+                let parts = val.split(':');
+                filterData.push(parts.length == 2 ? {
+                    CountryId: parts[0],
+                    StateId: parts[1]
+                } : {CountryId: val});
+            });
+
+            data = {
+                or: filterData
+            };
+        }
+        return data;
     }
 
-    static filterByClassified(filter: FilterModel) {
-        let isYes = filter.items.yes.value;
-        let isNo = filter.items.no.value;
-
-        if (isYes ^ isNo) {
-            let obj = {};
-            obj[filter.field] = {};
-            if (isYes) {
-                obj[filter.field]['ne'] = null;
-            } else {
-                obj[filter.field] = null;
-            }
-            return obj;
+    static filterByStages(filter: FilterModel) {
+        let data = {};
+        if (filter.items.element) {
+            let filterData = FiltersService.ParsePipelineIds(filter.items.element.value);
+            data = {
+                or: filterData
+            };
         }
+
+        return data;
+    }
+
+    static ParsePipelineIds(data: string[]) {
+        let filterData = [];
+        if (data) {
+            let pipelines = {};
+            data.sort().forEach(item => {
+                let parts = item.split(':'),
+                    id = parts[0];
+                if (!pipelines[id])
+                    pipelines[id] = [];
+                if (parts.length > 1)
+                    pipelines[id].push(parts[1]);
+            });
+            _.mapObject(pipelines, (val, key) => {
+                filterData.push('PipelineId eq ' + key + ' and StageId in (' + val.join(',') + ')');
+            });
+        }
+        return filterData;
+    }
+
+    static filterByStar(filter: FilterModel) {
+        return FiltersService.filterBySetOfValues(filter);
+    }
+
+    static filterByList(filter: FilterModel) {
+        return FiltersService.filterBySetOfValues(filter);
+    }
+
+    static filterByTag(filter: FilterModel) {
+        return FiltersService.filterBySetOfValues(filter);
+    }
+
+    static filterBySetOfValues(filter: FilterModel) {
+        let data = {};
+        let element = filter.items.element;
+        if (element && element.value) {
+            let filterData = _.map(element.value, x => {
+                let el = {};
+                el[filter.field] = x;
+                return el;
+            });
+
+            data = {
+                or: filterData
+            };
+        }
+        return data;
+    }
+
+    static filterByStatus(filter: FilterModel) {
+        return FiltersService.filterBySetOfValues(filter);
+    }
+
+    static filterByClientGroupId() {
+        return { 'GroupId': {'eq': ContactGroup.Client} };
     }
 
     static filterByAccount(filter: FilterModel) {
@@ -118,19 +194,6 @@ export class FiltersService {
     }
 
 
-    static getCustomerFilters(): any[] {
-        return [
-            { 'GroupId': { 'eq': ContactGroup.Client }},
-            {
-                'or': [
-                    { 'StatusId': { 'eq': ContactStatus.Active }},
-                    { 'StatusId': { 'eq': ContactStatus.Prospective }}
-                ]
-            },
-            { 'ParentId': { 'eq': null }},
-        ];
-    }
-
     constructor(
         private serverCacheService: ServerCacheService
     ) {}
@@ -151,7 +214,7 @@ export class FiltersService {
                     }
                     if (normalizedValue) {
                         if (!isLongFilter) {
-                            inExpressions.push(`'${normalizedValue.replace(/'/g, "''")}'`);
+                            inExpressions.push(`'${normalizedValue.replace(/'/g, '\'\'')}'`);
                         }
                         normalizedValues.push(normalizedValue);
                     }
@@ -162,7 +225,7 @@ export class FiltersService {
                             this.serverCacheService.getServerCacheId(normalizedValues),
                             valuesArray.length
                         )
-                    }
+                    };
                 } else {
                     data = inExpressions.length
                         ? [`${filter.field} in (${encodeURIComponent(inExpressions.join(','))})`]

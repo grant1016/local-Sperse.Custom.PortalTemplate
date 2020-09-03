@@ -113,6 +113,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     ];
     contactGroupId: BehaviorSubject<ContactGroup> = new BehaviorSubject(ContactGroup.Client);
     contactGroupId$: Observable<ContactGroup> = this.contactGroupId.asObservable();
+    defaultGridPagerConfig = DataGridService.defaultGridPagerConfig;
 
     stages = [];
     selectedClientKeys = [];
@@ -698,13 +699,13 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             purpose: AppConsts.PipelinePurposeIds.lead,
             contactGroupId: this.contactGroupId.value
         }))).pipe(first()).subscribe(pipeline => {
-            this.stages = pipeline.stages.map((stage) => {
+            this.stages = pipeline.stages.map(stage => {
                 return {
                     id: pipeline.id + ':' + stage.id,
                     index: stage.sortOrder,
                     name: stage.name
                 };
-            });
+            }).sort((prev, next) => prev.index > next.index ? -1 : 1);
         });
         this.initToolbarConfig();
     }
