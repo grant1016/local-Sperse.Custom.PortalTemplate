@@ -22,7 +22,6 @@ import { pluck } from 'rxjs/operators';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
-import { InfoItem } from '@app/shared/common/slice/info/info-item.model';
 import { MapData } from '@app/shared/common/slice/map/map-data.model';
 import { ImageFormat } from '@shared/common/export/image-format.enum';
 import { ExportService } from '@shared/common/export/export.service';

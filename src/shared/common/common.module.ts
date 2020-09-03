@@ -40,7 +40,6 @@ import { PhoneFormatModule } from '@shared/common/pipes/phone-format/phone-forma
         AddressFormatPipe,
         FileSizePipe,
         ZipCodeFormatterPipe,
-        InfoComponent,
         TitleCasePipe,
         NoDataModule,
         CalendarComponent,
