@@ -12,7 +12,6 @@ import { CacheHelper } from '@shared/common/cache-helper/cache-helper';
 import { CalendarComponent } from './widgets/calendar/calendar.component';
 import { ConditionsModalComponent } from '@shared/common/conditions-modal/conditions-modal.component';
 import { ZipCodeFormatterPipe } from '@shared/common/pipes/zip-code-formatter/zip-code-formatter.pipe';
-import { InfoComponent } from '@shared/common/widgets/info/info.component';
 import { CustomNumberPipe } from './pipes/custom-number/custom-number.pipe';
 import { AddressFormatPipe } from './pipes/address-format.pipe';
 import { FileSizePipe } from './pipes/file-size.pipe';
@@ -31,7 +30,6 @@ import { PhoneFormatModule } from '@shared/common/pipes/phone-format/phone-forma
         AddressFormatPipe,
         FileSizePipe,
         ZipCodeFormatterPipe,
-        InfoComponent,
         TitleCasePipe,
         RegisterConfirmComponent,
         ConditionsModalComponent,

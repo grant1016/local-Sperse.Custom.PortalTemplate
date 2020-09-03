@@ -26,7 +26,7 @@ import { InfoItem } from '@app/shared/common/slice/info/info-item.model';
 import { MapData } from '@app/shared/common/slice/map/map-data.model';
 import { ImageFormat } from '@shared/common/export/image-format.enum';
 import { ExportService } from '@shared/common/export/export.service';
-import { MapService } from '@app/shared/common/slice/map/map.service';
+import { MapService, InfoItem } from '@app/shared/common/slice/map/map.service';
 import { MapAreaItem } from '@app/shared/common/slice/map/map-area-item.model';
 import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
 import { MapArea } from './map-area.enum';

@@ -13,12 +13,16 @@ import { pluck, publishReplay, refCount } from 'rxjs/operators';
 import { MapArea } from '@app/shared/common/slice/map/map-area.enum';
 import { MapAreaItem } from '@app/shared/common/slice/map/map-area-item.model';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { InfoItem } from '@app/shared/common/slice/info/info-item.model';
 import { map, withLatestFrom } from '@node_modules/rxjs/operators';
 import { MapData } from '@app/shared/common/slice/map/map-data.model';
 import { ODataRequestValues } from '@shared/common/odata/odata-request-values.interface';
 import { Param } from '@shared/common/odata/param.model';
 import { UrlHelper } from '@shared/helpers/UrlHelper';
+
+export class InfoItem {
+    label: string;
+    value: number;
+}
 
 @Injectable()
 export class MapService {
