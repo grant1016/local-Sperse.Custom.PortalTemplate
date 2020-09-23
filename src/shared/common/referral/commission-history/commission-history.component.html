@@ -1,0 +1,56 @@
+<div class="total">
+    <div class="labels">
+        <div>{{ ls.l('Referral.TotalEarned') }}</div>
+        <div>{{ ls.l('Referral.TotalWithdrawals') }}</div>
+        <div>{{ ls.l('Referral.Balance') }}</div>
+    </div>
+    <div class="values">
+        <div>{{ 131277 | currency }}</div>
+        <div>{{ -8 | currency }}</div>
+        <div>{{ 131269 | currency }}</div>
+    </div>
+</div>
+<div class="grid">
+    <div class="search">
+        <dx-text-box mode="search"
+                     [value]="searchValue"
+                     (onValueChanged)="searchValueChange($event)">
+        </dx-text-box>
+    </div>
+    <dx-data-grid class="commission-history-grid main-component-view limitedPagerTotal"
+                  accesskey="narrowHeaderPanel"
+                  [renderAsync]="true"
+                  [allowColumnReordering]="false"
+                  [columnAutoWidth]="true"
+                  [dataSource]="dataSource"
+                  [allowColumnResizing]="true"
+                  [hoverStateEnabled]="true"
+                  [loadPanel]="{ enabled: false }"
+                  [remoteOperations]="{
+                    filtering: false,
+                    grouping: false,
+                    groupPaging: true,
+                    paging: true,
+                    sorting: true,
+                    summary: true
+                  }"
+                  [pager]="defaultGridPagerConfig"
+                  (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
+        <dxo-scrolling rowRenderingMode="virtual"></dxo-scrolling>
+        <dxi-column [dataField]="orderFields.OrderDate" [caption]="ls.l('Date')" sortOrder="desc" cellTemplate="dateCell"></dxi-column>
+        <dxi-column [dataField]="orderFields.Id" [caption]="ls.l('Id')"></dxi-column>
+        <dxi-column [dataField]="orderFields.Name" [caption]="ls.l('Customer')" cssClass="clipboard-holder"></dxi-column>
+        <dxi-column [dataField]="orderFields.Amount" [caption]="ls.l('Amount')" cellTemplate="amountCell" [width]="185" cssClass="padding-right" ></dxi-column>
+        <dxi-column [dataField]="orderFields.OrderType" [caption]="ls.l('Type')" cssClass="clipboard-holder"></dxi-column>
+        <dxi-column [dataField]="orderFields.PersonalAffiliateCode" [caption]="ls.l('ContactAffiliateCode')" [visible]="false"></dxi-column>
+        <dxi-column [dataField]="orderFields.SourceAffiliateCode" [caption]="ls.l('SourceAffiliateCode')" [visible]="false"></dxi-column>
+        <dxo-sorting mode="multiple"></dxo-sorting>
+        <dxo-paging [pageSize]="20"></dxo-paging>
+        <div *dxTemplate="let cellData of 'amountCell'" class="clipboard-holder">
+            {{ cellData.value | currency }}
+        </div>
+        <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
+            {{ cellData.value | date: formatting.dateTime : userTimezone }}
+        </div>
+    </dx-data-grid>
+</div>
