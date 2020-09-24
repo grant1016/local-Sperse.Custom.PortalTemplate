@@ -1,5 +1,15 @@
 /** Core imports */
-import { ChangeDetectionStrategy, Component, OnInit, OnDestroy, ElementRef, ChangeDetectorRef, Input } from '@angular/core';
+import {
+    ChangeDetectionStrategy,
+    Component,
+    OnInit,
+    OnDestroy,
+    ElementRef,
+    ChangeDetectorRef,
+    Input,
+    SimpleChanges,
+    OnChanges
+} from '@angular/core';
 
 /** Third party imports */
 import { takeUntil } from 'rxjs/operators';
@@ -21,7 +31,7 @@ import { TotalsDataField } from '@shared/crm/dashboard-widgets/counts-and-totals
     providers: [ DashboardServiceProxy, LifecycleSubjectsService ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class CountsAndTotalsComponent implements OnInit, OnDestroy {
+export class CountsAndTotalsComponent implements OnInit, OnChanges, OnDestroy {
     @Input() data: GetTotalsOutput;
     @Input() fields: TotalsDataField[];
     totalsDataLoading$ = this.dashboardService.totalsDataLoading$.pipe(takeUntil(this.lifeCycleService.destroy$));
@@ -37,13 +47,6 @@ export class CountsAndTotalsComponent implements OnInit, OnDestroy {
     ) {}
 
     ngOnInit() {
-        this.fields.forEach((field: TotalsDataField) => {
-            field.percent = this.dashboardService.getPercentage(
-                this.data[field.name.replace('total', 'new')],
-                this.data[field.name]
-            );
-        });
-        this.changeDetectorRef.detectChanges();
         this.totalsDataLoading$.pipe(
             takeUntil(this.lifeCycleService.destroy$)
         ).subscribe((loading: boolean) => {
@@ -51,6 +54,18 @@ export class CountsAndTotalsComponent implements OnInit, OnDestroy {
                 ? this.loadingService.startLoading(this.elementRef.nativeElement)
                 : this.loadingService.finishLoading(this.elementRef.nativeElement);
         });
+    }
+
+    ngOnChanges(changes: SimpleChanges) {
+        if (changes.data && changes.data.currentValue) {
+            this.fields.forEach((field: TotalsDataField) => {
+                field.percent = this.dashboardService.getPercentage(
+                    changes.data.currentValue[field.name.replace('total', 'new')],
+                    changes.data.currentValue[field.name]
+                );
+            });
+            this.changeDetectorRef.detectChanges();
+        }
     }
 
     ngOnDestroy() {
