@@ -50,7 +50,10 @@
           </div>
           <dx-scroll-view *ngIf="showDefaultSection$ | async" showScrollbar="onHover">
               <div class="dashboard-widgets">
-                  <counts-and-totals *ngIf="isGrantedCustomers || isGrantedOrders"></counts-and-totals>
+                  <counts-and-totals *ngIf="isGrantedCustomers || isGrantedOrders"
+                                     [data]="totalsData$ | async"
+                                     [fields]="totalsDataFields">
+                  </counts-and-totals>
                   <div class="analytics-wrap">
                       <div class="left-side col-xl-4">
                           <new-items-totals *ngIf="isGrantedCustomers || isGrantedOrders"></new-items-totals>

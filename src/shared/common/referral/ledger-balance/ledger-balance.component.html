@@ -1,0 +1,24 @@
+<counts-and-totals [data]="totalsData$ | async" [fields]="totalsDataFields"></counts-and-totals>
+<div class="balances">
+    <h2>Account Balances</h2>
+    <ul class="values">
+        <li *ngFor="let value of balancesValues">
+            <div>{{ value.name }}</div>
+            <div>{{ value.value | currency }}</div>
+        </li>
+    </ul>
+</div>
+<div class="withdrawal-request">
+    <h3>Request a withdrawal</h3>
+    <h4>You may request up to the total available balance shown above</h4>
+    <dx-number-box [(value)]="withdrawalAmount"
+                   placeholder="Withdrawal Amount">
+        <dx-validator>
+            <dxi-validation-rule type="required" message="Amount is required"></dxi-validation-rule>
+        </dx-validator>
+    </dx-number-box>
+    <div class="buttons">
+        <button class="save btn btn-primary" (click)="save()">{{ ls.l('Save') }}</button>
+        <button class="reset btn btn-secondary" (click)="reset()">{{ ls.l('Reset') }}</button>
+    </div>
+</div>

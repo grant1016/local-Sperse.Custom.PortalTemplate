@@ -32,6 +32,7 @@ import { ListsModule } from '@app/shared/common/lists/lists.module';
 import { AppStoreService } from '@app/store/app-store.service';
 import { LeadsComponent } from './leads/leads.component';
 import { PipelinesStoreActions } from '@app/store';
+import { CountsAndTotalsModule } from '@shared/crm/dashboard-widgets/counts-and-totals/counts-and-totals.module';
 
 
 @NgModule({
@@ -53,7 +54,8 @@ import { PipelinesStoreActions } from '@app/store';
         ngCommon.CommonModule,
         CRMDashboardWidgetsModule,
         LoadingSpinnerModule,
-        StaticListModule
+        StaticListModule,
+        CountsAndTotalsModule
     ],
     declarations: [
         LeadsComponent,

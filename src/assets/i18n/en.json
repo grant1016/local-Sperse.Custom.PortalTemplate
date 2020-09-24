@@ -13,6 +13,7 @@
             "TotalEarned": "Total Earned",
             "TotalWithdrawals": "Total Withdrawals",
             "Balance": "Balance"
-        }
+        },
+        "VersusEstimated": "Versus Estimated"
     }
 }

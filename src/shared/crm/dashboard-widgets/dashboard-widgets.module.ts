@@ -29,6 +29,7 @@ import { DashboardServiceProxy } from 'shared/service-proxies/service-proxies';
 import { LoadingSpinnerModule } from '@app/shared/common/loading-spinner/loading-spinner.module';
 import { PeriodService } from '@app/shared/common/period/period.service';
 import { MapModule } from '@app/shared/common/slice/map/map.module';
+import { CountsAndTotalsModule } from '@shared/crm/dashboard-widgets/counts-and-totals/counts-and-totals.module';
 
 @NgModule({
     imports: [
@@ -47,11 +48,11 @@ import { MapModule } from '@app/shared/common/slice/map/map.module';
         DxVectorMapModule,
         LoadingSpinnerModule,
         ngCommon.CommonModule,
-        MapModule
+        MapModule,
+        CountsAndTotalsModule
     ],
     declarations: [
         ClientsByRegionComponent,
-        CountsAndTotalsComponent,
         NewItemsTotalsComponent,
         TotalsByPeriodComponent,
         TotalsBySourceComponent,
@@ -60,7 +61,6 @@ import { MapModule } from '@app/shared/common/slice/map/map.module';
     entryComponents: [],
     exports: [
         ClientsByRegionComponent,
-        CountsAndTotalsComponent,
         NewItemsTotalsComponent,
         TotalsByPeriodComponent,
         TotalsBySourceComponent,

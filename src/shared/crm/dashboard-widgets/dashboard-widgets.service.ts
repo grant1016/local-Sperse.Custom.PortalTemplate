@@ -18,6 +18,7 @@ import { LayoutService } from '@app/shared/layout/layout.service';
 import { CalendarService } from '@app/shared/common/calendar-button/calendar.service';
 import { CalendarValuesModel } from '@shared/common/widgets/calendar/calendar-values.model';
 import { DateHelper } from '@shared/helpers/DateHelper';
+import { TotalsDataField } from '@shared/crm/dashboard-widgets/counts-and-totals/totals-data-field.interface';
 
 @Injectable()
 export class DashboardWidgetsService  {
@@ -38,7 +39,7 @@ export class DashboardWidgetsService  {
     private totalsDataLoading: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
     totalsDataLoading$: Observable<boolean> = this.totalsDataLoading.asObservable();
     private isGrantedCustomers = this.permissionService.isGranted(AppPermissions.CRMCustomers);
-    totalsDataFields = [
+    totalsDataFields: TotalsDataField[] = [
         {
             title: 'Sales',
             color: this.layoutService.getLayoutColor('totalSales'),
@@ -61,7 +62,8 @@ export class DashboardWidgetsService  {
            type: 'number',
            percent: '0%',
            visible: this.isGrantedCustomers
-       }];
+       }
+    ];
     private _refresh: BehaviorSubject<null> = new BehaviorSubject<null>(null);
     refresh$: Observable<null> = this._refresh.asObservable();
 

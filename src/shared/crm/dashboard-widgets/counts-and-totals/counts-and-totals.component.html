@@ -1,6 +1,6 @@
 <div class="totals-list row" *ngIf="data">
     <div *ngFor="let field of fields" class="col-lg-4">
-        <div *ngIf="field.visible" class="total-item {{ field.class }}">
+        <div *ngIf="field.visible" class="total-item">
             <div class="chart-head">
                 <span>{{ls.ls(localization, 'Total') + ' ' + ls.ls(localization, field.title)}}</span>
                 <span [ngStyle]="{'color': field.color}" *ngIf="field.type == 'currency'">
@@ -11,6 +11,10 @@
                 </span>
             </div>
             <div class="chart-line"><div [ngStyle]="{width: field.percent, 'background-color': field.color}"></div></div>
+            <div *ngIf="field.estimated" class="versus">
+                <span class="estimated-label">{{ ls.l('VersusEstimated') }}</span>
+                <span class="estimated-value">{{ field.estimated }}</span>
+            </div>
             <!--<div class="chart-progress"><span>{{ls.l('Progress')}}</span><span>{{ field.percent }}</span></div>-->
         </div>
     </div>

@@ -1,0 +1,51 @@
+:host {
+    padding-bottom: 5px;
+    display: block;
+    ::ng-deep counts-and-totals {
+        border-bottom: none;
+        .row {
+            margin: 0;
+        }
+    }
+    .balances {
+        padding-left: 70px;
+        margin-top: 20px;
+        h2 {
+            text-transform: uppercase;
+            font-size: 22px;
+            font-weight: 600;
+        }
+        ul {
+            display: flex;
+            padding-left: 0;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 15px;
+            li {
+                color: #000;
+                list-style: none;
+                &:not(:last-child) {
+                    margin-right: 50px;
+                }
+            }
+        }
+    }
+    .withdrawal-request {
+        margin-left: 200px;
+        margin-top: 40px;
+        h3 {
+            font-size: 20px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        h4 {
+            font-size: 13px;
+        }
+        dx-number-box {
+            width: 300px;
+            border: 1px solid #ddd;
+        }
+        .buttons {
+            margin-top: 15px;
+        }
+    }
+}

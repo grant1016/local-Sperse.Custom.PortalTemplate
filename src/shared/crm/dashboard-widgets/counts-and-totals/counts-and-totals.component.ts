@@ -1,5 +1,5 @@
 /** Core imports */
-import { ChangeDetectionStrategy, Component, OnInit, OnDestroy, ElementRef, ChangeDetectorRef } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, OnDestroy, ElementRef, ChangeDetectorRef, Input } from '@angular/core';
 
 /** Third party imports */
 import { takeUntil } from 'rxjs/operators';
@@ -12,6 +12,7 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 import { GetTotalsOutput } from '@shared/service-proxies/service-proxies';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
+import { TotalsDataField } from '@shared/crm/dashboard-widgets/counts-and-totals/totals-data-field.interface';
 
 @Component({
     selector: 'counts-and-totals',
@@ -21,8 +22,8 @@ import { LoadingService } from '@shared/common/loading-service/loading.service';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CountsAndTotalsComponent implements OnInit, OnDestroy {
-    data: GetTotalsOutput;
-    fields = this.dashboardService.totalsDataFields;
+    @Input() data: GetTotalsOutput;
+    @Input() fields: TotalsDataField[];
     totalsDataLoading$ = this.dashboardService.totalsDataLoading$.pipe(takeUntil(this.lifeCycleService.destroy$));
     localization = AppConsts.localization.CRMLocalizationSourceName;
 
@@ -36,19 +37,13 @@ export class CountsAndTotalsComponent implements OnInit, OnDestroy {
     ) {}
 
     ngOnInit() {
-        this.dashboardService.totalsData$
-            .pipe(takeUntil(this.lifeCycleService.destroy$))
-            .subscribe((totalsData: GetTotalsOutput) => {
-                this.data = totalsData;
-                this.fields.forEach((field) => {
-                    field.percent = this.dashboardService.getPercentage(
-                        totalsData[field.name.replace('total', 'new')],
-                        totalsData[field.name]
-                    );
-                });
-                this.changeDetectorRef.detectChanges();
-            });
-
+        this.fields.forEach((field: TotalsDataField) => {
+            field.percent = this.dashboardService.getPercentage(
+                this.data[field.name.replace('total', 'new')],
+                this.data[field.name]
+            );
+        });
+        this.changeDetectorRef.detectChanges();
         this.totalsDataLoading$.pipe(
             takeUntil(this.lifeCycleService.destroy$)
         ).subscribe((loading: boolean) => {

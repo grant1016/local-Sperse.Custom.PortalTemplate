@@ -27,7 +27,11 @@ import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { AppUiCustomizationService } from '@shared/common/ui/app-ui-customization.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { AppSessionService } from '@shared/common/session/app-session.service';
-import { DashboardServiceProxy, GetCRMStatusOutput, ModuleType, LayoutType } from '@shared/service-proxies/service-proxies';
+import {
+    DashboardServiceProxy,
+    GetCRMStatusOutput,
+    GetTotalsOutput
+} from '@shared/service-proxies/service-proxies';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { DashboardWidgetsService } from '@shared/crm/dashboard-widgets/dashboard-widgets.service';
 import { TotalsBySourceComponent } from '@shared/crm/dashboard-widgets/totals-by-source/totals-by-source.component';
@@ -37,6 +41,7 @@ import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/life
 import { PeriodService } from '@app/shared/common/period/period.service';
 import { ODataService } from '@shared/common/odata/odata.service';
 import { AppPermissions } from '@shared/AppPermissions';
+import { TotalsDataField } from '@shared/crm/dashboard-widgets/counts-and-totals/totals-data-field.interface';
 
 @Component({
     templateUrl: './dashboard.component.html',
@@ -93,6 +98,8 @@ export class CrmDashboardComponent implements AfterViewInit, OnInit {
             deserializeDates: false
         })
     });
+    totalsData$: Observable<GetTotalsOutput> = this.dashboardWidgetsService.totalsData$;
+    totalsDataFields: TotalsDataField[] = this.dashboardWidgetsService.totalsDataFields;
 
     constructor(
         private router: Router,

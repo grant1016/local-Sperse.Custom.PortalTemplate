@@ -7,6 +7,8 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { DxDataGridModule } from 'devextreme-angular/ui/data-grid';
 import { DxSelectBoxModule } from 'devextreme-angular/ui/select-box';
 import { DxTextBoxModule } from 'devextreme-angular/ui/text-box';
+import { DxNumberBoxModule } from 'devextreme-angular/ui/number-box';
+import { DxValidatorModule } from 'devextreme-angular/ui/validator';
 
 /** Application imports */
 import { ReferralComponent } from './referral.component';
@@ -15,15 +17,19 @@ import { LedgerBalanceComponent } from '@shared/common/referral/ledger-balance/l
 import { LinkGeneratorComponent } from '@shared/common/referral/link-generator/link-generator.component';
 import { LinkTrackingComponent } from '@shared/common/referral/link-tracking/link-tracking.component';
 import { ReferralRoutingModule } from '@shared/common/referral/referral-routing.module';
+import { CountsAndTotalsModule } from '@shared/crm/dashboard-widgets/counts-and-totals/counts-and-totals.module';
 
 @NgModule({
     imports: [
         CommonModule,
         DxDataGridModule,
         DxTextBoxModule,
+        DxNumberBoxModule,
         DxSelectBoxModule,
+        DxValidatorModule,
         MatTabsModule,
-        ReferralRoutingModule
+        ReferralRoutingModule,
+        CountsAndTotalsModule
     ],
     exports: [],
     declarations: [
