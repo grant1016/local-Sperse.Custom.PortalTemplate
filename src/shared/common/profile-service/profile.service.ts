@@ -3,16 +3,15 @@ import { Injectable } from '@angular/core';
 
 /** Third party imports */
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
-import { delay, distinctUntilChanged, map, publishReplay, refCount, startWith, switchMap } from 'rxjs/operators';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
 import {
-    GetMemberInfoOutput,
-    LayoutType,
-    MemberSubscriptionServiceProxy
+    LayoutType, MemberSettingsServiceProxy,
+    MemberSubscriptionServiceProxy, UpdateUserAffiliateCodeDto
 } from '@shared/service-proxies/service-proxies';
 import { AppSessionService } from '@shared/common/session/app-session.service';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 
 @Injectable()
 export class ProfileService {
@@ -34,7 +33,9 @@ export class ProfileService {
 
     constructor(
         private appSession: AppSessionService,
-        private subscriptionProxy: MemberSubscriptionServiceProxy
+        private subscriptionProxy: MemberSubscriptionServiceProxy,
+        private memberSettingsService: MemberSettingsServiceProxy,
+        private ls: AppLocalizationService
     ) {
         const eventMethod = window.addEventListener ? 'addEventListener' : 'attachEvent';
         const messageEvent = window[eventMethod] === 'attachEvent' ? 'onmessage' : 'message';
@@ -86,5 +87,13 @@ export class ProfileService {
 
     updateAccessCode(newAccessCode: string) {
         this.accessCode.next(newAccessCode);
+        this.memberSettingsService.updateAffiliateCode(new UpdateUserAffiliateCodeDto({ affiliateCode: newAccessCode })).subscribe(
+            () => {
+                abp.notify.info(this.ls.l('AccessCodeUpdated'));
+                this.appSession.user.affiliateCode = newAccessCode;
+            },
+            /** Update back if error comes */
+            () => this.accessCode.next(this.appSession.user.affiliateCode)
+        );
     }
 }

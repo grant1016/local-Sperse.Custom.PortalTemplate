@@ -1,12 +1,15 @@
 <mat-tab-group>
     <mat-tab [label]="ls.l('Referral.CommissionHistory')">
         <commission-history></commission-history>
+        <referral-info *ngIf="showReferralInfo"></referral-info>
     </mat-tab>
     <mat-tab [label]="ls.l('Referral.LedgerBalance')">
         <ledger-balance></ledger-balance>
+        <referral-info *ngIf="showReferralInfo"></referral-info>
     </mat-tab>
     <mat-tab [label]="ls.l('Referral.LinkGenerator')">
         <link-generator></link-generator>
+        <referral-info *ngIf="showReferralInfo"></referral-info>
     </mat-tab>
     <mat-tab [label]="ls.l('Referral.LinkTracking')" [disabled]="true">
         <link-tracking></link-tracking>

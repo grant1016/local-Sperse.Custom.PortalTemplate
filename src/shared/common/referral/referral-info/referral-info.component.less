@@ -1,0 +1,108 @@
+:host {
+    position: relative;
+    min-width: 400px;
+    padding: 30px;
+
+    user-photo {
+        display: block;
+        margin-bottom: 20px;
+        text-align: center;
+    }
+
+    ::ng-deep .source-info {
+        .field {
+            line-height: 24px !important;
+            padding: 10px 0;
+            label {
+                display: block;
+                margin-bottom: 5px !important;
+                & + div {
+                    display: flex;
+                    align-items: center;
+                    position: relative;
+                    .thumbnail {
+                        margin-right: 12px;
+                        img {
+                            width: 36px;
+                            height: 36px;
+                            border-radius: 50%;
+                        }
+                    }
+                    .field-info {
+                        display: flex;
+                        flex-direction: column;
+                        align-items: flex-start;
+                        .additional-info {
+                            span {
+                                font-size: 12px;
+                                &.date-ago {
+                                    min-width: 140px;
+                                    text-align: right;
+                                }
+                                &.channel-code {
+                                    min-width: 140px;
+                                }
+                                &.date-ago,
+                                &.channel-code,
+                                &.bold {
+                                    font-weight: 600;
+                                }
+                            }
+                        }
+                        hr {
+                            position: absolute;
+                            bottom: -15px;
+                            width: 100%;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    span, a {
+        padding-right: 30px;
+        i.save-to-clipboard {
+            padding-left: 30px;
+            display: none;
+        }
+        &:hover {
+            i.save-to-clipboard {
+                display: inline-block;
+            }
+        }
+    }
+
+    ::ng-deep mat-accordion {
+        position: relative;
+        .mat-expansion-panel {
+            box-shadow: initial;
+        }
+        .mat-expansion-indicator {
+            position: absolute;
+            left: 5px;
+            &:after {
+                border: none;
+                width: 10px;
+                height: 6px;
+                transform: initial;
+                background: url('../../../../assets/common/icons/small-triangle-down.svg') no-repeat;
+            }
+        }
+        mat-panel-title {
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 0.56px;
+            color: #202b35;
+            text-transform: uppercase;
+        }
+        .status-icon {
+            width: 11px;
+            height: 11px;
+            border-radius: 50%;
+            margin-right: 10px;
+            display: inline-block;
+            padding: 0 !important;
+        }
+    }
+}

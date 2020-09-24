@@ -8,5 +8,8 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ReferralComponent {
-    constructor(public ls: AppLocalizationService) {}
+    showReferralInfo = true;
+    constructor(
+        public ls: AppLocalizationService
+    ) {}
 }

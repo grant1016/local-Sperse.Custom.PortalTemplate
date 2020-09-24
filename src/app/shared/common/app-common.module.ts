@@ -135,7 +135,7 @@ import { ToolBarComponent } from './toolbar/toolbar.component';
         DxTooltipModule,
         DxSwitchModule,
         DxTreeListModule,
-        DxSliderModule,
+        DxSliderModule
     ],
     declarations: [
         TimeAgoPipe,

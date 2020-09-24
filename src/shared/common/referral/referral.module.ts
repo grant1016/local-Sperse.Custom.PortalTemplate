@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 
 /** Third party imports */
 import { MatTabsModule } from '@angular/material/tabs';
+import { MatExpansionModule } from '@angular/material/expansion';
 import { DxDataGridModule } from 'devextreme-angular/ui/data-grid';
 import { DxSelectBoxModule } from 'devextreme-angular/ui/select-box';
 import { DxTextBoxModule } from 'devextreme-angular/ui/text-box';
@@ -18,6 +19,9 @@ import { LinkGeneratorComponent } from '@shared/common/referral/link-generator/l
 import { LinkTrackingComponent } from '@shared/common/referral/link-tracking/link-tracking.component';
 import { ReferralRoutingModule } from '@shared/common/referral/referral-routing.module';
 import { CountsAndTotalsModule } from '@shared/crm/dashboard-widgets/counts-and-totals/counts-and-totals.module';
+import { ReferralInfoComponent } from '@shared/common/referral/referral-info/referral-info.component';
+import { UserPhotoModule } from '@app/shared/common/user-photo/user-photo.module';
+import { InplaceEditModule } from '@app/shared/common/inplace-edit/inplace-edit.module';
 
 @NgModule({
     imports: [
@@ -29,7 +33,10 @@ import { CountsAndTotalsModule } from '@shared/crm/dashboard-widgets/counts-and-
         DxValidatorModule,
         MatTabsModule,
         ReferralRoutingModule,
-        CountsAndTotalsModule
+        CountsAndTotalsModule,
+        UserPhotoModule,
+        MatExpansionModule,
+        InplaceEditModule
     ],
     exports: [],
     declarations: [
@@ -37,7 +44,8 @@ import { CountsAndTotalsModule } from '@shared/crm/dashboard-widgets/counts-and-
         LedgerBalanceComponent,
         LinkGeneratorComponent,
         LinkTrackingComponent,
-        ReferralComponent
+        ReferralComponent,
+        ReferralInfoComponent
     ],
     providers: [],
     bootstrap: [ ReferralComponent ]
