@@ -1,0 +1,11 @@
+<dx-text-box mode="search"
+             valueChangeEvent="keyup"
+             width="300px"
+             (onValueChanged)="search($event)">
+</dx-text-box>
+<ul>
+    <li *ngFor="let link of displayedLinks">
+        {{ link }}
+        <i class="save-to-clipboard" (click)="copy(link)"></i>
+    </li>
+</ul>
