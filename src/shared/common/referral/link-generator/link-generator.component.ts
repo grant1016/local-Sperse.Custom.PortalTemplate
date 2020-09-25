@@ -22,7 +22,7 @@ export class LinkGeneratorComponent {
     accessCode$: Observable<string> = this.profileService.accessCode$;
     private _search: BehaviorSubject<string> = new BehaviorSubject<string>('');
     search$: Observable<string> = this._search.asObservable();
-    initialLinks: any[] = [];
+    initialLinks: GeneratorLink[] = [];
     initialLinks$: Observable<GeneratorLink[]> = this.accessCode$.pipe(
         map((accessCode: string) => this.initialLinks.map((link: GeneratorLink) => {
             link.link = link.link + '/' + accessCode;

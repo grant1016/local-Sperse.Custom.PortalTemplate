@@ -3,7 +3,7 @@
              width="300px"
              (onValueChanged)="search($event)">
 </dx-text-box>
-<dx-data-grid [dataSource]="displayedLinks$ | async">
+<dx-data-grid [dataSource]="displayedLinks$ | async" [allowColumnResizing]="true">
     <dxi-column dataField="imgSrc" cellTemplate="imgTemplate" width="50px" caption=""></dxi-column>
     <dxi-column dataField="link" cssClass="clipboard-holder"></dxi-column>
     <div *dxTemplate="let cellData of 'imgTemplate'">
