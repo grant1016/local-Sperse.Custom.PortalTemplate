@@ -21,10 +21,7 @@ import { ExportGoogleSheetService } from '@shared/common/export/export-google-sh
 import { ExportService } from '@shared/common/export/export.service';
 import { AppStoreService } from '@app/store/app-store.service';
 import { AppService } from './app.service';
-import {
-    InstanceServiceProxy, ContactServiceProxy, BankAccountsServiceProxy,
-    BusinessEntityServiceProxy, TenantSubscriptionServiceProxy, CashflowServiceProxy, CashFlowForecastServiceProxy
-} from '@shared/service-proxies/service-proxies';
+import { InstanceServiceProxy, TenantSubscriptionServiceProxy } from '@shared/service-proxies/service-proxies';
 
 @NgModule({
     declarations: [

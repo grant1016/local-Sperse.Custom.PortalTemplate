@@ -22,6 +22,7 @@ import { CountsAndTotalsModule } from '@shared/crm/dashboard-widgets/counts-and-
 import { ReferralInfoComponent } from '@shared/common/referral/referral-info/referral-info.component';
 import { UserPhotoModule } from '@app/shared/common/user-photo/user-photo.module';
 import { InplaceEditModule } from '@app/shared/common/inplace-edit/inplace-edit.module';
+import { DxDataGridDirective } from '@shared/common/dx-data-grid/dx-data-grid.directive';
 
 @NgModule({
     imports: [
@@ -38,14 +39,15 @@ import { InplaceEditModule } from '@app/shared/common/inplace-edit/inplace-edit.
         MatExpansionModule,
         InplaceEditModule
     ],
-    exports: [],
+    exports: [ DxDataGridDirective ],
     declarations: [
         CommissionHistoryComponent,
         LedgerBalanceComponent,
         LinkGeneratorComponent,
         LinkTrackingComponent,
         ReferralComponent,
-        ReferralInfoComponent
+        ReferralInfoComponent,
+        DxDataGridDirective
     ],
     providers: [],
     bootstrap: [ ReferralComponent ]

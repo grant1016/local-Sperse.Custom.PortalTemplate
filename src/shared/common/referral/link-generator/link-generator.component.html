@@ -3,9 +3,10 @@
              width="300px"
              (onValueChanged)="search($event)">
 </dx-text-box>
-<ul>
-    <li *ngFor="let link of displayedLinks">
-        {{ link }}
-        <i class="save-to-clipboard" (click)="copy(link)"></i>
-    </li>
-</ul>
+<dx-data-grid [dataSource]="displayedLinks$ | async">
+    <dxi-column dataField="imgSrc" cellTemplate="imgTemplate" width="50px" caption=""></dxi-column>
+    <dxi-column dataField="link" cssClass="clipboard-holder"></dxi-column>
+    <div *dxTemplate="let cellData of 'imgTemplate'">
+        <img [src]="cellData.value" class="image">
+    </div>
+</dx-data-grid>
