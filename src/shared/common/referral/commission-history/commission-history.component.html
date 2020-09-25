@@ -37,20 +37,20 @@
                   [pager]="defaultGridPagerConfig"
                   (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
         <dxo-scrolling rowRenderingMode="virtual"></dxo-scrolling>
-        <dxi-column [dataField]="orderFields.OrderDate" [caption]="ls.l('Date')" sortOrder="desc" cellTemplate="dateCell"></dxi-column>
-        <dxi-column [dataField]="orderFields.Id" [caption]="ls.l('Id')"></dxi-column>
-        <dxi-column [dataField]="orderFields.Name" [caption]="ls.l('Customer')" cssClass="clipboard-holder"></dxi-column>
-        <dxi-column [dataField]="orderFields.Amount" [caption]="ls.l('Amount')" cellTemplate="amountCell" [width]="185" cssClass="padding-right" ></dxi-column>
-        <dxi-column [dataField]="orderFields.OrderType" [caption]="ls.l('Type')" cssClass="clipboard-holder"></dxi-column>
-        <dxi-column [dataField]="orderFields.PersonalAffiliateCode" [caption]="ls.l('ContactAffiliateCode')" [visible]="false"></dxi-column>
-        <dxi-column [dataField]="orderFields.SourceAffiliateCode" [caption]="ls.l('SourceAffiliateCode')" [visible]="false"></dxi-column>
+        <dxi-column [dataField]="orderFields.OrderDate" [caption]="ls.l('Order Date')" [width]="160" sortOrder="desc" cellTemplate="dateCell"></dxi-column>
+        <dxi-column [dataField]="orderFields.Id" [width]="100" [caption]="ls.l('Order Id')"></dxi-column>
+        <dxi-column [dataField]="orderFields.Name" [caption]="ls.l('Customer Name')" cssClass="clipboard-holder"></dxi-column>
+        <dxi-column [dataField]="orderFields.OrderType" [caption]="ls.l('Product Name')" [width]="150" cssClass="clipboard-holder"></dxi-column>
+        <dxi-column [dataField]="orderFields.Amount" [caption]="ls.l('Sale Amount')" cellTemplate="amountCell" [width]="185" cssClass="padding-right"></dxi-column>
+        <dxi-column [dataField]="orderFields.Amount" [caption]="ls.l('Commission')" cellTemplate="amountCell" [width]="185" cssClass="padding-right"></dxi-column>
+        <dxi-column [dataField]="orderFields.Stage" [caption]="ls.l('Status')" cssClass="padding-right"></dxi-column>
         <dxo-sorting mode="multiple"></dxo-sorting>
         <dxo-paging [pageSize]="20"></dxo-paging>
         <div *dxTemplate="let cellData of 'amountCell'" class="clipboard-holder">
             {{ cellData.value | currency }}
         </div>
         <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
-            {{ cellData.value | date: formatting.dateTime : userTimezone }}
+            {{ cellData.value | date: formatting.date : userTimezone }}
         </div>
     </dx-data-grid>
 </div>

@@ -4,7 +4,7 @@ export interface OrderDto {
     Amount: number;
     OrderType: string;
     OrderDate: string;
-    PersonalAffiliateCode: string;
-    SourceAffiliateCode: string;
     SourceEntryUrl: string;
+    Stage: string;
+    ProductName: string;
 }
