@@ -1,10 +1,14 @@
 <div class="grid">
-    <div class="search">
+    <header>
+        <h1>{{ ls.l('Referral.CommissionHistoryTitle') }}</h1>
+        <button>{{ ls.l('Referral.DownloadTheReport') }}</button>
+    </header>
+    <!--<div class="search">
         <dx-text-box mode="search"
                      [value]="searchValue"
                      (onValueChanged)="searchValueChange($event)">
         </dx-text-box>
-    </div>
+    </div>-->
     <dx-data-grid class="commission-history-grid main-component-view limitedPagerTotal"
                   accesskey="narrowHeaderPanel"
                   [renderAsync]="true"
@@ -13,6 +17,7 @@
                   [dataSource]="dataSource"
                   [allowColumnResizing]="true"
                   [hoverStateEnabled]="true"
+                  [showBorders]="true"
                   [loadPanel]="{ enabled: false }"
                   [remoteOperations]="{
                     filtering: false,
@@ -31,11 +36,14 @@
         <dxi-column [dataField]="orderFields.OrderType" [caption]="ls.l('Product Name')" [width]="150" cssClass="clipboard-holder"></dxi-column>
         <dxi-column [dataField]="orderFields.Amount" [caption]="ls.l('Sale Amount')" cellTemplate="amountCell" [width]="185" cssClass="padding-right"></dxi-column>
         <dxi-column [dataField]="orderFields.Amount" [caption]="ls.l('Commission')" cellTemplate="amountCell" [width]="185" cssClass="padding-right"></dxi-column>
-        <dxi-column [dataField]="orderFields.Stage" [caption]="ls.l('Status')" cssClass="padding-right"></dxi-column>
+        <dxi-column [dataField]="orderFields.Stage" [caption]="ls.l('Status')" cellTemplate="statusCell" cssClass="padding-right"></dxi-column>
         <dxo-sorting mode="multiple"></dxo-sorting>
         <dxo-paging [pageSize]="20"></dxo-paging>
         <div *dxTemplate="let cellData of 'amountCell'" class="clipboard-holder">
-            {{ cellData.value | currency }}
+            <span [ngStyle]="{ color: getCellColor(cellData.row.data.Stage) }">{{ cellData.value | currency }}</span>
+        </div>
+        <div *dxTemplate="let cellData of 'statusCell'" class="clipboard-holder">
+            <span [ngStyle]="{ color: getCellColor(cellData.row.data.Stage) }">{{ cellData.value }}</span>
         </div>
         <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
             {{ cellData.value | date: formatting.date : userTimezone }}

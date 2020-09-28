@@ -16,7 +16,9 @@
             "Withdrawn": "Withdrawn",
             "PendingAmounts": "Pending Amounts",
             "Available": "Available",
-            "RequestWithdrawal": "Request a withdrawal"
+            "RequestWithdrawal": "Request a withdrawal",
+            "CommissionHistoryTitle": "Your commission transaction history",
+            "DownloadTheReport": "Download the report"
         },
         "VersusEstimated": "Versus Estimated"
     }

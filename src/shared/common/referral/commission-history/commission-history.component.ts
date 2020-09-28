@@ -77,4 +77,8 @@ export class CommissionHistoryComponent {
         }
     }
 
+    getCellColor(status: string): string {
+        return status === 'Complete' ? '#38bd6c' : '#d16a39';
+    }
+
 }
