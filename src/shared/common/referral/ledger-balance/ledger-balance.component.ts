@@ -1,8 +1,5 @@
 import { ChangeDetectionStrategy, Component, ViewChild } from '@angular/core';
-import { TotalsDataField } from '@shared/crm/dashboard-widgets/counts-and-totals/totals-data-field.interface';
 import { LayoutService } from '@app/shared/layout/layout.service';
-import { Observable } from '@node_modules/rxjs';
-import { GetTotalsOutput } from '@shared/service-proxies/service-proxies';
 import { DashboardWidgetsService } from '@shared/crm/dashboard-widgets/dashboard-widgets.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { BalanceValue } from '@shared/common/referral/ledger-balance/balance-value.interface';
@@ -17,34 +14,6 @@ import { NotifyService } from '@abp/notify/notify.service';
 })
 export class LedgerBalanceComponent {
     @ViewChild(DxValidatorComponent, { static: false }) validator: DxValidatorComponent;
-    totalsDataFields: TotalsDataField[] = [
-        {
-            title: 'Sales',
-            color: this.layoutService.getLayoutColor('totalSales'),
-            name: 'totalOrderAmount',
-            type: 'currency',
-            percent:  '0%',
-            visible: true,
-            estimated: '10%'
-        }, {
-            title: 'Referrals',
-            color: this.layoutService.getLayoutColor('totalLeads'),
-            name: 'totalLeadCount',
-            type: 'number',
-            percent: '0%',
-            visible: true,
-            estimated: '10%'
-        }, {
-            title: 'Homeowners',
-            color: this.layoutService.getLayoutColor('totalClients'),
-            name: 'totalClientCount',
-            type: 'number',
-            percent: '0%',
-            visible: true,
-            estimated: '10%'
-        }
-    ];
-    totalsData$: Observable<GetTotalsOutput> = this.dashboardWidgetsService.totalsData$;
     balancesValues: BalanceValue[] = [
         {
             name: 'Earned',

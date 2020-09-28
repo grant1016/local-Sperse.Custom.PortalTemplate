@@ -1,0 +1,25 @@
+:host {
+    display: block;
+
+    .amounts-container {
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    commission-amount-block {
+        &:not(:last-child) {
+            margin-right: 20px;
+        }
+    }
+
+    .request-withdrawal {
+        background: none;
+        border: none;
+        text-decoration: underline;
+        outline: none;
+        display: block;
+        float: right;
+        padding: 0;
+        margin-top: 10px;
+    }
+}

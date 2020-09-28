@@ -18,11 +18,13 @@ import { LedgerBalanceComponent } from '@shared/common/referral/ledger-balance/l
 import { LinkGeneratorComponent } from '@shared/common/referral/link-generator/link-generator.component';
 import { LinkTrackingComponent } from '@shared/common/referral/link-tracking/link-tracking.component';
 import { ReferralRoutingModule } from '@shared/common/referral/referral-routing.module';
-import { CountsAndTotalsModule } from '@shared/crm/dashboard-widgets/counts-and-totals/counts-and-totals.module';
 import { ReferralInfoComponent } from '@shared/common/referral/referral-info/referral-info.component';
 import { UserPhotoModule } from '@app/shared/common/user-photo/user-photo.module';
 import { InplaceEditModule } from '@app/shared/common/inplace-edit/inplace-edit.module';
 import { DxDataGridDirective } from '@shared/common/dx-data-grid/dx-data-grid.directive';
+import { CommissionAmountsComponent } from '@shared/common/referral/commission-amounts/commission-amounts.component';
+import { CommissionAmountBlockComponent } from '@shared/common/referral/commission-amounts/commission-amount-block/commission-amount-block.component';
+import { CommissionAmountItemComponent } from '@shared/common/referral/commission-amounts/commission-amount-item/commission-amount-item.component';
 
 @NgModule({
     imports: [
@@ -34,7 +36,6 @@ import { DxDataGridDirective } from '@shared/common/dx-data-grid/dx-data-grid.di
         DxValidatorModule,
         MatTabsModule,
         ReferralRoutingModule,
-        CountsAndTotalsModule,
         UserPhotoModule,
         MatExpansionModule,
         InplaceEditModule
@@ -47,7 +48,10 @@ import { DxDataGridDirective } from '@shared/common/dx-data-grid/dx-data-grid.di
         LinkTrackingComponent,
         ReferralComponent,
         ReferralInfoComponent,
-        DxDataGridDirective
+        DxDataGridDirective,
+        CommissionAmountsComponent,
+        CommissionAmountBlockComponent,
+        CommissionAmountItemComponent
     ],
     providers: [],
     bootstrap: [ ReferralComponent ]

@@ -10,9 +10,13 @@
             "LedgerBalance": "Ledger Balance",
             "LinkGenerator": "Link Generator",
             "LinkTracking": "Link Tracking",
-            "TotalEarned": "Total Earned",
-            "TotalWithdrawals": "Total Withdrawals",
-            "Balance": "Balance"
+            "Balance": "Balance",
+            "TotalsAmountsPosted": "Totals Amounts Posted",
+            "Earned": "Earned",
+            "Withdrawn": "Withdrawn",
+            "PendingAmounts": "Pending Amounts",
+            "Available": "Available",
+            "RequestWithdrawal": "Request a withdrawal"
         },
         "VersusEstimated": "Versus Estimated"
     }
