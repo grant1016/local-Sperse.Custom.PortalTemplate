@@ -166,9 +166,9 @@ export class TotalsBySourceComponent implements OnInit, OnDestroy {
     }
 
     private getItemColor(item) {
-        return this.selectedTotal.value.getColor ?
-            this.selectedTotal.value.getColor(item) :
-            this.rangeColors[item.index];
+        return item.argument == 'Unknown'
+            ? '#bbb'
+            : this.selectedTotal.value.getColor ? this.selectedTotal.value.getColor(item) : this.rangeColors[item.index];
     }
 
     onPointHoverChanged($event) {
