@@ -1,0 +1,52 @@
+@borderColor: #868686;
+
+:host {
+    ::ng-deep dx-data-grid {
+        border: 1px solid @borderColor;
+        .dx-datagrid-headers {
+            .dx-datagrid-content {
+                border-bottom-color: @borderColor;
+            }
+            .dx-column-lines td {
+                background-color: #f2f2f2;
+                height: 35px;
+                text-transform: inherit;
+                border-bottom-color: @borderColor;
+                border-left: none;
+                border-right: none;
+                &,
+                .dx-datagrid-text-content {
+                    font-weight: 700 !important;
+                    font-size: 14px;
+                }
+            }
+        }
+        .dx-datagrid-rowsview tr.dx-column-lines {
+            td {
+                height: 30px;
+                color: initial;
+                font-weight: 500;
+                border-color: @borderColor;
+                border-left: none;
+                border-right: none;
+            }
+
+            &:not(:last-child) td {
+                border-bottom: 1px solid @borderColor;
+            }
+        }
+        .dx-datagrid-borders > .dx-datagrid-pager {
+            border-top-color: @borderColor;
+            height: initial;
+        }
+        .dx-datagrid-total-footer {
+            border-top-color: @borderColor;
+            & > .dx-datagrid-content {
+                padding: 0;
+                td {
+                    background-color: #f2f2f2;
+                }
+            }
+        }
+    }
+}

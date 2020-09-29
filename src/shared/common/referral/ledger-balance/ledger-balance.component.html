@@ -1,23 +1,26 @@
-<div class="balances">
-    <h2>Account Balances</h2>
-    <ul class="values">
-        <li *ngFor="let value of balancesValues">
-            <div>{{ value.name }}</div>
-            <div>{{ value.value | currency }}</div>
-        </li>
-    </ul>
-</div>
-<div class="withdrawal-request">
-    <h3>Request a withdrawal</h3>
-    <h4>You may request up to the total available balance shown above</h4>
-    <dx-number-box [(value)]="withdrawalAmount"
-                   placeholder="Withdrawal Amount">
-        <dx-validator>
-            <dxi-validation-rule type="required" message="Amount is required"></dxi-validation-rule>
-        </dx-validator>
-    </dx-number-box>
-    <div class="buttons">
-        <button class="save btn btn-primary" (click)="save()">{{ ls.l('Save') }}</button>
-        <button class="reset btn btn-secondary" (click)="reset()">{{ ls.l('Reset') }}</button>
-    </div>
-</div>
+<header>
+    <h1>{{ ls.l('Referral.LedgerBalanceTitle') }}</h1>
+    <button disabled>{{ ls.l('Referral.DownloadTheReport') }}</button>
+</header>
+<dx-data-grid [showBorders]="true"
+              [dataSource]="pendingTransactions"
+              (onRowPrepared)="onRowPrepared($event)"
+              (onCellPrepared)="onCellPrepared($event, 'Total including pending amounts:')">
+    <dxi-column dataField="date" cssClass="colorful" caption=""></dxi-column>
+    <dxi-column dataField="name" cssClass="colorful" caption=""></dxi-column>
+    <dxi-column dataField="status" cssClass="colorful" caption=""></dxi-column>
+    <dxi-column dataField="earningAmount" alignment="right" [caption]="110000 | currency" format="currency"></dxi-column>
+    <dxi-column dataField="withdrawalAmount" cssClass="withdrawalAmount" alignment="right" [caption]="-102500 | currency" format="currency"></dxi-column>
+    <dxi-column dataField="balance" alignment="right" [caption]="7500 | currency" format="currency"></dxi-column>
+</dx-data-grid>
+<dx-data-grid [showBorders]="true"
+              [dataSource]="transactions"
+              (onRowPrepared)="onRowPrepared($event)"
+              (onCellPrepared)="onCellPrepared($event, 'Total amounts posted in your account:')">
+    <dxi-column dataField="date" cssClass="colorful"></dxi-column>
+    <dxi-column dataField="name" cssClass="colorful"></dxi-column>
+    <dxi-column dataField="status" cssClass="colorful"></dxi-column>
+    <dxi-column dataField="earningAmount" alignment="right" [caption]="107500 | currency" format="currency"></dxi-column>
+    <dxi-column dataField="withdrawalAmount" cssClass="withdrawalAmount" alignment="right" [caption]="-70000 | currency" format="currency"></dxi-column>
+    <dxi-column dataField="balance" alignment="right" [caption]="37500 | currency" format="currency"></dxi-column>
+</dx-data-grid>

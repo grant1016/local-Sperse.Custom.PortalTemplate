@@ -21,7 +21,11 @@ import { LoadingService } from '@shared/common/loading-service/loading.service';
 @Component({
     selector: 'commission-history',
     templateUrl: 'commission-history.component.html',
-    styleUrls: [ 'commission-history.component.less' ],
+    styleUrls: [
+        '../shared/styles/header.less',
+        '../shared/styles/data-grid.less',
+        'commission-history.component.less'
+    ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CommissionHistoryComponent {

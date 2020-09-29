@@ -1,7 +1,7 @@
 <div class="grid">
     <header>
         <h1>{{ ls.l('Referral.CommissionHistoryTitle') }}</h1>
-        <button>{{ ls.l('Referral.DownloadTheReport') }}</button>
+        <button disabled>{{ ls.l('Referral.DownloadTheReport') }}</button>
     </header>
     <!--<div class="search">
         <dx-text-box mode="search"
@@ -31,7 +31,7 @@
                   (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
         <dxo-scrolling rowRenderingMode="virtual"></dxo-scrolling>
         <dxi-column [dataField]="orderFields.OrderDate" [caption]="ls.l('Order Date')" [width]="160" sortOrder="desc" cellTemplate="dateCell"></dxi-column>
-        <dxi-column [dataField]="orderFields.Id" [width]="100" [caption]="ls.l('Order Id')"></dxi-column>
+        <dxi-column [dataField]="orderFields.Id" alignment="left" [width]="100" [caption]="ls.l('Order Id')"></dxi-column>
         <dxi-column [dataField]="orderFields.Name" [caption]="ls.l('Customer Name')" cssClass="clipboard-holder"></dxi-column>
         <dxi-column [dataField]="orderFields.OrderType" [caption]="ls.l('Product Name')" [width]="150" cssClass="clipboard-holder"></dxi-column>
         <dxi-column [dataField]="orderFields.Amount" [caption]="ls.l('Sale Amount')" cellTemplate="amountCell" [width]="185" cssClass="padding-right"></dxi-column>
@@ -40,7 +40,9 @@
         <dxo-sorting mode="multiple"></dxo-sorting>
         <dxo-paging [pageSize]="20"></dxo-paging>
         <div *dxTemplate="let cellData of 'amountCell'" class="clipboard-holder">
-            <span [ngStyle]="{ color: getCellColor(cellData.row.data.Stage) }">{{ cellData.value | currency }}</span>
+            <span [ngStyle]="{ color: cellData.column.caption === ls.l('Commission') ? getCellColor(cellData.row.data.Stage) : '' }">
+                {{ cellData.value | currency }}
+            </span>
         </div>
         <div *dxTemplate="let cellData of 'statusCell'" class="clipboard-holder">
             <span [ngStyle]="{ color: getCellColor(cellData.row.data.Stage) }">{{ cellData.value }}</span>

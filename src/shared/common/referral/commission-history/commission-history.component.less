@@ -1,55 +1,9 @@
 :host {
-    padding: 40px;
+    padding: 0 40px;
     display: block;
-    header {
-        display: flex;
-        justify-content: space-between;
-        margin-bottom: 5px;
-        h1 {
-            text-transform: uppercase;
-            font-weight: 800;
-            font-size: 21px;
-        }
-        button {
-            background: none;
-            border: none;
-            outline: none;
-            text-decoration: underline;
-            cursor: pointer;
-        }
-    }
     .search {
         display: flex;
         justify-content: flex-end;
         margin-bottom: 10px;
-    }
-    ::ng-deep dx-data-grid {
-        border: 1px solid #868686;
-        .dx-datagrid-headers {
-            .dx-datagrid-content {
-                border-bottom-color: #868686;
-            }
-            .dx-column-lines td {
-                background-color: #f2f2f2;
-                padding: 0 7px;
-                height: 35px;
-                text-transform: inherit;
-                &,
-                .dx-datagrid-text-content {
-                    font-weight: 700 !important;
-                    font-size: 14px;
-                }
-            }
-        }
-        .dx-datagrid-rowsview .dx-column-lines td {
-            border-bottom-color: #868686;
-            padding: 0 7px;
-            height: 30px;
-            font-weight: 500;
-        }
-        .dx-datagrid-borders > .dx-datagrid-pager {
-            border-top-color: #868686;
-            height: initial;
-        }
     }
 }

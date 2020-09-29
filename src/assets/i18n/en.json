@@ -18,6 +18,7 @@
             "Available": "Available",
             "RequestWithdrawal": "Request a withdrawal",
             "CommissionHistoryTitle": "Your commission transaction history",
+            "LedgerBalanceTitle": "Your payout ledger history",
             "DownloadTheReport": "Download the report"
         },
         "VersusEstimated": "Versus Estimated"
