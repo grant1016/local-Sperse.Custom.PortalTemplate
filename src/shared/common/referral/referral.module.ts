@@ -25,6 +25,7 @@ import { DxDataGridDirective } from '@shared/common/dx-data-grid/dx-data-grid.di
 import { CommissionAmountsComponent } from '@shared/common/referral/commission-amounts/commission-amounts.component';
 import { CommissionAmountBlockComponent } from '@shared/common/referral/commission-amounts/commission-amount-block/commission-amount-block.component';
 import { CommissionAmountItemComponent } from '@shared/common/referral/commission-amounts/commission-amount-item/commission-amount-item.component';
+import { BeginOverlayModule } from '@shared/common/begin-overlay/begin-overlay.module';
 
 @NgModule({
     imports: [
@@ -38,7 +39,8 @@ import { CommissionAmountItemComponent } from '@shared/common/referral/commissio
         ReferralRoutingModule,
         UserPhotoModule,
         MatExpansionModule,
-        InplaceEditModule
+        InplaceEditModule,
+        BeginOverlayModule
     ],
     exports: [ DxDataGridDirective ],
     declarations: [
