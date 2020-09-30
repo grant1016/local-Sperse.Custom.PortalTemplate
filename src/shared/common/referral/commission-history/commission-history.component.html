@@ -22,13 +22,13 @@
                       [showBorders]="true"
                       [loadPanel]="{ enabled: false }"
                       [remoteOperations]="{
-                    filtering: false,
-                    grouping: false,
-                    groupPaging: true,
-                    paging: true,
-                    sorting: true,
-                    summary: true
-                  }"
+                        filtering: false,
+                        grouping: false,
+                        groupPaging: true,
+                        paging: true,
+                        sorting: true,
+                        summary: true
+                      }"
                       [pager]="defaultGridPagerConfig"
                       (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
             <dxo-scrolling rowRenderingMode="virtual"></dxo-scrolling>
@@ -42,9 +42,9 @@
             <dxo-sorting mode="multiple"></dxo-sorting>
             <dxo-paging [pageSize]="20"></dxo-paging>
             <div *dxTemplate="let cellData of 'amountCell'" class="clipboard-holder">
-            <span [ngStyle]="{ color: cellData.column.caption === ls.l('Commission') ? getCellColor(cellData.row.data.Stage) : '' }">
-                {{ cellData.value | currency }}
-            </span>
+                <span class="amountCell" [ngStyle]="{ color: cellData.column.caption === ls.l('Commission') ? getCellColor(cellData.row.data.Stage) : '' }">
+                    {{ cellData.value | currency }}
+                </span>
             </div>
             <div *dxTemplate="let cellData of 'statusCell'" class="clipboard-holder">
                 <span [ngStyle]="{ color: getCellColor(cellData.row.data.Stage) }">{{ cellData.value }}</span>

@@ -39,7 +39,7 @@ import { AppComponent } from './app.component';
                         data: { localizationSource: AppConsts.localization.CRMLocalizationSourceName }
                     },
                     {
-                        path: 'resellers',
+                        path: 'reseller-info',
                         loadChildren: () => import('shared/common/referral/referral.module').then(m => m.ReferralModule)
                     }
                 ]
