@@ -5,6 +5,7 @@ import { CommonModule } from '@angular/common';
 /** Third party imports */
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatExpansionModule } from '@angular/material/expansion';
+import { MatDialogModule } from '@angular/material/dialog';
 import { DxDataGridModule } from 'devextreme-angular/ui/data-grid';
 import { DxSelectBoxModule } from 'devextreme-angular/ui/select-box';
 import { DxTextBoxModule } from 'devextreme-angular/ui/text-box';
@@ -26,6 +27,7 @@ import { CommissionAmountsComponent } from '@shared/common/referral/commission-a
 import { CommissionAmountBlockComponent } from '@shared/common/referral/commission-amounts/commission-amount-block/commission-amount-block.component';
 import { CommissionAmountItemComponent } from '@shared/common/referral/commission-amounts/commission-amount-item/commission-amount-item.component';
 import { BeginOverlayModule } from '@shared/common/begin-overlay/begin-overlay.module';
+import { WithdrawalDialogComponent } from '@shared/common/referral/commission-amounts/withdrawal-dialog/withdrawal-dialog.component';
 
 @NgModule({
     imports: [
@@ -36,6 +38,7 @@ import { BeginOverlayModule } from '@shared/common/begin-overlay/begin-overlay.m
         DxSelectBoxModule,
         DxValidatorModule,
         MatTabsModule,
+        MatDialogModule,
         ReferralRoutingModule,
         UserPhotoModule,
         MatExpansionModule,
@@ -53,9 +56,10 @@ import { BeginOverlayModule } from '@shared/common/begin-overlay/begin-overlay.m
         DxDataGridDirective,
         CommissionAmountsComponent,
         CommissionAmountBlockComponent,
-        CommissionAmountItemComponent
+        CommissionAmountItemComponent,
+        WithdrawalDialogComponent
     ],
-    providers: [],
+    entryComponents: [ WithdrawalDialogComponent ],
     bootstrap: [ ReferralComponent ]
 })
 export class ReferralModule {

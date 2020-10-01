@@ -27,6 +27,10 @@ export class MainConfig implements ConfigInterface {
             route: 'platform',
             permission: AppPermissions.CRM,
             feature: AppFeatures.CRM
+        },
+        {
+            text: 'ResellerInfo',
+            route: '/app/reseller-info'
         }
     ];
 }

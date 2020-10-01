@@ -69,7 +69,7 @@ export class TopBarComponent implements OnDestroy {
                 });
             });
         });
-        this.appService.subscribeModuleChange((config) => {
+        this.appService.subscribeModuleChange((config: ConfigInterface) => {
             this.config = config;
             this.menu = new PanelMenu(
                 'MainMenu',
@@ -80,7 +80,7 @@ export class TopBarComponent implements OnDestroy {
                     0
                 )
             );
-            const selectedIndex = this.navbarItems.findIndex((navBarItem) => {
+            const selectedIndex = this.navbarItems.findIndex((navBarItem: PanelMenuItem) => {
                 return navBarItem.route === this.router.url.split('?')[0];
             });
             this.navbarItems = this.menu.items;

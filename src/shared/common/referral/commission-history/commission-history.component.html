@@ -50,7 +50,7 @@
                 <span [ngStyle]="{ color: getCellColor(cellData.row.data.Stage) }">{{ cellData.value }}</span>
             </div>
             <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
-                {{ cellData.value | date: formatting.date : userTimezone }}
+                {{ cellData.value | date: dateFormat : userTimezone }}
             </div>
         </dx-data-grid>
     </div>

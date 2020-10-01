@@ -21,6 +21,7 @@
             "LedgerBalanceTitle": "Your payout ledger history",
             "DownloadTheReport": "Download the report"
         },
-        "VersusEstimated": "Versus Estimated"
+        "VersusEstimated": "Versus Estimated",
+        "Navigation_ResellerInfo": "Reseller Info"
     }
 }

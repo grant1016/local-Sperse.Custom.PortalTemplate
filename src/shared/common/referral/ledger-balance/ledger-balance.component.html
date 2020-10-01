@@ -8,22 +8,28 @@
                   [dataSource]="pendingTransactions"
                   (onRowPrepared)="onRowPrepared($event)"
                   (onCellPrepared)="onCellPrepared($event, 'Total including pending amounts:')">
-        <dxi-column dataField="date" cssClass="colorful" caption=""></dxi-column>
+        <dxi-column dataField="date" width="130px" cellTemplate="dateTemplate" cssClass="colorful" caption=""></dxi-column>
         <dxi-column dataField="name" cssClass="colorful" caption=""></dxi-column>
         <dxi-column dataField="status" cssClass="colorful" caption=""></dxi-column>
         <dxi-column dataField="earningAmount" alignment="right" [caption]="110000 | currency" format="currency"></dxi-column>
         <dxi-column dataField="withdrawalAmount" cssClass="withdrawalAmount" alignment="right" [caption]="-102500 | currency" format="currency"></dxi-column>
         <dxi-column dataField="balance" alignment="right" [caption]="7500 | currency" format="currency"></dxi-column>
+        <div *dxTemplate="let cellData of 'dateTemplate'" class="clipboard-holder">
+            {{ cellData.value | date: dateFormat : userTimezone }}
+        </div>
     </dx-data-grid>
     <dx-data-grid [showBorders]="true"
                   [dataSource]="transactions"
                   (onRowPrepared)="onRowPrepared($event)"
                   (onCellPrepared)="onCellPrepared($event, 'Total amounts posted in your account:')">
-        <dxi-column dataField="date" cssClass="colorful"></dxi-column>
+        <dxi-column dataField="date" width="130px" cellTemplate="dateTemplate" cssClass="colorful"></dxi-column>
         <dxi-column dataField="name" cssClass="colorful"></dxi-column>
         <dxi-column dataField="status" cssClass="colorful"></dxi-column>
         <dxi-column dataField="earningAmount" alignment="right" [caption]="107500 | currency" format="currency"></dxi-column>
         <dxi-column dataField="withdrawalAmount" cssClass="withdrawalAmount" alignment="right" [caption]="-70000 | currency" format="currency"></dxi-column>
         <dxi-column dataField="balance" alignment="right" [caption]="37500 | currency" format="currency"></dxi-column>
+        <div *dxTemplate="let cellData of 'dateTemplate'" class="clipboard-holder">
+            {{ cellData.value | date: dateFormat : userTimezone }}
+        </div>
     </dx-data-grid>
 </div>

@@ -11,4 +11,4 @@
         <commission-amount-item [label]="ls.l('Referral.Balance')" [value]="5000"></commission-amount-item>
     </commission-amount-block>
 </div>
-<button class="request-withdrawal" disabled>{{ ls.l('Referral.RequestWithdrawal') }}</button>
+<button class="request-withdrawal" (click)="requestWithdrawal()">{{ ls.l('Referral.RequestWithdrawal') }}</button>

@@ -31,7 +31,7 @@ import { LoadingService } from '@shared/common/loading-service/loading.service';
 export class CommissionHistoryComponent {
     @ViewChild(DxDataGridComponent, { static: false }) dataGrid: DxDataGridComponent;
     readonly orderFields: KeysEnum<OrderDto> = OrderFields;
-    formatting = AppConsts.formatting;
+    dateFormat = 'MMM-dd-yyyy';
     userTimezone: string = DateHelper.getUserTimezone();
     defaultGridPagerConfig = DataGridService.defaultGridPagerConfig;
     searchValue;

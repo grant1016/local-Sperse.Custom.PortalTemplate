@@ -4,6 +4,7 @@ import { DashboardWidgetsService } from '@shared/crm/dashboard-widgets/dashboard
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { DxValidatorComponent } from '@node_modules/devextreme-angular';
 import { NotifyService } from '@abp/notify/notify.service';
+import { DateHelper } from '@shared/helpers/DateHelper';
 
 @Component({
     selector: 'ledger-balance',
@@ -60,6 +61,8 @@ export class LedgerBalanceComponent {
         {"date":"05/31/2020","name":"Total Withdrawals (Historical)","status":"Total","earningAmount":"","withdrawalAmount":-55000,"balance":""},
         {"date":"05/31/2020","name":"Total Earnings (Historical)","status":"Total","earningAmount":62500,"withdrawalAmount":"","balance":""}
     ];
+    userTimezone: string = DateHelper.getUserTimezone();
+    dateFormat = 'MMM-dd-yyyy E';
 
     constructor(
         private layoutService: LayoutService,
