@@ -11,8 +11,6 @@ import saveAs from 'file-saver';
 
 /** Application imports */
 import { KeysEnum } from '@shared/common/keys.enum/keys.enum';
-import { OrderDto } from '@shared/common/referral/commission-history/order-dto';
-import { OrderFields } from '@shared/common/referral/commission-history/order-fields.enum';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { AppConsts } from '@shared/AppConsts';
 import { DateHelper } from '@shared/helpers/DateHelper';
@@ -23,6 +21,8 @@ import { ODataService } from '@shared/common/odata/odata.service';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { CellRange } from '@node_modules/devextreme/excel_exporter';
 import { ReferralExportService } from '@shared/common/referral/referral-export.service';
+import { CommissionFields } from '@shared/common/referral/commission-history/commission-fields.enum';
+import { CommissionDto } from '@shared/common/referral/commission-history/commission-dto';
 
 @Component({
     selector: 'commission-history',
@@ -36,7 +36,7 @@ import { ReferralExportService } from '@shared/common/referral/referral-export.s
 })
 export class CommissionHistoryComponent {
     @ViewChild(DxDataGridComponent, { static: false }) dataGrid: DxDataGridComponent;
-    readonly orderFields: KeysEnum<OrderDto> = OrderFields;
+    readonly commissionFields: KeysEnum<CommissionDto> = CommissionFields;
     dateFormat = 'MMM-dd-yyyy';
     userTimezone: string = DateHelper.getUserTimezone();
     defaultGridPagerConfig = DataGridService.defaultGridPagerConfig;
@@ -45,8 +45,8 @@ export class CommissionHistoryComponent {
         requireTotalCount: true,
         store: {
             type: 'odata',
-            key: this.orderFields.Id,
-            url: this.getODataUrl('Order'),
+            key: this.commissionFields.Id,
+            url: this.getODataUrl('UserCommissions'),
             version: AppConsts.ODataVersion,
             deserializeDates: false,
             beforeSend: (request) => {
@@ -55,7 +55,10 @@ export class CommissionHistoryComponent {
                 if (this.searchValue) {
                     request.params.quickSearchString = this.searchValue;
                 }
-                request.params.$select = DataGridService.getSelectFields(this.dataGrid);
+                request.params.$select = DataGridService.getSelectFields(
+                    this.dataGrid,
+                    [ this.commissionFields.Id ]
+                );
             },
             onLoaded: () => {
                 this.loadingService.finishLoading();
@@ -83,8 +86,8 @@ export class CommissionHistoryComponent {
         return this.oDataService.getODataUrl(uri, filter, null, params);
     }
 
-    getCellColor(status: string): string {
-        return status === 'Complete' ? '#38bd6c' : '#d16a39';
+    getCellColor(commission: CommissionDto): string {
+        return commission.Status === 'Approved' ? '#38bd6c' : '#d16a39';
     }
 
     downloadReport() {
@@ -107,9 +110,9 @@ export class CommissionHistoryComponent {
                 const { gridCell, excelCell } = options;
                 if (gridCell.rowType === 'header') {
                     excelCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'F2F2F2' }};
-                } else if (gridCell.column.caption === this.ls.l('Commission') || gridCell.column.dataField === this.orderFields.Stage) {
+                } else if (gridCell.column.dataField === this.commissionFields.CommissionAmount || gridCell.column.dataField === this.commissionFields.Status) {
                     excelCell.font = {
-                        color: { argb: this.getCellColor(gridCell.data.Stage).slice(1) }
+                        color: { argb: this.getCellColor(gridCell.data).slice(1) }
                     }
                 }
             })
@@ -134,12 +137,16 @@ export class CommissionHistoryComponent {
         });
     }
 
-    calculateDateValue = (order: OrderDto) => {
-        return this.datePipe.transform(order.OrderDate, this.dateFormat, this.userTimezone);
+    calculateDateValue = (commission: CommissionDto) => {
+        return this.datePipe.transform(commission.OrderDate, this.dateFormat, this.userTimezone);
     }
 
-    calculateAmountValue = (order: OrderDto) => {
-        return this.currencyPipe.transform(order.Amount);
+    calculateSaleAmountValue = (commission: CommissionDto) => {
+        return this.currencyPipe.transform(commission.ProductAmount);
+    }
+
+    calculateCommissionAmountValue = (commission: CommissionDto) => {
+        return this.currencyPipe.transform(commission.CommissionAmount);
     }
 
 }

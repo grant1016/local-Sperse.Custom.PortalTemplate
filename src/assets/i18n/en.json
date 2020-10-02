@@ -19,7 +19,14 @@
             "RequestWithdrawal": "Request a withdrawal",
             "CommissionHistoryTitle": "Your commission transaction history",
             "LedgerBalanceTitle": "Your payout ledger history",
-            "DownloadTheReport": "Download the report"
+            "DownloadTheReport": "Download the report",
+            "OrderDate": "Order Date",
+            "OrderId": "Order Id",
+            "CustomerName": "Customer Name",
+            "ProductName": "Product Name",
+            "SaleAmount": "Sale Amount",
+            "Commission": "Commission",
+            "Status": "Status"
         },
         "VersusEstimated": "Versus Estimated",
         "Navigation_ResellerInfo": "Reseller Info"
