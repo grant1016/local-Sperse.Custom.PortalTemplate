@@ -1,6 +1,6 @@
 /** Core imports */
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, CurrencyPipe, DatePipe } from '@angular/common';
 
 /** Third party imports */
 import { MatTabsModule } from '@angular/material/tabs';
@@ -28,6 +28,7 @@ import { CommissionAmountBlockComponent } from '@shared/common/referral/commissi
 import { CommissionAmountItemComponent } from '@shared/common/referral/commission-amounts/commission-amount-item/commission-amount-item.component';
 import { BeginOverlayModule } from '@shared/common/begin-overlay/begin-overlay.module';
 import { WithdrawalDialogComponent } from '@shared/common/referral/commission-amounts/withdrawal-dialog/withdrawal-dialog.component';
+import { ReferralExportService } from '@shared/common/referral/referral-export.service';
 
 @NgModule({
     imports: [
@@ -59,6 +60,7 @@ import { WithdrawalDialogComponent } from '@shared/common/referral/commission-am
         CommissionAmountItemComponent,
         WithdrawalDialogComponent
     ],
+    providers: [ CurrencyPipe, DatePipe, ReferralExportService ],
     entryComponents: [ WithdrawalDialogComponent ],
     bootstrap: [ ReferralComponent ]
 })
