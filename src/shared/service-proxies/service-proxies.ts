@@ -35479,8 +35479,8 @@ export class UserCommissionServiceProxy {
      * @startDate (optional) 
      * @return Success
      */
-    getCommissionLedgers(startDate: moment.Moment | null | undefined): Observable<GetCommissionLedgersOutput> {
-        let url_ = this.baseUrl + "/api/services/CRM/UserCommission/GetCommissionLedgers?";
+    getLedger(startDate: moment.Moment | null | undefined): Observable<GetLedgerOutput> {
+        let url_ = this.baseUrl + "/api/services/CRM/UserCommission/GetLedger?";
         if (startDate !== undefined)
             url_ += "startDate=" + encodeURIComponent(startDate ? "" + startDate.toJSON() : "") + "&"; 
         url_ = url_.replace(/[?&]$/, "");
@@ -35495,20 +35495,20 @@ export class UserCommissionServiceProxy {
         };
 
         return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetCommissionLedgers(response_);
+            return this.processGetLedger(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processGetCommissionLedgers(<any>response_);
+                    return this.processGetLedger(<any>response_);
                 } catch (e) {
-                    return <Observable<GetCommissionLedgersOutput>><any>_observableThrow(e);
+                    return <Observable<GetLedgerOutput>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<GetCommissionLedgersOutput>><any>_observableThrow(response_);
+                return <Observable<GetLedgerOutput>><any>_observableThrow(response_);
         }));
     }
 
-    protected processGetCommissionLedgers(response: HttpResponseBase): Observable<GetCommissionLedgersOutput> {
+    protected processGetLedger(response: HttpResponseBase): Observable<GetLedgerOutput> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -35519,7 +35519,7 @@ export class UserCommissionServiceProxy {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? GetCommissionLedgersOutput.fromJS(resultData200) : new GetCommissionLedgersOutput();
+            result200 = resultData200 ? GetLedgerOutput.fromJS(resultData200) : new GetLedgerOutput();
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -35527,14 +35527,14 @@ export class UserCommissionServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<GetCommissionLedgersOutput>(<any>null);
+        return _observableOf<GetLedgerOutput>(<any>null);
     }
 
     /**
      * @return Success
      */
-    getCommissionTotals(): Observable<GetCommissionTotalsOutput> {
-        let url_ = this.baseUrl + "/api/services/CRM/UserCommission/GetCommissionTotals";
+    getTotals(): Observable<GetLedgerTotalsOutput> {
+        let url_ = this.baseUrl + "/api/services/CRM/UserCommission/GetTotals";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -35547,20 +35547,20 @@ export class UserCommissionServiceProxy {
         };
 
         return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetCommissionTotals(response_);
+            return this.processGetTotals(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processGetCommissionTotals(<any>response_);
+                    return this.processGetTotals(<any>response_);
                 } catch (e) {
-                    return <Observable<GetCommissionTotalsOutput>><any>_observableThrow(e);
+                    return <Observable<GetLedgerTotalsOutput>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<GetCommissionTotalsOutput>><any>_observableThrow(response_);
+                return <Observable<GetLedgerTotalsOutput>><any>_observableThrow(response_);
         }));
     }
 
-    protected processGetCommissionTotals(response: HttpResponseBase): Observable<GetCommissionTotalsOutput> {
+    protected processGetTotals(response: HttpResponseBase): Observable<GetLedgerTotalsOutput> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -35571,7 +35571,7 @@ export class UserCommissionServiceProxy {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? GetCommissionTotalsOutput.fromJS(resultData200) : new GetCommissionTotalsOutput();
+            result200 = resultData200 ? GetLedgerTotalsOutput.fromJS(resultData200) : new GetLedgerTotalsOutput();
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -35579,7 +35579,7 @@ export class UserCommissionServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<GetCommissionTotalsOutput>(<any>null);
+        return _observableOf<GetLedgerTotalsOutput>(<any>null);
     }
 }
 
@@ -76583,7 +76583,7 @@ export enum CommissionLedgerEntryType {
     Withdrawal = "Withdrawal", 
 }
 
-export class CommissionLedgerInfo implements ICommissionLedgerInfo {
+export class CommissionLedgerEntryInfo implements ICommissionLedgerEntryInfo {
     id!: number | undefined;
     date!: moment.Moment | undefined;
     startDate!: moment.Moment | undefined;
@@ -76592,7 +76592,7 @@ export class CommissionLedgerInfo implements ICommissionLedgerInfo {
     type!: CommissionLedgerEntryType | undefined;
     totalAmount!: number | undefined;
 
-    constructor(data?: ICommissionLedgerInfo) {
+    constructor(data?: ICommissionLedgerEntryInfo) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -76613,9 +76613,9 @@ export class CommissionLedgerInfo implements ICommissionLedgerInfo {
         }
     }
 
-    static fromJS(data: any): CommissionLedgerInfo {
+    static fromJS(data: any): CommissionLedgerEntryInfo {
         data = typeof data === 'object' ? data : {};
-        let result = new CommissionLedgerInfo();
+        let result = new CommissionLedgerEntryInfo();
         result.init(data);
         return result;
     }
@@ -76633,7 +76633,7 @@ export class CommissionLedgerInfo implements ICommissionLedgerInfo {
     }
 }
 
-export interface ICommissionLedgerInfo {
+export interface ICommissionLedgerEntryInfo {
     id: number | undefined;
     date: moment.Moment | undefined;
     startDate: moment.Moment | undefined;
@@ -76643,12 +76643,13 @@ export interface ICommissionLedgerInfo {
     totalAmount: number | undefined;
 }
 
-export class PendingCommissionsInfo implements IPendingCommissionsInfo {
-    totalAmount!: number | undefined;
-    startDate!: moment.Moment | undefined;
-    endDate!: moment.Moment | undefined;
+export class GetLedgerOutput implements IGetLedgerOutput {
+    startingEarningsBalance!: number | undefined;
+    startingWithdrawalsBalance!: number | undefined;
+    availableBalance!: number | undefined;
+    entries!: CommissionLedgerEntryInfo[] | undefined;
 
-    constructor(data?: IPendingCommissionsInfo) {
+    constructor(data?: IGetLedgerOutput) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -76659,41 +76660,53 @@ export class PendingCommissionsInfo implements IPendingCommissionsInfo {
 
     init(data?: any) {
         if (data) {
-            this.totalAmount = data["totalAmount"];
-            this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
-            this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
+            this.startingEarningsBalance = data["startingEarningsBalance"];
+            this.startingWithdrawalsBalance = data["startingWithdrawalsBalance"];
+            this.availableBalance = data["availableBalance"];
+            if (data["entries"] && data["entries"].constructor === Array) {
+                this.entries = [];
+                for (let item of data["entries"])
+                    this.entries.push(CommissionLedgerEntryInfo.fromJS(item));
+            }
         }
     }
 
-    static fromJS(data: any): PendingCommissionsInfo {
+    static fromJS(data: any): GetLedgerOutput {
         data = typeof data === 'object' ? data : {};
-        let result = new PendingCommissionsInfo();
+        let result = new GetLedgerOutput();
         result.init(data);
         return result;
     }
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["totalAmount"] = this.totalAmount;
-        data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
-        data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
+        data["startingEarningsBalance"] = this.startingEarningsBalance;
+        data["startingWithdrawalsBalance"] = this.startingWithdrawalsBalance;
+        data["availableBalance"] = this.availableBalance;
+        if (this.entries && this.entries.constructor === Array) {
+            data["entries"] = [];
+            for (let item of this.entries)
+                data["entries"].push(item.toJSON());
+        }
         return data; 
     }
 }
 
-export interface IPendingCommissionsInfo {
-    totalAmount: number | undefined;
-    startDate: moment.Moment | undefined;
-    endDate: moment.Moment | undefined;
+export interface IGetLedgerOutput {
+    startingEarningsBalance: number | undefined;
+    startingWithdrawalsBalance: number | undefined;
+    availableBalance: number | undefined;
+    entries: CommissionLedgerEntryInfo[] | undefined;
 }
 
-export class GetCommissionLedgersOutput implements IGetCommissionLedgersOutput {
-    commissionLedgerEntries!: CommissionLedgerInfo[] | undefined;
-    initialTotalEarnings!: number | undefined;
-    initialTotalWithdrawals!: number | undefined;
-    pendingCommissions!: PendingCommissionsInfo | undefined;
+export class GetLedgerTotalsOutput implements IGetLedgerTotalsOutput {
+    earnedAmount!: number | undefined;
+    withdrawnAmount!: number | undefined;
+    pendingEarningsAmount!: number | undefined;
+    pendingWithdrawalsAmount!: number | undefined;
+    availableBalance!: number | undefined;
 
-    constructor(data?: IGetCommissionLedgersOutput) {
+    constructor(data?: IGetLedgerTotalsOutput) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -76704,95 +76717,38 @@ export class GetCommissionLedgersOutput implements IGetCommissionLedgersOutput {
 
     init(data?: any) {
         if (data) {
-            if (data["commissionLedgerEntries"] && data["commissionLedgerEntries"].constructor === Array) {
-                this.commissionLedgerEntries = [];
-                for (let item of data["commissionLedgerEntries"])
-                    this.commissionLedgerEntries.push(CommissionLedgerInfo.fromJS(item));
-            }
-            this.initialTotalEarnings = data["initialTotalEarnings"];
-            this.initialTotalWithdrawals = data["initialTotalWithdrawals"];
-            this.pendingCommissions = data["pendingCommissions"] ? PendingCommissionsInfo.fromJS(data["pendingCommissions"]) : <any>undefined;
+            this.earnedAmount = data["earnedAmount"];
+            this.withdrawnAmount = data["withdrawnAmount"];
+            this.pendingEarningsAmount = data["pendingEarningsAmount"];
+            this.pendingWithdrawalsAmount = data["pendingWithdrawalsAmount"];
+            this.availableBalance = data["availableBalance"];
         }
     }
 
-    static fromJS(data: any): GetCommissionLedgersOutput {
+    static fromJS(data: any): GetLedgerTotalsOutput {
         data = typeof data === 'object' ? data : {};
-        let result = new GetCommissionLedgersOutput();
+        let result = new GetLedgerTotalsOutput();
         result.init(data);
         return result;
     }
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        if (this.commissionLedgerEntries && this.commissionLedgerEntries.constructor === Array) {
-            data["commissionLedgerEntries"] = [];
-            for (let item of this.commissionLedgerEntries)
-                data["commissionLedgerEntries"].push(item.toJSON());
-        }
-        data["initialTotalEarnings"] = this.initialTotalEarnings;
-        data["initialTotalWithdrawals"] = this.initialTotalWithdrawals;
-        data["pendingCommissions"] = this.pendingCommissions ? this.pendingCommissions.toJSON() : <any>undefined;
+        data["earnedAmount"] = this.earnedAmount;
+        data["withdrawnAmount"] = this.withdrawnAmount;
+        data["pendingEarningsAmount"] = this.pendingEarningsAmount;
+        data["pendingWithdrawalsAmount"] = this.pendingWithdrawalsAmount;
+        data["availableBalance"] = this.availableBalance;
         return data; 
     }
 }
 
-export interface IGetCommissionLedgersOutput {
-    commissionLedgerEntries: CommissionLedgerInfo[] | undefined;
-    initialTotalEarnings: number | undefined;
-    initialTotalWithdrawals: number | undefined;
-    pendingCommissions: PendingCommissionsInfo | undefined;
-}
-
-export class GetCommissionTotalsOutput implements IGetCommissionTotalsOutput {
-    earnings!: number | undefined;
-    withdrawn!: number | undefined;
-    pendingEarnings!: number | undefined;
-    pendingWithdrawn!: number | undefined;
-    pendingCommission!: number | undefined;
-
-    constructor(data?: IGetCommissionTotalsOutput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.earnings = data["earnings"];
-            this.withdrawn = data["withdrawn"];
-            this.pendingEarnings = data["pendingEarnings"];
-            this.pendingWithdrawn = data["pendingWithdrawn"];
-            this.pendingCommission = data["pendingCommission"];
-        }
-    }
-
-    static fromJS(data: any): GetCommissionTotalsOutput {
-        data = typeof data === 'object' ? data : {};
-        let result = new GetCommissionTotalsOutput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["earnings"] = this.earnings;
-        data["withdrawn"] = this.withdrawn;
-        data["pendingEarnings"] = this.pendingEarnings;
-        data["pendingWithdrawn"] = this.pendingWithdrawn;
-        data["pendingCommission"] = this.pendingCommission;
-        return data; 
-    }
-}
-
-export interface IGetCommissionTotalsOutput {
-    earnings: number | undefined;
-    withdrawn: number | undefined;
-    pendingEarnings: number | undefined;
-    pendingWithdrawn: number | undefined;
-    pendingCommission: number | undefined;
+export interface IGetLedgerTotalsOutput {
+    earnedAmount: number | undefined;
+    withdrawnAmount: number | undefined;
+    pendingEarningsAmount: number | undefined;
+    pendingWithdrawalsAmount: number | undefined;
+    availableBalance: number | undefined;
 }
 
 export class LinkToUserInput implements ILinkToUserInput {

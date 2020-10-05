@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { publishReplay, refCount } from 'rxjs/operators';
-import { GetCommissionTotalsOutput, UserCommissionServiceProxy } from '@shared/service-proxies/service-proxies';
+import { GetLedgerTotalsOutput, UserCommissionServiceProxy } from '@shared/service-proxies/service-proxies';
 
 @Injectable()
 export class ReferralService {
-    commissionTotals$: Observable<GetCommissionTotalsOutput> = this.userCommission.getCommissionTotals().pipe(
+    ledgerTotals$: Observable<GetLedgerTotalsOutput> = this.userCommission.getTotals().pipe(
         publishReplay(),
         refCount()
     )

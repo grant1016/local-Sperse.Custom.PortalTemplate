@@ -1,41 +1,51 @@
 <header>
     <h1>{{ ls.l('Referral.LedgerBalanceTitle') }}</h1>
-    <button (click)="downloadReport()">{{ ls.l('Referral.DownloadTheReport') }}</button>
+    <button (click)="downloadReport()" [disabled]="isDataLoaded">{{ ls.l('Referral.DownloadTheReport') }}</button>
 </header>
 <div class="grid-container">
-    <begin-overlay text="Coming Soon...." subText="Your commission activity is being imported and will be shown here once the report is ready."></begin-overlay>
     <dx-data-grid #pendingTransactionsGrid
                   [showBorders]="true"
-                  [dataSource]="pendingTransactions"
+                  [dataSource]="pendingCommissions"
+                  [allowColumnReordering]="false"
                   (onRowPrepared)="onRowPrepared($event)"
                   (onCellPrepared)="onCellPrepared($event, 'Total including pending amounts:')">
-        <dxi-column dataField="date" width="130px"
+        <dxi-column dataField="startDate"
+                    width="130px"
                     cellTemplate="dateTemplate"
                     [calculateCellValue]="calculateDateValue"
-                    cssClass="colorful" caption="">
+                    [allowSorting]="false"
+                    cssClass="colorful"
+                    caption="">
         </dxi-column>
-        <dxi-column dataField="name"
+        <dxi-column dataField="type"
+                    [allowSorting]="false"
                     cssClass="colorful"
                     caption="">
         </dxi-column>
         <dxi-column dataField="status"
                     cssClass="colorful"
+                    [allowSorting]="false"
                     caption="">
         </dxi-column>
-        <dxi-column dataField="earningAmount"
+        <dxi-column dataField="totalAmount"
                     alignment="right"
-                    [caption]="110000 | currency"
+                    [caption]="pendingEarningsTotal | currency"
+                    [allowSorting]="false"
+                    [calculateCellValue]="calculateEarningsAmountValue"
                     format="currency">
         </dxi-column>
-        <dxi-column dataField="withdrawalAmount"
+        <dxi-column dataField="totalAmount"
                     cssClass="withdrawalAmount"
                     alignment="right"
-                    [caption]="-102500 | currency"
+                    [calculateCellValue]="calculateWithdrawalAmount"
+                    [allowSorting]="false"
+                    [caption]="pendingWithdrawalsTotal | currency"
                     format="currency">
         </dxi-column>
         <dxi-column dataField="balance"
                     alignment="right"
-                    [caption]="7500 | currency"
+                    [allowSorting]="false"
+                    [caption]="(pendingEarningsTotal - pendingWithdrawalsTotal) | currency"
                     format="currency">
         </dxi-column>
         <div *dxTemplate="let cellData of 'dateTemplate'" class="clipboard-holder">
@@ -44,35 +54,44 @@
     </dx-data-grid>
     <dx-data-grid #transactionsGrid
                   [showBorders]="true"
-                  [dataSource]="transactions"
+                  [dataSource]="approvedCommissions"
+                  [allowColumnReordering]="false"
                   (onRowPrepared)="onRowPrepared($event)"
                   (onCellPrepared)="onCellPrepared($event, 'Total amounts posted in your account:')">
         <dxi-column dataField="date"
                     width="130px"
                     cellTemplate="dateTemplate"
+                    [allowSorting]="false"
                     [calculateCellValue]="calculateDateValue"
                     cssClass="colorful">
         </dxi-column>
-        <dxi-column dataField="name"
+        <dxi-column dataField="type"
+                    [allowSorting]="false"
                     cssClass="colorful">
         </dxi-column>
         <dxi-column dataField="status"
+                    [allowSorting]="false"
                     cssClass="colorful">
         </dxi-column>
-        <dxi-column dataField="earningAmount"
+        <dxi-column dataField="totalAmount"
                     alignment="right"
-                    [caption]="107500 | currency"
+                    [allowSorting]="false"
+                    [caption]="earningsTotal | currency"
+                    [calculateCellValue]="calculateEarningsAmountValue"
                     format="currency">
         </dxi-column>
-        <dxi-column dataField="withdrawalAmount"
+        <dxi-column dataField="totalAmount"
                     cssClass="withdrawalAmount"
                     alignment="right"
-                    [caption]="-70000 | currency"
+                    [allowSorting]="false"
+                    [calculateCellValue]="calculateWithdrawalAmount"
+                    [caption]="withdrawalsTotal | currency"
                     format="currency">
         </dxi-column>
         <dxi-column dataField="balance"
                     alignment="right"
-                    [caption]="37500 | currency"
+                    [allowSorting]="false"
+                    [caption]="(earningsTotal - withdrawalsTotal) | currency"
                     format="currency">
         </dxi-column>
         <div *dxTemplate="let cellData of 'dateTemplate'" class="clipboard-holder">

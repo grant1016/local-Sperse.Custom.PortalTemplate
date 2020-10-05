@@ -1,11 +1,12 @@
 /** Core imports */
-import { ChangeDetectionStrategy, Component, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
 import { CurrencyPipe, DatePipe } from '@angular/common';
 
 /** Third party imports */
 import { Workbook } from 'exceljs';
 import { CellRange, exportDataGrid } from 'devextreme/excel_exporter';
 import saveAs from 'file-saver';
+import * as moment from 'moment';
 
 /** Application imports */
 import { LayoutService } from '@app/shared/layout/layout.service';
@@ -15,7 +16,12 @@ import { DxDataGridComponent, DxValidatorComponent } from '@node_modules/devextr
 import { NotifyService } from '@abp/notify/notify.service';
 import { DateHelper } from '@shared/helpers/DateHelper';
 import { ReferralExportService } from '@shared/common/referral/referral-export.service';
-import { GetCommissionTotalsOutput } from '@shared/service-proxies/service-proxies';
+import {
+    CommissionLedgerEntryInfo,
+    CommissionLedgerEntryStatus,
+    GetLedgerOutput, GetLedgerTotalsOutput,
+    UserCommissionServiceProxy
+} from '@shared/service-proxies/service-proxies';
 import { ReferralService } from '@shared/common/referral/referral.service';
 
 @Component({
@@ -28,56 +34,22 @@ import { ReferralService } from '@shared/common/referral/referral.service';
     ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class LedgerBalanceComponent {
+export class LedgerBalanceComponent implements OnInit {
     @ViewChild('pendingTransactionsGrid', { static: false }) pendingTransactionsGrid: DxDataGridComponent;
     @ViewChild('transactionsGrid', { static: false }) transactionsGrid: DxDataGridComponent;
     @ViewChild(DxValidatorComponent, { static: false }) validator: DxValidatorComponent;
     withdrawalAmount = null;
-    pendingTransactions = [
-        {
-            date: '12/11/2020',
-            name: 'Withdrawal Request',
-            status: 'Pending',
-            earningAmount: null,
-            withdrawalAmount: -30000,
-            balance: null
-        },
-        {
-            date: '12/10/2020',
-            name: 'Withdrawal Request',
-            status: 'Pending',
-            earningAmount: null,
-            withdrawalAmount: -2500,
-            balance: null
-        } ,
-        {
-            date: '12/01/2020',
-            name: 'Earnings 11/22-11/29',
-            status: 'Pending',
-            earningAmount: 2500,
-            withdrawalAmount: null,
-            balance: null
-        }
-    ];
-    transactions = [
-        {"date":"11/29/2020","name":"Earnings 11/15-11/21","status":"Approved","earningAmount":2500,"withdrawalAmount":"","balance":30000},
-        {"date":"11/22/2020","name":"Earnings 11/08-11/14","status":"Approved","earningAmount":2500,"withdrawalAmount":"","balance":27500},
-        {"date":"11/15/2020","name":"Earnings 11/01-11/07","status":"Approved","earningAmount":2500,"withdrawalAmount":"","balance":25000},
-        {"date":"11/02/2020","name":"Withdrawal (PayQuicker)","status":"Completed","earningAmount":"","withdrawalAmount":-5000,"balance":22500},
-        {"date":"11/01/2020","name":"Earnings Oct 2020","status":"Approved","earningAmount":10000,"withdrawalAmount":"","balance":27500},
-        {"date":"10/03/2020","name":"Withdrawal (PayQuicker)","status":"Completed","earningAmount":"","withdrawalAmount":-5000,"balance":17500},
-        {"date":"10/02/2020","name":"Withdrawal (PayQuicker)","status":"Completed","earningAmount":"","withdrawalAmount":-5000,"balance":12500},
-        {"date":"10/01/2020","name":"Earnings Sep 2020","status":"Approved","earningAmount":10000,"withdrawalAmount":"","balance":22500},
-        {"date":"09/01/2020","name":"Earnings Aug 2020","status":"Approved","earningAmount":7500,"withdrawalAmount":"","balance":17500},
-        {"date":"08/01/2020","name":"Earnings Jul 2020","status":"Approved","earningAmount":5000,"withdrawalAmount":"","balance":10000},
-        {"date":"07/01/2020","name":"Earnings Jun 2020","status":"Approved","earningAmount":5000,"withdrawalAmount":"","balance":5000},
-        {"date":"05/31/2020","name":"Starting Balance","status":"Starting-Balance","earningAmount":"","withdrawalAmount":"","balance":7500},
-        {"date":"05/31/2020","name":"Total Withdrawals (Historical)","status":"Total","earningAmount":"","withdrawalAmount":-55000,"balance":""},
-        {"date":"05/31/2020","name":"Total Earnings (Historical)","status":"Total","earningAmount":62500,"withdrawalAmount":"","balance":""}
-    ];
+    ledger: GetLedgerOutput;
+    pendingCommissions: CommissionLedgerEntryInfo[] = [];
+    approvedCommissions: CommissionLedgerEntryInfo[] = [];
     userTimezone: string = DateHelper.getUserTimezone();
     dateFormat = 'MMM-dd-yyyy E';
-    commissionTotals: GetCommissionTotalsOutput;
+    ledgerTotals: GetLedgerTotalsOutput;
+    pendingEarningsTotal = 0;
+    pendingWithdrawalsTotal = 0;
+    earningsTotal = 0;
+    withdrawalsTotal = 0;
+    isDataLoaded = false;
 
     constructor(
         private layoutService: LayoutService,
@@ -87,13 +59,75 @@ export class LedgerBalanceComponent {
         private currencyPipe: CurrencyPipe,
         private datePipe: DatePipe,
         private referralService: ReferralService,
+        private userCommission: UserCommissionServiceProxy,
+        private changeDetectorRef: ChangeDetectorRef,
         public ls: AppLocalizationService
     ) {}
 
     ngOnInit() {
-        this.referralService.commissionTotals$.subscribe((commissionTotals: GetCommissionTotalsOutput) => {
-            this.commissionTotals = commissionTotals;
-        })
+        this.referralService.ledgerTotals$.subscribe((ledgerTotals: GetLedgerTotalsOutput) => {
+            this.ledgerTotals = ledgerTotals;
+        });
+        this.userCommission.getLedger(undefined).subscribe((ledger: GetLedgerOutput) => {
+            this.ledger = ledger;
+            let balance = 0;
+            ledger.entries
+                .sort((entryA: CommissionLedgerEntryInfo, entryB: CommissionLedgerEntryInfo) => {
+                    return moment(entryA.date).isAfter(entryB.date) ? 1 : -1;
+                })
+                .forEach((commissionLedgerInfo: CommissionLedgerEntryInfo) => {
+                    if (commissionLedgerInfo.status === CommissionLedgerEntryStatus.Pending) {
+                        this.pendingCommissions.push(commissionLedgerInfo);
+                        if (commissionLedgerInfo.totalAmount > 0) {
+                            this.pendingEarningsTotal += commissionLedgerInfo.totalAmount;
+                        } else {
+                            this.pendingWithdrawalsTotal += commissionLedgerInfo.totalAmount;
+                        }
+                    } else {
+                        commissionLedgerInfo['balance'] = balance += commissionLedgerInfo.totalAmount;
+                        this.approvedCommissions.unshift(commissionLedgerInfo);
+                        if (commissionLedgerInfo.totalAmount > 0) {
+                            this.earningsTotal += commissionLedgerInfo.totalAmount;
+                        } else {
+                            this.withdrawalsTotal += commissionLedgerInfo.totalAmount;
+                        }
+                    }
+                });
+
+            const startingBalanceRow: any = {
+                id: undefined,
+                status: 'Starting-Balance',
+                startDate: null,
+                endDate: null,
+                date: null,
+                type: 'Starting Balance',
+                totalAmount: null,
+                balance: this.ledger.startingEarningsBalance - this.ledger.startingWithdrawalsBalance
+            };
+            const totalWithdrawalsRow: any = {
+                id: undefined,
+                status: 'Total-Withdrawals',
+                startDate: null,
+                endDate: null,
+                date: null,
+                type: 'Total Withdrawals (Historical)',
+                totalAmount: this.ledger.startingWithdrawalsBalance || undefined,
+                balance: null
+            };
+            const totalEarningsRow: any = {
+                id: undefined,
+                status: 'Total-Earnings',
+                startDate: null,
+                endDate: null,
+                date: null,
+                type: 'Total Earnings (Historical)',
+                totalAmount: this.ledger.startingEarningsBalance || undefined,
+                balance: null
+            }
+            this.approvedCommissions.push(startingBalanceRow, totalWithdrawalsRow, totalEarningsRow);
+            this.isDataLoaded = true;
+            this.changeDetectorRef.detectChanges();
+        });
     }
 
     save() {
@@ -107,7 +141,11 @@ export class LedgerBalanceComponent {
     }
 
     onRowPrepared(e) {
-        if (e.data && (e.data.status === 'Approved' || e.data.status === 'Starting-Balance' || e.data.status === 'Total')) {
+        if (e.data && (e.data.status === 'Approved'
+            || e.data.status === 'Starting-Balance'
+            || e.data.status === 'Total-Earnings')
+            || e.data.status === 'Total-Withdrawals'
+        ) {
             e.rowElement.classList.add(e.data.status.toLowerCase());
         }
     }
@@ -121,7 +159,8 @@ export class LedgerBalanceComponent {
             } else if (e.columnIndex < 3) {
                 e.cellElement.style.display = 'none';
             }
-        } else if (e.rowType === 'data' && e.column.dataField === 'status' && (e.value === 'Starting-Balance' || e.value === 'Total')) {
+        } else if (e.rowType === 'data' && e.column.dataField === 'status' && (e.value === 'Starting-Balance'
+            || e.value === 'Total-Earnings' || e.value === 'Total-Withdrawals')) {
             e.cellElement.innerHTML = '';
         }
     }
@@ -151,21 +190,21 @@ export class LedgerBalanceComponent {
         }).then((cellRange: CellRange) => {
             ReferralExportService.addTableHeader(worksheet);
             this.referralExportService.addAmountsWidget(worksheet, 'e2efda', 2, 'TOTAL AMOUNTS POSTED', [
-                { name: 'Earned', value: this.currencyPipe.transform(this.commissionTotals.earnings) },
-                { name: 'Withdrawn', value: this.currencyPipe.transform(this.commissionTotals.withdrawn), valueColor: '00B050' }
+                { name: 'Earned', value: this.currencyPipe.transform(this.ledgerTotals.earnedAmount) },
+                { name: 'Withdrawn', value: this.currencyPipe.transform(this.ledgerTotals.withdrawnAmount), valueColor: '00B050' }
             ]);
             this.referralExportService.addAmountsWidget(worksheet, 'fff2cc', 5, 'PENDING AMOUNTS', [
-                { name: 'Earned', value: this.currencyPipe.transform(this.commissionTotals.pendingEarnings) },
-                { name: 'Withdrawn', value: this.currencyPipe.transform(this.commissionTotals.pendingWithdrawn), valueColor: '00B050' }
+                { name: 'Earned', value: this.currencyPipe.transform(this.ledgerTotals.pendingEarningsAmount) },
+                { name: 'Withdrawn', value: this.currencyPipe.transform(this.ledgerTotals.pendingEarningsAmount), valueColor: '00B050' }
             ]);
             this.referralExportService.addAmountsWidget(worksheet, 'c6e0b4', 7, 'AVAILABLE', [
-                { name: 'Balance', value: this.currencyPipe.transform(this.commissionTotals.earnings - this.commissionTotals.withdrawn) }
+                { name: 'Balance', value: this.currencyPipe.transform(this.ledgerTotals.availableBalance) }
             ]);
             this.referralExportService.addTableBorders(worksheet, cellRange);
             return exportDataGrid({
                 worksheet: worksheet,
                 component: this.transactionsGrid.instance,
-                topLeftCell: { row: 13, column: 2 },
+                topLeftCell: { row: cellRange.from.row + 2, column: 2 },
                 loadPanel: { enabled: false },
                 keepColumnWidths: true,
                 autoFilterEnabled: false,
@@ -189,7 +228,15 @@ export class LedgerBalanceComponent {
         return this.datePipe.transform(transaction.date, this.dateFormat, this.userTimezone);
     }
 
-    calculateAmountValue = (order) => {
-        return this.currencyPipe.transform(order.Amount);
+    calculateEarningsAmountValue = (commissionLedgerInfo: CommissionLedgerEntryInfo) => {
+        return commissionLedgerInfo.totalAmount > 0
+            ? this.currencyPipe.transform(commissionLedgerInfo.totalAmount)
+            : (commissionLedgerInfo.status as any == 'Total-Earnings' ? 0 : null );
+    }
+
+    calculateWithdrawalAmount = (commissionLedgerInfo: CommissionLedgerEntryInfo) => {
+        return commissionLedgerInfo.totalAmount < 0
+               ? this.currencyPipe.transform(commissionLedgerInfo.totalAmount)
+               : (commissionLedgerInfo.status as any == 'Total-Withdrawals' ? 0 : null );
     }
 }

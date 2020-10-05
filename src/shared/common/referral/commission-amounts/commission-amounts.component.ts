@@ -7,7 +7,7 @@ import { MatDialog } from '@angular/material/dialog';
 /** Application imports */
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { WithdrawalDialogComponent } from '@shared/common/referral/commission-amounts/withdrawal-dialog/withdrawal-dialog.component';
-import { GetCommissionTotalsOutput } from '@shared/service-proxies/service-proxies';
+import { GetLedgerTotalsOutput } from '@shared/service-proxies/service-proxies';
 import { ReferralService } from '@shared/common/referral/referral.service';
 
 @Component({
@@ -17,7 +17,7 @@ import { ReferralService } from '@shared/common/referral/referral.service';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CommissionAmountsComponent implements OnInit {
-    commissionTotals: GetCommissionTotalsOutput;
+    ledgerTotals: GetLedgerTotalsOutput;
     constructor(
         private dialog: MatDialog,
         private referralService: ReferralService,
@@ -26,8 +26,8 @@ export class CommissionAmountsComponent implements OnInit {
     ) {}
 
     ngOnInit() {
-        this.referralService.commissionTotals$.subscribe((commissionTotals: GetCommissionTotalsOutput) => {
-            this.commissionTotals = commissionTotals;
+        this.referralService.ledgerTotals$.subscribe((ledgerTotals: GetLedgerTotalsOutput) => {
+            this.ledgerTotals = ledgerTotals;
             this.changeDetectorRef.detectChanges();
         })
     }

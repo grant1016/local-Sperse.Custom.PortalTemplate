@@ -1,26 +1,26 @@
 <div class="amounts-container">
     <commission-amount-block [title]="ls.l('Referral.TotalsAmountsPosted')" color="#e2efda">
         <commission-amount-item [label]="ls.l('Referral.Earned')"
-                                [value]="commissionTotals?.earnings">
+                                [value]="ledgerTotals?.earnedAmount">
         </commission-amount-item>
         <commission-amount-item [label]="ls.l('Referral.Withdrawn')"
-                                [value]="commissionTotals?.withdrawn"
+                                [value]="ledgerTotals?.withdrawnAmount"
                                 valueColor="#30b862">
         </commission-amount-item>
     </commission-amount-block>
     <commission-amount-block [title]="ls.l('Referral.PendingAmounts')" color="#fff2cc">
         <commission-amount-item [label]="ls.l('Referral.Earned')"
-                                [value]="commissionTotals?.pendingEarnings">
+                                [value]="ledgerTotals?.pendingEarningsAmount">
         </commission-amount-item>
         <commission-amount-item [label]="ls.l('Referral.Withdrawn')"
-                                [value]="commissionTotals?.pendingWithdrawn"
+                                [value]="ledgerTotals?.pendingWithdrawalsAmount"
                                 valueColor="#30b862">
         </commission-amount-item>
     </commission-amount-block>
     <commission-amount-block [title]="ls.l('Referral.Available')"
                              color="#c6e0b4">
         <commission-amount-item [label]="ls.l('Referral.Balance')"
-                                [value]="commissionTotals?.earnings - commissionTotals?.withdrawn">
+                                [value]="ledgerTotals?.availableBalance">
         </commission-amount-item>
     </commission-amount-block>
 </div>

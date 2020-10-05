@@ -26,7 +26,6 @@ import { DxDataGridDirective } from '@shared/common/dx-data-grid/dx-data-grid.di
 import { CommissionAmountsComponent } from '@shared/common/referral/commission-amounts/commission-amounts.component';
 import { CommissionAmountBlockComponent } from '@shared/common/referral/commission-amounts/commission-amount-block/commission-amount-block.component';
 import { CommissionAmountItemComponent } from '@shared/common/referral/commission-amounts/commission-amount-item/commission-amount-item.component';
-import { BeginOverlayModule } from '@shared/common/begin-overlay/begin-overlay.module';
 import { WithdrawalDialogComponent } from '@shared/common/referral/commission-amounts/withdrawal-dialog/withdrawal-dialog.component';
 import { ReferralExportService } from '@shared/common/referral/referral-export.service';
 import { ReferralService } from '@shared/common/referral/referral.service';
@@ -45,8 +44,7 @@ import { UserCommissionServiceProxy } from '@shared/service-proxies/service-prox
         ReferralRoutingModule,
         UserPhotoModule,
         MatExpansionModule,
-        InplaceEditModule,
-        BeginOverlayModule
+        InplaceEditModule
     ],
     exports: [ DxDataGridDirective ],
     declarations: [

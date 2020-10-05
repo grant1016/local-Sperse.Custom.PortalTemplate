@@ -1,10 +1,9 @@
 <div class="grid">
     <header>
         <h1>{{ ls.l('Referral.CommissionHistoryTitle') }}</h1>
-        <button (click)="downloadReport()">{{ ls.l('Referral.DownloadTheReport') }}</button>
+        <button (click)="downloadReport()" [disabled]="!isDataLoaded">{{ ls.l('Referral.DownloadTheReport') }}</button>
     </header>
     <div class="grid-container">
-        <begin-overlay text="Coming Soon...." subText="Your commission activity is being imported and will be shown here once the report is ready."></begin-overlay>
         <dx-data-grid class="commission-history-grid main-component-view limitedPagerTotal"
                       accesskey="narrowHeaderPanel"
                       [renderAsync]="true"
