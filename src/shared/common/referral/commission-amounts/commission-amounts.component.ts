@@ -1,7 +1,14 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+/** Core imports */
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+
+/** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
+
+/** Application imports */
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { WithdrawalDialogComponent } from '@shared/common/referral/commission-amounts/withdrawal-dialog/withdrawal-dialog.component';
+import { GetCommissionTotalsOutput } from '@shared/service-proxies/service-proxies';
+import { ReferralService } from '@shared/common/referral/referral.service';
 
 @Component({
     selector: 'commission-amounts',
@@ -9,11 +16,21 @@ import { WithdrawalDialogComponent } from '@shared/common/referral/commission-am
     styleUrls: [ 'commission-amounts.component.less' ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class CommissionAmountsComponent {
+export class CommissionAmountsComponent implements OnInit {
+    commissionTotals: GetCommissionTotalsOutput;
     constructor(
         private dialog: MatDialog,
+        private referralService: ReferralService,
+        private changeDetectorRef: ChangeDetectorRef,
         public ls: AppLocalizationService
     ) {}
+
+    ngOnInit() {
+        this.referralService.commissionTotals$.subscribe((commissionTotals: GetCommissionTotalsOutput) => {
+            this.commissionTotals = commissionTotals;
+            this.changeDetectorRef.detectChanges();
+        })
+    }
 
     requestWithdrawal() {
         this.dialog.open(WithdrawalDialogComponent);

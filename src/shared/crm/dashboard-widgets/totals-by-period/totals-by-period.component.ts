@@ -75,23 +75,19 @@ export class TotalsByPeriodComponent implements DoCheck, OnInit, OnDestroy {
     periods: TotalsByPeriodModel[] = [
          {
              key: GroupByPeriod.Daily,
-             name: 'Daily',
-             amount: 30
+             name: 'Daily'
          },
          {
              key: GroupByPeriod.Weekly,
-             name: 'Weekly',
-             amount: 15
+             name: 'Weekly'
         },
         {
             key: GroupByPeriod.Monthly,
-            name: 'Monthly',
-            amount: 12
+            name: 'Monthly'
         },
         {
-            key: GroupByPeriod.Monthly,
-            name: 'Monthly',
-            amount: 5
+            key: GroupByPeriod.Yearly,
+            name: 'Yearly'
         }
     ];
     selectItems = [
@@ -150,14 +146,23 @@ export class TotalsByPeriodComponent implements DoCheck, OnInit, OnDestroy {
 
     ngOnInit() {
         this.totalsData$ = combineLatest(
-            this.dashboardWidgetsService.period$.pipe(map((period: PeriodModel) => this.savePeriod(period))),
+            this.dashboardWidgetsService.period$,
             this.isCumulative$,
             this.dashboardWidgetsService.refresh$
         ).pipe(
             takeUntil(this.destroy$),
             tap(() => this.loadingService.startLoading()),
-            switchMap(([period, isCumulative, ]: [TotalsByPeriodModel, boolean, null]) => {
-                return this.loadCustomersAndLeadsStats(period, isCumulative).pipe(
+            switchMap(([period, isCumulative, ]: [PeriodModel, boolean, null]) => {
+                const totalsByPeriodModel = this.savePeriod(period);
+                return this.loadCustomersAndLeadsStats(
+                    totalsByPeriodModel,
+                    period.from,
+                    period.to,
+                    isCumulative,
+                    undefined,
+                    undefined,
+                    undefined
+                ).pipe(
                     catchError(() => of([])),
                     finalize(() => this.loadingService.finishLoading())
                 );
@@ -226,9 +231,9 @@ export class TotalsByPeriodComponent implements DoCheck, OnInit, OnDestroy {
 
     private savePeriod(period: PeriodModel): TotalsByPeriodModel {
         if (period) {
-            if ([Period.Today, Period.Yesterday, Period.ThisWeek, Period.ThisMonth, Period.LastMonth].indexOf(period.period) >= 0)
+            if (moment(period.to).diff(moment(period.from), 'days') < 90 ) {
                 this.selectedPeriod = { ...this.periods[0] };
-            else if (period.name === Period.LastQuarter) {
+            } else if(moment(period.to).diff(moment(period.from), 'years') > 3) {
                 this.selectedPeriod = { ...this.periods[3] };
             } else {
                 this.selectedPeriod = { ...this.periods[2] };
@@ -237,11 +242,26 @@ export class TotalsByPeriodComponent implements DoCheck, OnInit, OnDestroy {
         return this.selectedPeriod;
     }
 
-    private loadCustomersAndLeadsStats(period: TotalsByPeriodModel, isCumulative: boolean): Observable<GetCustomerAndLeadStatsOutput[]> {
-        return this.dashboardServiceProxy.getCustomerAndLeadStats(
+    private loadCustomersAndLeadsStats(
+        period: TotalsByPeriodModel,
+        startDate: Date,
+        endDate: Date,
+        isCumulative: boolean,
+        contactId: number,
+        contactGroupId: string,
+        orgUnitIds: number[]
+    ): Observable<GetCustomerAndLeadStatsOutput[]> {
+        const momentEndDate = moment(endDate);
+        const today = moment();
+        return this.dashboardServiceProxy.getContactAndLeadStats(
             GroupByPeriod[(period.name as GroupByPeriod)],
-            period.amount,
-            isCumulative
+            undefined,
+            isCumulative,
+            moment(startDate),
+            momentEndDate.isAfter(today) ? today : momentEndDate,
+            contactGroupId,
+            contactId,
+            orgUnitIds
         );
     }
 

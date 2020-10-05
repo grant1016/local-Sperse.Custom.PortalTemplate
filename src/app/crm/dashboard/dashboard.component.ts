@@ -13,8 +13,7 @@ import { RouteReuseStrategy, ActivatedRoute, Router } from '@angular/router';
 import DataSource from 'devextreme/data/data_source';
 import ODataStore from 'devextreme/data/odata/store';
 import { DxDropDownBoxComponent } from 'devextreme-angular/ui/drop-down-box';
-import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
-import { Store } from '@ngrx/store';
+import { MatDialog } from '@angular/material/dialog';
 import { CacheService } from 'ng2-cache-service';
 import { Observable, ReplaySubject } from 'rxjs';
 import { filter, first, takeUntil, map } from 'rxjs/operators';
@@ -22,7 +21,6 @@ import { filter, first, takeUntil, map } from 'rxjs/operators';
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
 import { AppService } from '@app/app.service';
-import { CacheHelper } from '@shared/common/cache-helper/cache-helper';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { AppUiCustomizationService } from '@shared/common/ui/app-ui-customization.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -66,8 +64,6 @@ export class CrmDashboardComponent implements AfterViewInit, OnInit {
     contactAccounts: any[];
     showLoadingSpinner = true;
     userInfo = this.appSessionService.getShownLoginInfo();
-    private introAcceptedCacheKey: string = this.cacheHelper.getCacheKey('CRMIntro', 'IntroAccepted');
-    dialogConfig = new MatDialogConfig();
     isGrantedCustomers = this.permission.isGranted(AppPermissions.CRMCustomers);
     isGrantedOrders = this.permission.isGranted(AppPermissions.CRMOrders);
     hasCustomersPermission: boolean = this.permission.isGranted(AppPermissions.CRMCustomers);
@@ -116,7 +112,6 @@ export class CrmDashboardComponent implements AfterViewInit, OnInit {
         private oDataService: ODataService,
         public ui: AppUiCustomizationService,
         public permission: AppPermissionService,
-        public cacheHelper: CacheHelper,
         public ls: AppLocalizationService,
         public dialog: MatDialog
     ) {}
@@ -130,7 +125,7 @@ export class CrmDashboardComponent implements AfterViewInit, OnInit {
         this.activate();
     }
 
-    refresh(refreshLeadsAndClients = true) {
+    refresh(refreshLeadsAndClients: boolean = true) {
         this.dashboardWidgetsService.refresh();
         /** Reload status after refresh if it's showing welcome page */
         this.showWelcomeSection$.pipe(
@@ -151,7 +146,7 @@ export class CrmDashboardComponent implements AfterViewInit, OnInit {
     }
 
     private loadStatus() {
-        this.dashboardServiceProxy.getStatus().subscribe((status: GetCRMStatusOutput) => {
+        this.dashboardServiceProxy.getStatus(undefined, undefined).subscribe((status: GetCRMStatusOutput) => {
             this.showWelcomeSection.next(!status.hasData);
             this.showLoadingSpinner = false;
         });
@@ -173,11 +168,6 @@ export class CrmDashboardComponent implements AfterViewInit, OnInit {
                 filter(params => !!params['refresh'])
             )
             .subscribe(() => this.refresh() );
-    }
-
-    repaint() {
-        this.refreshClientsByRegion();
-        this.refreshTotalsBySource();
     }
 
     private refreshClientsByRegion() {

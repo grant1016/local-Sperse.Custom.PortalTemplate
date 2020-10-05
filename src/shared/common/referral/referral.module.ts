@@ -29,6 +29,8 @@ import { CommissionAmountItemComponent } from '@shared/common/referral/commissio
 import { BeginOverlayModule } from '@shared/common/begin-overlay/begin-overlay.module';
 import { WithdrawalDialogComponent } from '@shared/common/referral/commission-amounts/withdrawal-dialog/withdrawal-dialog.component';
 import { ReferralExportService } from '@shared/common/referral/referral-export.service';
+import { ReferralService } from '@shared/common/referral/referral.service';
+import { UserCommissionServiceProxy } from '@shared/service-proxies/service-proxies';
 
 @NgModule({
     imports: [
@@ -60,7 +62,7 @@ import { ReferralExportService } from '@shared/common/referral/referral-export.s
         CommissionAmountItemComponent,
         WithdrawalDialogComponent
     ],
-    providers: [ CurrencyPipe, DatePipe, ReferralExportService ],
+    providers: [ CurrencyPipe, DatePipe, ReferralExportService, ReferralService, UserCommissionServiceProxy ],
     entryComponents: [ WithdrawalDialogComponent ],
     bootstrap: [ ReferralComponent ]
 })

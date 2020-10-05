@@ -1,5 +1,5 @@
 /** Core imports */
-import { ChangeDetectionStrategy, Component, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, ViewChild } from '@angular/core';
 import { CurrencyPipe, DatePipe } from '@angular/common';
 
 /** Third party imports */
@@ -23,6 +23,8 @@ import { CellRange } from '@node_modules/devextreme/excel_exporter';
 import { ReferralExportService } from '@shared/common/referral/referral-export.service';
 import { CommissionFields } from '@shared/common/referral/commission-history/commission-fields.enum';
 import { CommissionDto } from '@shared/common/referral/commission-history/commission-dto';
+import { GetCommissionTotalsOutput } from '@shared/service-proxies/service-proxies';
+import { ReferralService } from '@shared/common/referral/referral.service';
 
 @Component({
     selector: 'commission-history',
@@ -34,7 +36,7 @@ import { CommissionDto } from '@shared/common/referral/commission-history/commis
     ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class CommissionHistoryComponent {
+export class CommissionHistoryComponent implements OnInit {
     @ViewChild(DxDataGridComponent, { static: false }) dataGrid: DxDataGridComponent;
     readonly commissionFields: KeysEnum<CommissionDto> = CommissionFields;
     dateFormat = 'MMM-dd-yyyy';
@@ -65,6 +67,7 @@ export class CommissionHistoryComponent {
             }
         }
     });
+    commissionTotals: GetCommissionTotalsOutput;
 
     constructor(
         private oDataService: ODataService,
@@ -72,9 +75,16 @@ export class CommissionHistoryComponent {
         private datePipe: DatePipe,
         private currencyPipe: CurrencyPipe,
         private referralExportService: ReferralExportService,
+        private referralService: ReferralService,
         public httpInterceptor: AppHttpInterceptor,
         public ls: AppLocalizationService
     ) {}
+
+    ngOnInit() {
+        this.referralService.commissionTotals$.subscribe((commissionTotals: GetCommissionTotalsOutput) => {
+            this.commissionTotals = commissionTotals;
+        })
+    }
 
     getQuickSearchParam() {
         return this.searchValue ? { name: 'quickSearchString', value: this.searchValue } : null;
@@ -119,15 +129,15 @@ export class CommissionHistoryComponent {
         }).then((cellRange: CellRange) => {
             ReferralExportService.addTableHeader(worksheet);
             this.referralExportService.addAmountsWidget(worksheet, 'e2efda', 2, 'TOTAL AMOUNTS POSTED', [
-                { name: 'Earned', value: this.currencyPipe.transform(356) },
-                { name: 'Withdrawn', value: this.currencyPipe.transform(-207), valueColor: '00B050' }
+                { name: 'Earned', value: this.currencyPipe.transform(this.commissionTotals.earnings) },
+                { name: 'Withdrawn', value: this.currencyPipe.transform(this.commissionTotals.withdrawn), valueColor: '00B050' }
             ]);
             this.referralExportService.addAmountsWidget(worksheet, 'fff2cc', 5, 'PENDING AMOUNTS', [
-                { name: 'Earned', value: this.currencyPipe.transform(16) },
-                { name: 'Withdrawn', value: this.currencyPipe.transform(-13), valueColor: '00B050' }
+                { name: 'Earned', value: this.currencyPipe.transform(this.commissionTotals.pendingEarnings) },
+                { name: 'Withdrawn', value: this.currencyPipe.transform(this.commissionTotals.pendingWithdrawn), valueColor: '00B050' }
             ]);
             this.referralExportService.addAmountsWidget(worksheet, 'c6e0b4', 8, 'AVAILABLE', [
-                { name: 'Balance', value: this.currencyPipe.transform(136) }
+                { name: 'Balance', value: this.currencyPipe.transform(this.commissionTotals.earnings - this.commissionTotals.withdrawn) }
             ]);
             this.referralExportService.addTableBorders(worksheet, cellRange);
         }).then(() => {

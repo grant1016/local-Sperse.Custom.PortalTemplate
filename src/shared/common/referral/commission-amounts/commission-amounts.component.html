@@ -1,14 +1,27 @@
 <div class="amounts-container">
     <commission-amount-block [title]="ls.l('Referral.TotalsAmountsPosted')" color="#e2efda">
-        <commission-amount-item [label]="ls.l('Referral.Earned')" [value]="107500"></commission-amount-item>
-        <commission-amount-item [label]="ls.l('Referral.Withdrawn')" [value]="-70000" valueColor="#30b862"></commission-amount-item>
+        <commission-amount-item [label]="ls.l('Referral.Earned')"
+                                [value]="commissionTotals?.earnings">
+        </commission-amount-item>
+        <commission-amount-item [label]="ls.l('Referral.Withdrawn')"
+                                [value]="commissionTotals?.withdrawn"
+                                valueColor="#30b862">
+        </commission-amount-item>
     </commission-amount-block>
     <commission-amount-block [title]="ls.l('Referral.PendingAmounts')" color="#fff2cc">
-        <commission-amount-item [label]="ls.l('Referral.Earned')" [value]="2500"></commission-amount-item>
-        <commission-amount-item [label]="ls.l('Referral.Withdrawn')" [value]="-32500" valueColor="#30b862"></commission-amount-item>
+        <commission-amount-item [label]="ls.l('Referral.Earned')"
+                                [value]="commissionTotals?.pendingEarnings">
+        </commission-amount-item>
+        <commission-amount-item [label]="ls.l('Referral.Withdrawn')"
+                                [value]="commissionTotals?.pendingWithdrawn"
+                                valueColor="#30b862">
+        </commission-amount-item>
     </commission-amount-block>
-    <commission-amount-block [title]="ls.l('Referral.Available')" color="#c6e0b4">
-        <commission-amount-item [label]="ls.l('Referral.Balance')" [value]="5000"></commission-amount-item>
+    <commission-amount-block [title]="ls.l('Referral.Available')"
+                             color="#c6e0b4">
+        <commission-amount-item [label]="ls.l('Referral.Balance')"
+                                [value]="commissionTotals?.earnings - commissionTotals?.withdrawn">
+        </commission-amount-item>
     </commission-amount-block>
 </div>
 <button class="request-withdrawal" (click)="requestWithdrawal()">{{ ls.l('Referral.RequestWithdrawal') }}</button>

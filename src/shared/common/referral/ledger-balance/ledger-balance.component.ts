@@ -15,7 +15,8 @@ import { DxDataGridComponent, DxValidatorComponent } from '@node_modules/devextr
 import { NotifyService } from '@abp/notify/notify.service';
 import { DateHelper } from '@shared/helpers/DateHelper';
 import { ReferralExportService } from '@shared/common/referral/referral-export.service';
-import { OrderDto } from '@shared/common/referral/commission-history/order-dto';
+import { GetCommissionTotalsOutput } from '@shared/service-proxies/service-proxies';
+import { ReferralService } from '@shared/common/referral/referral.service';
 
 @Component({
     selector: 'ledger-balance',
@@ -76,6 +77,7 @@ export class LedgerBalanceComponent {
     ];
     userTimezone: string = DateHelper.getUserTimezone();
     dateFormat = 'MMM-dd-yyyy E';
+    commissionTotals: GetCommissionTotalsOutput;
 
     constructor(
         private layoutService: LayoutService,
@@ -84,8 +86,15 @@ export class LedgerBalanceComponent {
         private referralExportService: ReferralExportService,
         private currencyPipe: CurrencyPipe,
         private datePipe: DatePipe,
+        private referralService: ReferralService,
         public ls: AppLocalizationService
     ) {}
+
+    ngOnInit() {
+        this.referralService.commissionTotals$.subscribe((commissionTotals: GetCommissionTotalsOutput) => {
+            this.commissionTotals = commissionTotals;
+        })
+    }
 
     save() {
         if (this.validator.instance.validate().isValid) {
@@ -142,15 +151,15 @@ export class LedgerBalanceComponent {
         }).then((cellRange: CellRange) => {
             ReferralExportService.addTableHeader(worksheet);
             this.referralExportService.addAmountsWidget(worksheet, 'e2efda', 2, 'TOTAL AMOUNTS POSTED', [
-                { name: 'Earned', value: this.currencyPipe.transform(107500) },
-                { name: 'Withdrawn', value: this.currencyPipe.transform(-70000), valueColor: '00B050' }
+                { name: 'Earned', value: this.currencyPipe.transform(this.commissionTotals.earnings) },
+                { name: 'Withdrawn', value: this.currencyPipe.transform(this.commissionTotals.withdrawn), valueColor: '00B050' }
             ]);
             this.referralExportService.addAmountsWidget(worksheet, 'fff2cc', 5, 'PENDING AMOUNTS', [
-                { name: 'Earned', value: this.currencyPipe.transform(2500) },
-                { name: 'Withdrawn', value: this.currencyPipe.transform(-32500), valueColor: '00B050' }
+                { name: 'Earned', value: this.currencyPipe.transform(this.commissionTotals.pendingEarnings) },
+                { name: 'Withdrawn', value: this.currencyPipe.transform(this.commissionTotals.pendingWithdrawn), valueColor: '00B050' }
             ]);
             this.referralExportService.addAmountsWidget(worksheet, 'c6e0b4', 7, 'AVAILABLE', [
-                { name: 'Balance', value: this.currencyPipe.transform(5000) }
+                { name: 'Balance', value: this.currencyPipe.transform(this.commissionTotals.earnings - this.commissionTotals.withdrawn) }
             ]);
             this.referralExportService.addTableBorders(worksheet, cellRange);
             return exportDataGrid({
@@ -180,7 +189,7 @@ export class LedgerBalanceComponent {
         return this.datePipe.transform(transaction.date, this.dateFormat, this.userTimezone);
     }
 
-    calculateAmountValue = (order: OrderDto) => {
+    calculateAmountValue = (order) => {
         return this.currencyPipe.transform(order.Amount);
     }
 }
