@@ -1,10 +1,16 @@
 <mat-dialog-content>
-    <h3>Request a withdrawal</h3>
-    <h4>You may request up to the total available balance shown above</h4>
+    <h3>{{ ls.l('Referral.RequestWithdrawal') }}</h3>
+    <h4>{{ ls.l('Referral.WithdrawalDescription') }}</h4>
     <dx-number-box [(value)]="withdrawalAmount"
-                   placeholder="Withdrawal Amount">
+                   [placeholder]="ls.l('Referral.WithdrawalAmount')">
         <dx-validator>
-            <dxi-validation-rule type="required" message="Amount is required"></dxi-validation-rule>
+            <dxi-validation-rule type="required"
+                                 [message]="ls.l('Referral.AmountIsRequired')">
+            </dxi-validation-rule>
+            <dxi-validation-rule type="range"
+                                 [max]="data.availableBalance"
+                                 [message]="ls.l('Referral.YouCantRequestMoreThen', this.data.availableBalance | currency)">
+            </dxi-validation-rule>
         </dx-validator>
     </dx-number-box>
     <div class="buttons">

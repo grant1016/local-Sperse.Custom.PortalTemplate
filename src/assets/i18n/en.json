@@ -26,7 +26,12 @@
             "ProductName": "Product Name",
             "SaleAmount": "Sale Amount",
             "Commission": "Commission",
-            "Status": "Status"
+            "Status": "Status",
+            "WithdrawalAmount": "Withdrawal Amount",
+            "WithdrawalDescription": "You may request up to the total available balance",
+            "AmountIsRequired": "Amount is required",
+            "ThanksForRequest": "Thanks for you request",
+            "YouCantRequestMoreThen": "You can't request more then {0}"
         },
         "VersusEstimated": "Versus Estimated",
         "Navigation_ResellerInfo": "Reseller Info"

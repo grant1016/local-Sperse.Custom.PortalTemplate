@@ -1,5 +1,5 @@
-import { ChangeDetectionStrategy, Component, ViewChild } from '@angular/core';
-import { MatDialogRef } from '@angular/material/dialog';
+import { ChangeDetectionStrategy, Component, Inject, ViewChild } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { DxValidatorComponent } from 'devextreme-angular/ui/validator';
 import { NotifyService } from '@abp/notify/notify.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -16,12 +16,13 @@ export class WithdrawalDialogComponent {
     constructor(
         private dialog: MatDialogRef<WithdrawalDialogComponent>,
         private notifyService: NotifyService,
-        public ls: AppLocalizationService
+        public ls: AppLocalizationService,
+        @Inject(MAT_DIALOG_DATA) public data: { availableBalance: number }
     ) {}
 
     save() {
         if (this.validator.instance.validate().isValid) {
-            this.notifyService.success(this.ls.l('Thanks for you request'));
+            this.notifyService.success(this.ls.l('Referral.ThanksForRequest'));
             this.dialog.close();
         }
     }

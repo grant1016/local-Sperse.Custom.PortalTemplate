@@ -1,6 +1,6 @@
 <header>
     <h1>{{ ls.l('Referral.LedgerBalanceTitle') }}</h1>
-    <button (click)="downloadReport()" [disabled]="isDataLoaded">{{ ls.l('Referral.DownloadTheReport') }}</button>
+    <button (click)="downloadReport()" [disabled]="!isDataLoaded">{{ ls.l('Referral.DownloadTheReport') }}</button>
 </header>
 <div class="grid-container">
     <dx-data-grid #pendingTransactionsGrid

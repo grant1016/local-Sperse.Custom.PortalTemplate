@@ -33,6 +33,10 @@ export class CommissionAmountsComponent implements OnInit {
     }
 
     requestWithdrawal() {
-        this.dialog.open(WithdrawalDialogComponent);
+        this.dialog.open(WithdrawalDialogComponent, {
+            data: {
+                availableBalance: this.ledgerTotals.availableBalance
+            }
+        });
     }
 }
