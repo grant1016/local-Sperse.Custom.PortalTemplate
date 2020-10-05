@@ -27,9 +27,8 @@
             <dxo-scrolling rowRenderingMode="virtual"></dxo-scrolling>
             <dxi-column [dataField]="commissionFields.OrderDate"
                         [caption]="ls.l('Referral.OrderDate')"
-                        [width]="160"
                         sortOrder="desc"
-                        cssClass="clipboard-holder"
+                        cssClass="clipboard-holder tabular"
                         [calculateCellValue]="calculateDateValue">
             </dxi-column>
             <dxi-column [dataField]="commissionFields.OrderNumber"
@@ -70,7 +69,7 @@
             <dxo-paging [pageSize]="20"></dxo-paging>
             <div *dxTemplate="let cellData of 'amountCell'" class="clipboard-holder">
                 <span class="amountCell"
-                      [ngStyle]="{color: cellData.column.field === commissionFields.CommissionAmount ? getCellColor(cellData.row.data) : '' }">
+                      [ngStyle]="{ color: cellData.column.field === commissionFields.CommissionAmount ? getCellColor(cellData.row.data) : '' }">
                     {{ cellData.value }}
                 </span>
             </div>
