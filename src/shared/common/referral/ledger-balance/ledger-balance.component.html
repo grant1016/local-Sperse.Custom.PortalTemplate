@@ -19,6 +19,7 @@
         </dxi-column>
         <dxi-column dataField="type"
                     [allowSorting]="false"
+                    [calculateCellValue]="calculateDescriptionValue"
                     cssClass="colorful"
                     caption="">
         </dxi-column>
@@ -67,6 +68,7 @@
         </dxi-column>
         <dxi-column dataField="type"
                     [allowSorting]="false"
+                    [calculateCellValue]="calculateDescriptionValue"
                     cssClass="colorful">
         </dxi-column>
         <dxi-column dataField="status"

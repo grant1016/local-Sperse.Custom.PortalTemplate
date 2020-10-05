@@ -123,7 +123,7 @@ export class LedgerBalanceComponent implements OnInit {
                 type: 'Total Earnings (Historical)',
                 totalAmount: this.ledger.startingEarningsBalance || undefined,
                 balance: null
-            }
+            };
             this.approvedCommissions.push(startingBalanceRow, totalWithdrawalsRow, totalEarningsRow);
             this.isDataLoaded = true;
             this.changeDetectorRef.detectChanges();
@@ -143,8 +143,8 @@ export class LedgerBalanceComponent implements OnInit {
     onRowPrepared(e) {
         if (e.data && (e.data.status === 'Approved'
             || e.data.status === 'Starting-Balance'
-            || e.data.status === 'Total-Earnings')
-            || e.data.status === 'Total-Withdrawals'
+            || e.data.status === 'Total-Earnings'
+            || e.data.status === 'Total-Withdrawals')
         ) {
             e.rowElement.classList.add(e.data.status.toLowerCase());
         }
@@ -224,8 +224,15 @@ export class LedgerBalanceComponent implements OnInit {
         });
     }
 
-    calculateDateValue = transaction => {
-        return this.datePipe.transform(transaction.date, this.dateFormat, this.userTimezone);
+    calculateDateValue = (commissionLedgerInfo: CommissionLedgerEntryInfo) => {
+        return this.datePipe.transform(commissionLedgerInfo.date, this.dateFormat, this.userTimezone);
+    }
+
+    calculateDescriptionValue = (commissionLedgerInfo: CommissionLedgerEntryInfo) => {
+        const startDate: string = commissionLedgerInfo.startDate ? commissionLedgerInfo.startDate.format('MM/DD') : '';
+        const endDate: string = commissionLedgerInfo.endDate ? commissionLedgerInfo.endDate.format('MM/DD') : '';
+        const date: string = startDate === endDate ? startDate : (startDate + ( startDate && endDate ? '-' : '') + endDate);
+        return commissionLedgerInfo.type + ' ' + date;
     }
 
     calculateEarningsAmountValue = (commissionLedgerInfo: CommissionLedgerEntryInfo) => {
