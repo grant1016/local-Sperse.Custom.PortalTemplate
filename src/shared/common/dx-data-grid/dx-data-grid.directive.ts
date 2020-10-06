@@ -11,7 +11,6 @@ import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { AppConsts } from '@shared/AppConsts';
 import { DateHelper } from '@shared/helpers/DateHelper';
-import { CommissionFields } from '@shared/common/referral/commission-history/commission-fields.enum';
 
 @Directive({
     selector: 'dx-data-grid',
@@ -60,7 +59,7 @@ export class DxDataGridDirective implements OnInit, OnDestroy {
                                 text = this.renderer.createElement('span');
                                 this.renderer.appendChild(event.cellElement, text);
                             }
-                            text.innerText = event.value || '';
+                            text.innerText = this.getDateFormatted(event.data[event.column.dataField], event.column.format, false);
                         }
                         if (event.cellElement.classList.contains('clipboard-holder'))
                             this.appendClipboardIcon(event.cellElement);
@@ -70,7 +69,7 @@ export class DxDataGridDirective implements OnInit, OnDestroy {
                     if (event.eventType == 'mouseout') {
                         if (event.column.name == 'hiddenTime') {
                             let text = event.cellElement.querySelector('span');
-                            text.innerText = event.value ? event.value.split(' ').shift() : '';
+                            text.innerText = event.value ? this.getDateFormatted(event.data[event.column.dataField], event.column.format) : '';
                         }
                     }
                 }
@@ -84,12 +83,14 @@ export class DxDataGridDirective implements OnInit, OnDestroy {
     }
 
     checkInitDateCellColumn(component) {
-        component.option('columns').forEach(column => {
-            if (column.cellTemplate == 'dateCell'
-                || column.dataField === 'startDate'
-                || column.dataField === 'date'
-                || column.dataField === CommissionFields.OrderDate
-            ) {
+        this.updateDateColumns(component.option('columns'), component);
+    }
+
+    updateDateColumns(columns, component) {
+        columns.forEach(column => {
+            if (column.columns) {
+                this.updateDateColumns(column.columns, component);
+            } else if (column.dataType === 'date') {
                 this.initDateCellColumn(column, component);
             }
         });
@@ -97,23 +98,20 @@ export class DxDataGridDirective implements OnInit, OnDestroy {
 
     initDateCellColumn(column, component) {
         component.columnOption(column.dataField, 'name', 'hiddenTime');
-        component.columnOption(column.dataField, 'width', '200px');
+        component.columnOption(column.dataField, 'width', '230px');
         component.columnOption(column.dataField, 'cellTemplate', undefined);
         component.columnOption(column.dataField, 'cssClass', column.cssClass + ' clipboard-holder');
-        component.columnOption(column.dataField, 'calculateDisplayValue', (data) => {
-            return this.getDateFormated(data[column.dataField]);
-        });
-        component.columnOption(column.dataField, 'calculateGroupValue', (data) => {
-            return this.getDateFormated(data[column.dataField]);
-        });
         component.columnOption(column.dataField, 'calculateCellValue', (data) => {
-            return this.getDateFormated(data[column.dataField], false);
+            return this.getDateFormatted(data[column.dataField], column.format);
         });
     }
 
-    getDateFormated(value: string, withoutTime = true) {
+    getDateFormatted(value: string, dateFormat: string,  withoutTime: boolean = true) {
         let date = value && this.datePipe.transform(
-            value, AppConsts.formatting.dateTime, this.timezone);
+            value,
+            dateFormat ? dateFormat + ' ' + AppConsts.formatting.time : AppConsts.formatting.dateTime,
+            this.timezone
+        );
         if (withoutTime)
             date = date && date.split(' ').shift();
         return date || '';

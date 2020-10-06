@@ -217,10 +217,6 @@ export class LedgerBalanceComponent implements OnInit {
         });
     }
 
-    calculateDateValue = (commissionLedgerInfo: CommissionLedgerEntryInfo) => {
-        return this.datePipe.transform(commissionLedgerInfo.date, this.dateFormat, this.userTimezone);
-    }
-
     calculateDescriptionValue = (commissionLedgerInfo: CommissionLedgerEntryInfo) => {
         const startDate: string = commissionLedgerInfo.startDate ? commissionLedgerInfo.startDate.format('MM/DD') : '';
         const endDate: string = commissionLedgerInfo.endDate ? commissionLedgerInfo.endDate.format('MM/DD') : '';

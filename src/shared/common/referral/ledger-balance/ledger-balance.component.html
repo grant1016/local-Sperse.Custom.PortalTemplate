@@ -12,7 +12,8 @@
                     caption="Total including pending amounts:"
                     cssClass="clipboard-holder">
             <dxi-column dataField="startDate"
-                        [calculateCellValue]="calculateDateValue"
+                        dataType="date"
+                        [format]="dateFormat"
                         [allowSorting]="false"
                         cssClass="colorful tabular clipboard-holder">
             </dxi-column>
@@ -70,7 +71,8 @@
                     cssClass="clipboard-holder">
             <dxi-column dataField="date"
                         [allowSorting]="false"
-                        [calculateCellValue]="calculateDateValue"
+                        [format]="dateFormat"
+                        dataType="date"
                         cssClass="colorful clipboard-holder">
             </dxi-column>
             <dxi-column dataField="type"

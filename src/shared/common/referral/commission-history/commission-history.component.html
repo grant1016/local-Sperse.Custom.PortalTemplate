@@ -27,9 +27,10 @@
             <dxo-scrolling rowRenderingMode="virtual"></dxo-scrolling>
             <dxi-column [dataField]="commissionFields.OrderDate"
                         [caption]="ls.l('Referral.OrderDate')"
+                        dataType="date"
                         sortOrder="desc"
                         cssClass="clipboard-holder tabular"
-                        [calculateCellValue]="calculateDateValue">
+                        [format]="dateFormat">
             </dxi-column>
             <dxi-column [dataField]="commissionFields.OrderNumber"
                         alignment="left"

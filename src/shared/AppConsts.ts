@@ -76,6 +76,7 @@ export class AppConsts {
         date: 'MM/dd/yyyy',
         dateTime: 'MM/dd/yyyy hh:mm a',
         dateMoment: 'MM/DD/YYYY',
+        time: 'hh:mm a',
         monthDay: 'MMM d',
         inboxDate: 'MMM d, yyyy hh:mm a',
         fieldDateTime: 'MMM DD, YYYY HH:mm',

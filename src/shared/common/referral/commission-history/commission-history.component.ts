@@ -153,10 +153,6 @@ export class CommissionHistoryComponent implements OnInit {
         });
     }
 
-    calculateDateValue = (commission: CommissionDto) => {
-        return this.datePipe.transform(commission.OrderDate, this.dateFormat, this.userTimezone);
-    }
-
     calculateSaleAmountValue = (commission: CommissionDto) => {
         return this.currencyPipe.transform(commission.ProductAmount);
     }
