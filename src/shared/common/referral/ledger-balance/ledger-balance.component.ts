@@ -150,28 +150,13 @@ export class LedgerBalanceComponent implements OnInit {
         }
     }
 
-    onCellPrepared(e, text: string) {
-        if (e.rowType === 'header') {
-            if (e.columnIndex === 0) {
-                e.cellElement.colSpan = 3;
-                e.cellElement.innerHTML = text;
-                e.cellElement.style.textAlign = 'right';
-            } else if (e.columnIndex < 3) {
-                e.cellElement.style.display = 'none';
-            }
-        } else if (e.rowType === 'data' && e.column.dataField === 'status' && (e.value === 'Starting-Balance'
-            || e.value === 'Total-Earnings' || e.value === 'Total-Withdrawals')) {
-            e.cellElement.innerHTML = '';
-        }
-    }
-
     downloadReport() {
         const workBook = new Workbook();
         const worksheet = workBook.addWorksheet(
             'Payout Ledger History',
             {
                 properties: { defaultRowHeight: 26 },
-                views: [ { showGridLines: false } ],
+                views: [ { showGridLines: false, state: 'normal' } ],
             }
         );
         exportDataGrid({
@@ -185,6 +170,9 @@ export class LedgerBalanceComponent implements OnInit {
                 const { gridCell, excelCell } = options;
                 if (gridCell.rowType === 'header') {
                     excelCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'F2F2F2' }};
+                    if (gridCell.column['hasColumns']) {
+                        excelCell.alignment = { horizontal: 'right' };
+                    }
                 }
             })
         }).then((cellRange: CellRange) => {
@@ -200,11 +188,12 @@ export class LedgerBalanceComponent implements OnInit {
             this.referralExportService.addAmountsWidget(worksheet, 'c6e0b4', 7, 'AVAILABLE', [
                 { name: 'Balance', value: this.currencyPipe.transform(this.ledgerTotals.availableBalance) }
             ]);
-            this.referralExportService.addTableBorders(worksheet, cellRange);
+            this.referralExportService.addTableBorders(worksheet, cellRange, 2);
+            this.referralExportService.addMergedColumnLeftBorder(worksheet, cellRange);
             return exportDataGrid({
                 worksheet: worksheet,
                 component: this.transactionsGrid.instance,
-                topLeftCell: { row: cellRange.from.row + 2, column: 2 },
+                topLeftCell: { row: cellRange.to.row + 2, column: 2 },
                 loadPanel: { enabled: false },
                 keepColumnWidths: true,
                 autoFilterEnabled: false,
@@ -212,10 +201,14 @@ export class LedgerBalanceComponent implements OnInit {
                     const { gridCell, excelCell } = options;
                     if (gridCell.rowType === 'header') {
                         excelCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'E2EFDA' }};
+                        if (gridCell.column['hasColumns']) {
+                            excelCell.alignment = { horizontal: 'right' };
+                        }
                     }
                 })
             }).then((cellRange: CellRange) => {
-                this.referralExportService.addTableBorders(worksheet, cellRange);
+                this.referralExportService.addTableBorders(worksheet, cellRange, 2);
+                this.referralExportService.addMergedColumnLeftBorder(worksheet, cellRange);
             });
         }).then(() => {
             workBook.xlsx.writeBuffer().then((buffer: BlobPart) => {
@@ -235,15 +228,22 @@ export class LedgerBalanceComponent implements OnInit {
         return commissionLedgerInfo.type + ' ' + date;
     }
 
+    calculateStatusValue = (commissionLedgerInfo: CommissionLedgerEntryInfo) => {
+        const status: any = commissionLedgerInfo.status;
+        return status === 'Starting-Balance' || status === 'Total-Earnings' || status === 'Total-Withdrawals'
+               ? ''
+               : commissionLedgerInfo.status;
+    }
+
     calculateEarningsAmountValue = (commissionLedgerInfo: CommissionLedgerEntryInfo) => {
         return commissionLedgerInfo.totalAmount > 0
             ? this.currencyPipe.transform(commissionLedgerInfo.totalAmount)
-            : (commissionLedgerInfo.status as any == 'Total-Earnings' ? 0 : null );
+            : (commissionLedgerInfo.status as any == 'Total-Earnings' ? 0 : null);
     }
 
     calculateWithdrawalAmount = (commissionLedgerInfo: CommissionLedgerEntryInfo) => {
         return commissionLedgerInfo.totalAmount < 0
                ? this.currencyPipe.transform(commissionLedgerInfo.totalAmount)
-               : (commissionLedgerInfo.status as any == 'Total-Withdrawals' ? 0 : null );
+               : (commissionLedgerInfo.status as any == 'Total-Withdrawals' ? 0 : null);
     }
 }

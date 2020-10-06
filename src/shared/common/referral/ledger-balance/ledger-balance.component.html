@@ -7,92 +7,114 @@
                   [showBorders]="true"
                   [dataSource]="pendingCommissions"
                   [allowColumnReordering]="false"
-                  (onRowPrepared)="onRowPrepared($event)"
-                  (onCellPrepared)="onCellPrepared($event, 'Total including pending amounts:')">
-        <dxi-column dataField="startDate"
-                    cellTemplate="dateTemplate"
-                    [calculateCellValue]="calculateDateValue"
-                    [allowSorting]="false"
-                    cssClass="colorful tabular clipboard-holder"
-                    caption="">
+                  (onRowPrepared)="onRowPrepared($event)">
+        <dxi-column alignment="right"
+                    caption="Total including pending amounts:"
+                    cssClass="clipboard-holder">
+            <dxi-column dataField="startDate"
+                        [calculateCellValue]="calculateDateValue"
+                        [allowSorting]="false"
+                        cssClass="colorful tabular clipboard-holder">
+            </dxi-column>
+            <dxi-column dataField="type"
+                        [allowSorting]="false"
+                        [calculateCellValue]="calculateDescriptionValue"
+                        cssClass="colorful clipboard-holder">
+            </dxi-column>
+            <dxi-column dataField="status"
+                        cssClass="colorful clipboard-holder"
+                        [calculateCellValue]="calculateStatusValue"
+                        [allowSorting]="false">
+            </dxi-column>
         </dxi-column>
-        <dxi-column dataField="type"
-                    [allowSorting]="false"
-                    [calculateCellValue]="calculateDescriptionValue"
-                    cssClass="colorful clipboard-holder"
-                    caption="">
-        </dxi-column>
-        <dxi-column dataField="status"
-                    cssClass="colorful clipboard-holder"
-                    [allowSorting]="false"
-                    caption="">
-        </dxi-column>
-        <dxi-column dataField="totalAmount"
-                    alignment="right"
-                    cssClass="clipboard-holder"
+        <dxi-column alignment="right"
                     [caption]="pendingEarningsTotal | currency"
-                    [allowSorting]="false"
-                    [calculateCellValue]="calculateEarningsAmountValue"
-                    format="currency">
+                    cssClass="clipboard-holder">
+            <dxi-column dataField="totalAmount"
+                        alignment="right"
+                        cssClass="clipboard-holder"
+                        [allowSorting]="false"
+                        [calculateCellValue]="calculateEarningsAmountValue"
+                        format="currency">
+            </dxi-column>
         </dxi-column>
-        <dxi-column dataField="totalAmount"
-                    cssClass="withdrawalAmount clipboard-holder"
-                    alignment="right"
-                    [calculateCellValue]="calculateWithdrawalAmount"
-                    [allowSorting]="false"
+        <dxi-column alignment="right"
                     [caption]="pendingWithdrawalsTotal | currency"
-                    format="currency">
+                    cssClass="clipboard-holder">
+            <dxi-column dataField="totalAmount"
+                        cssClass="withdrawalAmount clipboard-holder"
+                        alignment="right"
+                        [calculateCellValue]="calculateWithdrawalAmount"
+                        [allowSorting]="false"
+                        format="currency">
+            </dxi-column>
         </dxi-column>
-        <dxi-column dataField="balance"
-                    alignment="right"
-                    cssClass="clipboard-holder"
-                    [allowSorting]="false"
+        <dxi-column alignment="right"
                     [caption]="(pendingEarningsTotal - pendingWithdrawalsTotal) | currency"
-                    format="currency">
+                    cssClass="clipboard-holder">
+            <dxi-column dataField="balance"
+                        alignment="right"
+                        cssClass="clipboard-holder"
+                        [allowSorting]="false"
+                        format="currency">
+            </dxi-column>
         </dxi-column>
     </dx-data-grid>
     <dx-data-grid #transactionsGrid
                   [showBorders]="true"
                   [dataSource]="approvedCommissions"
                   [allowColumnReordering]="false"
-                  (onRowPrepared)="onRowPrepared($event)"
-                  (onCellPrepared)="onCellPrepared($event, 'Total amounts posted in your account:')">
-        <dxi-column dataField="date"
-                    [allowSorting]="false"
-                    [calculateCellValue]="calculateDateValue"
-                    cssClass="colorful clipboard-holder">
+                  (onRowPrepared)="onRowPrepared($event)">
+        <dxi-column alignment="right"
+                    caption="Total amounts posted in your account:"
+                    cssClass="clipboard-holder">
+            <dxi-column dataField="date"
+                        [allowSorting]="false"
+                        [calculateCellValue]="calculateDateValue"
+                        cssClass="colorful clipboard-holder">
+            </dxi-column>
+            <dxi-column dataField="type"
+                        [allowSorting]="false"
+                        [calculateCellValue]="calculateDescriptionValue"
+                        cssClass="colorful clipboard-holder">
+            </dxi-column>
+            <dxi-column dataField="status"
+                        [allowSorting]="false"
+                        [calculateCellValue]="calculateStatusValue"
+                        cssClass="colorful clipboard-holder">
+            </dxi-column>
         </dxi-column>
-        <dxi-column dataField="type"
-                    [allowSorting]="false"
-                    [calculateCellValue]="calculateDescriptionValue"
-                    cssClass="colorful clipboard-holder">
-        </dxi-column>
-        <dxi-column dataField="status"
-                    [allowSorting]="false"
-                    cssClass="colorful clipboard-holder">
-        </dxi-column>
-        <dxi-column dataField="totalAmount"
-                    alignment="right"
-                    cssClass="clipboard-holder clipboard-holder"
-                    [allowSorting]="false"
+        <dxi-column alignment="right"
                     [caption]="earningsTotal | currency"
-                    [calculateCellValue]="calculateEarningsAmountValue"
-                    format="currency">
+                    cssClass="clipboard-holder">
+            <dxi-column dataField="totalAmount"
+                        alignment="right"
+                        cssClass="clipboard-holder clipboard-holder"
+                        [allowSorting]="false"
+                        [calculateCellValue]="calculateEarningsAmountValue"
+                        format="currency">
+            </dxi-column>
         </dxi-column>
-        <dxi-column dataField="totalAmount"
-                    cssClass="withdrawalAmount clipboard-holder"
-                    alignment="right"
-                    [allowSorting]="false"
-                    [calculateCellValue]="calculateWithdrawalAmount"
+        <dxi-column alignment="right"
                     [caption]="withdrawalsTotal | currency"
-                    format="currency">
+                    cssClass="clipboard-holder">
+            <dxi-column dataField="totalAmount"
+                        cssClass="withdrawalAmount clipboard-holder"
+                        alignment="right"
+                        [allowSorting]="false"
+                        [calculateCellValue]="calculateWithdrawalAmount"
+                        format="currency">
+            </dxi-column>
         </dxi-column>
-        <dxi-column dataField="balance"
-                    alignment="right"
-                    cssClass="clipboard-holder"
-                    [allowSorting]="false"
+        <dxi-column alignment="right"
                     [caption]="(earningsTotal - withdrawalsTotal) | currency"
-                    format="currency">
+                    cssClass="clipboard-holder">
+            <dxi-column dataField="balance"
+                        alignment="right"
+                        cssClass="clipboard-holder"
+                        [allowSorting]="false"
+                        format="currency">
+            </dxi-column>
         </dxi-column>
     </dx-data-grid>
 </div>

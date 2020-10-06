@@ -81,7 +81,7 @@ export class ReferralExportService {
         });
     }
 
-    addTableBorders(worksheet: Worksheet, cellRange: CellRange) {
+    addTableBorders(worksheet: Worksheet, cellRange: CellRange, headerRowsAmount?: number) {
         for (let rowIndex = cellRange.from.row; rowIndex <= cellRange.to.row; rowIndex++) {
             for (let columnIndex = cellRange.from.column; columnIndex <= cellRange.to.column; columnIndex++) {
                 let border: Partial<Borders> = {};
@@ -89,7 +89,7 @@ export class ReferralExportService {
                     border.left = this.thinBorder;
                 }
 
-                if (rowIndex === cellRange.from.row) {
+                if (rowIndex === cellRange.from.row || (headerRowsAmount && rowIndex <= cellRange.from.row + headerRowsAmount)) {
                     /** Borders for header row */
                     border.top = border.bottom = this.thinBorder;
                 } else {
@@ -103,5 +103,11 @@ export class ReferralExportService {
                 worksheet.getCell(rowIndex, columnIndex).border = border;
             }
         }
+    }
+
+    addMergedColumnLeftBorder(worksheet: Worksheet, cellRange: CellRange) {
+        /** Add left border to the first merged column */
+        const topMergedColumn = worksheet.getCell(cellRange.from.row, cellRange.from.column + 2);
+        topMergedColumn.border = { ...topMergedColumn.border, left: this.thinBorder };
     }
 }
