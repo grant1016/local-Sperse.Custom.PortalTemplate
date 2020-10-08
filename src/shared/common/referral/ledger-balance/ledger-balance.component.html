@@ -88,7 +88,7 @@
             </dxi-column>
         </dxi-column>
         <dxi-column alignment="right"
-                    [caption]="earningsTotal | currency"
+                    [caption]="(earningsTotal + ledger.startingEarningsBalance) | currency"
                     cssClass="clipboard-holder">
             <dxi-column dataField="earningsAmount"
                         alignment="right"
@@ -99,7 +99,7 @@
             </dxi-column>
         </dxi-column>
         <dxi-column alignment="right"
-                    [caption]="withdrawalsTotal | currency"
+                    [caption]="(withdrawalsTotal + ledger.startingWithdrawalsBalance) | currency"
                     cssClass="clipboard-holder">
             <dxi-column dataField="withdrawalAmount"
                         cssClass="withdrawalAmount clipboard-holder"
@@ -110,7 +110,7 @@
             </dxi-column>
         </dxi-column>
         <dxi-column alignment="right"
-                    [caption]="(earningsTotal - withdrawalsTotal) | currency"
+                    [caption]="(earningsTotal - withdrawalsTotal + ledger.startingEarningsBalance - ledger.startingWithdrawalsBalance) | currency"
                     cssClass="clipboard-holder">
             <dxi-column dataField="balance"
                         alignment="right"

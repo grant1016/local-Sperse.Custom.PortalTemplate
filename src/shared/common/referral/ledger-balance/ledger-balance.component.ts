@@ -19,6 +19,7 @@ import { ReferralExportService } from '@shared/common/referral/referral-export.s
 import {
     CommissionLedgerEntryInfo,
     CommissionLedgerEntryStatus,
+    CommissionLedgerEntryType,
     GetLedgerOutput, GetLedgerTotalsOutput,
     UserCommissionServiceProxy
 } from '@shared/service-proxies/service-proxies';
@@ -50,7 +51,7 @@ export class LedgerBalanceComponent implements OnInit {
     earningsTotal = 0;
     withdrawalsTotal = 0;
     isDataLoaded = false;
-    private startDate: moment.Moment = moment('2020-05-31 23:59:59');
+    private startDate: moment.Moment = moment('2020-06-01 00:00:00');
 
     constructor(
         private layoutService: LayoutService,
@@ -231,13 +232,13 @@ export class LedgerBalanceComponent implements OnInit {
     }
 
     calculateEarningsAmountValue = (commissionLedgerInfo: CommissionLedgerEntryInfo) => {
-        return commissionLedgerInfo.totalAmount > 0
+        return commissionLedgerInfo.type === CommissionLedgerEntryType.Earning
             ? this.currencyPipe.transform(commissionLedgerInfo.totalAmount)
             : (commissionLedgerInfo.status as any == 'Total-Earnings' ? 0 : null);
     }
 
     calculateWithdrawalAmount = (commissionLedgerInfo: CommissionLedgerEntryInfo) => {
-        return commissionLedgerInfo.totalAmount < 0
+        return commissionLedgerInfo.type === CommissionLedgerEntryType.Withdrawal
                ? this.currencyPipe.transform(commissionLedgerInfo.totalAmount)
                : (commissionLedgerInfo.status as any == 'Total-Withdrawals' ? 0 : null);
     }
