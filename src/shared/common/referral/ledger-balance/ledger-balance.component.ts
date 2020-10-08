@@ -104,31 +104,17 @@ export class LedgerBalanceComponent implements OnInit {
                 totalAmount: null,
                 balance: this.ledger.startingEarningsBalance - this.ledger.startingWithdrawalsBalance
             };
-            const totalWithdrawalsRow: any = {
-                id: undefined,
-                status: 'Total-Withdrawals',
-                startDate: null,
-                endDate: null,
-                date: null,
-                type: 'Total Withdrawals (Historical)',
-                totalAmount: this.ledger.startingWithdrawalsBalance || undefined,
-                balance: null
-            };
-            const totalEarningsRow: any = {
-                id: undefined,
-                status: 'Total-Earnings',
-                startDate: null,
-                endDate: null,
-                date: null,
-                type: 'Total Earnings (Historical)',
-                totalAmount: this.ledger.startingEarningsBalance || undefined,
-                balance: null
-            };
-            this.approvedCommissions.push(startingBalanceRow, totalWithdrawalsRow, totalEarningsRow);
+            this.approvedCommissions.push(startingBalanceRow);
             this.isDataLoaded = true;
             this.changeDetectorRef.detectChanges();
         });
     }
+
+    emptyText = () => null;
+
+    customizeStartingEarnings = () => this.ledger && this.currencyPipe.transform(this.ledger.startingEarningsBalance);
+
+    customizeStartingWithdrawals = () => this.ledger && this.currencyPipe.transform(this.ledger.startingWithdrawalsBalance);
 
     save() {
         if (this.validator.instance.validate().isValid) {
@@ -147,6 +133,16 @@ export class LedgerBalanceComponent implements OnInit {
             || e.data.status === 'Total-Withdrawals')
         ) {
             e.rowElement.classList.add(e.data.status.toLowerCase());
+        }
+    }
+
+    onCellPrepared(e) {
+        if (e.rowType === 'totalFooter' ) {
+            if (e.columnIndex === 1) {
+                e.cellElement.colSpan = 2;
+            } else if (e.columnIndex === 2) {
+                e.cellElement.style.display = 'none';
+            }
         }
     }
 
