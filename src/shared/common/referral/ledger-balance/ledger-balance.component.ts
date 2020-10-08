@@ -50,6 +50,7 @@ export class LedgerBalanceComponent implements OnInit {
     earningsTotal = 0;
     withdrawalsTotal = 0;
     isDataLoaded = false;
+    private startDate: moment.Moment = moment('2020-05-31 23:59:59');
 
     constructor(
         private layoutService: LayoutService,
@@ -68,7 +69,7 @@ export class LedgerBalanceComponent implements OnInit {
         this.referralService.ledgerTotals$.subscribe((ledgerTotals: GetLedgerTotalsOutput) => {
             this.ledgerTotals = ledgerTotals;
         });
-        this.userCommission.getLedger(undefined).subscribe((ledger: GetLedgerOutput) => {
+        this.userCommission.getLedger(this.startDate).subscribe((ledger: GetLedgerOutput) => {
             this.ledger = ledger;
             let balance = 0;
             ledger.entries
@@ -99,7 +100,7 @@ export class LedgerBalanceComponent implements OnInit {
                 status: 'Starting-Balance',
                 startDate: null,
                 endDate: null,
-                date: null,
+                date: this.startDate,
                 type: 'Starting Balance',
                 totalAmount: null,
                 balance: this.ledger.startingEarningsBalance - this.ledger.startingWithdrawalsBalance
@@ -111,6 +112,8 @@ export class LedgerBalanceComponent implements OnInit {
     }
 
     emptyText = () => null;
+
+    getFormattedStartDate = () => this.datePipe.transform(this.startDate, this.dateFormat, this.userTimezone);
 
     customizeStartingEarnings = () => this.ledger && this.currencyPipe.transform(this.ledger.startingEarningsBalance);
 
