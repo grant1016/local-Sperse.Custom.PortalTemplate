@@ -37,10 +37,20 @@
 
         .dx-datagrid-summary-item {
             height: 26px;
-            line-height: 28px;
+            line-height: 15px;
             font-size: 14px;
             font-weight: 600;
             color: initial;
+        }
+
+        .dx-datagrid-total-footer td {
+            padding: 0 !important;
+            .dx-datagrid-text-content {
+                padding: 7px 25px 7px 7px;
+                &:first-child {
+                    border-bottom: 1px solid #868686;
+                }
+            }
         }
 
         td.withdrawalAmount {

@@ -35,8 +35,7 @@
                         alignment="right"
                         cssClass="clipboard-holder"
                         [allowSorting]="false"
-                        [calculateCellValue]="calculateEarningsAmountValue"
-                        format="currency">
+                        [calculateCellValue]="calculateEarningsAmountValue">
             </dxi-column>
         </dxi-column>
         <dxi-column alignment="right"
@@ -46,8 +45,7 @@
                         cssClass="withdrawalAmount clipboard-holder"
                         alignment="right"
                         [calculateCellValue]="calculateWithdrawalAmount"
-                        [allowSorting]="false"
-                        format="currency">
+                        [allowSorting]="false">
             </dxi-column>
         </dxi-column>
         <dxi-column alignment="right"
@@ -57,7 +55,7 @@
                         alignment="right"
                         cssClass="clipboard-holder"
                         [allowSorting]="false"
-                        format="currency">
+                        [format]="currencyFormat">
             </dxi-column>
         </dxi-column>
     </dx-data-grid>
@@ -88,42 +86,47 @@
             </dxi-column>
         </dxi-column>
         <dxi-column alignment="right"
-                    [caption]="(earningsTotal + ledger.startingEarningsBalance) | currency"
+                    [caption]="(earningsTotal + ledger?.startingEarningsBalance) | currency"
                     cssClass="clipboard-holder">
             <dxi-column dataField="earningsAmount"
                         alignment="right"
                         cssClass="clipboard-holder"
                         [allowSorting]="false"
-                        [calculateCellValue]="calculateEarningsAmountValue"
-                        format="currency">
+                        [calculateCellValue]="calculateEarningsAmountValue">
             </dxi-column>
         </dxi-column>
         <dxi-column alignment="right"
-                    [caption]="(withdrawalsTotal + ledger.startingWithdrawalsBalance) | currency"
+                    [caption]="(withdrawalsTotal + ledger?.startingWithdrawalsBalance) | currency"
                     cssClass="clipboard-holder">
             <dxi-column dataField="withdrawalAmount"
                         cssClass="withdrawalAmount clipboard-holder"
                         alignment="right"
                         [allowSorting]="false"
-                        [calculateCellValue]="calculateWithdrawalAmount"
-                        format="currency">
+                        [calculateCellValue]="calculateWithdrawalAmount">
             </dxi-column>
         </dxi-column>
         <dxi-column alignment="right"
-                    [caption]="(earningsTotal - withdrawalsTotal + ledger.startingEarningsBalance - ledger.startingWithdrawalsBalance) | currency"
+                    [caption]="(earningsTotal - withdrawalsTotal + ledger?.startingEarningsBalance - ledger?.startingWithdrawalsBalance) | currency"
                     cssClass="clipboard-holder">
             <dxi-column dataField="balance"
                         alignment="right"
                         cssClass="clipboard-holder"
                         [allowSorting]="false"
-                        format="currency">
+                        [format]="currencyFormat">
             </dxi-column>
         </dxi-column>
         <dxo-summary>
             <dxi-total-item column="date" [customizeText]="getFormattedStartDate" displayFormat="{0}"></dxi-total-item>
+            <dxi-total-item column="type" displayFormat="Starting Balance"></dxi-total-item>
+            <dxi-total-item column="earningsAmount" [customizeText]="emptyText" displayFormat="{0}"></dxi-total-item>
+            <dxi-total-item column="withdrawalAmount" [customizeText]="emptyText" displayFormat="{0}"></dxi-total-item>
+            <dxi-total-item column="balance" [customizeText]="customizeStartingBalance" displayFormat="{0}"></dxi-total-item>
+
+            <dxi-total-item column="date" [customizeText]="getFormattedStartDate" displayFormat="{0}"></dxi-total-item>
             <dxi-total-item column="type" displayFormat="Total Withdrawals (Historical)"></dxi-total-item>
             <dxi-total-item column="earningsAmount" [customizeText]="emptyText" displayFormat="{0}"></dxi-total-item>
-            <dxi-total-item column="withdrawalAmount" [customizeText]="customizeStartingWithdrawals" summaryType="sum" displayFormat="{0}"></dxi-total-item>
+            <dxi-total-item column="withdrawalAmount" [customizeText]="customizeStartingWithdrawals"displayFormat="{0}"></dxi-total-item>
+            <dxi-total-item column="balance" [customizeText]="emptyText" displayFormat="{0}"></dxi-total-item>
 
             <dxi-total-item column="date" [customizeText]="getFormattedStartDate" displayFormat="{0}"></dxi-total-item>
             <dxi-total-item column="type" displayFormat="Total Earnings (Historical)"></dxi-total-item>

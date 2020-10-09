@@ -14,7 +14,6 @@ import { DashboardWidgetsService } from '@shared/crm/dashboard-widgets/dashboard
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { DxDataGridComponent, DxValidatorComponent } from '@node_modules/devextreme-angular';
 import { NotifyService } from '@abp/notify/notify.service';
-import { DateHelper } from '@shared/helpers/DateHelper';
 import { ReferralExportService } from '@shared/common/referral/referral-export.service';
 import {
     CommissionLedgerEntryInfo,
@@ -43,8 +42,11 @@ export class LedgerBalanceComponent implements OnInit {
     ledger: GetLedgerOutput;
     pendingCommissions: CommissionLedgerEntryInfo[] = [];
     approvedCommissions: CommissionLedgerEntryInfo[] = [];
-    userTimezone: string = DateHelper.getUserTimezone();
     dateFormat = 'MMM-dd-yyyy E';
+    currencyFormat = {
+        type: 'currency',
+        precision: 2
+    };
     ledgerTotals: GetLedgerTotalsOutput;
     pendingEarningsTotal = 0;
     pendingWithdrawalsTotal = 0;
@@ -72,21 +74,22 @@ export class LedgerBalanceComponent implements OnInit {
         });
         this.userCommission.getLedger(this.startDate).subscribe((ledger: GetLedgerOutput) => {
             this.ledger = ledger;
-            let balance = 0;
+            let pendingBalance = 0, approvedBalance = 0;
             ledger.entries
                 .sort((entryA: CommissionLedgerEntryInfo, entryB: CommissionLedgerEntryInfo) => {
                     return moment(entryA.date).isAfter(entryB.date) ? 1 : -1;
                 })
                 .forEach((commissionLedgerInfo: CommissionLedgerEntryInfo) => {
                     if (commissionLedgerInfo.status === CommissionLedgerEntryStatus.Pending) {
-                        this.pendingCommissions.push(commissionLedgerInfo);
+                        commissionLedgerInfo['balance'] = pendingBalance += this.getBalanceModifier(commissionLedgerInfo);
+                        this.pendingCommissions.unshift(commissionLedgerInfo);
                         if (commissionLedgerInfo.totalAmount > 0) {
                             this.pendingEarningsTotal += commissionLedgerInfo.totalAmount;
                         } else {
                             this.pendingWithdrawalsTotal += commissionLedgerInfo.totalAmount;
                         }
                     } else {
-                        commissionLedgerInfo['balance'] = balance += commissionLedgerInfo.totalAmount;
+                        commissionLedgerInfo['balance'] = approvedBalance += this.getBalanceModifier(commissionLedgerInfo);
                         this.approvedCommissions.unshift(commissionLedgerInfo);
                         if (commissionLedgerInfo.totalAmount > 0) {
                             this.earningsTotal += commissionLedgerInfo.totalAmount;
@@ -95,26 +98,22 @@ export class LedgerBalanceComponent implements OnInit {
                         }
                     }
                 });
-
-            const startingBalanceRow: any = {
-                id: undefined,
-                status: 'Starting-Balance',
-                startDate: null,
-                endDate: null,
-                date: this.startDate,
-                type: 'Starting Balance',
-                totalAmount: null,
-                balance: this.ledger.startingEarningsBalance - this.ledger.startingWithdrawalsBalance
-            };
-            this.approvedCommissions.push(startingBalanceRow);
             this.isDataLoaded = true;
             this.changeDetectorRef.detectChanges();
         });
     }
 
+    private getBalanceModifier(commissionLedgerInfo: CommissionLedgerEntryInfo) {
+         return commissionLedgerInfo.type === CommissionLedgerEntryType.Earning
+                ? (+commissionLedgerInfo.totalAmount)
+                : (-commissionLedgerInfo.totalAmount);
+    }
+
     emptyText = () => null;
 
-    getFormattedStartDate = () => this.datePipe.transform(this.startDate, this.dateFormat, this.userTimezone);
+    getFormattedStartDate = () => 'May-31-2020 Sun';
+
+    customizeStartingBalance = () => this.ledger && this.currencyPipe.transform(this.ledger.startingEarningsBalance - this.ledger.startingWithdrawalsBalance);
 
     customizeStartingEarnings = () => this.ledger && this.currencyPipe.transform(this.ledger.startingEarningsBalance);
 
