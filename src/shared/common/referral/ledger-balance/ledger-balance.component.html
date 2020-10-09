@@ -106,7 +106,7 @@
             </dxi-column>
         </dxi-column>
         <dxi-column alignment="right"
-                    [caption]="(earningsTotal - withdrawalsTotal + ledger?.startingEarningsBalance - ledger?.startingWithdrawalsBalance) | currency"
+                    [caption]="(earningsTotal - withdrawalsTotal + ledger?.availableBalance) | currency"
                     cssClass="clipboard-holder">
             <dxi-column dataField="balance"
                         alignment="right"

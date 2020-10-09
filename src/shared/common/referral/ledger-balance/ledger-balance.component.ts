@@ -74,7 +74,7 @@ export class LedgerBalanceComponent implements OnInit {
         });
         this.userCommission.getLedger(this.startDate).subscribe((ledger: GetLedgerOutput) => {
             this.ledger = ledger;
-            let pendingBalance = 0, approvedBalance = 0;
+            let pendingBalance = 0, approvedBalance = ledger.availableBalance;
             ledger.entries
                 .sort((entryA: CommissionLedgerEntryInfo, entryB: CommissionLedgerEntryInfo) => {
                     return moment(entryA.date).isAfter(entryB.date) ? 1 : -1;
@@ -113,7 +113,7 @@ export class LedgerBalanceComponent implements OnInit {
 
     getFormattedStartDate = () => 'May-31-2020 Sun';
 
-    customizeStartingBalance = () => this.ledger && this.currencyPipe.transform(this.ledger.startingEarningsBalance - this.ledger.startingWithdrawalsBalance);
+    customizeStartingBalance = () => this.ledger && this.currencyPipe.transform(this.ledger.availableBalance);
 
     customizeStartingEarnings = () => this.ledger && this.currencyPipe.transform(this.ledger.startingEarningsBalance);
 
