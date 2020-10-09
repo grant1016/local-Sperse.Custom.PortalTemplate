@@ -109,11 +109,9 @@ export class DxDataGridDirective implements OnInit, OnDestroy {
     getDateFormatted(value: string, dateFormat: string,  withoutTime: boolean = true) {
         let date = value && this.datePipe.transform(
             value,
-            dateFormat ? dateFormat + ' ' + AppConsts.formatting.time : AppConsts.formatting.dateTime,
+            (dateFormat || AppConsts.formatting.date) + (withoutTime ? '' : ' ' +  AppConsts.formatting.time),
             this.timezone
         );
-        if (withoutTime)
-            date = date && date.split(' ').shift();
         return date || '';
     }
 
