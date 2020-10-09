@@ -81,7 +81,7 @@ export class LedgerBalanceComponent implements OnInit {
                 })
                 .forEach((commissionLedgerInfo: CommissionLedgerEntryInfo) => {
                     if (commissionLedgerInfo.status === CommissionLedgerEntryStatus.Pending) {
-                        commissionLedgerInfo['balance'] = pendingBalance += this.getBalanceModifier(commissionLedgerInfo);
+                        commissionLedgerInfo['balance'] = pendingBalance += commissionLedgerInfo.totalAmount;
                         this.pendingCommissions.unshift(commissionLedgerInfo);
                         if (commissionLedgerInfo.totalAmount > 0) {
                             this.pendingEarningsTotal += commissionLedgerInfo.totalAmount;
@@ -89,7 +89,7 @@ export class LedgerBalanceComponent implements OnInit {
                             this.pendingWithdrawalsTotal += commissionLedgerInfo.totalAmount;
                         }
                     } else {
-                        commissionLedgerInfo['balance'] = approvedBalance += this.getBalanceModifier(commissionLedgerInfo);
+                        commissionLedgerInfo['balance'] = approvedBalance += commissionLedgerInfo.totalAmount;
                         this.approvedCommissions.unshift(commissionLedgerInfo);
                         if (commissionLedgerInfo.totalAmount > 0) {
                             this.earningsTotal += commissionLedgerInfo.totalAmount;
@@ -101,12 +101,6 @@ export class LedgerBalanceComponent implements OnInit {
             this.isDataLoaded = true;
             this.changeDetectorRef.detectChanges();
         });
-    }
-
-    private getBalanceModifier(commissionLedgerInfo: CommissionLedgerEntryInfo) {
-         return commissionLedgerInfo.type === CommissionLedgerEntryType.Earning
-                ? (+commissionLedgerInfo.totalAmount)
-                : (-commissionLedgerInfo.totalAmount);
     }
 
     emptyText = () => null;
