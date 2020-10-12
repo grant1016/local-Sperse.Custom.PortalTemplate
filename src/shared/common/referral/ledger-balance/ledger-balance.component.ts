@@ -74,14 +74,13 @@ export class LedgerBalanceComponent implements OnInit {
         });
         this.userCommission.getLedger(this.startDate).subscribe((ledger: GetLedgerOutput) => {
             this.ledger = ledger;
-            let pendingBalance = 0, approvedBalance = ledger.availableBalance;
+            let balance = ledger.startingEarningsBalance + ledger.startingWithdrawalsBalance;
             ledger.entries
                 .sort((entryA: CommissionLedgerEntryInfo, entryB: CommissionLedgerEntryInfo) => {
                     return moment(entryA.date).isAfter(entryB.date) ? 1 : -1;
                 })
                 .forEach((commissionLedgerInfo: CommissionLedgerEntryInfo) => {
                     if (commissionLedgerInfo.status === CommissionLedgerEntryStatus.Pending) {
-                        commissionLedgerInfo['balance'] = pendingBalance += commissionLedgerInfo.totalAmount;
                         this.pendingCommissions.unshift(commissionLedgerInfo);
                         if (commissionLedgerInfo.totalAmount > 0) {
                             this.pendingEarningsTotal += commissionLedgerInfo.totalAmount;
@@ -89,7 +88,7 @@ export class LedgerBalanceComponent implements OnInit {
                             this.pendingWithdrawalsTotal += commissionLedgerInfo.totalAmount;
                         }
                     } else {
-                        commissionLedgerInfo['balance'] = approvedBalance += commissionLedgerInfo.totalAmount;
+                        commissionLedgerInfo['balance'] = balance += commissionLedgerInfo.totalAmount;
                         this.approvedCommissions.unshift(commissionLedgerInfo);
                         if (commissionLedgerInfo.totalAmount > 0) {
                             this.earningsTotal += commissionLedgerInfo.totalAmount;
@@ -98,6 +97,10 @@ export class LedgerBalanceComponent implements OnInit {
                         }
                     }
                 });
+            /** Increment balance with pending balances */
+            for (let i = this.pendingCommissions.length - 1; i >= 0; i--) {
+                this.pendingCommissions[i]['balance'] = balance += this.pendingCommissions[i].totalAmount;
+            }
             this.isDataLoaded = true;
             this.changeDetectorRef.detectChanges();
         });
@@ -107,11 +110,19 @@ export class LedgerBalanceComponent implements OnInit {
 
     getFormattedStartDate = () => 'May-31-2020 Sun';
 
-    customizeStartingBalance = () => this.ledger && this.currencyPipe.transform(this.ledger.availableBalance);
+    customizeStartingBalance = () => this.ledger && this.currencyPipe.transform(this.ledger.startingEarningsBalance + this.ledger.startingWithdrawalsBalance);
 
     customizeStartingEarnings = () => this.ledger && this.currencyPipe.transform(this.ledger.startingEarningsBalance);
 
     customizeStartingWithdrawals = () => this.ledger && this.currencyPipe.transform(this.ledger.startingWithdrawalsBalance);
+
+    get approvedEarningsTotal(): number {
+        return this.earningsTotal + (this.ledger && this.ledger.startingEarningsBalance);
+    }
+
+    get approvedWithdrawalsTotal(): number {
+        return this.withdrawalsTotal + (this.ledger && this.ledger.startingWithdrawalsBalance);
+    }
 
     save() {
         if (this.validator.instance.validate().isValid) {
