@@ -235,10 +235,16 @@ export class LedgerBalanceComponent implements OnInit, OnDestroy {
     }
 
     calculateDescriptionValue = (commissionLedgerInfo: CommissionLedgerEntryInfo) => {
-        const startDate: string = commissionLedgerInfo.startDate ? commissionLedgerInfo.startDate.format('MM/DD') : '';
-        const endDate: string = commissionLedgerInfo.endDate ? commissionLedgerInfo.endDate.format('MM/DD') : '';
-        const date: string = startDate === endDate ? startDate : (startDate + ( startDate && endDate ? '-' : '') + endDate);
-        return commissionLedgerInfo.type + ' ' + date;
+        let description: string = commissionLedgerInfo.type;
+        if (commissionLedgerInfo.paymentSystem) {
+            description += ' (' + commissionLedgerInfo.paymentSystem + ')';
+        } else {
+            const startDate: string = commissionLedgerInfo.startDate ? commissionLedgerInfo.startDate.format('MM/DD') : '';
+            const endDate: string = commissionLedgerInfo.endDate ? commissionLedgerInfo.endDate.format('MM/DD') : '';
+            const date: string = startDate === endDate ? startDate : (startDate + ( startDate && endDate ? '-' : '') + endDate);
+            description += ' ' + date
+        }
+        return description;
     }
 
     calculateStatusValue = (commissionLedgerInfo: CommissionLedgerEntryInfo) => {
