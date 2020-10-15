@@ -248,7 +248,7 @@ export class LedgerBalanceComponent implements OnInit, OnDestroy {
                : commissionLedgerInfo.status;
     }
 
-    calculateEarningsAmountValue = (commissionLedgerInfo: CommissionLedgerEntryInfo) => {
+    calculateEarningsAmount = (commissionLedgerInfo: CommissionLedgerEntryInfo) => {
         return commissionLedgerInfo.type === CommissionLedgerEntryType.Earning
             ? this.currencyPipe.transform(commissionLedgerInfo.totalAmount)
             : (commissionLedgerInfo.status as any == 'Total-Earnings' ? 0 : null);

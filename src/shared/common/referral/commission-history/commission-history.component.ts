@@ -1,5 +1,13 @@
 /** Core imports */
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import {
+    ChangeDetectionStrategy,
+    ChangeDetectorRef,
+    Component,
+    ElementRef,
+    OnDestroy,
+    OnInit,
+    ViewChild
+} from '@angular/core';
 import { CurrencyPipe, DatePipe } from '@angular/common';
 
 /** Third party imports */
@@ -52,7 +60,7 @@ export class CommissionHistoryComponent implements OnInit, OnDestroy {
             deserializeDates: false,
             beforeSend: (request) => {
                 this.isDataLoaded = false;
-                this.loadingService.startLoading();
+                this.loadingService.startLoading(this.elementRef.nativeElement);
                 this.changeDetectorRef.detectChanges();
                 request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                 if (this.searchValue) {
@@ -65,7 +73,7 @@ export class CommissionHistoryComponent implements OnInit, OnDestroy {
             },
             onLoaded: () => {
                 this.isDataLoaded = true;
-                this.loadingService.finishLoading();
+                this.loadingService.finishLoading(this.elementRef.nativeElement);
                 this.changeDetectorRef.detectChanges();
             }
         }
@@ -81,6 +89,7 @@ export class CommissionHistoryComponent implements OnInit, OnDestroy {
         private referralExportService: ReferralExportService,
         private referralService: ReferralService,
         private changeDetectorRef: ChangeDetectorRef,
+        private elementRef: ElementRef,
         public httpInterceptor: AppHttpInterceptor,
         public ls: AppLocalizationService
     ) {}
