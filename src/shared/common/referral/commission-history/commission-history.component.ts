@@ -1,25 +1,24 @@
 /** Core imports */
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { CurrencyPipe, DatePipe } from '@angular/common';
 
 /** Third party imports */
 import DataSource from 'devextreme/data/data_source';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
-import { exportDataGrid } from 'devextreme/excel_exporter';
+import { CellRange, exportDataGrid } from 'devextreme/excel_exporter';
 import { Workbook } from 'exceljs';
 import saveAs from 'file-saver';
+import { Subscription } from 'rxjs';
 
 /** Application imports */
 import { KeysEnum } from '@shared/common/keys.enum/keys.enum';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { AppConsts } from '@shared/AppConsts';
-import { DateHelper } from '@shared/helpers/DateHelper';
 import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
 import { AppHttpInterceptor } from '@shared/http/appHttpInterceptor';
 import { Param } from '@shared/common/odata/param.model';
 import { ODataService } from '@shared/common/odata/odata.service';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
-import { CellRange } from '@node_modules/devextreme/excel_exporter';
 import { ReferralExportService } from '@shared/common/referral/referral-export.service';
 import { CommissionFields } from '@shared/common/referral/commission-history/commission-fields.enum';
 import { CommissionDto } from '@shared/common/referral/commission-history/commission-dto';
@@ -36,11 +35,10 @@ import { GetLedgerTotalsOutput } from '@shared/service-proxies/service-proxies';
     ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class CommissionHistoryComponent implements OnInit {
+export class CommissionHistoryComponent implements OnInit, OnDestroy {
     @ViewChild(DxDataGridComponent, { static: false }) dataGrid: DxDataGridComponent;
     readonly commissionFields: KeysEnum<CommissionDto> = CommissionFields;
     dateFormat = 'MMM-dd-yyyy';
-    userTimezone: string = DateHelper.getUserTimezone();
     defaultGridPagerConfig = DataGridService.defaultGridPagerConfig;
     searchValue;
     isDataLoaded = false;
@@ -73,6 +71,7 @@ export class CommissionHistoryComponent implements OnInit {
         }
     });
     ledgerTotals: GetLedgerTotalsOutput;
+    totalsSubscription: Subscription;
 
     constructor(
         private oDataService: ODataService,
@@ -87,7 +86,7 @@ export class CommissionHistoryComponent implements OnInit {
     ) {}
 
     ngOnInit() {
-        this.referralService.ledgerTotals$.subscribe((ledgerTotals: GetLedgerTotalsOutput) => {
+        this.totalsSubscription = this.referralService.ledgerTotals$.subscribe((ledgerTotals: GetLedgerTotalsOutput) => {
             this.ledgerTotals = ledgerTotals;
         });
     }
@@ -159,6 +158,10 @@ export class CommissionHistoryComponent implements OnInit {
 
     calculateCommissionAmountValue = (commission: CommissionDto) => {
         return this.currencyPipe.transform(commission.CommissionAmount);
+    }
+
+    ngOnDestroy() {
+        this.totalsSubscription.unsubscribe();
     }
 
 }

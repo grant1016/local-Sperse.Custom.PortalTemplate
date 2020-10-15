@@ -1,13 +1,20 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-import { publishReplay, refCount } from 'rxjs/operators';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { publishReplay, refCount, switchMap } from 'rxjs/operators';
 import { GetLedgerTotalsOutput, UserCommissionServiceProxy } from '@shared/service-proxies/service-proxies';
 
 @Injectable()
 export class ReferralService {
-    ledgerTotals$: Observable<GetLedgerTotalsOutput> = this.userCommission.getTotals().pipe(
+    private _refresh: BehaviorSubject<null> = new BehaviorSubject<null>(null);
+    refresh$: Observable<null> = this._refresh.asObservable();
+    ledgerTotals$: Observable<GetLedgerTotalsOutput> = this.refresh$.pipe(
+        switchMap(() => this.userCommission.getTotals()),
         publishReplay(),
         refCount()
-    )
+    );
     constructor(private userCommission: UserCommissionServiceProxy) {}
+
+    refresh() {
+        this._refresh.next(null);
+    }
 }

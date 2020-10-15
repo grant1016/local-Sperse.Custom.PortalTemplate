@@ -1,5 +1,5 @@
 /** Core imports */
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { CurrencyPipe, DatePipe } from '@angular/common';
 
 /** Third party imports */
@@ -7,12 +7,15 @@ import { Workbook } from 'exceljs';
 import { CellRange, exportDataGrid } from 'devextreme/excel_exporter';
 import saveAs from 'file-saver';
 import * as moment from 'moment';
+import { Observable, Subject } from 'rxjs';
+import { switchMap, takeUntil } from 'rxjs/operators';
+import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
+import { DxValidatorComponent } from 'devextreme-angular/ui/validator';
 
 /** Application imports */
 import { LayoutService } from '@app/shared/layout/layout.service';
 import { DashboardWidgetsService } from '@shared/crm/dashboard-widgets/dashboard-widgets.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { DxDataGridComponent, DxValidatorComponent } from '@node_modules/devextreme-angular';
 import { NotifyService } from '@abp/notify/notify.service';
 import { ReferralExportService } from '@shared/common/referral/referral-export.service';
 import {
@@ -34,7 +37,7 @@ import { ReferralService } from '@shared/common/referral/referral.service';
     ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class LedgerBalanceComponent implements OnInit {
+export class LedgerBalanceComponent implements OnInit, OnDestroy {
     @ViewChild('pendingTransactionsGrid', { static: false }) pendingTransactionsGrid: DxDataGridComponent;
     @ViewChild('transactionsGrid', { static: false }) transactionsGrid: DxDataGridComponent;
     @ViewChild(DxValidatorComponent, { static: false }) validator: DxValidatorComponent;
@@ -54,6 +57,8 @@ export class LedgerBalanceComponent implements OnInit {
     withdrawalsTotal = 0;
     isDataLoaded = false;
     private startDate: moment.Moment = moment('2020-06-01 00:00:00');
+    private destroy: Subject<any> = new Subject<any>();
+    private destroy$: Observable<any> = this.destroy.asObservable();
 
     constructor(
         private layoutService: LayoutService,
@@ -69,11 +74,19 @@ export class LedgerBalanceComponent implements OnInit {
     ) {}
 
     ngOnInit() {
-        this.referralService.ledgerTotals$.subscribe((ledgerTotals: GetLedgerTotalsOutput) => {
+        this.referralService.ledgerTotals$.pipe(
+            takeUntil(this.destroy$)
+        ).subscribe((ledgerTotals: GetLedgerTotalsOutput) => {
             this.ledgerTotals = ledgerTotals;
         });
-        this.userCommission.getLedger(this.startDate).subscribe((ledger: GetLedgerOutput) => {
+        this.referralService.refresh$.pipe(
+            takeUntil(this.destroy$),
+            switchMap(() => this.userCommission.getLedger(this.startDate))
+        ).subscribe((ledger: GetLedgerOutput) => {
             this.ledger = ledger;
+            this.pendingCommissions = [];
+            this.approvedCommissions = [];
+            this.earningsTotal = this.withdrawalsTotal = this.pendingEarningsTotal = this.pendingWithdrawalsTotal = 0;
             let balance = ledger.startingEarningsBalance + ledger.startingWithdrawalsBalance;
             ledger.entries
                 .sort((entryA: CommissionLedgerEntryInfo, entryB: CommissionLedgerEntryInfo) => {
@@ -245,5 +258,9 @@ export class LedgerBalanceComponent implements OnInit {
         return commissionLedgerInfo.type === CommissionLedgerEntryType.Withdrawal
                ? this.currencyPipe.transform(commissionLedgerInfo.totalAmount)
                : (commissionLedgerInfo.status as any == 'Total-Withdrawals' ? 0 : null);
+    }
+
+    ngOnDestroy() {
+        this.destroy.next();
     }
 }

@@ -24,4 +24,8 @@
         </commission-amount-item>
     </commission-amount-block>
 </div>
-<button class="request-withdrawal" (click)="requestWithdrawal()">{{ ls.l('Referral.RequestWithdrawal') }}</button>
+<button class="request-withdrawal"
+        [disabled]="ledgerTotals?.availableBalance <= 0"
+        (click)="requestWithdrawal()">
+    {{ ls.l('Referral.RequestWithdrawal') }}
+</button>

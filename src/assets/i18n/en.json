@@ -30,7 +30,7 @@
             "WithdrawalAmount": "Withdrawal Amount",
             "WithdrawalDescription": "You may request up to the total available balance",
             "AmountIsRequired": "Amount is required",
-            "ThanksForRequest": "Thanks for you request",
+            "ThanksForRequest": "Thank you for you request",
             "YouCantRequestMoreThen": "You can't request more then {0}"
         },
         "VersusEstimated": "Versus Estimated",

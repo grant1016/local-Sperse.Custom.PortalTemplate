@@ -40,7 +40,7 @@ export class ReferralInfoComponent {
         }
     ];
     sourceContactInfo$: Observable<GetSourceContactInfoOutput> = this.contactProxy.getContactInfo(this.appSession.user.contactId).pipe(
-        switchMap((contactInfo: ContactInfoDto) => this.contactProxy.getSourceContactInfo(contactInfo.groupId, contactInfo.id))
+        switchMap((contactInfo: ContactInfoDto) => this.contactProxy.getSourceContactInfo(contactInfo.id))
     );
     profilePictureUrl: string = this.profileService.getProfilePictureUrl(this.appSession.user && this.appSession.user.profilePictureId);
 
