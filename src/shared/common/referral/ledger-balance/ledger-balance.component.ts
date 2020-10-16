@@ -200,7 +200,7 @@ export class LedgerBalanceComponent implements OnInit, OnDestroy {
             ]);
             this.referralExportService.addAmountsWidget(worksheet, 'fff2cc', 5, 'PENDING AMOUNTS', [
                 { name: 'Earned', value: this.currencyPipe.transform(this.ledgerTotals.pendingEarningsAmount) },
-                { name: 'Withdrawn', value: this.currencyPipe.transform(this.ledgerTotals.pendingEarningsAmount), valueColor: '00B050' }
+                { name: 'Withdrawn', value: this.currencyPipe.transform(this.ledgerTotals.pendingWithdrawalsAmount), valueColor: '00B050' }
             ]);
             this.referralExportService.addAmountsWidget(worksheet, 'c6e0b4', 7, 'AVAILABLE', [
                 { name: 'Balance', value: this.currencyPipe.transform(this.ledgerTotals.availableBalance) }
