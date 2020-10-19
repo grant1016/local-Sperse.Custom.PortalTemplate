@@ -7,7 +7,7 @@
         <dx-data-grid class="commission-history-grid main-component-view limitedPagerTotal"
                       accesskey="narrowHeaderPanel"
                       [renderAsync]="true"
-                      [allowColumnReordering]="false"
+                      [allowColumnReordering]="true"
                       [columnAutoWidth]="true"
                       [dataSource]="dataSource"
                       [allowColumnResizing]="true"
@@ -16,7 +16,7 @@
                       [loadPanel]="{ enabled: false }"
                       [remoteOperations]="{
                         filtering: false,
-                        grouping: false,
+                        grouping: true,
                         groupPaging: true,
                         paging: true,
                         sorting: true,
@@ -24,6 +24,7 @@
                       }"
                       [pager]="defaultGridPagerConfig"
                       (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
+            <dxo-group-panel [visible]="true"></dxo-group-panel>
             <dxo-scrolling rowRenderingMode="virtual"></dxo-scrolling>
             <dxi-column [dataField]="commissionFields.OrderDate"
                         [caption]="ls.l('Referral.OrderDate')"
