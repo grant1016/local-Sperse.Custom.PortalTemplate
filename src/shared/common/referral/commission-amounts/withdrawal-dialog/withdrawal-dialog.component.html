@@ -2,6 +2,7 @@
     <h3>{{ ls.l('Referral.RequestWithdrawal') }}</h3>
     <h4>{{ ls.l('Referral.WithdrawalDescription') }}</h4>
     <dx-number-box [(value)]="withdrawalAmount"
+                   format="$ #,##0.##"
                    [placeholder]="ls.l('Referral.WithdrawalAmount')">
         <dx-validator>
             <dxi-validation-rule type="required"
