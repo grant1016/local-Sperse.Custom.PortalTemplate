@@ -22,11 +22,15 @@ import { SettingService } from '@abp/settings/setting.service';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 
+export class AdLoginHostDirective {
+    constructor(public viewContainerRef: ViewContainerRef) { }
+}
 
 @Component({
     templateUrl: './login.component.html',
     styleUrls: [ './login.component.less' ],
-    animations: [accountModuleAnimation()]
+    animations: [accountModuleAnimation()],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LoginComponent implements OnInit {
     @ViewChild('loginForm', { static: false }) loginForm;
