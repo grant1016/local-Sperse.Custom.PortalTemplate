@@ -1,5 +1,5 @@
-<div class="login">
-    <div class="header">
+<section class="account-section">
+    <header class="section-header">
         <div class="logo">
             <a [href]="originUrl">
                 <img *ngIf="!appSession.tenant || !appSession.tenant.logoId"
@@ -11,26 +11,20 @@
                      width="auto" height="60"/>
             </a>
         </div>
-    </div>
-
-    <main class="main-content">
-        <div class="account-forms">
-            <div class="row">
-                <div class="col-md-6 col-sm-12 col-xs-12 text-center form-wrapper">
-                    <router-outlet></router-outlet>
-                </div>
-                <div class="col-md-6 col-sm-12 d-none d-md-block text-center slogan-side">
-                    <img src="assets/common/images/brain.svg" alt="The digital brain of your business" width="488" class="img-responsive">
-                    <h2 class="slogan">The digital brain of your business</h2>
-                    <p class="slogan-description">Augmented by Artificial Intelligence</p>
-                </div>
-            </div>
+    </header>
+    <main class="content">
+        <div class="left-side">
+            <router-outlet></router-outlet>
+        </div>
+        <div class="right-side">
+            <div class="dots"></div>
+            <div class="video-container"></div>
+            <div class="bg-circle"></div>
         </div>
     </main>
-
-    <div class="footer">
-        <div class="copyright">
-            {{currentYear}} &copy; {{tenantName}} {{ls.l("Platform")}}
-        </div>
-    </div>
-</div>
+</section>
+<!--
+1440
+865 - 60%
+575 - 40%
+-->
