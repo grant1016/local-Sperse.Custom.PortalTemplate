@@ -25,7 +25,7 @@ export class LinkGeneratorComponent {
     initialLinks: GeneratorLink[] = [];
     initialLinks$: Observable<GeneratorLink[]> = this.accessCode$.pipe(
         map((accessCode: string) => this.initialLinks.map((link: GeneratorLink) => {
-            link.link = link.link + '/' + accessCode;
+            link.link = link.initialLink + '/' + accessCode;
             return link;
         }))
     );
