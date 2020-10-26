@@ -7537,12 +7537,10 @@ obuf@^1.0.0, obuf@^1.1.2:
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/obuf/-/obuf-1.1.2.tgz#09bea3343d41859ebd446292d11c9d4db619084e"
 
-odata-query@^6.2.0:
-  version "6.2.0"
-  resolved "https://registry.yarnpkg.com/odata-query/-/odata-query-6.2.0.tgz#e8624f6bb90960c29da2834b6adc2c022a87cb22"
-  integrity sha512-EDMtGsdcWb0qv6gRgXLvl4O9YYfOIz11LdX6UbOPE1clpUAWOXU3Jpe170KdHb4GWvpCqTM57P5qoILQuUsyrw==
-  dependencies:
-    tslib "^1.10.0"
+odata-query@5.7.0:
+  version "5.7.0"
+  resolved "https://registry.yarnpkg.com/odata-query/-/odata-query-5.7.0.tgz#0e93acb6d217f1b9026c095c2b7b116f18ba91fd"
+  integrity sha512-iR6eMApz7mVABLlBAYLjRjQaVQUBO2+uG7oYWVnqdwBKz2RdYKleQ1+HLmwxCTw/MUjpNA2HOq24gAncwJAJpA==
 
 omggif@1.0.7:
   version "1.0.7"

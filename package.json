@@ -130,7 +130,7 @@
     "ngx-clipboard": "^12.3.0",
     "ngx-file-drop": "^8.0.8",
     "ngx-mask": "^9.0.2",
-    "odata-query": "^6.2.0",
+    "odata-query": "5.7.0",
     "pace-progress": "^1.0.2",
     "parse-full-name": "^1.2.3",
     "popper.js": "^1.12.9",

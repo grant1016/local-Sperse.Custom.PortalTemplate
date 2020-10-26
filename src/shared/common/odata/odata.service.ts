@@ -45,7 +45,7 @@ export class ODataService {
         if (dataSource) {
             this.cancelDataSource(dataSource, uri);
             if (url && dataSource['_store'])
-                dataSource['_store']['_url'] = url;
+                dataSource['_store']['_requestDispatcher']['_url'] = url;
             promise = dataSource.reload();
             dataSource['operationId'] = promise['operationId'];
         }
