@@ -26,6 +26,7 @@ import {
     UserCommissionServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { ReferralService } from '@shared/common/referral/referral.service';
+import { ExcelDataGridCell } from '@node_modules/devextreme/excel_exporter';
 
 @Component({
     selector: 'ledger-balance',
@@ -123,11 +124,11 @@ export class LedgerBalanceComponent implements OnInit, OnDestroy {
 
     getFormattedStartDate = () => 'May-31-2020 Sun';
 
-    customizeStartingBalance = () => this.ledger && this.currencyPipe.transform(this.ledger.startingEarningsBalance + this.ledger.startingWithdrawalsBalance);
+    customizeStartingBalance = () => this.ledger && (this.ledger.startingEarningsBalance + this.ledger.startingWithdrawalsBalance);
 
-    customizeStartingEarnings = () => this.ledger && this.currencyPipe.transform(this.ledger.startingEarningsBalance);
+    customizeStartingEarnings = () => this.ledger && (this.ledger.startingEarningsBalance);
 
-    customizeStartingWithdrawals = () => this.ledger && this.currencyPipe.transform(this.ledger.startingWithdrawalsBalance);
+    customizeStartingWithdrawals = () => this.ledger && (this.ledger.startingWithdrawalsBalance);
 
     get approvedEarningsTotal(): number {
         return this.earningsTotal + (this.ledger && this.ledger.startingEarningsBalance);
@@ -183,27 +184,19 @@ export class LedgerBalanceComponent implements OnInit, OnDestroy {
             loadPanel: { enabled: false },
             keepColumnWidths: true,
             autoFilterEnabled: false,
-            customizeCell: (options => {
-                const { gridCell, excelCell } = options;
-                if (gridCell.rowType === 'header') {
-                    excelCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'F2F2F2' }};
-                    if (gridCell.column['hasColumns']) {
-                        excelCell.alignment = { horizontal: 'right' };
-                    }
-                }
-            })
+            customizeCell: (options) => this.customizeExportCell(options)
         }).then((cellRange: CellRange) => {
             ReferralExportService.addTableHeader(worksheet);
             this.referralExportService.addAmountsWidget(worksheet, 'e2efda', 2, 'TOTAL AMOUNTS POSTED', [
-                { name: 'Earned', value: this.currencyPipe.transform(this.ledgerTotals.earnedAmount) },
-                { name: 'Withdrawn', value: this.currencyPipe.transform(this.ledgerTotals.withdrawnAmount), valueColor: '00B050' }
+                { name: 'Earned', value: this.ledgerTotals.earnedAmount },
+                { name: 'Withdrawn', value: this.ledgerTotals.withdrawnAmount }
             ]);
             this.referralExportService.addAmountsWidget(worksheet, 'fff2cc', 5, 'PENDING AMOUNTS', [
-                { name: 'Earned', value: this.currencyPipe.transform(this.ledgerTotals.pendingEarningsAmount) },
-                { name: 'Withdrawn', value: this.currencyPipe.transform(this.ledgerTotals.pendingWithdrawalsAmount), valueColor: '00B050' }
+                { name: 'Earned', value: this.ledgerTotals.pendingEarningsAmount },
+                { name: 'Withdrawn', value: this.ledgerTotals.pendingWithdrawalsAmount }
             ]);
             this.referralExportService.addAmountsWidget(worksheet, 'c6e0b4', 7, 'AVAILABLE', [
-                { name: 'Balance', value: this.currencyPipe.transform(this.ledgerTotals.availableBalance) }
+                { name: 'Balance', value: this.ledgerTotals.availableBalance }
             ]);
             this.referralExportService.addTableBorders(worksheet, cellRange, 2);
             this.referralExportService.addMergedColumnLeftBorder(worksheet, cellRange);
@@ -214,24 +207,37 @@ export class LedgerBalanceComponent implements OnInit, OnDestroy {
                 loadPanel: { enabled: false },
                 keepColumnWidths: true,
                 autoFilterEnabled: false,
-                customizeCell: (options => {
-                    const { gridCell, excelCell } = options;
-                    if (gridCell.rowType === 'header') {
-                        excelCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'E2EFDA' }};
-                        if (gridCell.column['hasColumns']) {
-                            excelCell.alignment = { horizontal: 'right' };
-                        }
-                    }
-                })
+                customizeCell: (options: { gridCell?: ExcelDataGridCell, excelCell?: any }) => this.customizeExportCell(options, 'E2EFDA')
             }).then((cellRange: CellRange) => {
                 this.referralExportService.addTableBorders(worksheet, cellRange, 2);
                 this.referralExportService.addMergedColumnLeftBorder(worksheet, cellRange);
             });
         }).then(() => {
             workBook.xlsx.writeBuffer().then((buffer: BlobPart) => {
-                saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'PayoutLedgerHistory.xlsx');
+                saveAs(
+                    new Blob([buffer], { type: 'application/octet-stream' }),
+                    ReferralExportService.getFileName('Ledger')
+                );
             });
         });
+    }
+
+    customizeExportCell(options: { gridCell?: ExcelDataGridCell, excelCell?: any}, color?: string) {
+        const { gridCell, excelCell } = options;
+        if (gridCell.rowType === 'header') {
+            excelCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: color || 'F2F2F2' }};
+            if (gridCell.column['hasColumns']) {
+                excelCell.alignment = { horizontal: 'right' };
+                /** Remove dollar sign */
+                if (gridCell.column.caption && gridCell.column.cssClass.indexOf('amount') >= 0) {
+                    excelCell.numFmt = ReferralExportService.currencyFormat;
+                    excelCell.value = +gridCell.column.caption.replace(/[^0-9.-]+/g,'');
+                }
+            }
+        }
+        if (gridCell.column.cssClass.indexOf('amount') >= 0) {
+            excelCell.numFmt = ReferralExportService.currencyFormat;
+        }
     }
 
     calculateDescriptionValue = (commissionLedgerInfo: CommissionLedgerEntryInfo) => {
@@ -256,13 +262,13 @@ export class LedgerBalanceComponent implements OnInit, OnDestroy {
 
     calculateEarningsAmount = (commissionLedgerInfo: CommissionLedgerEntryInfo) => {
         return commissionLedgerInfo.type === CommissionLedgerEntryType.Earning
-            ? this.currencyPipe.transform(commissionLedgerInfo.totalAmount)
+            ? commissionLedgerInfo.totalAmount
             : (commissionLedgerInfo.status as any == 'Total-Earnings' ? 0 : null);
     }
 
     calculateWithdrawalAmount = (commissionLedgerInfo: CommissionLedgerEntryInfo) => {
         return commissionLedgerInfo.type === CommissionLedgerEntryType.Withdrawal
-               ? this.currencyPipe.transform(commissionLedgerInfo.totalAmount)
+               ? commissionLedgerInfo.totalAmount
                : (commissionLedgerInfo.status as any == 'Total-Withdrawals' ? 0 : null);
     }
 

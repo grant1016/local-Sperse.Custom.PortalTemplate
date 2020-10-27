@@ -139,34 +139,36 @@ export class CommissionHistoryComponent implements OnInit, OnDestroy {
                         color: { argb: this.getCellColor(gridCell.data).slice(1) }
                     };
                 }
+                if (gridCell.rowType === 'data') {
+                    if (gridCell.column.dataField === this.commissionFields.Id) {
+                        excelCell.numFmt = '0';
+                    } else if (gridCell.column.cellTemplate === 'amountCell') {
+                        excelCell.numFmt = ReferralExportService.currencyFormat;
+                    }
+                }
             })
         }).then((cellRange: CellRange) => {
             ReferralExportService.addTableHeader(worksheet);
             this.referralExportService.addAmountsWidget(worksheet, 'e2efda', 2, 'TOTAL AMOUNTS POSTED', [
-                { name: 'Earned', value: this.currencyPipe.transform(this.ledgerTotals.earnedAmount) },
-                { name: 'Withdrawn', value: this.currencyPipe.transform(this.ledgerTotals.withdrawnAmount), valueColor: '00B050' }
+                { name: 'Earned', value: this.ledgerTotals.earnedAmount },
+                { name: 'Withdrawn', value: this.ledgerTotals.withdrawnAmount }
             ]);
             this.referralExportService.addAmountsWidget(worksheet, 'fff2cc', 5, 'PENDING AMOUNTS', [
-                { name: 'Earned', value: this.currencyPipe.transform(this.ledgerTotals.pendingEarningsAmount) },
-                { name: 'Withdrawn', value: this.currencyPipe.transform(this.ledgerTotals.pendingWithdrawalsAmount), valueColor: '00B050' }
+                { name: 'Earned', value: this.ledgerTotals.pendingEarningsAmount },
+                { name: 'Withdrawn', value: this.ledgerTotals.pendingWithdrawalsAmount }
             ]);
             this.referralExportService.addAmountsWidget(worksheet, 'c6e0b4', 8, 'AVAILABLE', [
-                { name: 'Balance', value: this.currencyPipe.transform(this.ledgerTotals.availableBalance) }
+                { name: 'Balance', value: this.ledgerTotals.availableBalance }
             ]);
             this.referralExportService.addTableBorders(worksheet, cellRange);
         }).then(() => {
             workBook.xlsx.writeBuffer().then((buffer: BlobPart) => {
-                saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'CommissionHistory.xlsx');
+                saveAs(
+                    new Blob([buffer], { type: 'application/octet-stream' }),
+                    ReferralExportService.getFileName('Commission-history')
+                );
             });
         });
-    }
-
-    calculateSaleAmountValue = (commission: CommissionDto) => {
-        return this.currencyPipe.transform(commission.ProductAmount);
-    }
-
-    calculateCommissionAmountValue = (commission: CommissionDto) => {
-        return this.currencyPipe.transform(commission.CommissionAmount);
     }
 
     ngOnDestroy() {
