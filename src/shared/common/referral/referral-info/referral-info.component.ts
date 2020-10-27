@@ -2,22 +2,18 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 /** Third party imports  */
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 
 /** Application imports  */
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { AppConsts } from '@shared/AppConsts';
-import {
-    ContactInfoDto,
-    ContactServiceProxy,
-    GetSourceContactInfoOutput
-} from '@shared/service-proxies/service-proxies';
+import { ContactServiceProxy, GetSourceContactInfoOutput } from '@shared/service-proxies/service-proxies';
 import { ProfileService } from '@shared/common/profile-service/profile.service';
 import { AppService } from '@app/app.service';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { ClipboardService } from '@node_modules/ngx-clipboard';
 import { NotifyService } from '@abp/notify/notify.service';
-import { switchMap } from '@node_modules/rxjs/internal/operators';
 
 @Component({
     selector: 'referral-info',
@@ -39,8 +35,10 @@ export class ReferralInfoComponent {
             message: this.ls.l('MaxLengthIs', AppConsts.maxAffiliateCodeLength)
         }
     ];
-    sourceContactInfo$: Observable<GetSourceContactInfoOutput> = this.contactProxy.getContactInfo(this.appSession.user.contactId).pipe(
-        switchMap((contactInfo: ContactInfoDto) => this.contactProxy.getSourceContactInfo(contactInfo.id))
+    sourceContactInfo$: Observable<GetSourceContactInfoOutput> = this.contactProxy.isAccessible(this.appSession.user.contactId).pipe(
+        switchMap((isAccessible: boolean) => {
+            return isAccessible ? this.contactProxy.getSourceContactInfo(this.appSession.user.contactId) : of(null);
+        })
     );
     profilePictureUrl: string = this.profileService.getProfilePictureUrl(this.appSession.user && this.appSession.user.profilePictureId);
 
