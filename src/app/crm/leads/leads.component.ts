@@ -269,7 +269,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             let url = this.oDataService.getODataUrl(this.totalDataSourceURI,
                 odataRequestValues.filter, null, odataRequestValues.params);
             if (url && this.oDataService.requestLengthIsValid(url)) {
-                this.totalDataSource['_store']['_url'] = url;
+                this.totalDataSource['_store']['_requestDispatcher']['_url'] = url;
                 this.totalDataSource.load();
             }
         });
@@ -668,7 +668,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 quickSearch ? [ quickSearch ] : undefined
             ).subscribe((filterQuery: string) => {
                 if (filterQuery && filterQuery !== 'canceled') {
-                    this.totalDataSource['_store']['_url'] = this.oDataService
+                    this.totalDataSource['_store']['_requestDispatcher']['_url'] = this.oDataService
                         .getODataUrl(this.totalDataSourceURI, filterQuery);
                     this.dataSource.store.url = this.oDataService
                         .getODataUrl(this.dataSourceURI, filterQuery);
