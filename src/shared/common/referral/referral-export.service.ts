@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
-import { Alignment, Border, Borders, Fill, Worksheet } from '@node_modules/exceljs';
-import { CellRange } from '@node_modules/devextreme/excel_exporter';
+import { Alignment, Border, Borders, Fill, Worksheet } from 'exceljs';
+import { CellRange } from 'devextreme/excel_exporter';
+import * as moment from 'moment';
 
 @Injectable()
 export class ReferralExportService {
     thinBorder: Partial<Border> = { style: 'thin', color: { argb: '#000' }};
-
     static addTableHeader(worksheet: Worksheet) {
         const headerRow = worksheet.getRow(2);
         headerRow.height = 30;
@@ -14,13 +14,14 @@ export class ReferralExportService {
         headerRow.getCell(2).font = { size: 18, bold: true };
         headerRow.getCell(2).alignment = { horizontal: 'center' };
     }
+    static currencyFormat = '"$"#,##0.00;[Red]("$"#,##0.00)';
 
     addAmountsWidget(
         worksheet: Worksheet,
         color: string,
         startColumnIndex: number,
         title: string,
-        columns: { name: string, value: string, valueColor?: string }[]
+        columns: { name: string, value: number }[]
     ) {
         const widgetHeaderRow = worksheet.getRow(4);
         if (columns.length > 1) {
@@ -62,9 +63,7 @@ export class ReferralExportService {
                 size: 14,
                 bold: true
             };
-            if (column.valueColor) {
-                valueCell.font.color = { argb: column.valueColor };
-            }
+            valueCell.numFmt = ReferralExportService.currencyFormat;
             let valueCellBorder: Partial<Borders> = { bottom: this.thinBorder };
             if (index === 0) {
                 let headerCellBorder: Partial<Borders> = { left: this.thinBorder };
@@ -79,6 +78,10 @@ export class ReferralExportService {
                 valueCell.border = { ...valueCellBorder, right: this.thinBorder };
             }
         });
+    }
+
+    static getFileName(prefix: string) {
+        return `${prefix}_${moment().format('YYYY-MM-DD_hhmmss_a')}.xlsx`;
     }
 
     addTableBorders(worksheet: Worksheet, cellRange: CellRange, headerRowsAmount?: number) {

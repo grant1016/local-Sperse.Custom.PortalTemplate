@@ -51,14 +51,12 @@
             <dxi-column [dataField]="commissionFields.ProductAmount"
                         [caption]="ls.l('Referral.SaleAmount')"
                         cellTemplate="amountCell"
-                        [calculateCellValue]="calculateSaleAmountValue"
                         [width]="185"
                         cssClass="padding-right">
             </dxi-column>
             <dxi-column [dataField]="commissionFields.CommissionAmount"
                         [caption]="ls.l('Referral.Commission')"
                         cellTemplate="amountCell"
-                        [calculateCellValue]="calculateCommissionAmountValue"
                         [width]="185"
                         cssClass="padding-right">
             </dxi-column>
@@ -72,7 +70,7 @@
             <div *dxTemplate="let cellData of 'amountCell'" class="clipboard-holder">
                 <span class="amountCell"
                       [ngStyle]="{ color: cellData.column.field === commissionFields.CommissionAmount ? getCellColor(cellData.row.data) : '' }">
-                    {{ cellData.value }}
+                    {{ cellData.value | currency }}
                 </span>
             </div>
             <div *dxTemplate="let cellData of 'statusCell'" class="clipboard-holder">
