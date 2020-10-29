@@ -148,7 +148,7 @@ export class CommissionHistoryComponent implements OnInit, OnDestroy {
                 }
             })
         }).then((cellRange: CellRange) => {
-            ReferralExportService.addTableHeader(worksheet);
+            ReferralExportService.addTableHeader(worksheet, 'YOUR COMMISSION TRANSACTION HISTORY');
             this.referralExportService.addAmountsWidget(worksheet, 'e2efda', 2, 'TOTAL AMOUNTS POSTED', [
                 { name: 'Earned', value: this.ledgerTotals.earnedAmount },
                 { name: 'Withdrawn', value: this.ledgerTotals.withdrawnAmount }

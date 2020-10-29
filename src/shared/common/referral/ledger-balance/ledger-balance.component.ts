@@ -186,7 +186,7 @@ export class LedgerBalanceComponent implements OnInit, OnDestroy {
             autoFilterEnabled: false,
             customizeCell: (options) => this.customizeExportCell(options)
         }).then((cellRange: CellRange) => {
-            ReferralExportService.addTableHeader(worksheet);
+            ReferralExportService.addTableHeader(worksheet, 'YOUR PAYOUT LEDGER HISTORY');
             this.referralExportService.addAmountsWidget(worksheet, 'e2efda', 2, 'TOTAL AMOUNTS POSTED', [
                 { name: 'Earned', value: this.ledgerTotals.earnedAmount },
                 { name: 'Withdrawn', value: this.ledgerTotals.withdrawnAmount }

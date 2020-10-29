@@ -6,11 +6,11 @@ import * as moment from 'moment';
 @Injectable()
 export class ReferralExportService {
     thinBorder: Partial<Border> = { style: 'thin', color: { argb: '#000' }};
-    static addTableHeader(worksheet: Worksheet) {
+    static addTableHeader(worksheet: Worksheet, title: string) {
         const headerRow = worksheet.getRow(2);
         headerRow.height = 30;
         worksheet.mergeCells(2, 2, 2, 8);
-        headerRow.getCell(2).value = 'YOUR PAYOUT LEDGER HISTORY';
+        headerRow.getCell(2).value = title;
         headerRow.getCell(2).font = { size: 18, bold: true };
         headerRow.getCell(2).alignment = { horizontal: 'center' };
     }
