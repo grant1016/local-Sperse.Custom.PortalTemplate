@@ -124,11 +124,11 @@ export class LedgerBalanceComponent implements OnInit, OnDestroy {
 
     getFormattedStartDate = () => 'May-31-2020 Sun';
 
-    customizeStartingBalance = () => this.ledger && (this.ledger.startingEarningsBalance + this.ledger.startingWithdrawalsBalance);
+    customizeStartingBalance = () => this.ledger && this.currencyPipe.transform(this.ledger.startingEarningsBalance + this.ledger.startingWithdrawalsBalance);
 
-    customizeStartingEarnings = () => this.ledger && (this.ledger.startingEarningsBalance);
+    customizeStartingEarnings = () => this.ledger && this.currencyPipe.transform(this.ledger.startingEarningsBalance);
 
-    customizeStartingWithdrawals = () => this.ledger && (this.ledger.startingWithdrawalsBalance);
+    customizeStartingWithdrawals = () => this.ledger && this.currencyPipe.transform(this.ledger.startingWithdrawalsBalance);
 
     get approvedEarningsTotal(): number {
         return this.earningsTotal + (this.ledger && this.ledger.startingEarningsBalance);

@@ -128,7 +128,6 @@
             <dxi-total-item column="balance"
                             cssClass="amount"
                             [customizeText]="customizeStartingBalance"
-                            [valueFormat]="currencyFormat"
                             displayFormat="{0}">
             </dxi-total-item>
 
@@ -138,7 +137,6 @@
             <dxi-total-item column="withdrawalAmount"
                             cssClass="amount"
                             [customizeText]="customizeStartingWithdrawals"
-                            [valueFormat]="currencyFormat"
                             displayFormat="{0}">
             </dxi-total-item>
             <dxi-total-item column="balance" [customizeText]="emptyText" displayFormat="{0}"></dxi-total-item>
@@ -148,7 +146,6 @@
             <dxi-total-item column="earningsAmount"
                             cssClass="amount"
                             [customizeText]="customizeStartingEarnings"
-                            [valueFormat]="currencyFormat"
                             displayFormat="{0}">
             </dxi-total-item>
         </dxo-summary>
