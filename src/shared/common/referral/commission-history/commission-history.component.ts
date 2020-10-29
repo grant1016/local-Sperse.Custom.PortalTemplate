@@ -160,6 +160,8 @@ export class CommissionHistoryComponent implements OnInit, OnDestroy {
             this.referralExportService.addAmountsWidget(worksheet, 'c6e0b4', 8, 'AVAILABLE', [
                 { name: 'Balance', value: this.ledgerTotals.availableBalance }
             ]);
+            /** Increase width of C2 column */
+            worksheet.getColumn(3).width = 20;
             this.referralExportService.addTableBorders(worksheet, cellRange);
         }).then(() => {
             workBook.xlsx.writeBuffer().then((buffer: BlobPart) => {
