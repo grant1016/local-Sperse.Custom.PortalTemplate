@@ -1,4 +1,4 @@
-<user-photo [profilePictureUrl]="profilePictureUrl"></user-photo>
+<user-photo [profilePictureUrl]="profilePictureUrl$ | async"></user-photo>
 <mat-accordion displayMode="flat" [multi]="true">
     <mat-expansion-panel class="affiliate-info" [expanded]="true">
         <mat-expansion-panel-header>

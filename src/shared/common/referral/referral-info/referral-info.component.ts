@@ -40,7 +40,7 @@ export class ReferralInfoComponent {
             return isAccessible ? this.contactProxy.getSourceContactInfo(this.appSession.user.contactId) : of(null);
         })
     );
-    profilePictureUrl: string = this.profileService.getProfilePictureUrl(this.appSession.user && this.appSession.user.profilePictureId);
+    profilePictureUrl$: Observable<string> = this.profileService.profilePictureUrl$;
 
     constructor(
         private contactProxy: ContactServiceProxy,
@@ -52,11 +52,11 @@ export class ReferralInfoComponent {
         public appSession: AppSessionService
     ) {}
 
-    updateAffiliateCode(value) {
+    updateAffiliateCode(value): void {
         this.profileService.updateAccessCode(value);
     }
 
-    getThumbnailSrc(thumbnailId?: string) {
+    getThumbnailSrc(thumbnailId?: string): string {
         return this.profileService.getContactPhotoUrl(thumbnailId, true);
     }
 

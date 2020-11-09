@@ -30,6 +30,10 @@ export class ProfileService {
             'large': AppConsts.imageUrls.noPhoto
         }
     };
+    private profilePictureUrl: BehaviorSubject<string> = new BehaviorSubject<string>(
+        this.getProfilePictureUrl(this.appSession.user && this.appSession.user.profilePictureId)
+    );
+    profilePictureUrl$: Observable<string> = this.profilePictureUrl.asObservable();
 
     constructor(
         private appSession: AppSessionService,
@@ -95,5 +99,9 @@ export class ProfileService {
             /** Update back if error comes */
             () => this.accessCode.next(this.appSession.user.affiliateCode)
         );
+    }
+
+    updatePictureUrl(pictureUrl: string) {
+        this.profilePictureUrl.next(pictureUrl);
     }
 }

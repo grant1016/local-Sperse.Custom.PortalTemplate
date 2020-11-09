@@ -3,8 +3,8 @@ import { Injectable } from '@angular/core';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
-import { of } from 'rxjs';
-import { filter, pluck } from 'rxjs/operators';
+import { Observable, Subject, of, BehaviorSubject } from 'rxjs';
+import { filter, first, mapTo, tap, switchMap } from 'rxjs/operators';
 
 /** Application imports */
 import { MySettingsModalComponent } from 'app/shared/layout/profile/my-settings-modal.component';
@@ -20,12 +20,9 @@ import { AppConsts } from 'shared/AppConsts';
 import { ChangePasswordModalComponent } from 'app/shared/layout/profile/change-password-modal.component';
 import { AppAuthService } from 'shared/common/auth/app-auth.service';
 import { LoginAttemptsModalComponent } from 'app/shared/layout/login-attempts-modal/login-attempts-modal.component';
-import { UserHelper } from 'app/shared/helpers/UserHelper';
 import { AppSessionService } from 'shared/common/session/app-session.service';
-import { Observable } from '@node_modules/rxjs';
 import { FeatureCheckerService } from '@abp/features/feature-checker.service';
 import { AbpSessionService } from '@abp/session/abp-session.service';
-import { environment } from 'environments/environment';
 import { AppFeatures } from '@shared/AppFeatures';
 import { UserDropdownMenuItemType } from '@shared/common/layout/user-management-list/user-dropdown-menu/user-dropdown-menu-item-type';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -84,6 +81,10 @@ export class UserManagementService {
             iconSrc: 'assets/common/icons/logout.svg'
         }
     ];
+    saveProfilePicture: Subject<boolean> = new Subject();
+    private temporaryPhotoBase64: BehaviorSubject<string> = new BehaviorSubject<string>(null);
+    temporaryPhotoBase64$: Observable<string> = this.temporaryPhotoBase64.asObservable();
+
     constructor(
         private dialog: MatDialog,
         private authService: AppAuthService,
@@ -110,36 +111,61 @@ export class UserManagementService {
         }
     }
 
-    changeProfilePicture(e): void {
-        this.dialog.open(UploadPhotoDialogComponent, {
+    openUploadDialog() {
+        return this.dialog.open(UploadPhotoDialogComponent, {
             data: {
                 source: this.profileService.getProfilePictureUrl(this.appSession.user.profilePictureId),
                 maxSizeBytes: AppConsts.maxImageSize
             },
             hasBackdrop: true
-        }).afterClosed()
-            .pipe(filter(result => result))
-            .subscribe((result) => {
-                if (result.clearPhoto) {
-                    this.profileServiceProxy.clearProfilePicture()
-                        .subscribe(() => {
-                            this.handleProfilePictureChange(null);
-                        });
-                } else {
-                    const base64OrigImage = StringHelper.getBase64(result.origImage),
-                        base64ThumbImage = StringHelper.getBase64(result.thumImage);
-                    this.profileServiceProxy.updateProfilePicture(UpdateProfilePictureInput.fromJS({
-                        originalImage: base64OrigImage,
-                        thumbnail: base64ThumbImage,
-                        source: result.source
-                    })).subscribe(thumbnailId => {
-                        this.handleProfilePictureChange(thumbnailId);
-                    });
-                }
-            });
-        if (e.stopPropagation) {
+        });
+    }
+
+    changeProfilePicture(e?: MouseEvent, uploadAfterSave: boolean = true): Observable<string> {
+        const newProfilePictureImage$: Observable<string> = this.openUploadDialog().afterClosed()
+            .pipe(
+                filter(result => result),
+                /** Wait for saveProfilePicture subject uploadAfterSave is false */
+                switchMap((result) => {
+                    let res;
+                    if (uploadAfterSave) {
+                        res = of(result);
+                    } else {
+                        this.temporaryPhotoBase64.next(StringHelper.getBase64(result.origImage));
+                        res = this.saveProfilePicture.pipe(
+                            first(),
+                            tap(() => this.temporaryPhotoBase64.next(null)),
+                            mapTo(result)
+                        );
+                    }
+                    return res;
+                }),
+                switchMap((result: any) => {
+                    let image$: Observable<string>;
+                    if (result.clearPhoto) {
+                        image$ = this.profileServiceProxy.clearProfilePicture().pipe(
+                            tap(() => this.handleProfilePictureChange(null)),
+                            mapTo(null)
+                        );
+                    } else {
+                        const base64OrigImage = StringHelper.getBase64(result.origImage),
+                            base64ThumbImage = StringHelper.getBase64(result.thumImage);
+                        image$ = this.profileServiceProxy.updateProfilePicture(UpdateProfilePictureInput.fromJS({
+                            originalImage: base64OrigImage,
+                            thumbnail: base64ThumbImage,
+                            source: result.source
+                        })).pipe(
+                            tap((thumbnailId: string) => this.handleProfilePictureChange(thumbnailId)),
+                            mapTo(base64OrigImage)
+                        );
+                    }
+                    return image$;
+                })
+            );
+        if (e && e.stopPropagation) {
             e.stopPropagation();
         }
+        return newProfilePictureImage$;
     }
 
     private handleProfilePictureChange(thumbnailId: string) {
