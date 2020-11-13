@@ -110,6 +110,8 @@ export class ResetPasswordComponent implements OnInit {
         let native = input.valueAccessor._elementRef.nativeElement,
             visible = native.type == 'text';
         native.type = visible ? 'password' : 'text';
-        event.currentTarget.text = this.ls.l(visible ? 'Show' : 'Hide');
+        visible
+            ? event.currentTarget.classList.remove('visible')
+            : event.currentTarget.classList.add('visible');
     }
 }

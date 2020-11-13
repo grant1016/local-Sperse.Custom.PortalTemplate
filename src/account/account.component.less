@@ -603,3 +603,20 @@ input.form-control {
     margin-top: 15px;
     color: red;
 }
+
+.form-group {
+    position: relative;
+}
+.show-password {
+    position: absolute;
+    right: 13px;
+    top: 8px;
+    text-transform: uppercase;
+    width: 22px;
+    height: 15px;
+    background-image: url('../assets/common/icons/trailing-icon.svg');
+
+    &.visible {
+        background-image: url('../assets/common/icons/trailing-icon-blue.svg');
+    }
+}

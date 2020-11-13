@@ -85,6 +85,9 @@ export class LoginComponent implements OnInit {
 
     showHidePassword(event) {
         this.showPassword = !this.showPassword;
-        event.currentTarget.text = this.ls.l((this.showPassword ? 'Hide' : 'Show'));
+        if (event.currentTarget.text) event.currentTarget.text = this.ls.l((this.showPassword ? 'Hide' : 'Show'));
+        this.showPassword
+            ? event.currentTarget.classList.add('visible')
+            : event.currentTarget.classList.remove('visible');
     }
 }
