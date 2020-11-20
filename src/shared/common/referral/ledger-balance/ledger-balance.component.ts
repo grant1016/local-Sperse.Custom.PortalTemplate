@@ -14,7 +14,6 @@ import { DxValidatorComponent } from 'devextreme-angular/ui/validator';
 
 /** Application imports */
 import { LayoutService } from '@app/shared/layout/layout.service';
-import { DashboardWidgetsService } from '@shared/crm/dashboard-widgets/dashboard-widgets.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { NotifyService } from '@abp/notify/notify.service';
 import { ReferralExportService } from '@shared/common/referral/referral-export.service';
@@ -63,7 +62,6 @@ export class LedgerBalanceComponent implements OnInit, OnDestroy {
 
     constructor(
         private layoutService: LayoutService,
-        private dashboardWidgetsService: DashboardWidgetsService,
         private notifyService: NotifyService,
         private referralExportService: ReferralExportService,
         private currencyPipe: CurrencyPipe,
