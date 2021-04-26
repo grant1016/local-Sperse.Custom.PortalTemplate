@@ -14,13 +14,19 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 import { UrlHelper } from '@shared/helpers/UrlHelper';
 import {
     TenantModel,
+    TokenAuthServiceProxy,
     SendAutoLoginLinkInput,
+    AuthenticateByCodeModel,
+    AuthenticateResultModel,
     AccountServiceProxy
 } from '@shared/service-proxies/service-proxies';
+import { LoginService } from '../login/login.service';
 
 @Component({
     templateUrl: 'auto-login.component.html',
-    styleUrls: [ 'auto-login.component.less' ],
+    styleUrls: [
+        'auto-login.component.less' 
+    ],
     animations: [accountModuleAnimation()]
 })
 export class AutoLoginComponent {
@@ -30,6 +36,9 @@ export class AutoLoginComponent {
     tenantName = this.appSession.tenant
         ? this.appSession.tenant.name
         : AppConsts.defaultTenantName;
+    accessCodeMaxTriesCount = 3;
+    accessCodeIsValid: boolean;
+    accessCode: string;
     userEmail: string;
 
     constructor(
@@ -37,10 +46,21 @@ export class AutoLoginComponent {
         public ls: AppLocalizationService,
         private activatedRoute: ActivatedRoute,
         private accountProxy: AccountServiceProxy,
+        private authProxy: TokenAuthServiceProxy,
+        private loginService: LoginService,
         private appSession: AppSessionService
     ) {
         this.activatedRoute.queryParams.pipe(first())
             .subscribe((params: Params) => this.userEmail = params.email);
+    }
+
+    checkAccessCodeMaxTries(showInvalidMessage = true) {
+        this.accessCodeMaxTriesCount--;
+        if (this.accessCodeMaxTriesCount > 0) {
+            if (showInvalidMessage)
+                abp.message.error(this.ls.l('AutoLoginCodeIsIncorrect'));
+        } else
+            abp.message.error(this.ls.l('LoginFailed'));
     }
 
     sendloginLink(tenantId?: number): void {
@@ -69,6 +89,37 @@ export class AutoLoginComponent {
         return !path || path.indexOf('auto-login') > 0 ? '' : path;
     }
 
-    openConditionsDialog() {
+    authenticateByCode() {
+        abp.ui.setBusy();
+        this.authProxy.authenticateByCode(new AuthenticateByCodeModel({
+            emailAddress: this.userEmail,
+            code: this.accessCode
+        })).pipe(
+            finalize(() => abp.ui.clearBusy())
+        ).subscribe((res: AuthenticateResultModel) => {
+            this.loginService.processAuthenticateResult(res, AppConsts.appBaseUrl);
+        }, () => {
+            this.checkAccessCodeMaxTries(false);
+        });
+    }
+
+    onAccessCodeProcess() {
+        if (this.accessCode && this.accessCodeIsValid)
+            this.authenticateByCode();
+        else
+            this.checkAccessCodeMaxTries();
+    }
+
+    onAutoLoginCodeFocusOut(event) {
+        this.accessCodeIsValid = event.component.option('isValid');
+    }
+
+    onAutoLoginCodeChanged(event) {
+        this.accessCodeIsValid = event.component.option('isValid');
+        if (event.event.keyCode === 13/*Enter*/)
+            this.onAccessCodeProcess();
+    }
+
+    openConditionsDialog(type: ConditionsType) {
     }
 }

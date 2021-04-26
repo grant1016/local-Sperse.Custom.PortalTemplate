@@ -14,7 +14,7 @@ import { IFormattedUserNotification, UserNotificationHelper } from './UserNotifi
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 import { GetNotificationsOutput, UserNotificationState } from '../../../../shared/service-proxies/service-proxies';
-import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
+import { DataGridService } from '../../common/data-grid.service/data-grid.service';
 import { DxDataGridComponent } from 'devextreme-angular';
 
 @Component({
@@ -27,7 +27,7 @@ import { DxDataGridComponent } from 'devextreme-angular';
 export class NotificationsComponent implements OnInit {
     @ViewChild(ModalDialogComponent, { static: true }) modalDialog: ModalDialogComponent;
     @ViewChild(DxDataGridComponent, { static: false }) dataGrid: DxDataGridComponent;
-    unreadNotificationCount = 0;
+
     readStateFilter: UserNotificationState;
     loading = false;
     selectBoxList = [
@@ -44,27 +44,26 @@ export class NotificationsComponent implements OnInit {
                 loadOptions.take,
                 loadOptions.skip
             ).pipe(
-                finalize(() => this.modalDialog.finishLoading()),
+                finalize(() => this.modalDialog.finishLoading())
             ).toPromise().then((notificationsOutput: GetNotificationsOutput) => {
                 let notifications = [];
-                this.unreadNotificationCount = notificationsOutput.unreadCount;
                 notificationsOutput.items.forEach((item: UserNotificationDto) => {
                     notifications.push(this.userNotificationHelper.format(<any>item, false));
                 });
-                return {
-                    data: notifications,
-                    totalCount: notificationsOutput.totalCount
-                };
+                return notifications;
             });
-        }
+        },
+        totalCount: () => this.notificationService.getUserNotificationCount(
+            this.readStateFilter
+        ).toPromise()
     });
     defaultGridPagerConfig = DataGridService.defaultGridPagerConfig;
 
     constructor(
+        private router: Router,
         private dialog: MatDialog,
         private notificationService: NotificationServiceProxy,
-        private userNotificationHelper: UserNotificationHelper,
-        private router: Router,
+        public userNotificationHelper: UserNotificationHelper,
         public ls: AppLocalizationService
     ) {}
 
@@ -97,7 +96,6 @@ export class NotificationsComponent implements OnInit {
                     'state',
                     'READ'
                 );
-                this.unreadNotificationCount -= 1;
             }
         });
     }

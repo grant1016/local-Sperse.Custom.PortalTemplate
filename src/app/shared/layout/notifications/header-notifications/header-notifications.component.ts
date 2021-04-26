@@ -6,7 +6,7 @@ import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 
 /** Application imports */
-import { InstanceServiceProxy, NotificationServiceProxy, TenantSubscriptionServiceProxy, UserNotificationDto } from '@shared/service-proxies/service-proxies';
+import { InstanceServiceProxy, NotificationServiceProxy, TenantSubscriptionServiceProxy, UserNotificationDto, UserNotificationState, GetNotificationsOutput } from '@shared/service-proxies/service-proxies';
 import { IFormattedUserNotification, UserNotificationHelper } from '../UserNotificationHelper';
 import { AppService } from '@app/app.service';
 import { NotificationsComponent } from '@app/shared/layout/notifications/notifications.component';
@@ -29,13 +29,20 @@ import { ConfigInterface } from '@app/shared/common/config.interface';
 })
 export class HeaderNotificationsComponent implements OnInit {
     notifications: IFormattedUserNotification[] = [];
-    unreadNotificationCount = 0;
+    get unreadNotificationCount(): number {
+        return this.userNotificationHelper.unreadNotificationCount;
+    }
+    set unreadNotificationCount(val: number) {
+        this.userNotificationHelper.unreadNotificationCount = val;
+    }
     shownLoginInfo: { fullName, email, tenantName?};
     tenancyName = '';
     userName = '';
     subscriptionInfoTitle: string;
     subscriptionInfoText: string;
     subscriptionExpiringDayCount = null;
+
+    private readonly CONTACT_ENTITY_TYPE = 'Sperse.CRM.Contacts.Entities.Contact';
 
     constructor(
         private dialog: MatDialog,
@@ -53,6 +60,8 @@ export class HeaderNotificationsComponent implements OnInit {
         this.loadNotifications();
         this.registerToEvents();
         this.getCurrentLoginInformations();
+
+        setInterval(() => this.loadNotifications(), 1000 * 60 * 15 /*Reload every 15min*/);
 
         if (this.appService.moduleSubscriptions$) {
             this.appService.subscribeModuleChange((config: ConfigInterface) => this.getSubscriptionInfo(config.name));
@@ -114,8 +123,8 @@ export class HeaderNotificationsComponent implements OnInit {
     }
 
     loadNotifications(): void {
-        this.notificationService.getUserNotifications(undefined, 3, 0).subscribe(result => {
-            this.unreadNotificationCount = result.unreadCount;
+        this.notificationService.getUserNotifications(UserNotificationState._0, 3, 0).subscribe((result: GetNotificationsOutput) => {
+            this.unreadNotificationCount = result.items.length;
             this.notifications = [];
             $.each(result.items, (index, item: UserNotificationDto) => {
                 this.notifications.push(this.userNotificationHelper.format(<any>item));
@@ -134,13 +143,18 @@ export class HeaderNotificationsComponent implements OnInit {
         });
 
         abp.event.on('app.notifications.read', userNotificationId => {
-            for (let i = 0; i < this.notifications.length; i++) {
-                if (this.notifications[i].userNotificationId === userNotificationId) {
-                    this.notifications[i].state = 'READ';
-                }
-            }
-
             this.unreadNotificationCount -= 1;
+            if (this.unreadNotificationCount <= 0)
+                this.loadNotifications();
+            else {
+                this.notifications.some(notification => {
+                    if (notification.userNotificationId === userNotificationId) {
+                        notification.isUnread = false;
+                        notification.state = 'READ';
+                        return true;
+                    }
+                });
+            }
         });
     }
 
@@ -157,9 +171,12 @@ export class HeaderNotificationsComponent implements OnInit {
         this.userNotificationHelper.setAsRead(userNotification.userNotificationId);
     }
 
-    gotoUrl(url: string): void {
-        if (url) {
-            this.router.navigateByUrl(url);
+    onNotificationClick(notification: any): void {
+        if (notification.entityTypeName == this.CONTACT_ENTITY_TYPE && notification.entityId) {
+            this.router.navigate(['app/crm/contact', notification.entityId]);
+            this.hideDropDown();
+        } else if (notification.url) {
+            this.router.navigateByUrl(notification.url);
             this.hideDropDown();
         }
     }

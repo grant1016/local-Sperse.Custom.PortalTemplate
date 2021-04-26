@@ -21,6 +21,8 @@ import { TenantChangeComponent } from './shared/tenant-change.component';
 import { SelectTenantComponent } from './login/select-tenant.component';
 import { ApplicationServiceProxy } from '@shared/service-proxies/service-proxies';
 import { TranslateModule } from '@ngx-translate/core';
+import { DxTextBoxModule } from 'devextreme-angular/ui/text-box';
+import { DxButtonModule } from 'devextreme-angular/ui/button';
 
 @NgModule({
     imports: [
@@ -30,6 +32,8 @@ import { TranslateModule } from '@ngx-translate/core';
         ModalModule.forRoot(),
         UtilsModule,
         AccountRoutingModule,
+        DxTextBoxModule,
+        DxButtonModule,
         TranslateModule.forChild({
             extend: true
         })
