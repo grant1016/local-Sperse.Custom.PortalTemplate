@@ -1,52 +1,50 @@
-﻿## ASP.NET ZERO - Angular 2 UI
+﻿### How To Fork Project?
 
-This is Angular 2 UI for AspNet Zero. It's in PREVIEW state and is constantly being improved and changed.
-So, don't use it in production, but you can test it and check source to prepare to the coming release.
+* Create your own empty repository with some name (for ex. ``company.portal``) or use existing on any git server.
+* Clone portal template into ``sperse.custom.portaltemplate`` folder
 
-### Prerequirements
+    git clone https://{User}@bitbucket.org/sperse-team/sperse.custom.portaltemplate.git
 
-*ASP.NET Core (Windows (x64) Installer - .NET Core 1.1.1 runtime (Current))
-https://www.microsoft.com/net/download/core#/runtime
+* Go to ``company.portal`` repository root folder and add cloned remote to your repository (use correct path to sperse.custom.portaltemplate repository folder if ``company.portal`` repository folder not on the same level)
 
-* nodejs + npm
-https://nodejs.org/dist/v8.11.2/node-v8.11.2-x64.msi
+    git remote add sperse.custom.portaltemplate ../sperse.custom.portaltemplate
+    
+* Update all of your branches set to track remote ones
 
-* Yarn
-https://yarnpkg.com/en/docs/install#windows-stable
+    git remote update
 
-* angular-cli v1.0.0-beta.17 (tested in this version, but may work in later versions too).
+* Merge ``sperse.custom.portaltemplate`` into ``company.portal`` (it's possible to use any branch version instead of ``master``)
 
-* typescript 2.0 (v2.1 recommended).
-https://www.microsoft.com/en-us/download/details.aspx?id=48593
+    git merge -S --allow-unrelated-histories sperse.custom.portaltemplate/master
 
-### IDE
+* Push changes to ``company.portal`` repository (depending which branch was used)
 
-Project is IDE and OS independent. That means you can develop in Windows/Linux/Mac with any editor.
-We developed it with Visual Studio 2015 and Visual Studio Code.
-We are best comfortable with Visual Studio 2015 with Resharper 2016.3 EAP.
+    git push origin master
+
 
 ### How To Run?
 
-UI uses AspNet Zero (ASP.NET Core version) as backend. So, you should first run it:
-
-* Open AspNet Zero AspNet Core project in Visual Studio.
-* Set ``.Web.Host`` as startup project.
-* Go to the root folder of EntityFramework project and run UpdateDB.cmd.
-* Run the application. You will see the Swagger UI (https://www.aspnetzero.com/Documents/Development-Guide-Core#swagger-ui).
-  http://localhost:7000
-
-Once server side is ready, you can run the Angular2 application:
-
 * Go to root folder of the Angular2 project (the folder contains package.json file) and run ``yarn`` from command line one time to restore all packages (or RestorePackages.cmd).
-* Run ``npm start`` from command line to run angular-cli server. Wait webpack to finish it's work.
-* Visit ``http://localhost:7200`` in your browser.
-  User: admin
-  Password: Qwertyuiop1
+* Run ``npm start`` from command line to run angular-cli server. Wait webpack to finish it's work. 
+    There are allowed follwing environments for development:
+        ``npm start`` or ``npm run start-staging`` - staging development mode
+        ``npm run start-beta`` - beta development mode
+
+    Also allowed following build modes:
+        ``npm run build-devstaging`` - staging development mode
+        ``npm run build-devbeta`` - beta development mode
+        ``npm run build-staging`` - staging mode
+        ``npm run build-beta`` - beta mode
+        ``npm run build-prod`` - prod mode
+
+    More options for all modes available in package.json and angular.json configuration files. 
+    (see ./src/environments folder for corresponding environment settings) 
+* Visit ``http://localhost:4200`` in your browser.
+
   
-Localhost with SSL by @DT
-* run ``npm run start-staging-ssl`` or create the same for start but you need ``localhost:7000`` with https
-* for fixing warning in browser you can update angular.json and maybe add certificate in trusted
-* add code below
+### How To Run with SSL?
+
+* Update/add options into angular.json
 ```
 "serve": {
   "builder": "@angular-devkit/build-angular:dev-server",
@@ -57,3 +55,6 @@ Localhost with SSL by @DT
     "sslCert": "ssl/server.crt"
   },
 ```
+* Run ``npm start`` or any other mode.
+* Visit ``https://localhost:4200`` in your browser.
+* Accept certificate as trusted.
