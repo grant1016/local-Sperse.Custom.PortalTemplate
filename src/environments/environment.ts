@@ -8,7 +8,6 @@ export const environment = {
     zenDeskEnabled: false,
     hmr: false,
     publicUrl: 'http://localhost:5200',
-    remoteServiceBaseUrl: 'https://testadmin.sperse.com',
     appBaseHref: 'https://testuicdn.azureedge.net/current/',
     appConfig: 'appconfig.json',
     releaseStage: 'development',

@@ -4,7 +4,6 @@ export const environment = {
     hmr: false,
     appConfig: 'appconfig.devbeta.json',
     publicUrl: 'http://localhost:5200',
-    remoteServiceBaseUrl: 'https://beta.sperse.com',
     appBaseHref: 'https://sperseuicdn.azureedge.net/current/',
     releaseStage: 'development',
 };
