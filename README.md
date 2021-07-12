@@ -1,45 +1,92 @@
-﻿### How To Fork Project?
+﻿### Prerequirements
 
-* Create your own empty repository with some name (for ex. ``company.portal``) or use existing on any git server.
-* Clone portal template into ``sperse.custom.portaltemplate`` folder
+* nodejs + npm
+https://nodejs.org
 
-    git clone https://{User}@bitbucket.org/sperse-team/sperse.custom.portaltemplate.git
+* Yarn
+https://yarnpkg.com/en/docs/install#windows-stable
 
-* Go to ``company.portal`` repository root folder and add cloned remote to your repository (use correct path to sperse.custom.portaltemplate repository folder if ``company.portal`` repository folder not on the same level)
+* angular-cli v8.3.24 (tested in this version, but may work in later versions too).
 
-    git remote add sperse.custom.portaltemplate ../sperse.custom.portaltemplate
+* typescript 3.5.2
+
+
+### IDE
+
+Project is IDE and OS independent. 
+That means you can develop in Windows/Linux/Mac with any editor like Visual Studio Code, Angular IDE or Webstorm.
+
+
+### How To Fork Portal Template repository (skip these steps if the template has already been forked into your custom portal repository)
+
+* Add template repository as remote in your portal repository
+
+    git remote add sperse.custom.portaltemplate https://bitbucket.org/sperse-team/sperse.custom.portaltemplate.git
     
+* Process merge as described below
+
+
+### Merge template to your portal repository
+
 * Update all of your branches set to track remote ones
 
     git remote update
 
-* Merge ``sperse.custom.portaltemplate`` into ``company.portal`` (it's possible to use any branch version instead of ``master``)
+* Merge template into your portal (it's possible to use any branch version instead of ``master``)
 
     git merge -S --allow-unrelated-histories sperse.custom.portaltemplate/master
 
-* Push changes to ``company.portal`` repository (depending which branch was used)
+* Push changes to your repository (depending which branch was used)
 
     git push origin master
 
 
 ### How To Run?
 
-* Go to root folder of the Angular2 project (the folder contains package.json file) and run ``yarn`` from command line one time to restore all packages (or RestorePackages.cmd).
-* Run ``npm start`` from command line to run angular-cli server. Wait webpack to finish it's work. 
-    There are allowed follwing environments for development:
-        ``npm start`` or ``npm run start-staging`` - staging development mode
-        ``npm run start-beta`` - beta development mode
+* Go to root folder of portal project (the folder contains package.json file) and run ``yarn`` from command line one time to restore all packages (or RestorePackages.cmd).
+* Run ``npm run start-staging`` from command line to run angular-cli server. Wait webpack to finish its work. There are follwing environments for development:
 
-    Also allowed following build modes:
-        ``npm run build-devstaging`` - staging development mode
-        ``npm run build-devbeta`` - beta development mode
-        ``npm run build-staging`` - staging mode
-        ``npm run build-beta`` - beta mode
-        ``npm run build-prod`` - prod mode
+    - local API server access (don't useful for external development):
 
-    More options for all modes available in package.json and angular.json configuration files. 
-    (see ./src/environments folder for corresponding environment settings) 
+        npm start 
+
+    - start UI server in staging mode:
+
+        npm run start-staging
+
+    - start UI server in beta mode:
+
+        npm run start-beta
+
 * Visit ``http://localhost:4200`` in your browser.
+
+
+### Run build for deployment
+
+* There are following build environments allowed:
+
+    - build staging development mode (means no optimizations enabled):
+
+        npm run build-devstaging
+
+    - build beta development mode (means no optimizations enabled):
+
+        npm run build-devbeta
+
+    - build staging mode:
+
+        npm run build-staging
+
+     - build beta mode:
+
+        npm run build-beta
+
+    - build prod mode:
+
+        npm run build-prod
+    
+* More options for all modes available in package.json and angular.json configuration files. 
+(see ./src/environments folder for corresponding environment settings) 
 
   
 ### How To Run with SSL?
