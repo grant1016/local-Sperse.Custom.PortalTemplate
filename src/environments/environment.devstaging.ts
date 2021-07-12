@@ -4,6 +4,5 @@ export const environment = {
     hmr: false,
     appConfig: 'appconfig.devstaging.json',
     publicUrl: 'http://localhost:5200',
-    appBaseHref: 'https://testuicdn.azureedge.net/current/',
-    releaseStage: 'development',
+    releaseStage: 'development'
 };

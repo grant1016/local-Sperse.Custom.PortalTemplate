@@ -4,6 +4,5 @@ export const environment = {
     hmr: false,
     appConfig: 'appconfig.prod.json',
     publicUrl: 'https://sperse.com',
-    appBaseHref: 'https://cdn.sperse.com/current/',
-    releaseStage: 'production',
+    releaseStage: 'production'
 };
