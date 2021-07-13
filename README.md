@@ -6,11 +6,6 @@ https://nodejs.org
 * Yarn
 https://yarnpkg.com/en/docs/install#windows-stable
 
-* angular-cli v8.3.24 (tested in this version, but may work in later versions too).
-
-* typescript 3.5.2
-
-
 ### IDE
 
 Project is IDE and OS independent. 
@@ -21,7 +16,7 @@ That means you can develop in Windows/Linux/Mac with any editor like Visual Stud
 
 * Add template repository as remote in your portal repository
 
-    git remote add sperse.custom.portaltemplate https://bitbucket.org/sperse-team/sperse.custom.portaltemplate.git
+    git remote add template https://bitbucket.org/sperse-team/sperse.custom.portaltemplate.git
     
 * Process merge as described below
 
@@ -34,7 +29,7 @@ That means you can develop in Windows/Linux/Mac with any editor like Visual Stud
 
 * Merge template into your portal (it's possible to use any branch version instead of ``master``)
 
-    git merge -S --allow-unrelated-histories sperse.custom.portaltemplate/master
+    git merge -S --allow-unrelated-histories template/master
 
 * Push changes to your repository (depending which branch was used)
 
@@ -46,7 +41,7 @@ That means you can develop in Windows/Linux/Mac with any editor like Visual Stud
 * Go to root folder of portal project (the folder contains package.json file) and run ``yarn`` from command line one time to restore all packages (or RestorePackages.cmd).
 * Run ``npm run start-staging`` from command line to run angular-cli server. Wait webpack to finish its work. There are follwing environments for development:
 
-    - local API server access (don't useful for external development):
+    - local API server access (for internal use only):
 
         npm start 
 
