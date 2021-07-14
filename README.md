@@ -1,52 +1,93 @@
-﻿## ASP.NET ZERO - Angular 2 UI
-
-This is Angular 2 UI for AspNet Zero. It's in PREVIEW state and is constantly being improved and changed.
-So, don't use it in production, but you can test it and check source to prepare to the coming release.
-
-### Prerequirements
-
-*ASP.NET Core (Windows (x64) Installer - .NET Core 1.1.1 runtime (Current))
-https://www.microsoft.com/net/download/core#/runtime
+﻿### Prerequirements
 
 * nodejs + npm
-https://nodejs.org/dist/v8.11.2/node-v8.11.2-x64.msi
+https://nodejs.org
 
 * Yarn
 https://yarnpkg.com/en/docs/install#windows-stable
 
-* angular-cli v1.0.0-beta.17 (tested in this version, but may work in later versions too).
-
-* typescript 2.0 (v2.1 recommended).
-https://www.microsoft.com/en-us/download/details.aspx?id=48593
 
 ### IDE
 
-Project is IDE and OS independent. That means you can develop in Windows/Linux/Mac with any editor.
-We developed it with Visual Studio 2015 and Visual Studio Code.
-We are best comfortable with Visual Studio 2015 with Resharper 2016.3 EAP.
+Project is IDE and OS independent. 
+That means you can develop in Windows/Linux/Mac with any editor like Visual Studio Code, Angular IDE or Webstorm.
+
+
+### How To Fork Portal Template repository (skip these steps if the template has already been forked into your custom portal repository)
+
+* Add template repository as remote in your portal repository
+
+    git remote add template https://bitbucket.org/sperse-team/sperse.custom.portaltemplate.git
+    
+* Process merge as described below
+
+
+### Merge template to your portal repository
+
+* Update all of your branches set to track remote ones
+
+    git remote update
+
+* Merge template into your portal (it's possible to use any branch version instead of ``master``)
+
+    git merge -S --allow-unrelated-histories template/master
+
+* Push changes to your repository (depending which branch was used)
+
+    git push origin master
+
 
 ### How To Run?
 
-UI uses AspNet Zero (ASP.NET Core version) as backend. So, you should first run it:
+* Go to root folder of portal project (the folder contains package.json file) and run ``yarn`` from command line one time to restore all packages (or RestorePackages.cmd).
+* Run ``npm run start-staging`` from command line to run angular-cli server. Wait webpack to finish its work. There are follwing environments for development:
 
-* Open AspNet Zero AspNet Core project in Visual Studio.
-* Set ``.Web.Host`` as startup project.
-* Go to the root folder of EntityFramework project and run UpdateDB.cmd.
-* Run the application. You will see the Swagger UI (https://www.aspnetzero.com/Documents/Development-Guide-Core#swagger-ui).
-  http://localhost:7000
+    - local API server access (for internal use only):
 
-Once server side is ready, you can run the Angular2 application:
+        npm start 
 
-* Go to root folder of the Angular2 project (the folder contains package.json file) and run ``yarn`` from command line one time to restore all packages (or RestorePackages.cmd).
-* Run ``npm start`` from command line to run angular-cli server. Wait webpack to finish it's work.
-* Visit ``http://localhost:7200`` in your browser.
-  User: admin
-  Password: Qwertyuiop1
+    - start UI server in staging mode:
+
+        npm run start-staging
+
+    - start UI server in beta mode:
+
+        npm run start-beta
+
+* Visit ``http://localhost:4200`` in your browser.
+
+
+### Run build for deployment
+
+* There are following build environments allowed:
+
+    - build staging development mode (means no optimizations enabled):
+
+        npm run build-devstaging
+
+    - build beta development mode (means no optimizations enabled):
+
+        npm run build-devbeta
+
+    - build staging mode:
+
+        npm run build-staging
+
+     - build beta mode:
+
+        npm run build-beta
+
+    - build prod mode:
+
+        npm run build-prod
+    
+* More options for all modes available in package.json and angular.json configuration files. 
+(see ./src/environments folder for corresponding environment settings) 
+
   
-Localhost with SSL by @DT
-* run ``npm run start-staging-ssl`` or create the same for start but you need ``localhost:7000`` with https
-* for fixing warning in browser you can update angular.json and maybe add certificate in trusted
-* add code below
+### How To Run with SSL?
+
+* Update/add options into angular.json
 ```
 "serve": {
   "builder": "@angular-devkit/build-angular:dev-server",
@@ -57,3 +98,6 @@ Localhost with SSL by @DT
     "sslCert": "ssl/server.crt"
   },
 ```
+* Run ``npm start`` or any other mode.
+* Visit ``https://localhost:4200`` in your browser.
+* Accept certificate as trusted.

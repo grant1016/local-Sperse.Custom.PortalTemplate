@@ -7,9 +7,7 @@ export const environment = {
     production: false,
     zenDeskEnabled: false,
     hmr: false,
-    publicUrl: 'http://localhost:5200',
-    remoteServiceBaseUrl: 'http://localhost:7000',
-    appBaseHref: 'https://testuicdn.azureedge.net/current/',
     appConfig: 'appconfig.json',
-    releaseStage: 'development',
+    publicUrl: 'http://localhost:5200',
+    releaseStage: 'development'
 };
