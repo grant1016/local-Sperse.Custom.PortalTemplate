@@ -3,6 +3,7 @@ import { Component, Injector } from '@angular/core';
 import { ActivatedRoute, Params } from '@angular/router';
 
 /** Third party imports */
+import { MatDialog } from '@angular/material/dialog';
 import { finalize, first } from 'rxjs/operators';
 
 /** Application imports */
@@ -11,6 +12,7 @@ import { ConditionsType } from '@shared/AppEnums';
 import { accountModuleAnimation } from '@shared/animations/routerTransition';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { ConditionsModalComponent } from '@shared/common/conditions-modal/conditions-modal.component';
 import { UrlHelper } from '@shared/helpers/UrlHelper';
 import {
     TenantModel,
@@ -43,6 +45,7 @@ export class AutoLoginComponent {
 
     constructor(
         injector: Injector,
+        public dialog: MatDialog,
         public ls: AppLocalizationService,
         private activatedRoute: ActivatedRoute,
         private accountProxy: AccountServiceProxy,
@@ -121,5 +124,6 @@ export class AutoLoginComponent {
     }
 
     openConditionsDialog(type: ConditionsType) {
+        this.dialog.open(ConditionsModalComponent, { panelClass: ['slider', 'footer-slider'], data: { type: type }});
     }
 }
