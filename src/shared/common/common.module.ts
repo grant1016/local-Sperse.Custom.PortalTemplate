@@ -43,6 +43,7 @@ import { PhoneFormatModule } from '@shared/common/pipes/phone-format/phone-forma
         TitleCasePipe,
         NoDataModule,
         CalendarComponent,
+        ConditionsModalComponent,
         RegisterConfirmComponent
     ],
     imports: [
@@ -55,7 +56,9 @@ import { PhoneFormatModule } from '@shared/common/pipes/phone-format/phone-forma
         PhoneFormatModule,
         CountryPhoneNumberModule
     ],
-    entryComponents: [],
+    entryComponents: [
+        ConditionsModalComponent
+    ],
     providers: [
         AppUrlService,
         PrimengTableHelper,
