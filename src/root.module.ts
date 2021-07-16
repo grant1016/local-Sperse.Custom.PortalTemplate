@@ -10,6 +10,8 @@ import { RouteReuseStrategy, Router } from '@angular/router';
 import { AbpModule } from '@abp/abp.module';
 import { GestureConfig } from '@angular/material';
 import { CacheService } from 'ng2-cache-service';
+import { CacheStorageAbstract } from 'ng2-cache-service/dist/src/services/storage/cache-storage-abstract.service';
+import { CacheLocalStorage } from 'ng2-cache-service/dist/src/services/storage/local-storage/cache-local-storage.service';
 import { BugsnagErrorHandler } from '@bugsnag/plugin-angular';
 import { TranslateLoader, TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
@@ -38,6 +40,7 @@ import { TitleService } from '@shared/common/title/title.service';
 import { LoadingSpinnerModule } from '@app/shared/common/loading-spinner/loading-spinner.module';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { ProfileService } from '@shared/common/profile-service/profile.service';
+import { StatesService } from '@root/store/states-store/states.service';
 import { RootStoreModule } from '@root/store';
 
 export function errorHandlerFactory(
@@ -207,6 +210,11 @@ function handleLogoutRequest(authService: AppAuthService) {
         TitleService,
         FullScreenService,
         FaviconService,
+        StatesService,
+        {
+            provide: CacheStorageAbstract,
+            useClass: CacheLocalStorage
+        },
         CacheService,
         { provide: HTTP_INTERCEPTORS, useClass: AppHttpInterceptor, multi: true },
         { provide: API_BASE_URL, useFactory: getRemoteServiceBaseUrl },
