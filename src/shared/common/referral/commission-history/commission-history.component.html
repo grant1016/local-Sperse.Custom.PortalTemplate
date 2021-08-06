@@ -35,7 +35,7 @@
             </dxi-column>
             <dxi-column [dataField]="commissionFields.OrderNumber"
                         alignment="left"
-                        [width]="100"
+                        [width]="50"
                         [caption]="ls.l('Referral.OrderId')"
                         cssClass="clipboard-holder">
             </dxi-column>
@@ -53,6 +53,11 @@
                         cellTemplate="amountCell"
                         [width]="185"
                         cssClass="padding-right">
+            </dxi-column>
+            <dxi-column [dataField]="commissionFields.Tier"
+                        [caption]="ls.l('Referral.Tier')"
+                        cellTemplate="tierCell"
+                        [width]="100">
             </dxi-column>
             <dxi-column [dataField]="commissionFields.CommissionAmount"
                         [caption]="ls.l('Referral.Commission')"
@@ -75,6 +80,9 @@
             </div>
             <div *dxTemplate="let cellData of 'statusCell'" class="clipboard-holder">
                 <span [ngStyle]="{ color: getCellColor(cellData.row.data) }">{{ cellData.value }}</span>
+            </div>
+            <div *dxTemplate="let cellData of 'tierCell'" class="clipboard-holder">
+                {{ ls.l('Referral.' + cellData.value) }}
             </div>
         </dx-data-grid>
     </div>
