@@ -35,7 +35,9 @@
         "ThanksForRequest": "Thank you for you request",
         "YouCantRequestMoreThen": "You can't request more then {0}",
         "Tier1": "T1",
-        "Tier2": "T2"
+        "Tier2": "T2",
+        "TotalEarnings": "Total Earnings",
+        "TotalWithdrawal": "Total Withdrawal"
       },
         "VersusEstimated": "Versus Estimated",
         "Navigation_ResellerInfo": "Reseller Info"

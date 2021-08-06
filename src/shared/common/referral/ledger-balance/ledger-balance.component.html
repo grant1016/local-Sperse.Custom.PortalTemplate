@@ -32,7 +32,7 @@
                     name="pendingEarningsTotal"
                     [caption]="(pendingEarningsTotal + approvedEarningsTotal) | currency"
                     cssClass="clipboard-holder amount">
-            <dxi-column [caption]="ls.l('Total Earnings')"
+            <dxi-column [caption]="ls.l('Referral.TotalEarnings')"
                         dataField="totalAmount"
                         alignment="right"
                         cssClass="clipboard-holder amount"
@@ -44,7 +44,7 @@
         <dxi-column alignment="right"
                     [caption]="(pendingWithdrawalsTotal + approvedWithdrawalsTotal) | currency"
                     cssClass="clipboard-holder amount">
-            <dxi-column [caption]="ls.l('Total Withdrawal')"
+            <dxi-column [caption]="ls.l('Referral.TotalWithdrawal')"
                         dataField="totalAmount"
                         cssClass="withdrawalAmount clipboard-holder amount"
                         alignment="right"
@@ -93,7 +93,7 @@
         <dxi-column alignment="right"
                     [caption]="approvedEarningsTotal | currency"
                     cssClass="clipboard-holder amount">
-            <dxi-column [caption]="ls.l('Earned')"
+            <dxi-column [caption]="ls.l('Referral.Earned')"
                         dataField="earningsAmount"
                         alignment="right"
                         cssClass="clipboard-holder amount"
@@ -105,7 +105,7 @@
         <dxi-column alignment="right"
                     [caption]="approvedWithdrawalsTotal | currency"
                     cssClass="clipboard-holder amount">
-            <dxi-column [caption]="ls.l('Withdrawn')"
+            <dxi-column [caption]="ls.l('Referral.Withdrawn')"
                         dataField="withdrawalAmount"
                         cssClass="withdrawalAmount clipboard-holder amount"
                         alignment="right"
