@@ -32,7 +32,8 @@
                     name="pendingEarningsTotal"
                     [caption]="(pendingEarningsTotal + approvedEarningsTotal) | currency"
                     cssClass="clipboard-holder amount">
-            <dxi-column dataField="totalAmount"
+            <dxi-column [caption]="ls.l('Referral.Earnings')"
+                        dataField="totalAmount"
                         alignment="right"
                         cssClass="clipboard-holder amount"
                         [allowSorting]="false"
@@ -43,7 +44,8 @@
         <dxi-column alignment="right"
                     [caption]="(pendingWithdrawalsTotal + approvedWithdrawalsTotal) | currency"
                     cssClass="clipboard-holder amount">
-            <dxi-column dataField="totalAmount"
+            <dxi-column [caption]="ls.l('Referral.Withdrawal')"
+                        dataField="totalAmount"
                         cssClass="withdrawalAmount clipboard-holder amount"
                         alignment="right"
                         [format]="currencyFormat"
@@ -91,7 +93,8 @@
         <dxi-column alignment="right"
                     [caption]="approvedEarningsTotal | currency"
                     cssClass="clipboard-holder amount">
-            <dxi-column dataField="earningsAmount"
+            <dxi-column [caption]="ls.l('Referral.Earned')"
+                        dataField="earningsAmount"
                         alignment="right"
                         cssClass="clipboard-holder amount"
                         [allowSorting]="false"
@@ -102,7 +105,8 @@
         <dxi-column alignment="right"
                     [caption]="approvedWithdrawalsTotal | currency"
                     cssClass="clipboard-holder amount">
-            <dxi-column dataField="withdrawalAmount"
+            <dxi-column [caption]="ls.l('Referral.Withdrawn')"
+                        dataField="withdrawalAmount"
                         cssClass="withdrawalAmount clipboard-holder amount"
                         alignment="right"
                         [allowSorting]="false"

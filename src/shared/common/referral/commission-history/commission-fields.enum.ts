@@ -9,6 +9,7 @@ export const CommissionFields: KeysEnum<CommissionDto> = {
     CustomerName: 'CustomerName',
     ProductName: 'ProductName',
     ProductAmount: 'ProductAmount',
+    Tier: 'Tier',
     CommissionAmount: 'CommissionAmount',
     Status: 'Status'
 };

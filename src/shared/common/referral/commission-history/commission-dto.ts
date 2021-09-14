@@ -6,6 +6,7 @@ export interface CommissionDto {
     CustomerName: string;
     ProductName: string;
     ProductAmount: number;
+    Tier: string;
     CommissionAmount: number;
     Status: string;
 }
