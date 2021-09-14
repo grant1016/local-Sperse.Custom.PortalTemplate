@@ -3,6 +3,8 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { UtilsModule } from '@shared/utils/utils.module';
 import { ModalModule } from 'ngx-bootstrap/modal';
+import { DxButtonModule } from 'devextreme-angular/ui/button';
+import { DxTextBoxModule } from 'devextreme-angular/ui/text-box';
 import { AccountRoutingModule } from './account-routing.module';
 import { SignupModule } from './signup/signup.module';
 import { AccountComponent } from './account.component';
@@ -30,6 +32,8 @@ import { TranslateModule } from '@ngx-translate/core';
         ModalModule.forRoot(),
         UtilsModule,
         AccountRoutingModule,
+        DxTextBoxModule,
+        DxButtonModule,
         TranslateModule.forChild({
             extend: true
         })

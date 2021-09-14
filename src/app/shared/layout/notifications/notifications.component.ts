@@ -27,6 +27,7 @@ import { DxDataGridComponent } from 'devextreme-angular';
 export class NotificationsComponent implements OnInit {
     @ViewChild(ModalDialogComponent, { static: true }) modalDialog: ModalDialogComponent;
     @ViewChild(DxDataGridComponent, { static: false }) dataGrid: DxDataGridComponent;
+    totalCount: number;
     unreadNotificationCount = 0;
     readStateFilter: UserNotificationState;
     loading = false;
@@ -39,23 +40,23 @@ export class NotificationsComponent implements OnInit {
         key: 'userNotificationId',
         load: (loadOptions) => {
             this.modalDialog.startLoading();
+            this.processToalCountRequest();
             return this.notificationService.getUserNotifications(
                 this.readStateFilter,
                 loadOptions.take,
                 loadOptions.skip
             ).pipe(
-                finalize(() => this.modalDialog.finishLoading()),
+                finalize(() => this.modalDialog.finishLoading())
             ).toPromise().then((notificationsOutput: GetNotificationsOutput) => {
                 let notifications = [];
-                this.unreadNotificationCount = notificationsOutput.unreadCount;
                 notificationsOutput.items.forEach((item: UserNotificationDto) => {
                     notifications.push(this.userNotificationHelper.format(<any>item, false));
                 });
-                return {
-                    data: notifications,
-                    totalCount: notificationsOutput.totalCount
-                };
+                return notifications;
             });
+        },
+        totalCount: (loadOptions: any) => {
+            return this.totalCount || loadOptions.take;
         }
     });
     defaultGridPagerConfig = DataGridService.defaultGridPagerConfig;
@@ -72,7 +73,18 @@ export class NotificationsComponent implements OnInit {
         this.registerToEvents();
     }
 
+    processToalCountRequest() {
+        if (!this.totalCount)
+            this.notificationService.getUserNotificationCount(
+                this.readStateFilter
+            ).subscribe(totalCount => {
+                this.notificationsDataSource['_totalCount'] = this.totalCount = totalCount;
+                this.dataGrid.instance.repaint();
+            });
+    }
+
     loadNotifications(): void {
+        this.totalCount = undefined;
         this.dataGrid.instance.refresh();
     }
 

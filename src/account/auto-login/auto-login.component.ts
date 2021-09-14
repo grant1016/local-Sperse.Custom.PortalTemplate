@@ -4,10 +4,13 @@ import { ActivatedRoute, Params } from '@angular/router';
 
 /** Third party imports */
 import { finalize, first } from 'rxjs/operators';
+import { MatDialog } from '@angular/material/dialog';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
 import { ConditionsType } from '@shared/AppEnums';
+import { LoginService } from '../login/login.service';
+import { ConditionsModalComponent } from '@shared/common/conditions-modal/conditions-modal.component';
 import { accountModuleAnimation } from '@shared/animations/routerTransition';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -15,7 +18,10 @@ import { UrlHelper } from '@shared/helpers/UrlHelper';
 import {
     TenantModel,
     SendAutoLoginLinkInput,
-    AccountServiceProxy
+    AccountServiceProxy,
+    TokenAuthServiceProxy,
+    AuthenticateByCodeModel,
+    AuthenticateResultModel
 } from '@shared/service-proxies/service-proxies';
 
 @Component({
@@ -30,17 +36,39 @@ export class AutoLoginComponent {
     tenantName = this.appSession.tenant
         ? this.appSession.tenant.name
         : AppConsts.defaultTenantName;
+    accessCodeMaxTriesCount = 3;
+    accessCodeIsValid: boolean;
+    accessCode: string;
+    isInstantForm: boolean = false;
     userEmail: string;
 
     constructor(
         injector: Injector,
+        public dialog: MatDialog,
         public ls: AppLocalizationService,
         private activatedRoute: ActivatedRoute,
         private accountProxy: AccountServiceProxy,
-        private appSession: AppSessionService
+        private authProxy: TokenAuthServiceProxy,
+        private appSession: AppSessionService,
+        private loginService: LoginService
     ) {
         this.activatedRoute.queryParams.pipe(first())
-            .subscribe((params: Params) => this.userEmail = params.email);
+            .subscribe((params: Params) => {
+                this.userEmail = params.email;
+                if (this.userEmail) {
+                    if (this.isInstantForm = params.hasOwnProperty('instant'))
+                        setTimeout(() => this.sendloginLink());
+                }
+            });
+    }
+
+    checkAccessCodeMaxTries(showInvalidMessage = true) {
+        this.accessCodeMaxTriesCount--;
+        if (this.accessCodeMaxTriesCount > 0) {
+            if (showInvalidMessage)
+                abp.message.error(this.ls.l('AutoLoginCodeIsIncorrect'));
+        } else
+            abp.message.error(this.ls.l('LoginFailed'));
     }
 
     sendloginLink(tenantId?: number): void {
@@ -69,6 +97,38 @@ export class AutoLoginComponent {
         return !path || path.indexOf('auto-login') > 0 ? '' : path;
     }
 
-    openConditionsDialog() {
+    authenticateByCode() {
+        abp.ui.setBusy();
+        this.authProxy.authenticateByCode(new AuthenticateByCodeModel({
+            emailAddress: this.userEmail,
+            code: this.accessCode
+        })).pipe(
+            finalize(() => abp.ui.clearBusy())
+        ).subscribe((res: AuthenticateResultModel) => {
+            this.loginService.processAuthenticateResult(res, AppConsts.appBaseUrl);
+        }, () => {
+            this.checkAccessCodeMaxTries(false);
+        });
+    }
+
+    onAccessCodeProcess() {
+        if (this.accessCode && this.accessCodeIsValid)
+            this.authenticateByCode();
+        else
+            this.checkAccessCodeMaxTries();
+    }
+
+    onAutoLoginCodeFocusOut(event) {
+        this.accessCodeIsValid = event.component.option('isValid');
+    }
+
+    onAutoLoginCodeChanged(event) {
+        this.accessCodeIsValid = event.component.option('isValid');
+        if (event.event.keyCode === 13/*Enter*/)
+            this.onAccessCodeProcess();
+    }
+
+    openConditionsDialog(type: ConditionsType) {
+        this.dialog.open(ConditionsModalComponent, { panelClass: ['slider', 'footer-slider'], data: { type: type }});
     }
 }

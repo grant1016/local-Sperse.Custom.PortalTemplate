@@ -65,7 +65,6 @@ let COMPONENTS = [
         DxDropDownBoxModule,
 
         MatTabsModule,
-
         PrimeNgFileUploadModule,
         ProgressBarModule,
         TableModule,

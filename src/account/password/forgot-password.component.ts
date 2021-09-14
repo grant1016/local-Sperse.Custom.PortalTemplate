@@ -4,6 +4,7 @@ import {
     OnInit,
     ViewChild,
 } from '@angular/core';
+import { Router } from '@angular/router';
 
 /** Application imports */
 import { SendPasswordResetCodeInput } from '@shared/service-proxies/service-proxies';
@@ -14,6 +15,9 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 
 @Component({
     templateUrl: './forgot-password.component.html',
+    styleUrls: [
+        './forgot-password.component.less'
+    ],
     animations: [accountModuleAnimation()]
 })
 export class ForgotPasswordComponent implements OnInit {
@@ -23,11 +27,19 @@ export class ForgotPasswordComponent implements OnInit {
     emailRegex = AppConsts.regexPatterns.email;
 
     constructor (
+        private router: Router,
         private loginService: LoginService,
         public ls: AppLocalizationService
     ) {}
 
     ngOnInit() {}
+
+    autoLogin() {
+        if (this.form.valid)
+            this.router.navigate(['account/auto-login'], 
+                {queryParams: {email: this.model.emailAddress, instant: true}}
+            )
+    }
 
     save(): void {
         if (this.form.valid) {
