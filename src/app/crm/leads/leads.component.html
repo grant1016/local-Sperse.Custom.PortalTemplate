@@ -31,8 +31,7 @@
                 [updateConfirmationMessage]="l('LeadsUpdateStatusWarningMessage')"
                 targetSelector="[aria-label='{{l('Toolbar_Stage')}}']"
                 [funnelStyling]="true"
-                [list]="stages"
-                (onItemSelected)="updateLeadsStage($event)">
+                [list]="stages">
         </app-static-list>
         <tags-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [filterModel]="filterModelTags" [managePermission]="manageCGPermision"></tags-list>
         <lists-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [filterModel]="filterModelLists" [managePermission]="manageCGPermision"></lists-list>
@@ -40,9 +39,9 @@
         <crm-stars-list [selectedKeys]="selectedClientKeys"
                         [bulkUpdateMode]="true"
                         [filterModel]="filterModelStar"
-                        [hideButtons]="isBankCodeLayoutType">
+                        [hideButtons]="false">
         </crm-stars-list>
-        <div [hidden]="hideDataGrid$ | async" class="portlet light no-padding margin-bottom-0">
+        <div class="portlet light no-padding margin-bottom-0">
             <div class="portlet-body">
                 <div>
                     <div id="LeadsTable">
@@ -138,7 +137,7 @@
                             <dxo-summary>
                                 <dxi-group-item [column]="leadFields.Id"
                                                 summaryType="count"
-                                                [displayFormat]="'{0} ' + l('ContactGroup_' + selectedContactGroup).toLocaleLowerCase()">
+                                                [displayFormat]="'{0} ' + l('ContactGroup_Client').toLocaleLowerCase()">
                                 </dxi-group-item>
                             </dxo-summary>
                         </dx-data-grid>
@@ -150,6 +149,6 @@
 </div>
 
 <app-no-data
-    [hidden]="!isDataLoaded || totalRowCount || showPivotGrid"
+    [hidden]="!isDataLoaded || totalRowCount"
     [showLink]="false">
 </app-no-data>

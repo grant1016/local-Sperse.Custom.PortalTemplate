@@ -13,7 +13,9 @@
             "Balance": "Balance",
             "TotalsAmountsPosted": "Totals Amounts Posted",
             "Earned": "Earned",
+            "Earnings": "Earnings",
             "Withdrawn": "Withdrawn",
+            "Withdrawal": "Withdrawal",
             "PendingAmounts": "Pending Amounts",
             "Available": "Available",
             "RequestWithdrawal": "Request a withdrawal",
@@ -25,13 +27,16 @@
             "CustomerName": "Customer Name",
             "ProductName": "Product Name",
             "SaleAmount": "Sale Amount",
+            "Tier": "Tier",
             "Commission": "Commission",
             "Status": "Status",
             "WithdrawalAmount": "Withdrawal Amount",
             "WithdrawalDescription": "You may request up to the total available balance",
             "AmountIsRequired": "Amount is required",
             "ThanksForRequest": "Thank you for you request",
-            "YouCantRequestMoreThen": "You can't request more then {0}"
+            "YouCantRequestMoreThen": "You can't request more then {0}",
+            "Tier1": "T1",
+            "Tier2": "T2"
         },
         "VersusEstimated": "Versus Estimated",
         "Navigation_ResellerInfo": "Reseller Info"

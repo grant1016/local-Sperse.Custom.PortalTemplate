@@ -25,7 +25,7 @@ export class AppComponent extends AppComponentBase implements OnInit, OnDestroy 
     private rootComponent: any;
     public constructor(
         injector: Injector,
-        private appService: AppService,
+        public appService: AppService,
         private renderer: Renderer2,
         public filtersService: FiltersService,
         @Inject(DOCUMENT) private document: any

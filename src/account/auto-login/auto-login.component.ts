@@ -3,8 +3,8 @@ import { Component, Injector } from '@angular/core';
 import { ActivatedRoute, Params } from '@angular/router';
 
 /** Third party imports */
-import { finalize, first } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
+import { finalize, first } from 'rxjs/operators';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
@@ -17,16 +17,18 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 import { UrlHelper } from '@shared/helpers/UrlHelper';
 import {
     TenantModel,
+    TokenAuthServiceProxy,
     SendAutoLoginLinkInput,
     AccountServiceProxy,
-    TokenAuthServiceProxy,
     AuthenticateByCodeModel,
     AuthenticateResultModel
 } from '@shared/service-proxies/service-proxies';
 
 @Component({
     templateUrl: 'auto-login.component.html',
-    styleUrls: [ 'auto-login.component.less' ],
+    styleUrls: [
+        'auto-login.component.less' 
+    ],
     animations: [accountModuleAnimation()]
 })
 export class AutoLoginComponent {

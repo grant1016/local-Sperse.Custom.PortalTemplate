@@ -14,7 +14,7 @@ import { IFormattedUserNotification, UserNotificationHelper } from './UserNotifi
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 import { GetNotificationsOutput, UserNotificationState } from '../../../../shared/service-proxies/service-proxies';
-import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
+import { DataGridService } from '../../common/data-grid.service/data-grid.service';
 import { DxDataGridComponent } from 'devextreme-angular';
 
 @Component({
@@ -62,10 +62,10 @@ export class NotificationsComponent implements OnInit {
     defaultGridPagerConfig = DataGridService.defaultGridPagerConfig;
 
     constructor(
+        private router: Router,
         private dialog: MatDialog,
         private notificationService: NotificationServiceProxy,
-        private userNotificationHelper: UserNotificationHelper,
-        private router: Router,
+        public userNotificationHelper: UserNotificationHelper,
         public ls: AppLocalizationService
     ) {}
 
@@ -109,7 +109,6 @@ export class NotificationsComponent implements OnInit {
                     'state',
                     'READ'
                 );
-                this.unreadNotificationCount -= 1;
             }
         });
     }

@@ -3,20 +3,39 @@ import { Injectable } from '@angular/core';
 
 /** Third party imports */
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { delay, map, publishReplay, refCount, switchMap } from 'rxjs/operators';
+import * as moment from 'moment-timezone';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
 import {
+    GetMemberInfoOutput,
+    SubscriptionShortInfoOutput,
     LayoutType, MemberSettingsServiceProxy,
     MemberSubscriptionServiceProxy, UpdateUserAffiliateCodeDto
 } from '@shared/service-proxies/service-proxies';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { ServiceType } from './service-type.enum';
 
 @Injectable()
 export class ProfileService {
+    private readonly SYSTEM_TYPE = '';
+    private accessCode: BehaviorSubject<string> = new BehaviorSubject<string>(
+        this.appSession.user ? this.appSession.user.affiliateCode : null
+    );
     private loadMemberInfo: Subject<null> = new Subject<null>();
-    private accessCode: BehaviorSubject<string> = new BehaviorSubject<string>(this.appSession.user ? this.appSession.user.affiliateCode : null);
+    memberInfo$: Observable<GetMemberInfoOutput> =
+        this.loadMemberInfo.pipe(delay(3000),
+            switchMap(() => this.subscriptionProxy.getMemberInfo(
+                this.SYSTEM_TYPE,
+                undefined,
+                undefined
+            )),
+            publishReplay(),
+            refCount()
+        );
+
     accessCode$: Observable<string> = this.accessCode.asObservable();
     defaultPhotos = {
         [LayoutType.Default]: AppConsts.imageUrls.noPhoto
@@ -44,10 +63,11 @@ export class ProfileService {
         const eventMethod = window.addEventListener ? 'addEventListener' : 'attachEvent';
         const messageEvent = window[eventMethod] === 'attachEvent' ? 'onmessage' : 'message';
         window.addEventListener(messageEvent, this.refreshMemberInfo.bind(this), false);
+        this.refreshMemberInfo({data: 'update'});
     }
 
     refreshMemberInfo(e) {
-        if (e.data === 'update') {
+        if (this.SYSTEM_TYPE && e.data === 'update') {
             this.loadMemberInfo.next();
         }
     }
@@ -87,6 +107,33 @@ export class ProfileService {
         return tenant && this.defaultContactPhotos[tenant.customLayoutType]
             ? this.defaultContactPhotos[tenant.customLayoutType][defaultPhotoSize]
             : AppConsts.imageUrls.noPhoto;
+    }
+
+    checkServiceSubscription(serviceTypeId: ServiceType): Observable<boolean> {
+        return this.memberInfo$.pipe(
+            map((memberInfo: GetMemberInfoOutput) => {
+                return memberInfo.subscriptions.some((sub: SubscriptionShortInfoOutput) => {
+                    return this.isSubscriptionAvailable(sub, serviceTypeId);
+                });
+            })
+        );
+    }
+
+    private isSubscriptionAvailable(subscription: SubscriptionShortInfoOutput, serviceTypeId: ServiceType): boolean {
+        return subscription.serviceTypeId.toLowerCase() === serviceTypeId.toString().toLowerCase()
+            && (!subscription.finalEndDate || subscription.finalEndDate.diff(moment()) > 0);
+    }
+
+    hasSubscriptions(serviceTypeIds: ServiceType[], operator: 'or' | 'and'): Observable<boolean> {
+        return this.memberInfo$.pipe(
+            map((memberInfo: GetMemberInfoOutput) => {
+                return serviceTypeIds[operator === 'or' ? 'some' : 'every']((serviceTypeId: ServiceType) => {
+                    return memberInfo.subscriptions.some((subscription: SubscriptionShortInfoOutput) => {
+                        return this.isSubscriptionAvailable(subscription, serviceTypeId);
+                    });
+                });
+            })
+        );
     }
 
     updateAccessCode(newAccessCode: string) {

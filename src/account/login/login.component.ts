@@ -8,6 +8,7 @@ import {
 } from '@angular/core';
 
 /** Third party imports */
+import { MatDialog } from '@angular/material/dialog';
 import * as moment from 'moment';
 
 /** Application imports */
@@ -21,6 +22,7 @@ import { ExternalLoginProvider, LoginService } from './login.service';
 import { SettingService } from '@abp/settings/setting.service';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { ConditionsModalComponent } from '@shared/common/conditions-modal/conditions-modal.component';
 
 export class AdLoginHostDirective {
     constructor(public viewContainerRef: ViewContainerRef) { }
@@ -41,6 +43,7 @@ export class LoginComponent implements OnInit {
     showPassword = false;
 
     constructor(
+        public dialog: MatDialog,
         private sessionService: AbpSessionService,
         private sessionAppService: SessionServiceProxy,
         private setting: SettingService,
@@ -66,6 +69,7 @@ export class LoginComponent implements OnInit {
     }
 
     openConditionsDialog(type: ConditionsType) {
+        this.dialog.open(ConditionsModalComponent, { panelClass: ['slider', 'footer-slider'], data: { type: type }});
     }
 
     login(): void {

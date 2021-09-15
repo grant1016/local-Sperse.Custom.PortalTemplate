@@ -16,10 +16,9 @@
                 </div>
             </div>
             <div class="col-xl-6 text-right links">
-                <a href="javascript:;"
-                   class="text-right"
-                   (click)="setAllNotificationsAsRead($event);"
-                   *ngIf="unreadNotificationCount">
+                <a href="javascript:;" class="text-right"
+                   *ngIf="userNotificationHelper.unreadNotificationCount > 0"                   
+                   (click)="setAllNotificationsAsRead($event);">
                     {{ls.l("SetAllAsRead")}}
                 </a>
                 <a (click)="openNotificationSettingsModal($event)"
@@ -57,7 +56,7 @@
                 </dxi-column>
 
                 <div *dxTemplate="let options of 'iconCellTemplate'">
-                    <i class="fa" [ngClass]="options.data.icon"></i>
+                    <i class="fa {{options.data.icon}} {{options.data.state}}"></i>
                 </div>
                 <div *dxTemplate="let options of 'dateCellTemplate'">
                     {{options.data.time}}
