@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 
 /** Third party imports */
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
-import { delay, map, publishReplay, refCount, switchMap } from 'rxjs/operators';
+import { map, publishReplay, refCount, switchMap } from 'rxjs/operators';
 import * as moment from 'moment-timezone';
 
 /** Application imports */
@@ -26,7 +26,7 @@ export class ProfileService {
     );
     private loadMemberInfo: Subject<null> = new Subject<null>();
     memberInfo$: Observable<GetMemberInfoOutput> =
-        this.loadMemberInfo.pipe(delay(3000),
+        this.loadMemberInfo.pipe(
             switchMap(() => this.subscriptionProxy.getMemberInfo(
                 this.SYSTEM_TYPE,
                 undefined,
@@ -63,7 +63,7 @@ export class ProfileService {
         const eventMethod = window.addEventListener ? 'addEventListener' : 'attachEvent';
         const messageEvent = window[eventMethod] === 'attachEvent' ? 'onmessage' : 'message';
         window.addEventListener(messageEvent, this.refreshMemberInfo.bind(this), false);
-        this.refreshMemberInfo({data: 'update'});
+        setTimeout(() => this.refreshMemberInfo({data: 'update'}), 2000);
     }
 
     refreshMemberInfo(e) {
