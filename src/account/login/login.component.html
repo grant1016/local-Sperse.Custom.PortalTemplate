@@ -26,7 +26,7 @@
                            placeholder="{{ls.l('Password')}}" name="password" required maxlength="32" tabindex="2" />
                     <a class="show-password" (click)="showHidePassword($event)"></a>
                     <div class="form-group clearfix">
-                        <a routerLink="/account/forgot-password" id="forget-password" class="forget-password pull-right">{{ls.l("ForgotPassword")}}</a>
+                        <a routerLink="/account/forgot-password" [queryParams]="{'email': loginService.authenticateModel.userNameOrEmailAddress}" id="forget-password" class="forget-password pull-right">{{ls.l("ForgotPassword")}}</a>
                     </div>
                 </div>
 

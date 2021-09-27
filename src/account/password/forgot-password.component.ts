@@ -4,7 +4,10 @@ import {
     OnInit,
     ViewChild,
 } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router, ParamMap } from '@angular/router';
+
+/** Third party imports */
+import { first } from 'rxjs/operators';
 
 /** Application imports */
 import { SendPasswordResetCodeInput } from '@shared/service-proxies/service-proxies';
@@ -28,9 +31,18 @@ export class ForgotPasswordComponent implements OnInit {
 
     constructor (
         private router: Router,
+        private activatedRoute: ActivatedRoute,
         private loginService: LoginService,
         public ls: AppLocalizationService
-    ) {}
+    ) {
+        this.activatedRoute.queryParamMap.pipe(
+            first()
+        ).subscribe((paramsMap: ParamMap) => {
+            let email = paramsMap.get('email');
+            if (email)
+                this.model.emailAddress = email;
+        });
+    }
 
     ngOnInit() {}
 

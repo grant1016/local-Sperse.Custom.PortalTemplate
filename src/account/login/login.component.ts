@@ -6,9 +6,11 @@ import {
     ViewChild,
     ViewContainerRef
 } from '@angular/core';
+import { ActivatedRoute, ParamMap } from '@angular/router';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
+import { first } from 'rxjs/operators';
 import * as moment from 'moment';
 
 /** Application imports */
@@ -48,9 +50,18 @@ export class LoginComponent implements OnInit {
         private sessionAppService: SessionServiceProxy,
         private setting: SettingService,
         private appSession: AppSessionService,
+        private activatedRoute: ActivatedRoute,
         public loginService: LoginService,
         public ls: AppLocalizationService
-    ) {}
+    ) {
+        this.activatedRoute.queryParamMap.pipe(
+            first()
+        ).subscribe((paramsMap: ParamMap) => {
+            let email = paramsMap.get('email');
+            if (email)
+                this.loginService.authenticateModel.userNameOrEmailAddress = email;
+        });
+    }
 
     ngOnInit(): void {
         let tenant = this.appSession.tenant;
