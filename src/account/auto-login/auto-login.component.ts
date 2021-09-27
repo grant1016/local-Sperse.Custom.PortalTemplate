@@ -91,7 +91,7 @@ export class AutoLoginComponent {
                 this.isLinkSent = res.detectedTenancies.length == 1;
             } else
                 this.isLinkSent = !isNaN(tenantId);
-        });
+        }, () => this.isInstantForm = false);
     }
 
     getAppRoute() {
