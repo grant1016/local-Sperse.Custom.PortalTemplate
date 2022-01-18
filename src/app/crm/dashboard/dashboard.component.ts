@@ -21,6 +21,7 @@ import { filter, first, takeUntil, map } from 'rxjs/operators';
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
 import { AppService } from '@app/app.service';
+import { ContactGroup } from '@shared/AppEnums';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { AppUiCustomizationService } from '@shared/common/ui/app-ui-customization.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -73,13 +74,16 @@ export class CrmDashboardComponent implements AfterViewInit, OnInit {
     contactsDataSource = new DataSource({
         pageSize: 50,
         sort: [{ selector: 'CompanyName', desc: false }, { selector: 'Name', desc: false }],
-        filter: [['StatusId', '=', 'A'], ['GroupId', '=', 'C'], ['ParentId', '=', null]],
+        filter: [['ParentId', '=', null]],
         select: ['Id', 'Name', 'CompanyName', 'Email'],
         store: new ODataStore({
             key: 'ContactId',
             url: this.oDataService.getODataUrl('Contact'),
             version: AppConsts.ODataVersion,
             beforeSend: (request) => {
+                request.params.isActive = true;
+                request.params.isProspective = false;
+                request.params.contactGroupId = ContactGroup.Client;
                 request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                 if (this.search) {
                     request.params.quickSearchString = this.search;
