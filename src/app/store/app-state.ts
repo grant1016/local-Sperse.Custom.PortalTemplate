@@ -3,7 +3,6 @@ import {
     ListsStoreState,
     RatingsStoreState,
     StarsStoreState,
-    StatusesStoreState,
     TagsStoreState
 } from '@app/store/index';
 
@@ -12,6 +11,5 @@ export interface State {
     lists: ListsStoreState.State;
     ratings: RatingsStoreState.State;
     stars: StarsStoreState.State;
-    statuses: StatusesStoreState.State;
     tags: TagsStoreState.State;
 }

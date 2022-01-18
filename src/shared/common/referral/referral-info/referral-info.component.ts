@@ -19,6 +19,7 @@ import { NotifyService } from '@abp/notify/notify.service';
     selector: 'referral-info',
     templateUrl: 'referral-info.component.html',
     styleUrls: [ 'referral-info.component.less' ],
+    providers: [ContactServiceProxy],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ReferralInfoComponent {
