@@ -147,19 +147,20 @@ export class TotalsByPeriodComponent implements DoCheck, OnInit, OnDestroy {
     ngOnInit() {
         this.totalsData$ = combineLatest(
             this.dashboardWidgetsService.period$,
+            this.dashboardWidgetsService.sourceContactId$,
             this.isCumulative$,
             this.dashboardWidgetsService.refresh$
         ).pipe(
             takeUntil(this.destroy$),
             tap(() => this.loadingService.startLoading()),
-            switchMap(([period, isCumulative, ]: [PeriodModel, boolean, null]) => {
+            switchMap(([period, sourceContactId, isCumulative, ]: [PeriodModel, number, boolean, null]) => {
                 const totalsByPeriodModel = this.savePeriod(period);
                 return this.loadCustomersAndLeadsStats(
                     totalsByPeriodModel,
                     period.from,
                     period.to,
                     isCumulative,
-                    undefined,
+                    sourceContactId,
                     undefined,
                     undefined
                 ).pipe(

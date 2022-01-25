@@ -121,6 +121,7 @@ export class TotalsBySourceComponent implements OnInit, OnDestroy {
         this.data$ = combineLatest(
             this.selectedTotal$,
             this.dashboardWidgetsService.period$,
+            this.dashboardWidgetsService.sourceContactId$,
             this.dashboardWidgetsService.refresh$,
         ).pipe(
             takeUntil(this.lifeCycleService.destroy$),
@@ -128,8 +129,8 @@ export class TotalsBySourceComponent implements OnInit, OnDestroy {
                 this.loading = true;
                 this.loadingService.startLoading(this.elementRef.nativeElement);
             }),
-            switchMap(([selectedTotal, period, ]: [ITotalOption, PeriodModel, null]) => selectedTotal.method.call(
-                this.dashboardServiceProxy, period && period.from || new Date('2000-01-01'), period && period.to || new Date()).pipe(
+            switchMap(([selectedTotal, period, sourceContactId, ]: [ITotalOption, PeriodModel, number, null]) => selectedTotal.method.call(
+                this.dashboardServiceProxy, period && period.from || new Date('2000-01-01'), period && period.to || new Date(), undefined, sourceContactId).pipe(
                     catchError(() => of([])),
                     finalize(() => this.loadingService.finishLoading(this.elementRef.nativeElement))
                 )

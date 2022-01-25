@@ -66,6 +66,8 @@ export class DashboardWidgetsService  {
     ];
     private _refresh: BehaviorSubject<null> = new BehaviorSubject<null>(null);
     refresh$: Observable<null> = this._refresh.asObservable();
+    private _sourceContactId: BehaviorSubject<number> = new BehaviorSubject<number>(undefined);
+    sourceContactId$: Observable<number> = this._sourceContactId.asObservable();
 
     constructor(
         private permissionService: AppPermissionService,
@@ -77,14 +79,15 @@ export class DashboardWidgetsService  {
     ) {
         combineLatest(
             this.period$,
+            this.sourceContactId$,
             this.refresh$
         ).pipe(
             tap(() => this.totalsDataLoading.next(true)),
-            switchMap(([period, refresh]: [PeriodModel, null]) => this.dashboardServiceProxy.getTotals(
+            switchMap(([period, sourceContactId, refresh]: [PeriodModel, number, null]) => this.dashboardServiceProxy.getTotals(
                 period && period.from,
                 period && period.to,
                 undefined,
-                undefined,
+                sourceContactId,
                 undefined
             ).pipe(
                 catchError(() => of(new GetTotalsOutput())),
@@ -95,6 +98,10 @@ export class DashboardWidgetsService  {
         });
     }
 
+    filterBySourceContactId(sourceContactId?: number) {
+        this._sourceContactId.next(sourceContactId);
+    }
+
     refresh() {
         this._refresh.next(null);
     }
@@ -102,5 +109,4 @@ export class DashboardWidgetsService  {
     getPercentage(value, total) {
         return (total ? Math.round(value / total * 100) : 0)  + '%';
     }
-
 }

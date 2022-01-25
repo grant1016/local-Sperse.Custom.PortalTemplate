@@ -91,8 +91,6 @@ export class CrmDashboardComponent implements AfterViewInit, OnInit {
             },
             onLoaded: (accounts: any[]) => {
                 this.contactAccounts = accounts;
-                if (!this.selectedAccount && this.contactAccounts.length)
-                    this.selectedAccount = accounts[0];
                 this.changeDetectorRef.detectChanges();
             },
             deserializeDates: false
@@ -186,13 +184,19 @@ export class CrmDashboardComponent implements AfterViewInit, OnInit {
 
     valueChanged(event) {
         this.selectedAccount = event.itemData;
+        this.dashboardWidgetsService.filterBySourceContactId(this.selectedAccount && this.selectedAccount.Id);
         this.dropDown.instance.close();
     }
 
     getSelectedName() {
-        return this.selectedAccount ? 
-            this.selectedAccount.CompanyName || this.selectedAccount.Name || this.selectedAccount.Email
-                : this.userInfo.fullName;
+        return this.selectedAccount && (this.selectedAccount.CompanyName || this.selectedAccount.Name || this.selectedAccount.Email);
+    }
+
+    onDropDownChanged(event) {
+        if (event.name == 'value' && !event.value) {
+            this.dashboardWidgetsService.filterBySourceContactId(undefined);
+            this.changeDetectorRef.markForCheck();
+        }
     }
 
     searchChanged = (e) => {

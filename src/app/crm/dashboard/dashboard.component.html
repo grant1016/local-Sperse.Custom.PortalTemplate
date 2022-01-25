@@ -2,9 +2,15 @@
         [showReloadButton]="ui.showReload"
         (onReload)="refresh()">
     <div class="title">
-        <dx-drop-down-box accessKey="accounts-dropdown" [fieldTemplate]="'field'" width="350px">
+        <dx-drop-down-box
+            width="350px"
+            accessKey="accounts-dropdown" 
+            [showClearButton]="true" 
+            [(value)]="selectedAccount" 
+            [fieldTemplate]="'field'" 
+            (onOptionChanged)="onDropDownChanged($event)">
             <div *dxTemplate="let data of 'content'" class="accounts-dropdown">
-                <dx-list [items]="contactAccounts"
+                <dx-list [items]="contactAccounts"                         
                          [searchEnabled]="true"
                          [searchEditorOptions]="{
                                onKeyUp: searchChanged
@@ -22,7 +28,7 @@
                 </dx-list>
             </div>
             <div *dxTemplate="let data of 'field'">
-                <dx-text-box [value]="getSelectedName()" [hint]="getSelectedName()" [readOnly]="true"></dx-text-box>
+                <dx-text-box [value]="getSelectedName()" [placeholder]="ls.l('SourceContactName')" [hint]="getSelectedName()" [readOnly]="true"></dx-text-box>
             </div>
         </dx-drop-down-box>
     </div>
