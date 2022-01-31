@@ -8,7 +8,6 @@ import { Store, select } from '@ngrx/store';
 import {
     ListsStoreActions,
     StarsStoreActions,
-    StatusesStoreActions,
     TagsStoreActions,
 } from '@app/store/index';
 import { AppStore } from './index';
@@ -27,7 +26,6 @@ export class AppStoreService {
             &&  this.permission.isGranted(AppPermissions.CRMCustomers)
         ) {
             this.store$.dispatch(new StarsStoreActions.LoadRequestAction(false));
-            this.store$.dispatch(new StatusesStoreActions.LoadRequestAction(false));
             this.store$.dispatch(new TagsStoreActions.LoadRequestAction(false));
             this.store$.dispatch(new ListsStoreActions.LoadRequestAction(false));
         }

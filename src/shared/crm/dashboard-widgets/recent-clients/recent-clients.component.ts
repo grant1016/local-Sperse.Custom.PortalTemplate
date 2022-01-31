@@ -34,14 +34,18 @@ export class RecentClientsComponent implements OnInit {
             message: this.ls.ls('CRM', 'CRMDashboard_LastNLeadsRecords',  [this.recordsCount]),
             dataLink: '',
             allRecordsLink: '/app/crm/leads',
-            dataSource: this.dashboardServiceProxy.getRecentlyCreatedLeads(this.recordsCount, undefined, undefined, undefined)
+            dataSource: this.dashboardWidgetsService.sourceContactId$.pipe(switchMap(sourceContactId => 
+                this.dashboardServiceProxy.getRecentlyCreatedLeads(this.recordsCount, undefined, sourceContactId, undefined)
+            ))
         },
         {
             name: this.ls.l('CRMDashboard_RecentClients'),
             message: this.ls.ls('CRM', 'CRMDashboard_LastNClientsRecords', [this.recordsCount]),
             dataLink: 'app/crm/contact',
             allRecordsLink: '/app/crm/clients',
-            dataSource: this.dashboardServiceProxy.getRecentlyCreatedCustomers(this.recordsCount, undefined, undefined, undefined)
+            dataSource: this.dashboardWidgetsService.sourceContactId$.pipe(switchMap(sourceContactId => 
+                this.dashboardServiceProxy.getRecentlyCreatedCustomers(this.recordsCount, undefined, sourceContactId, undefined)
+            ))
         }
     ];
 
@@ -64,10 +68,10 @@ export class RecentClientsComponent implements OnInit {
             this.selectedItem$,
             this.dashboardWidgetsService.refresh$
         ).pipe(
-            tap(() => this.loadingService.startLoading(this.elementRef.nativeElement)),
+            tap(() => this.loadingService.startLoading(this.elementRef.nativeElement)),            
             switchMap(([selectedItem]) => selectedItem.dataSource.pipe(
-                catchError(() => of([])),
-                finalize(() => this.loadingService.finishLoading(this.elementRef.nativeElement))
+                tap(() => this.loadingService.finishLoading(this.elementRef.nativeElement)),
+                catchError(() => of([]))
             ))
         );
     }
