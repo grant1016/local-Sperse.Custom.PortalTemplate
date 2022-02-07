@@ -1,4 +1,4 @@
-import { NgModule, ApplicationRef, Injector, Injectable, AfterViewInit } from '@angular/core';
+import { NgModule, ApplicationRef, Injector, Injectable, AfterViewInit, Directive } from '@angular/core';
 import { RouterModule, Route, Router, Routes, NavigationEnd, PreloadingStrategy } from '@angular/router';
 import { Observable, of } from 'rxjs';
 import { RouteGuard } from '@shared/common/auth/route-guard';
@@ -45,6 +45,7 @@ const routes: Routes = [
     }
 ];
 
+@Directive()
 @NgModule({
     imports: [
         RouterModule.forRoot(routes, {
