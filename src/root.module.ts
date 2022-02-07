@@ -8,7 +8,6 @@ import { RouteReuseStrategy, Router } from '@angular/router';
 
 /** Third party imports */
 import { AbpModule } from 'abp-ng2-module';
-import { GestureConfig } from '@angular/material';
 import { CacheService } from 'ng2-cache-service';
 import { CacheStorageAbstract } from 'ng2-cache-service/dist/src/services/storage/cache-storage-abstract.service';
 import { CacheLocalStorage } from 'ng2-cache-service/dist/src/services/storage/local-storage/cache-local-storage.service';
@@ -232,10 +231,6 @@ function handleLogoutRequest(authService: AppAuthService) {
         {
             provide: RouteReuseStrategy,
             useClass: CustomReuseStrategy
-        },
-        {
-            provide: HAMMER_GESTURE_CONFIG,
-            useClass: GestureConfig
         },
         {
             provide: ErrorHandler,
