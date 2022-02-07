@@ -5,7 +5,7 @@ import { Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 
 /** Application imports */
-import { LocalizationService } from '@abp/localization/localization.service';
+import { LocalizationService } from 'abp-ng2-module';
 import { AppConsts } from '@shared/AppConsts';
 
 @Injectable()

@@ -15,7 +15,7 @@ import { DxValidatorComponent } from 'devextreme-angular/ui/validator';
 /** Application imports */
 import { LayoutService } from '@app/shared/layout/layout.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { NotifyService } from '@abp/notify/notify.service';
+import { NotifyService } from 'abp-ng2-module';
 import { ReferralExportService } from '@shared/common/referral/referral-export.service';
 import {
     CommissionLedgerEntryInfo,
