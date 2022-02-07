@@ -1,5 +1,5 @@
 /** Core imports */
-import { Injector, ApplicationRef, ElementRef, HostBinding, OnDestroy } from '@angular/core';
+import { Injector, ApplicationRef, ElementRef, HostBinding, OnDestroy, Directive } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
 /** Third party imports */
@@ -28,6 +28,7 @@ import { FullScreenService } from '@shared/common/fullscreen/fullscreen.service'
 import { TitleService } from '@shared/common/title/title.service';
 import { ProfileService } from '@shared/common/profile-service/profile.service';
 
+@Directive()
 export abstract class AppComponentBase implements OnDestroy {
     @HostBinding('class.fullscreen') public isFullscreenMode;
     private destroySubject: Subject<boolean> = new Subject<boolean>();

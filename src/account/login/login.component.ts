@@ -37,7 +37,7 @@ export class AdLoginHostDirective {
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LoginComponent implements OnInit {
-    @ViewChild('loginForm', { static: false }) loginForm;
+    @ViewChild('loginForm') loginForm;
     currentYear: number = moment().year();
     tenantName = AppConsts.defaultTenantName;
     conditions = ConditionsType;

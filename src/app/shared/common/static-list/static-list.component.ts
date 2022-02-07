@@ -20,7 +20,7 @@ import { PermissionCheckerService } from 'abp-ng2-module';
   styleUrls: ['./static-list.component.less']
 })
 export class StaticListComponent {
-    @ViewChild('staticList', { static: false }) dxList: DxListComponent;
+    @ViewChild('staticList') dxList: DxListComponent;
     @ViewChild(DxTooltipComponent, { static: true }) dxTooltip: DxTooltipComponent;
     @Output() onApply: EventEmitter<any> = new EventEmitter();
     @Output() onItemSelected: EventEmitter<any> = new EventEmitter();

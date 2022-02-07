@@ -20,7 +20,7 @@ import { LoadingService } from '@shared/common/loading-service/loading.service';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class WithdrawalDialogComponent {
-    @ViewChild(DxValidatorComponent, { static: false }) validator: DxValidatorComponent;
+    @ViewChild(DxValidatorComponent) validator: DxValidatorComponent;
     withdrawalAmount: number;
     constructor(
         private dialog: MatDialogRef<WithdrawalDialogComponent>,

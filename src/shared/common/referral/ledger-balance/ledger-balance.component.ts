@@ -38,9 +38,9 @@ import { ExcelDataGridCell } from '@node_modules/devextreme/excel_exporter';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LedgerBalanceComponent implements OnInit, OnDestroy {
-    @ViewChild('pendingTransactionsGrid', { static: false }) pendingTransactionsGrid: DxDataGridComponent;
-    @ViewChild('transactionsGrid', { static: false }) transactionsGrid: DxDataGridComponent;
-    @ViewChild(DxValidatorComponent, { static: false }) validator: DxValidatorComponent;
+    @ViewChild('pendingTransactionsGrid') pendingTransactionsGrid: DxDataGridComponent;
+    @ViewChild('transactionsGrid') transactionsGrid: DxDataGridComponent;
+    @ViewChild(DxValidatorComponent) validator: DxValidatorComponent;
     withdrawalAmount = null;
     ledger: GetLedgerOutput;
     pendingCommissions: CommissionLedgerEntryInfo[] = [];

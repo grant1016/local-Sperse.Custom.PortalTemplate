@@ -50,9 +50,9 @@ import { TotalsDataField } from '@shared/crm/dashboard-widgets/counts-and-totals
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CrmDashboardComponent implements AfterViewInit, OnInit {
-    @ViewChild(DxDropDownBoxComponent, { static: false }) dropDown: DxDropDownBoxComponent;
-    @ViewChild(ClientsByRegionComponent, { static: false }) clientsByRegion: ClientsByRegionComponent;
-    @ViewChild(TotalsBySourceComponent, { static: false }) totalsBySource: TotalsBySourceComponent;
+    @ViewChild(DxDropDownBoxComponent) dropDown: DxDropDownBoxComponent;
+    @ViewChild(ClientsByRegionComponent) clientsByRegion: ClientsByRegionComponent;
+    @ViewChild(TotalsBySourceComponent) totalsBySource: TotalsBySourceComponent;
 
     private showWelcomeSection: ReplaySubject<boolean> = new ReplaySubject<boolean>(1);
     showWelcomeSection$: Observable<boolean> = this.showWelcomeSection.asObservable();

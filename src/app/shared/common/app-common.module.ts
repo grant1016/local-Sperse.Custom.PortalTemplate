@@ -176,7 +176,7 @@ import { ToolBarComponent } from './toolbar/toolbar.component';
     ]
 })
 export class AppCommonModule {
-    static forRoot(): ModuleWithProviders {
+    static forRoot(): ModuleWithProviders<AppCommonModule> {
         return {
             ngModule: AppCommonModule,
             providers: []

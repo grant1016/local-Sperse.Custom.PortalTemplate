@@ -41,7 +41,7 @@ import { AppConsts } from '@shared/AppConsts';
     providers: [ CommonUserInfoServiceProxy, MemberSettingsServiceProxy ]
 })
 export class UserDropdownMenuComponent {
-    @ViewChild('topBarUserProfile', { static: false }) topBarUserProfile: ElementRef;
+    @ViewChild('topBarUserProfile') topBarUserProfile: ElementRef;
     @Input() subtitle: string;
     @Input() dropdownMenuItems: UserDropdownMenuItemModel[] = this.getDropDownItems();
     private commonUserInfoService: CommonUserInfoServiceProxy;
