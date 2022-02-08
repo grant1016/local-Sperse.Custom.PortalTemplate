@@ -25,7 +25,7 @@ import 'assets/metronic/src/js/framework/base/util.js';
 import 'assets/metronic/src/js/framework/components/general/dropdown.js';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { AppFeatures } from '@shared/AppFeatures';
-import { FeatureCheckerService } from '@abp/features/feature-checker.service';
+import { FeatureCheckerService } from 'abp-ng2-module';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { ProfileService } from '@shared/common/profile-service/profile.service';
 import { AppConsts } from '@shared/AppConsts';
@@ -41,7 +41,7 @@ import { AppConsts } from '@shared/AppConsts';
     providers: [ CommonUserInfoServiceProxy, MemberSettingsServiceProxy ]
 })
 export class UserDropdownMenuComponent {
-    @ViewChild('topBarUserProfile', { static: false }) topBarUserProfile: ElementRef;
+    @ViewChild('topBarUserProfile') topBarUserProfile: ElementRef;
     @Input() subtitle: string;
     @Input() dropdownMenuItems: UserDropdownMenuItemModel[] = this.getDropDownItems();
     private commonUserInfoService: CommonUserInfoServiceProxy;

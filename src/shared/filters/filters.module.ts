@@ -85,7 +85,7 @@ import { ServerCacheService } from '@shared/common/server-cache-service/server-c
     ]
 })
 export class FiltersModule {
-    static forRoot(): ModuleWithProviders {
+    static forRoot(): ModuleWithProviders<FiltersModule> {
         return {
             ngModule: FiltersModule,
             providers: [

@@ -84,7 +84,7 @@ export class ExportService {
     exportTo(option, type, dataGrid: DxDataGridComponent = null, prefix?: string): Promise<any> {
         this.loadingService.startLoading();
         if (dataGrid && dataGrid.instance && dataGrid.instance.getDataSource().isLoading())
-            return new Promise((resolve) => {
+            return new Promise<any>((resolve) => {
                 dataGrid.instance.on('contentReady', () => {
                     dataGrid.instance.off('contentReady');
                     resolve(this.exportTo(option, type, dataGrid, prefix));
@@ -124,7 +124,7 @@ export class ExportService {
     }
 
     private exportToCSVInternal(dataGrid: DxDataGridComponent, exportAllData: boolean, prefix?: string) {
-        return new Promise((resolve) => {
+        return new Promise<void>((resolve) => {
             this.getDataFromGrid(dataGrid, (data) => {
                 this.moveItemsToCSV(data, dataGrid, prefix);
                 resolve();
@@ -133,7 +133,7 @@ export class ExportService {
     }
 
     private exportToGoogleSheetsInternal(dataGrid: DxDataGridComponent, exportAllData: boolean, prefix?: string) {
-        return this.exportGoogleSheetService.export(new Promise((resolve) => {
+        return this.exportGoogleSheetService.export(new Promise<any>((resolve) => {
             this.getDataFromGrid(dataGrid, data => {
                 let visibleColumns = dataGrid.instance.getVisibleColumns(),
                     rowData = this.exportGoogleSheetService.getHeaderRows(visibleColumns);
@@ -154,7 +154,7 @@ export class ExportService {
     }
 
     private exportToExcelInternal(dataGrid: DxDataGridComponent, exportAllData: boolean, prefix?: string) {
-        return new Promise(resolve => {
+        return new Promise<void>(resolve => {
             let instance = dataGrid.instance,
                 dataStore = instance.getDataSource().store(),
                 initialBeforeSend = dataStore._beforeSend,

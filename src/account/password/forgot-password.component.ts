@@ -24,7 +24,7 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
     animations: [accountModuleAnimation()]
 })
 export class ForgotPasswordComponent implements OnInit {
-    @ViewChild('forgotPassForm', { static: false }) form;
+    @ViewChild('forgotPassForm') form;
     model: SendPasswordResetCodeInput = new SendPasswordResetCodeInput();
     saving = false;
     emailRegex = AppConsts.regexPatterns.email;

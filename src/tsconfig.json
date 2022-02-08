@@ -3,11 +3,10 @@
     "allowSyntheticDefaultImports": true,
     "declaration": false,
     "downlevelIteration": true,
-    "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "lib": [ "es6", "dom" ],
     "mapRoot": "./",
-    "module": "esnext",
+    "module": "es2020",
     "skipLibCheck": true,
     "moduleResolution": "node",
     "outDir": "../dist/out-tsc",
@@ -16,9 +15,8 @@
     "typeRoots": [
       "../node_modules/@types"
     ],
-    "baseUrl": ".",
+    "baseUrl": "./",
     "paths": {
-      "@abp/*": [ "../node_modules/abp-ng2-module/dist/src/*" ],
       "@app/*": [ "./app/*" ],
       "@admin/*": [ "./app/admin/*" ],
       "@root/*": [ "./*" ],
@@ -26,23 +24,30 @@
       "@node_modules/*": [ "../node_modules/*" ],
       "@angular/*": [ "../node_modules/@angular/*" ],
       "moment": [ "../node_modules/moment/moment.js" ],
-      "moment-timezone": [ "../node_modules/moment-timezone/builds/moment-timezone-with-data.min.js" ],
-      "sax": [ "./node_modules/sax/lib/sax.js" ]
+      "moment-timezone": [ "../node_modules/moment-timezone/builds/moment-timezone-with-data.min.js" ]
     }
   },
   "angularCompilerOptions": {
-    "enableIvy": false
+      "fullTemplateTypeCheck": true,
+      "strictTemplates": true,
+      "strictInputTypes": false,
+      "strictAttributeTypes": false,
+      "strictOutputEventTypes": false,
+      "strictDomEventTypes": false,
+      "strictLiteralTypes": false,
+      "strictInjectionParameters": false,
+      "enableIvy": true
   },
-  "include": [
-      "./**/*",
-      "./node_modules/ngx-international-phone-number/src/"
+  "files": [
+      "main.ts",
+      "polyfills.ts"
   ],
   "exclude": [
-      "./account/register/**",
-      "./account/payment/**",
-    "./app/shared/crm/shared/advanced-list/**",
-      "./personal-finance/landings/lend-space-dark/lend-space-dark.component.ts",
-      "./personal-finance/landings/credit-report/credit-report.component.ts",
-      "./personal-finance/landings/credit-report/register-form/register-form.component.ts"
+      "./**/*.spec.ts",
+      "./test.ts"
+  ],
+  "include": [
+      "./typings.d.ts",
+      "./node_modules/ngx-international-phone-number/src/"
   ]
 }

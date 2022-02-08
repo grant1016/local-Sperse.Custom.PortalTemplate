@@ -23,7 +23,7 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
     ],
 })
 export class ResetPasswordComponent implements OnInit {
-    @ViewChild('resetPassForm', { static: false }) form;
+    @ViewChild('resetPassForm') form;
     model: ResetPasswordModel = new ResetPasswordModel();
     passwordComplexitySetting: PasswordComplexitySetting = new PasswordComplexitySetting();
     saving = false;

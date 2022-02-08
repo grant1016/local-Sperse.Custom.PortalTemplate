@@ -7,7 +7,7 @@ import { DxValidatorComponent } from 'devextreme-angular/ui/validator';
 import { finalize } from 'rxjs/operators';
 
 /** Application imports */
-import { NotifyService } from '@abp/notify/notify.service';
+import { NotifyService } from 'abp-ng2-module';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { UserCommissionServiceProxy } from '@shared/service-proxies/service-proxies';
 import { ReferralService } from '@shared/common/referral/referral.service';
@@ -20,7 +20,7 @@ import { LoadingService } from '@shared/common/loading-service/loading.service';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class WithdrawalDialogComponent {
-    @ViewChild(DxValidatorComponent, { static: false }) validator: DxValidatorComponent;
+    @ViewChild(DxValidatorComponent) validator: DxValidatorComponent;
     withdrawalAmount: number;
     constructor(
         private dialog: MatDialogRef<WithdrawalDialogComponent>,

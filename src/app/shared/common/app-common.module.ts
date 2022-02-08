@@ -49,12 +49,12 @@ import { TableModule } from 'primeng/table';
 import { PaginatorModule } from 'primeng/primeng';
 import { ModalModule } from 'ngx-bootstrap';
 import { TimeAgoPipe } from 'time-ago-pipe';
-import { ImageCropperModule } from 'ng2-img-cropper';
+import { ImageCropperModule } from 'ngx-image-cropper';
 import { NgxFileDropModule } from 'ngx-file-drop';
 import { ModalDialogModule } from '@shared/common/dialogs/modal/modal-dialog.module';
 
 /** Application imports */
-import { AbpModule } from '@abp/abp.module';
+import { AbpModule } from 'abp-ng2-module';
 import { UtilsModule } from '@shared/utils/utils.module';
 import { CommonModule } from '@shared/common/common.module';
 import { UploadPhotoDialogComponent } from './upload-photo-dialog/upload-photo-dialog.component';
@@ -176,7 +176,7 @@ import { ToolBarComponent } from './toolbar/toolbar.component';
     ]
 })
 export class AppCommonModule {
-    static forRoot(): ModuleWithProviders {
+    static forRoot(): ModuleWithProviders<AppCommonModule> {
         return {
             ngModule: AppCommonModule,
             providers: []

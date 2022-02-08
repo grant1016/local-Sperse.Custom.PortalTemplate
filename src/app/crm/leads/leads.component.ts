@@ -71,13 +71,13 @@ import { ODataService } from '@shared/common/odata/odata.service';
     animations: [appModuleAnimation()]
 })
 export class LeadsComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
-    @ViewChild(DxDataGridComponent, {static: false}) dataGrid: DxDataGridComponent;
-    @ViewChild(TagsListComponent, {static: false}) tagsComponent: TagsListComponent;
-    @ViewChild(ListsListComponent, {static: false}) listsComponent: ListsListComponent;
-    @ViewChild(RatingComponent, {static: false}) ratingComponent: RatingComponent;
-    @ViewChild(StarsListComponent, {static: false}) starsListComponent: StarsListComponent;
-    @ViewChild('stageList', {static: false}) stagesComponent: StaticListComponent;
-    @ViewChild(ToolBarComponent, {static: false}) toolbar: ToolBarComponent;
+    @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
+    @ViewChild(TagsListComponent) tagsComponent: TagsListComponent;
+    @ViewChild(ListsListComponent) listsComponent: ListsListComponent;
+    @ViewChild(RatingComponent) ratingComponent: RatingComponent;
+    @ViewChild(StarsListComponent) starsListComponent: StarsListComponent;
+    @ViewChild('stageList') stagesComponent: StaticListComponent;
+    @ViewChild(ToolBarComponent) toolbar: ToolBarComponent;
 
     private readonly dataSourceURI = 'Lead';
     private readonly totalDataSourceURI = 'Lead/$count';

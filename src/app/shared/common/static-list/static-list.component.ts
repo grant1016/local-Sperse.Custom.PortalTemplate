@@ -11,8 +11,8 @@ import * as _ from 'underscore';
 import { FiltersService } from '@shared/filters/filters.service';
 import { AppPermissions } from '@shared/AppPermissions';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { MessageService } from '@abp/message/message.service';
-import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
+import { MessageService } from 'abp-ng2-module';
+import { PermissionCheckerService } from 'abp-ng2-module';
 
 @Component({
   selector: 'app-static-list',
@@ -20,7 +20,7 @@ import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
   styleUrls: ['./static-list.component.less']
 })
 export class StaticListComponent {
-    @ViewChild('staticList', { static: false }) dxList: DxListComponent;
+    @ViewChild('staticList') dxList: DxListComponent;
     @ViewChild(DxTooltipComponent, { static: true }) dxTooltip: DxTooltipComponent;
     @Output() onApply: EventEmitter<any> = new EventEmitter();
     @Output() onItemSelected: EventEmitter<any> = new EventEmitter();

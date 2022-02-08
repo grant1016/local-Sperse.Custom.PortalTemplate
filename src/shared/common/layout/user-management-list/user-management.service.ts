@@ -21,13 +21,13 @@ import { ChangePasswordModalComponent } from 'app/shared/layout/profile/change-p
 import { AppAuthService } from 'shared/common/auth/app-auth.service';
 import { LoginAttemptsModalComponent } from 'app/shared/layout/login-attempts-modal/login-attempts-modal.component';
 import { AppSessionService } from 'shared/common/session/app-session.service';
-import { FeatureCheckerService } from '@abp/features/feature-checker.service';
-import { AbpSessionService } from '@abp/session/abp-session.service';
+import { FeatureCheckerService } from 'abp-ng2-module';
+import { AbpSessionService } from 'abp-ng2-module';
 import { AppFeatures } from '@shared/AppFeatures';
 import { UserDropdownMenuItemType } from '@shared/common/layout/user-management-list/user-dropdown-menu/user-dropdown-menu-item-type';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { AppPermissions } from '@shared/AppPermissions';
-import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
+import { PermissionCheckerService } from 'abp-ng2-module';
 import { Router } from '@angular/router';
 import { UserDropdownMenuItemModel } from '@shared/common/layout/user-management-list/user-dropdown-menu/user-dropdown-menu-item.model';
 import { ProfileService } from '@shared/common/profile-service/profile.service';

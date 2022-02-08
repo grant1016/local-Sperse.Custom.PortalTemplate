@@ -44,7 +44,7 @@ import { GetLedgerTotalsOutput } from '@shared/service-proxies/service-proxies';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CommissionHistoryComponent implements OnInit, OnDestroy {
-    @ViewChild(DxDataGridComponent, { static: false }) dataGrid: DxDataGridComponent;
+    @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
     readonly commissionFields: KeysEnum<CommissionDto> = CommissionFields;
     dateFormat = 'MMM-dd-yyyy';
     defaultGridPagerConfig = DataGridService.defaultGridPagerConfig;
