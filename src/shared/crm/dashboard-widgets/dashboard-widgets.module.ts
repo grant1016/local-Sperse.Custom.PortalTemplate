@@ -5,7 +5,6 @@ import { CommonModule } from '@shared/common/common.module';
 import { RouterModule } from '@angular/router';
 
 /** Third party imports */
-import { RoundProgressModule } from 'angular-svg-round-progressbar';
 import { MatDialogModule } from '@angular/material/dialog';
 import { DxSelectBoxModule } from 'devextreme-angular/ui/select-box';
 import { DxCheckBoxModule } from 'devextreme-angular/ui/check-box';
@@ -35,7 +34,6 @@ import { CountsAndTotalsModule } from '@shared/crm/dashboard-widgets/counts-and-
     imports: [
         CommonModule,
         RouterModule,
-        RoundProgressModule,
         DxButtonModule,
         DxSelectBoxModule,
         DxCheckBoxModule,

@@ -18,9 +18,9 @@
             "polyfills": "src/polyfills.ts",
             "allowedCommonJsDependencies": [
                 "underscore", "underscore.string", "lodash", "moment-timezone",
-                "ngx-google-places-autocomplete", "angular-svg-round-progressbar",
-                "ng2-cache-service", "@bugsnag/js", "buffer", "@angularclass/hmr",
-                "devextreme", "uuid", "primeng", "exceljs", "jquery-calendar"
+                "ngx-google-places-autocomplete", "ng2-cache-service", "@bugsnag/js", 
+                "buffer", "@angularclass/hmr", "devextreme", "uuid", "primeng", 
+                "exceljs", "jquery-calendar"
             ],
             "assets": [
               "src/assets",
@@ -253,9 +253,9 @@
             ],
             "allowedCommonJsDependencies": [
                 "underscore", "underscore.string", "lodash", "moment-timezone",
-                "ngx-google-places-autocomplete", "angular-svg-round-progressbar",
-                "ng2-cache-service", "@bugsnag/js", "buffer", "@angularclass/hmr",
-                "devextreme", "uuid", "primeng", "exceljs", "jquery-calendar"
+                "ngx-google-places-autocomplete", "ng2-cache-service", "@bugsnag/js", 
+                "buffer", "@angularclass/hmr", "devextreme", "uuid", "primeng", 
+                "exceljs", "jquery-calendar"
             ],
             "assets": [
               "src/assets",
