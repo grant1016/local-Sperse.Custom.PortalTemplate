@@ -18,7 +18,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 
 /** Application imports */
-import { AppAuthService } from '@shared/common/auth/app-auth.service.ts';
+import { AppAuthService } from '@shared/common/auth/app-auth.service';
 import { MemberAreaLink } from '@shared/common/area-navigation/member-area-link.enum';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';

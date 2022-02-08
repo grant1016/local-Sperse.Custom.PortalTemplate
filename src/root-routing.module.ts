@@ -45,7 +45,6 @@ const routes: Routes = [
     }
 ];
 
-@Directive()
 @NgModule({
     imports: [
         RouterModule.forRoot(routes, {
@@ -57,7 +56,6 @@ const routes: Routes = [
     ],
     providers: [LocalizationResolver]
 })
-
 export class RootRoutingModule implements AfterViewInit {
     constructor(
         private injector: Injector,

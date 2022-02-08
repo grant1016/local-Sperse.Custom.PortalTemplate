@@ -3,7 +3,6 @@
     "allowSyntheticDefaultImports": true,
     "declaration": false,
     "downlevelIteration": true,
-    "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "lib": [ "es6", "dom" ],
     "mapRoot": "./",
@@ -16,9 +15,8 @@
     "typeRoots": [
       "../node_modules/@types"
     ],
-    "baseUrl": ".",
+    "baseUrl": "./",
     "paths": {
-      "@abp/*": [ "../node_modules/abp-ng2-module/dist/src/*" ],
       "@app/*": [ "./app/*" ],
       "@admin/*": [ "./app/admin/*" ],
       "@root/*": [ "./*" ],
@@ -26,19 +24,30 @@
       "@node_modules/*": [ "../node_modules/*" ],
       "@angular/*": [ "../node_modules/@angular/*" ],
       "moment": [ "../node_modules/moment/moment.js" ],
-      "moment-timezone": [ "../node_modules/moment-timezone/builds/moment-timezone-with-data.min.js" ],
-      "sax": [ "./node_modules/sax/lib/sax.js" ]
+      "moment-timezone": [ "../node_modules/moment-timezone/builds/moment-timezone-with-data.min.js" ]
     }
   },
   "angularCompilerOptions": {
-    "enableIvy": false
+      "fullTemplateTypeCheck": true,
+      "strictTemplates": true,
+      "strictInputTypes": false,
+      "strictAttributeTypes": false,
+      "strictOutputEventTypes": false,
+      "strictDomEventTypes": false,
+      "strictLiteralTypes": false,
+      "strictInjectionParameters": false,
+      "enableIvy": true
   },
   "files": [
-    "main.ts",
-    "polyfills.ts"
+      "main.ts",
+      "polyfills.ts"
+  ],
+  "exclude": [
+      "./**/*.spec.ts",
+      "./test.ts"
   ],
   "include": [
-      "./**/*",
+      "./typings.d.ts",
       "./node_modules/ngx-international-phone-number/src/"
   ]
 }

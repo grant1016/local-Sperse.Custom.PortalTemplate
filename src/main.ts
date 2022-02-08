@@ -3,7 +3,7 @@ import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 import { hmrBootstrap } from './hmr';
 import { environment } from './environments/environment';
 import { RootModule } from './root.module';
-import './polyfills.ts';
+import './polyfills';
 
 if (environment.production) {
     enableProdMode();

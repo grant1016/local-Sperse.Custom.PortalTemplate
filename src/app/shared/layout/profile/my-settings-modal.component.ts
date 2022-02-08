@@ -12,6 +12,7 @@ import {
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
+import { finalize } from 'rxjs/operators';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
@@ -26,7 +27,6 @@ import { NotifyService } from 'abp-ng2-module';
 import { SettingService } from 'abp-ng2-module';
 import { MessageService } from 'abp-ng2-module';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
-import { finalize } from '@node_modules/rxjs/internal/operators';
 
 @Component({
     templateUrl: './my-settings-modal.component.html',
