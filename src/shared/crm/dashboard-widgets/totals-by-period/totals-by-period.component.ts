@@ -314,7 +314,7 @@ export class TotalsByPeriodComponent implements DoCheck, OnInit, OnDestroy {
     }
 
     customizeBottomAxis = (elem) => {
-        return this.getPeriodBottomAxisCustomizer(this.selectedPeriod.name)(elem);
+        return this.getPeriodBottomAxisCustomizer(this.selectedPeriod.name).call(this, elem);
     }
 
     customizeTooltip = pointInfo => {
@@ -367,6 +367,10 @@ export class TotalsByPeriodComponent implements DoCheck, OnInit, OnDestroy {
     }
 
     /** Factory for method that customize axis */
+
+    getYearlyBottomAxisCustomizer(elem) {
+        return this.getMonthlyBottomAxisCustomizer(elem);
+    }
 
     getMonthlyBottomAxisCustomizer(elem) {
         return `${elem.value.toUTCString().split(' ')[2].toUpperCase()}<br/><div class="yearArgument">${elem.value.getUTCFullYear().toString().substr(-2)}</div>`;
