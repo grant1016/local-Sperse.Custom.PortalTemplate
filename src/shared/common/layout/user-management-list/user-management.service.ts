@@ -115,7 +115,8 @@ export class UserManagementService {
         return this.dialog.open(UploadPhotoDialogComponent, {
             data: {
                 source: this.profileService.getProfilePictureUrl(this.appSession.user.profilePictureId),
-                maxSizeBytes: AppConsts.maxImageSize
+                maxSizeBytes: AppConsts.maxImageSize,
+                title: this.ls.l('ChangeProfilePicture')
             },
             hasBackdrop: true
         });

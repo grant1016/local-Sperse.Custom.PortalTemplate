@@ -5,6 +5,7 @@ import {
     Component,
     Inject,
     ViewChild,
+    ElementRef,
     AfterViewInit
 } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
@@ -44,6 +45,7 @@ export class UploadPhotoDialogComponent implements AfterViewInit {
     title: string = this.data.title;
 
     constructor(
+        private elementRef: ElementRef,
         private changeDetectorRef: ChangeDetectorRef,
         private profileServiceProxy: ProfileServiceProxy,
         private loadingService: LoadingService,
@@ -58,11 +60,24 @@ export class UploadPhotoDialogComponent implements AfterViewInit {
             let image: any = new Image();
             image.src = this.data.source;
             image.crossOrigin = 'Anonymous';
+            this.startLoading();
+            image.onerror = () => {
+                this.finishLoading();
+            };
             image.onload = () => {
                 this.cropper['loadImageFromURL'](image.src);
+                this.changeDetectorRef.detectChanges();
                 this.clearDisabled = false;
             };
         }
+    }
+
+    startLoading() {
+        this.loadingService.startLoading(this.elementRef.nativeElement);
+    }
+
+    finishLoading() {
+        this.loadingService.finishLoading(this.elementRef.nativeElement);
     }
 
     fileSelected($event) {
@@ -172,14 +187,14 @@ export class UploadPhotoDialogComponent implements AfterViewInit {
     loadFile(paste: boolean = false) {
         /** Load file into the croop */
         if (this.fileUrlFormControl.valid) {
-            this.loadingService.startLoading();
+            this.startLoading();
             let image = new Image();
             image.src = this.fileUrlFormControl.value;
             image.crossOrigin = 'Anonymous';
             image.onload = () => {
                 this.cropper['loadImageFromURL'](image.src);
                 this.changeDetectorRef.detectChanges();
-                this.loadingService.finishLoading();
+                this.finishLoading();
             };
             image.onerror = () => {
                 if (!paste) {
@@ -203,7 +218,7 @@ export class UploadPhotoDialogComponent implements AfterViewInit {
                         () => this.loadingService.finishLoading()
                     );
                 } else
-                    this.loadingService.finishLoading();
+                    this.finishLoading();
             };
         }
     }
