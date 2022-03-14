@@ -14,6 +14,7 @@ import { ImageFormat } from '@shared/common/export/image-format.enum';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
 //import * as jsPDF from 'jspdf';
 import { PdfExportHeader } from './pdf-export-header.interface';
+import { AppHttpConfiguration } from '@shared/http/appHttpConfiguration';
 
 @Injectable()
 export class ExportService {
@@ -23,6 +24,7 @@ export class ExportService {
 
     constructor(
         private injector: Injector,
+        private configuration: AppHttpConfiguration,
         private loadingService: LoadingService
     ) {
         this.exportGoogleSheetService = injector.get(ExportGoogleSheetService);
@@ -60,11 +62,12 @@ export class ExportService {
                 initialStore = initialDataSource.store(),
                 initialBeforeSend = initialStore._beforeSend;
 
+            let initialOnLoadedList = this.handleExportIgnoreOnLoaded(initialDataSource, initialStore);
+
             initialStore._beforeSend = (request) => {
                 initialBeforeSend.call(initialStore, request);
                 request.timeout = this.EXPORT_REQUEST_TIMEOUT;
             };
-
             (new DataSource({
                 paginate: false,
                 filter: initialDataSource.filter(),
@@ -72,13 +75,27 @@ export class ExportService {
                 store: initialStore
             })).load().done(res => {
                 initialStore._beforeSend = initialBeforeSend;
+                this.restoreInitialOnLoadedList(initialStore, initialOnLoadedList);
                 callback(this.checkJustifyData(res));
-            }).fail(() => {
+            }).fail(error => {
                 initialStore._beforeSend = initialBeforeSend;
-                callback([]);
+                this.restoreInitialOnLoadedList(initialStore, initialOnLoadedList);
+                this.handleExportError(error);
             });
-        } else
-            callback(dataGrid.instance.getSelectedRowsData());
+        } else {
+            let selection: any = dataGrid.instance.getSelectedRowsData();
+            if (selection instanceof Array)
+                callback(selection);
+            else
+                selection.then(callback);
+        }
+    }
+
+    handleExportError(error: any) {
+        this.loadingService.finishLoading();
+        let defaultError = this.configuration.defaultError;
+        abp.message.error(error && error.errorDetails && error.errorDetails.message
+            || defaultError.message + ' ' + defaultError.details, 'Export Error');        
     }
 
     exportTo(option, type, dataGrid: DxDataGridComponent = null, prefix?: string): Promise<any> {
@@ -156,7 +173,8 @@ export class ExportService {
     private exportToExcelInternal(dataGrid: DxDataGridComponent, exportAllData: boolean, prefix?: string) {
         return new Promise<void>(resolve => {
             let instance = dataGrid.instance,
-                dataStore = instance.getDataSource().store(),
+                dataSource = instance.getDataSource(),
+                dataStore = dataSource.store(),
                 initialBeforeSend = dataStore._beforeSend,
                 isLoadPanel = instance.option('loadPanel.enabled'),
                 initialFileName = dataGrid.export.fileName,
@@ -173,6 +191,8 @@ export class ExportService {
             if (isLoadPanel)
                 instance.option('loadPanel.enabled', false);
 
+            let initialOnLoadedList = this.handleExportIgnoreOnLoaded(dataSource, dataStore);
+
             dataStore._beforeSend = (request) => {
                 request.timeout = this.EXPORT_REQUEST_TIMEOUT;
                 initialBeforeSend.call(dataStore, request);
@@ -186,9 +206,16 @@ export class ExportService {
                 dataGrid.export.fileName = initialFileName;
                 dataStore._beforeSend = initialBeforeSend;
                 dataStore.off('loaded', onLoadInternal);
+                dataStore.off('exported');
+                this.restoreInitialOnLoadedList(dataStore, initialOnLoadedList);
                 resolve();
             });
-
+            let onDataError = (error) => {
+                dataStore.off('dataErrorOccurred', onDataError);
+                this.handleExportError(error.error);
+                instance.refresh();
+            };
+            instance.on('dataErrorOccurred', onDataError);
             instance.exportToExcel(!exportAllData);
         });
     }
@@ -212,7 +239,7 @@ export class ExportService {
             });
             return result;
         }
-        return new Promise((resolve) => {
+        return new Promise<void>((resolve) => {
             this.getDataFromGrid(
                 dataGrid,
                 (data) => {
@@ -224,6 +251,21 @@ export class ExportService {
         });
     }
 */
+    handleExportIgnoreOnLoaded(dataSource, store): any[] {
+        let loadedEvent = store._eventsStrategy._events['loaded'];
+        let initialOnLoadedList = [];
+        if (loadedEvent && dataSource['exportIgnoreOnLoaded']) {
+            initialOnLoadedList = store._eventsStrategy._events['loaded']._list;
+            store._eventsStrategy._events['loaded']._list = [];
+        }
+        return initialOnLoadedList;
+    }
+
+    restoreInitialOnLoadedList(store, list: any[]): void {
+        if (list.length)
+            store._eventsStrategy._events['loaded']._list = list;
+    }
+
     /**
      * Download the charts into file
      * @param ImageFormat format

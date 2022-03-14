@@ -590,7 +590,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                                     action: this.exportData.bind(this, options => {
                                         return this.exportService.exportToXLS(
                                             options,
-                                            null,
+                                            this.dataGrid,
                                             this.getUserGroup(this.contactGroup)
                                         );
                                     }),
@@ -601,7 +601,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                                     action: this.exportData.bind(this, options => 
                                         this.exportService.exportToCSV(
                                             options,
-                                            null,
+                                            this.dataGrid,
                                             this.getUserGroup(this.contactGroup)
                                         )
                                     ),
@@ -612,7 +612,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                                     action: this.exportData.bind(this, options => 
                                         this.exportService.exportToGoogleSheet(
                                             options,
-                                            null,
+                                            this.dataGrid,
                                             this.getUserGroup(this.contactGroup)
                                         )
                                     ),
