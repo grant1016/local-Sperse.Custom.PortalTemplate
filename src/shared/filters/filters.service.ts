@@ -14,7 +14,7 @@ import { FilterItemModel } from '@shared/filters/models/filter-item.model';
 import { ContactGroup, ContactStatus } from '../AppEnums';
 import { FilterMultilineInputModel } from '@shared/filters/multiline-input/filter-multiline-input.model';
 import { ServerCacheService } from '@shared/common/server-cache-service/server-cache.service';
-import { MessageService } from '@abp/message/message.service';
+import { MessageService } from 'abp-ng2-module';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { AsyncFilter } from '@shared/filters/models/async-filter.model';
 

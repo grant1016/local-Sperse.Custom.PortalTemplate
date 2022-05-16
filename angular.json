@@ -16,7 +16,12 @@
             "main": "src/main.ts",
             "tsConfig": "src/tsconfig.json",
             "polyfills": "src/polyfills.ts",
-            "showCircularDependencies": true,
+            "allowedCommonJsDependencies": [
+                "underscore", "underscore.string", "lodash", "moment-timezone",
+                "ngx-google-places-autocomplete", "ng2-cache-service", "@bugsnag/js", 
+                "buffer", "@angularclass/hmr", "devextreme", "uuid", "primeng", 
+                "exceljs", "jquery-calendar"
+            ],
             "assets": [
               "src/assets",
               "src/manifest.json",
@@ -65,26 +70,33 @@
               "node_modules/abp-web-resources/Abp/Framework/scripts/libs/abp.blockUI.js",
               "node_modules/abp-web-resources/Abp/Framework/scripts/libs/abp.spin.js",
               "node_modules/abp-web-resources/Abp/Framework/scripts/libs/abp.sweet-alert.js"
-            ]
+            ],
+            "aot": false,
+            "vendorChunk": true,
+            "extractLicenses": false,
+            "buildOptimizer": false,
+            "sourceMap": true,
+            "optimization": false,
+            "namedChunks": true
           },
           "configurations": {
             "dev": {
-              "optimization": false,
-              "sourceMap": false,
-              "extractCss": true,
-              "aot": false,
-              "showCircularDependencies": true,
-              "vendorChunk": true,
-              "buildOptimizer": false
+              "budgets": [
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb"
+                }
+              ],
+              "sourceMap": false
             },
             "devstaging": {
-              "optimization": false,
+              "budgets": [
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb"
+                }
+              ],
               "sourceMap": false,
-              "extractCss": true,
-              "aot": false,
-              "showCircularDependencies": true,
-              "vendorChunk": true,
-              "buildOptimizer": false,
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
@@ -97,13 +109,13 @@
               ]
             },
             "devbeta": {
-              "optimization": false,
+              "budgets": [
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb"
+                }
+              ],
               "sourceMap": false,
-              "extractCss": true,
-              "aot": false,
-              "showCircularDependencies": true,
-              "vendorChunk": true,
-              "buildOptimizer": false,
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
@@ -116,16 +128,17 @@
               ]
             },
             "staging": {
+              "budgets": [
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb"
+                }
+              ],
               "optimization": true,
               "outputHashing": "all",
               "sourceMap": false,
-              "extractCss": true,
               "namedChunks": false,
-              "aot": true,
-              "showCircularDependencies": true,
               "extractLicenses": true,
-              "vendorChunk": true,
-              "buildOptimizer": true,
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
@@ -138,16 +151,17 @@
               ]
             },
             "beta": {
+              "budgets": [
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb"
+                }
+              ],
               "optimization": true,
               "outputHashing": "all",
               "sourceMap": false,
-              "extractCss": true,
               "namedChunks": false,
-              "aot": true,
-              "showCircularDependencies": true,
               "extractLicenses": true,
-              "vendorChunk": true,
-              "buildOptimizer": true,
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
@@ -160,16 +174,17 @@
               ]
             },
             "prod": {
+              "budgets": [
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb"
+                }
+              ],
               "optimization": true,
               "outputHashing": "all",
               "sourceMap": false,
-              "extractCss": true,
               "namedChunks": false,
-              "aot": true,
-              "showCircularDependencies": true,
               "extractLicenses": true,
-              "vendorChunk": true,
-              "buildOptimizer": true,
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
@@ -181,7 +196,8 @@
                 }
               ]
             }
-          }
+          },
+          "defaultConfiguration": ""
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
@@ -190,22 +206,13 @@
           },
           "configurations": {
             "dev": {
-              "browserTarget": "abp-zero-template:build:dev",
-              "optimization": false,
-              "sourceMap": false,
-              "aot": false
+              "browserTarget": "abp-zero-template:build:dev"
             },
             "devstaging": {
-              "browserTarget": "abp-zero-template:build:devstaging",
-              "optimization": false,
-              "sourceMap": false,
-              "aot": false
+              "browserTarget": "abp-zero-template:build:devstaging"
             },
             "devbeta": {
-              "browserTarget": "abp-zero-template:build:devbeta",
-              "optimization": false,
-              "sourceMap": false,
-              "aot": false
+              "browserTarget": "abp-zero-template:build:devbeta"
             }
           }
         },
@@ -243,6 +250,12 @@
             ],
             "styles": [
               "src/styles.css"
+            ],
+            "allowedCommonJsDependencies": [
+                "underscore", "underscore.string", "lodash", "moment-timezone",
+                "ngx-google-places-autocomplete", "ng2-cache-service", "@bugsnag/js", 
+                "buffer", "@angularclass/hmr", "devextreme", "uuid", "primeng", 
+                "exceljs", "jquery-calendar"
             ],
             "assets": [
               "src/assets",
@@ -304,7 +317,7 @@
   "schematics": {
     "@schematics/angular:component": {
       "prefix": "app",
-      "styleext": "less"
+      "style": "less"
     },
     "@schematics/angular:directive": {
       "prefix": "app"

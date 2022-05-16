@@ -1,5 +1,5 @@
 /** Core imports */
-import { Injector, ApplicationRef, ElementRef, HostBinding, OnDestroy } from '@angular/core';
+import { Injector, ApplicationRef, ElementRef, HostBinding, OnDestroy, Directive } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
 /** Third party imports */
@@ -10,12 +10,12 @@ import capitalize from 'underscore.string/capitalize';
 /** Application imports */
 import { DateHelper } from '@shared/helpers/DateHelper';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
-import { LocalizationService } from '@abp/localization/localization.service';
-import { FeatureCheckerService } from '@abp/features/feature-checker.service';
-import { NotifyService } from '@abp/notify/notify.service';
-import { SettingService } from '@abp/settings/setting.service';
-import { MessageService } from '@abp/message/message.service';
-import { AbpMultiTenancyService } from '@abp/multi-tenancy/abp-multi-tenancy.service';
+import { LocalizationService } from 'abp-ng2-module';
+import { FeatureCheckerService } from 'abp-ng2-module';
+import { NotifyService } from 'abp-ng2-module';
+import { SettingService } from 'abp-ng2-module';
+import { MessageService } from 'abp-ng2-module';
+import { AbpMultiTenancyService } from 'abp-ng2-module';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { PrimengTableHelper } from 'shared/helpers/PrimengTableHelper';
@@ -28,6 +28,7 @@ import { FullScreenService } from '@shared/common/fullscreen/fullscreen.service'
 import { TitleService } from '@shared/common/title/title.service';
 import { ProfileService } from '@shared/common/profile-service/profile.service';
 
+@Directive()
 export abstract class AppComponentBase implements OnDestroy {
     @HostBinding('class.fullscreen') public isFullscreenMode;
     private destroySubject: Subject<boolean> = new Subject<boolean>();

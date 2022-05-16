@@ -39,6 +39,8 @@
             "Tier2": "T2"
         },
         "VersusEstimated": "Versus Estimated",
-        "Navigation_ResellerInfo": "Reseller Info"
+        "Navigation_ResellerInfo": "Reseller Info",
+        "CRMDashboard_RecentLeads": "Recent Leads",
+        "CRMDashboard_LastNLeadsRecords": "Last {0} leads registered"
     }
 }

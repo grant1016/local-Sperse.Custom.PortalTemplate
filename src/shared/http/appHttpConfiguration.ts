@@ -1,12 +1,19 @@
 import { Injectable } from '@angular/core';
+import { HttpResponse } from '@angular/common/http';
 import { AppConsts } from '@shared/AppConsts';
-import { AbpHttpConfiguration } from '@abp/abpHttpInterceptor';
-import { MessageService } from '@abp/message/message.service';
-import { LogService } from '@abp/log/log.service';
+import { AbpHttpConfigurationService } from 'abp-ng2-module';
+import { MessageService } from 'abp-ng2-module';
+import { LogService } from 'abp-ng2-module';
 
 @Injectable()
-export class AppHttpConfiguration extends AbpHttpConfiguration {
+export class AppHttpConfiguration extends AbpHttpConfigurationService {
     avoidErrorHandling = false;
+    private readonly avoidErrorHandlingKeys = [
+        'Platform/User/GetUserCount',
+        'odata/OrderCount',
+        'odata/SubscriptionSlice'
+    ];
+
     constructor(
         messageService: MessageService,
         logService: LogService
@@ -29,5 +36,13 @@ export class AppHttpConfiguration extends AbpHttpConfiguration {
         abp.multiTenancy.setTenantIdCookie();
 
         super.handleUnAuthorizedRequest(messagePromise, this.getTargetURL(targetUrl));
+    }
+
+    handleNonAbpErrorResponse(response: HttpResponse<any>) {
+        if ([401, 403, 404].indexOf(response.status) >= 0) {
+            super.handleNonAbpErrorResponse(response);
+        } else {
+            this.showError(response.body);
+        }
     }
 }

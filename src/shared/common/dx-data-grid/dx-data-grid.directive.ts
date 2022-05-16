@@ -4,7 +4,7 @@ import { DatePipe } from '@angular/common';
 
 /** Third party imports */
 import { ClipboardService } from 'ngx-clipboard';
-import { NotifyService } from '@abp/notify/notify.service';
+import { NotifyService } from 'abp-ng2-module';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 
 /** Application imports */

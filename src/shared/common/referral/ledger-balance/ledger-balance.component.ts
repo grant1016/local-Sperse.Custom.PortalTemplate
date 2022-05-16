@@ -15,7 +15,7 @@ import { DxValidatorComponent } from 'devextreme-angular/ui/validator';
 /** Application imports */
 import { LayoutService } from '@app/shared/layout/layout.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { NotifyService } from '@abp/notify/notify.service';
+import { NotifyService } from 'abp-ng2-module';
 import { ReferralExportService } from '@shared/common/referral/referral-export.service';
 import {
     CommissionLedgerEntryInfo,
@@ -38,9 +38,9 @@ import { ExcelDataGridCell } from '@node_modules/devextreme/excel_exporter';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LedgerBalanceComponent implements OnInit, OnDestroy {
-    @ViewChild('pendingTransactionsGrid', { static: false }) pendingTransactionsGrid: DxDataGridComponent;
-    @ViewChild('transactionsGrid', { static: false }) transactionsGrid: DxDataGridComponent;
-    @ViewChild(DxValidatorComponent, { static: false }) validator: DxValidatorComponent;
+    @ViewChild('pendingTransactionsGrid') pendingTransactionsGrid: DxDataGridComponent;
+    @ViewChild('transactionsGrid') transactionsGrid: DxDataGridComponent;
+    @ViewChild(DxValidatorComponent) validator: DxValidatorComponent;
     withdrawalAmount = null;
     ledger: GetLedgerOutput;
     pendingCommissions: CommissionLedgerEntryInfo[] = [];

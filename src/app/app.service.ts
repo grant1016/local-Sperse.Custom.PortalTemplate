@@ -24,8 +24,8 @@ import {
     ModuleSubscriptionInfoDto
 } from '@shared/service-proxies/service-proxies';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
-import { FeatureCheckerService } from '@abp/features/feature-checker.service';
-import { NotifyService } from '@abp/notify/notify.service';
+import { FeatureCheckerService } from 'abp-ng2-module';
+import { NotifyService } from 'abp-ng2-module';
 import { AppPermissions } from '@shared/AppPermissions';
 import { AppFeatures } from '@shared/AppFeatures';
 import { BehaviorSubject } from '@node_modules/rxjs';
@@ -257,7 +257,7 @@ export class AppService extends AppServiceBase {
     requestVerification(contactId: number): Observable<number> {
         return new Observable<number>((observer) => {
             abp.message.confirm(
-                'Please confirm user activation',
+                'Please confirm user activation', '',
                 (isConfirmed) => {
                     if (isConfirmed) {
                         let request = new RegisterMemberInput();

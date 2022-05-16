@@ -33,7 +33,7 @@ import { LoadingService } from '@shared/common/loading-service/loading.service';
     }
 })
 export class ModalDialogComponent implements OnInit, AfterViewInit {
-    @ViewChild('titleComponent', { static: false }) titleComponent: DxTextBoxComponent;
+    @ViewChild('titleComponent') titleComponent: DxTextBoxComponent;
 
     @Input() title: string;
     @Input() editTitle = false;

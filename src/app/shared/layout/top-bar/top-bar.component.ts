@@ -31,7 +31,7 @@ import { ConfigNavigation } from '@app/shared/common/config-navigation.interface
     providers: [ LifecycleSubjectsService ]
 })
 export class TopBarComponent implements OnDestroy {
-    @ViewChild(DxNavBarComponent, { static: false }) navBar: DxNavBarComponent;
+    @ViewChild(DxNavBarComponent) navBar: DxNavBarComponent;
 
     config: ConfigInterface;
     selectedIndex: number;

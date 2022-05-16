@@ -13,7 +13,7 @@ import { ProfileService } from '@shared/common/profile-service/profile.service';
 import { AppService } from '@app/app.service';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { ClipboardService } from '@node_modules/ngx-clipboard';
-import { NotifyService } from '@abp/notify/notify.service';
+import { NotifyService } from 'abp-ng2-module';
 
 @Component({
     selector: 'referral-info',

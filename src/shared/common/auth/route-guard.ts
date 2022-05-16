@@ -11,7 +11,7 @@ import {
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { UrlHelper } from '@shared/helpers/UrlHelper';
-import { FeatureCheckerService } from '@abp/features/feature-checker.service';
+import { FeatureCheckerService } from 'abp-ng2-module';
 
 @Injectable()
 export class RouteGuard implements CanActivate, CanActivateChild {
