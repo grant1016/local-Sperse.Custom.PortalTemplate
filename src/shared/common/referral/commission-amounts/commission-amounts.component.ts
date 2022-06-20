@@ -1,42 +1,40 @@
 /** Core imports */
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
-
-/** Third party imports */
-import { MatDialog } from '@angular/material/dialog';
+import { ChangeDetectionStrategy, ComponentFactoryResolver, ViewChild,
+    Directive, Component, ViewContainerRef, OnInit } from '@angular/core';
 
 /** Application imports */
-import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { WithdrawalDialogComponent } from '@shared/common/referral/commission-amounts/withdrawal-dialog/withdrawal-dialog.component';
-import { GetLedgerTotalsOutput } from '@shared/service-proxies/service-proxies';
-import { ReferralService } from '@shared/common/referral/referral.service';
+import { CommissionAmountsLayoutBaseComponent } from './commission-amounts-layout-base.component';
+import { CommissionAmountsLayoutLightComponent } from './commission-amounts-layout-light.component';
+
+@Directive({
+    selector: '[ad-commission-amounts]'
+})
+export class CommissionAmountsAdDirective {
+    constructor(public viewContainerRef: ViewContainerRef) { }
+}
 
 @Component({
     selector: 'commission-amounts',
     templateUrl: 'commission-amounts.component.html',
-    styleUrls: [ 'commission-amounts.component.less' ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CommissionAmountsComponent implements OnInit {
-    ledgerTotals: GetLedgerTotalsOutput;
+    @ViewChild(CommissionAmountsAdDirective, { static: true }) adDirective: CommissionAmountsAdDirective;
+    showBaseLayout = false;
+
     constructor(
-        private dialog: MatDialog,
-        private referralService: ReferralService,
-        private changeDetectorRef: ChangeDetectorRef,
-        public ls: AppLocalizationService
+        private componentFactoryResolver: ComponentFactoryResolver
     ) {}
 
-    ngOnInit() {
-        this.referralService.ledgerTotals$.subscribe((ledgerTotals: GetLedgerTotalsOutput) => {
-            this.ledgerTotals = ledgerTotals;
-            this.changeDetectorRef.detectChanges();
-        })
+    ngOnInit(): void {
+        this.loadLayoutComponent();
     }
 
-    requestWithdrawal() {
-        this.dialog.open(WithdrawalDialogComponent, {
-            data: {
-                availableBalance: this.ledgerTotals.availableBalance
-            }
-        });
+    private loadLayoutComponent() {
+        this.adDirective.viewContainerRef.createComponent(
+            this.componentFactoryResolver.resolveComponentFactory(
+                this.showBaseLayout ? CommissionAmountsLayoutBaseComponent : CommissionAmountsLayoutLightComponent
+            )
+        );
     }
 }

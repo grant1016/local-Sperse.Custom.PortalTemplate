@@ -1,0 +1,59 @@
+:host {
+    position: relative;
+    display: flex;
+
+    h1 {
+        font-family: Poppins;
+        font-size: 18px;
+        font-weight: 600;
+        font-stretch: normal;
+        font-style: normal;
+        line-height: 1.78;
+        letter-spacing: -0.41px;
+        text-align: left;
+        color: #010043;
+        position: absolute;
+        left: 368px;
+        top: 10px;
+    }
+
+    ::ng-deep mat-tab-group {
+        .mat-tab-header {
+            height: 51px;
+
+            mat-ink-bar {
+                display: none;
+            }
+        }
+        .mat-tab-header {
+            justify-content: right;
+            border-bottom: 1px solid rgba(217,216,216,.7);
+        }
+        .mat-tab-label-container {
+            max-width: 480px;
+
+            .mat-tab-label {
+                opacity: 1;
+                padding: 0;
+                min-width: 120px;
+                .mat-tab-label-content {
+                    font-family: Poppins!important;
+                    font-size: 12px;
+                    font-weight: 500;
+                    font-stretch: normal;
+                    font-style: normal;
+                    line-height: 3;
+                    letter-spacing: -0.24px;
+                    text-align: right;
+                    color: #7e7a72;
+                }
+                &.mat-tab-label-active .mat-tab-label-content {
+                    color: #0a0850;
+                }
+                &.mat-tab-disabled .mat-tab-label-content {
+                    opacity: 0.5;
+                }
+            }
+        }
+    }
+}

@@ -1,18 +1,40 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+/** Core imports */
+import { ChangeDetectionStrategy, ComponentFactoryResolver, ViewChild,
+    Directive, Component, ViewContainerRef, OnInit } from '@angular/core';
+
+/** Application imports */
+import { ReferralLayoutBaseComponent } from './referral-layout-base.component';
+import { ReferralLayoutLightComponent } from './referral-layout-light.component';
+
+@Directive({
+    selector: '[ad-referral]'
+})
+export class ReferralAdDirective {
+    constructor(public viewContainerRef: ViewContainerRef) { }
+}
 
 @Component({
     selector: 'referral',
     templateUrl: 'referral.component.html',
-    styleUrls: [
-        '../../../shared/common/dx-data-grid/dx-data-grid.directive.less',
-        'referral.component.less'
-    ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ReferralComponent {
-    showReferralInfo = true;
+export class ReferralComponent implements OnInit {
+    @ViewChild(ReferralAdDirective, { static: true }) adDirective: ReferralAdDirective;
+    showBaseLayout = false;
+
     constructor(
-        public ls: AppLocalizationService
+        private componentFactoryResolver: ComponentFactoryResolver
     ) {}
+
+    ngOnInit(): void {
+        this.loadLayoutComponent();
+    }
+
+    private loadLayoutComponent() {
+        this.adDirective.viewContainerRef.createComponent(
+            this.componentFactoryResolver.resolveComponentFactory(
+                this.showBaseLayout ? ReferralLayoutBaseComponent : ReferralLayoutLightComponent
+            )
+        );
+    }
 }

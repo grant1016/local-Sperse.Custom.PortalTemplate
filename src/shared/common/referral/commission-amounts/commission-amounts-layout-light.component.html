@@ -1,0 +1,50 @@
+<div class="amounts-container">
+    <div class="funds-amounts">
+        <div>
+            <h1>{{ls.l('You have funds available!')}}</h1>
+            <h3>{{ls.l('Great Job! You have funds available to withdraw')}}</h3>
+        </div>
+        <div class="amounts">
+            <div class="posted">
+                <h3>{{ ls.l('Referral.TotalsAmountsPosted') }}</h3>
+                <div class="earned">
+                    <h4>{{ ls.l('Referral.Earned') }}</h4>
+                    <p>{{ ledgerTotals?.earnedAmount | currency }}</p>
+                </div>
+                <div class="withdrawn">
+                    <h4>{{ ls.l('Referral.Withdrawn') }}</h4>
+                    <p class="green">{{ ledgerTotals?.withdrawnAmount | currency }}</p>
+                </div>
+            </div>
+            <div class="pending">
+                <h3>{{ ls.l('Referral.PendingAmounts') }}</h3>
+                <div class="earned">
+                    <h4>{{ ls.l('Referral.Earned') }}</h4>
+                    <p>{{ ledgerTotals?.pendingEarningsAmount | currency }}</p>
+                </div>
+                <div class="withdrawn">
+                    <h4>{{ ls.l('Referral.Withdrawn') }}</h4>
+                    <p class="green">{{ ledgerTotals?.pendingWithdrawalsAmount | currency }}</p>
+                </div>
+            </div>            
+        </div>
+    </div>
+    <div class="funds-available">
+        <div class="available">
+            <img src="assets/common/icons/lock.svg" width="25" height="auto">
+            <h3>{{ls.l('Referral.Available')}}</h3>
+            <p class="amount">{{ ledgerTotals?.pendingWithdrawalsAmount | currency }}</p>
+        </div>
+    </div>
+    <div class="funds-withdraw">
+        <button class="request-withdrawal"
+                [disabled]="ledgerTotals?.availableBalance <= 0"
+                (click)="requestWithdrawal()">
+            {{ ls.l('Referral.RequestWithdrawal') }}
+        </button>
+        <div class="pay-pal">
+            <span>{{ls.l('You\'re connected with')}}<img src="assets/common/icons/paypal-logo.png" width="40px" height="auto"></span>
+            <p class="email">{{userEmailAddress}}</p>
+        </div>
+    </div>
+</div>

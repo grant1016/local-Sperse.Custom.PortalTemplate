@@ -13,17 +13,33 @@ import { DxNumberBoxModule } from 'devextreme-angular/ui/number-box';
 import { DxValidatorModule } from 'devextreme-angular/ui/validator';
 
 /** Application imports */
-import { ReferralComponent } from './referral.component';
-import { CommissionHistoryComponent } from '@shared/common/referral/commission-history/commission-history.component';
+import { ReferralComponent, ReferralAdDirective } from './referral.component';
+import { ReferralLayoutBaseComponent } from './referral-layout-base.component';
+import { ReferralLayoutLightComponent } from './referral-layout-light.component';
+import { 
+    CommissionHistoryComponent, 
+    CommissionHistoryAdDirective 
+} from '@shared/common/referral/commission-history/commission-history.component';
+import { CommissionHistoryLayoutBaseComponent } from '@shared/common/referral/commission-history/commission-history-layout-base.component';
+import { CommissionHistoryLayoutLightComponent } from '@shared/common/referral/commission-history/commission-history-layout-light.component';
 import { LedgerBalanceComponent } from '@shared/common/referral/ledger-balance/ledger-balance.component';
 import { LinkGeneratorComponent } from '@shared/common/referral/link-generator/link-generator.component';
 import { LinkTrackingComponent } from '@shared/common/referral/link-tracking/link-tracking.component';
 import { ReferralRoutingModule } from '@shared/common/referral/referral-routing.module';
-import { ReferralInfoComponent } from '@shared/common/referral/referral-info/referral-info.component';
+import { 
+    ReferralInfoComponent, 
+    ReferralInfoAdDirective 
+} from '@shared/common/referral/referral-info/referral-info.component';
+import { ReferralInfoLayoutBaseComponent } from '@shared/common/referral/referral-info/referral-info-layout-base.component';
+import { ReferralInfoLayoutLightComponent } from '@shared/common/referral/referral-info/referral-info-layout-light.component';
 import { UserPhotoModule } from '@app/shared/common/user-photo/user-photo.module';
 import { InplaceEditModule } from '@app/shared/common/inplace-edit/inplace-edit.module';
 import { DxDataGridDirective } from '@shared/common/dx-data-grid/dx-data-grid.directive';
-import { CommissionAmountsComponent } from '@shared/common/referral/commission-amounts/commission-amounts.component';
+import { 
+    CommissionAmountsComponent, 
+    CommissionAmountsAdDirective } from '@shared/common/referral/commission-amounts/commission-amounts.component';
+import { CommissionAmountsLayoutBaseComponent } from '@shared/common/referral/commission-amounts/commission-amounts-layout-base.component';
+import { CommissionAmountsLayoutLightComponent } from '@shared/common/referral/commission-amounts/commission-amounts-layout-light.component';
 import { CommissionAmountBlockComponent } from '@shared/common/referral/commission-amounts/commission-amount-block/commission-amount-block.component';
 import { CommissionAmountItemComponent } from '@shared/common/referral/commission-amounts/commission-amount-item/commission-amount-item.component';
 import { WithdrawalDialogComponent } from '@shared/common/referral/commission-amounts/withdrawal-dialog/withdrawal-dialog.component';
@@ -49,13 +65,25 @@ import { UserCommissionServiceProxy } from '@shared/service-proxies/service-prox
     exports: [ DxDataGridDirective ],
     declarations: [
         CommissionHistoryComponent,
+        CommissionHistoryAdDirective,
+        CommissionHistoryLayoutBaseComponent,
+        CommissionHistoryLayoutLightComponent,
         LedgerBalanceComponent,
         LinkGeneratorComponent,
         LinkTrackingComponent,
         ReferralComponent,
+        ReferralAdDirective,
+        ReferralLayoutBaseComponent,
+        ReferralLayoutLightComponent,
         ReferralInfoComponent,
+        ReferralInfoAdDirective,
+        ReferralInfoLayoutBaseComponent,
+        ReferralInfoLayoutLightComponent,
         DxDataGridDirective,
         CommissionAmountsComponent,
+        CommissionAmountsAdDirective,
+        CommissionAmountsLayoutBaseComponent,
+        CommissionAmountsLayoutLightComponent,
         CommissionAmountBlockComponent,
         CommissionAmountItemComponent,
         WithdrawalDialogComponent
