@@ -5,25 +5,27 @@
     </header>
     <div class="grid-container">
         <dx-data-grid class="commission-history-grid main-component-view limitedPagerTotal"
-                      accesskey="narrowHeaderPanel"
-                      [renderAsync]="true"
-                      [allowColumnReordering]="true"
-                      [columnAutoWidth]="true"
-                      [dataSource]="dataSource"
-                      [allowColumnResizing]="true"
-                      [hoverStateEnabled]="true"
-                      [showBorders]="true"
-                      [loadPanel]="{ enabled: false }"
-                      [remoteOperations]="{
-                        filtering: false,
-                        grouping: true,
-                        groupPaging: true,
-                        paging: true,
-                        sorting: true,
-                        summary: true
-                      }"
-                      [pager]="defaultGridPagerConfig"
-                      (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
+            accesskey="narrowHeaderPanel"
+            [noDataText]="ls.l('Referral.NoTransactionHistory')"
+            [renderAsync]="true"
+            [allowColumnReordering]="true"
+            [columnAutoWidth]="true"
+            [dataSource]="dataSource"
+            [allowColumnResizing]="true"
+            [hoverStateEnabled]="true"
+            [showBorders]="true"
+            [loadPanel]="{ enabled: false }"
+            [remoteOperations]="{
+              filtering: false,
+              grouping: true,
+              groupPaging: true,
+              paging: true,
+              sorting: true,
+              summary: true
+            }"
+            [pager]="defaultGridPagerConfig"
+            (click)="onGridClick($event)"
+            (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
             <dxo-group-panel [visible]="true"></dxo-group-panel>
             <dxo-scrolling rowRenderingMode="virtual"></dxo-scrolling>
             <dxi-column [dataField]="commissionFields.OrderDate"

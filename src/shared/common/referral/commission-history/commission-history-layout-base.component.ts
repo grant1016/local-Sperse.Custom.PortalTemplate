@@ -9,6 +9,7 @@ import {
     ViewChild
 } from '@angular/core';
 import { CurrencyPipe, DatePipe } from '@angular/common';
+import { Router } from '@angular/router';
 
 /** Third party imports */
 import DataSource from 'devextreme/data/data_source';
@@ -91,7 +92,8 @@ export class CommissionHistoryLayoutBaseComponent implements OnInit, OnDestroy {
         private changeDetectorRef: ChangeDetectorRef,
         private elementRef: ElementRef,
         public httpInterceptor: AppHttpInterceptor,
-        public ls: AppLocalizationService
+        public ls: AppLocalizationService,
+        public router: Router
     ) {}
 
     ngOnInit() {
@@ -173,8 +175,9 @@ export class CommissionHistoryLayoutBaseComponent implements OnInit, OnDestroy {
         });
     }
 
+    onGridClick(event) {}
+
     ngOnDestroy() {
         this.totalsSubscription.unsubscribe();
     }
-
 }

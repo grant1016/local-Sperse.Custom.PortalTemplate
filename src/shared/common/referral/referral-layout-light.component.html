@@ -1,6 +1,14 @@
 <referral-info *ngIf="showReferralInfo"></referral-info>
 <h1>{{ ls.l('Referral.CommissionHistoryTitle') }}</h1>
-<mat-tab-group>
+<mat-tab-group [(selectedIndex)]="selectedTabIndex">
+    <mat-tab [label]="ls.l('Referral.Overview')">
+        <div>
+            DASHBOARD HERE
+        </div>
+    </mat-tab>
+    <mat-tab [label]="ls.l('Referral.LinkGenerator')">
+        <link-generator></link-generator>
+    </mat-tab>
     <mat-tab [label]="ls.l('Referral.CommissionHistory')">
         <div>
             <commission-amounts></commission-amounts>
@@ -10,13 +18,12 @@
     <mat-tab [label]="ls.l('Referral.LedgerBalance')">
         <div>
             <commission-amounts></commission-amounts>
-            <ledger-balance></ledger-balance>
+            <dx-scroll-view height="calc(100vh - 325px)" showScrollbar="onHover">
+                <ledger-balance></ledger-balance>
+            </dx-scroll-view>
         </div>
     </mat-tab>
-    <mat-tab [label]="ls.l('Referral.LinkGenerator')">
-        <link-generator></link-generator>
-    </mat-tab>
-    <mat-tab [label]="ls.l('Referral.LinkTracking')" [disabled]="true">
+    <!-- mat-tab [label]="ls.l('Referral.LinkTracking')" [disabled]="true">
         <link-tracking></link-tracking>
-    </mat-tab>
+    </mat-tab -->
 </mat-tab-group>

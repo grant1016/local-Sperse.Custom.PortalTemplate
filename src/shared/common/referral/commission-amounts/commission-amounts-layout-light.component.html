@@ -8,28 +8,28 @@
             <div class="posted">
                 <h3>{{ ls.l('Referral.TotalsAmountsPosted') }}</h3>
                 <div class="earned">
-                    <h4>{{ ls.l('Referral.Earned') }}</h4>
+                    <h4><img src="assets/common/icons/earnings.svg">{{ ls.l('Referral.Earned') }}</h4>
                     <p>{{ ledgerTotals?.earnedAmount | currency }}</p>
                 </div>
                 <div class="withdrawn">
-                    <h4>{{ ls.l('Referral.Withdrawn') }}</h4>
+                    <h4><img src="assets/common/icons/profits.svg">{{ ls.l('Referral.Withdrawn') }}</h4>
                     <p class="green">{{ ledgerTotals?.withdrawnAmount | currency }}</p>
                 </div>
             </div>
             <div class="pending">
                 <h3>{{ ls.l('Referral.PendingAmounts') }}</h3>
                 <div class="earned">
-                    <h4>{{ ls.l('Referral.Earned') }}</h4>
+                    <h4><img src="assets/common/icons/earnings.svg">{{ ls.l('Referral.Earned') }}</h4>
                     <p>{{ ledgerTotals?.pendingEarningsAmount | currency }}</p>
                 </div>
                 <div class="withdrawn">
-                    <h4>{{ ls.l('Referral.Withdrawn') }}</h4>
+                    <h4><img src="assets/common/icons/profits.svg">{{ ls.l('Referral.Withdrawn') }}</h4>
                     <p class="green">{{ ledgerTotals?.pendingWithdrawalsAmount | currency }}</p>
                 </div>
             </div>            
         </div>
     </div>
-    <div class="funds-available">
+    <div class="funds-available" [ngClass]="{active: !!ledgerTotals?.availableBalance}">
         <div class="available">
             <img src="assets/common/icons/lock.svg" width="25" height="auto">
             <h3>{{ls.l('Referral.Available')}}</h3>
@@ -38,6 +38,7 @@
     </div>
     <div class="funds-withdraw">
         <button class="request-withdrawal"
+                [ngClass]="{active: !!ledgerTotals?.availableBalance}"                    
                 [disabled]="ledgerTotals?.availableBalance <= 0"
                 (click)="requestWithdrawal()">
             {{ ls.l('Referral.RequestWithdrawal') }}

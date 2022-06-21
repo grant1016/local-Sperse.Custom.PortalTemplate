@@ -10,4 +10,9 @@ import { CommissionHistoryLayoutBaseComponent } from './commission-history-layou
     styleUrls: ['commission-history-layout-light.component.less'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class CommissionHistoryLayoutLightComponent extends CommissionHistoryLayoutBaseComponent {}
+export class CommissionHistoryLayoutLightComponent extends CommissionHistoryLayoutBaseComponent {
+    onGridClick(event) {
+        if (event.target.classList.contains('dx-datagrid-nodata'))
+            this.router.navigate([], {queryParams: {tab: 2}});
+    }
+}

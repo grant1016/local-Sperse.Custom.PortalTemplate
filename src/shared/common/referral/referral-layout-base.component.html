@@ -1,4 +1,4 @@
-<mat-tab-group>
+<mat-tab-group [(selectedIndex)]="selectedTabIndex">
     <mat-tab [label]="ls.l('Referral.CommissionHistory')">
         <div>
             <commission-amounts></commission-amounts>

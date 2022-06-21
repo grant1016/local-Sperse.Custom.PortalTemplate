@@ -11,6 +11,7 @@ import { DxSelectBoxModule } from 'devextreme-angular/ui/select-box';
 import { DxTextBoxModule } from 'devextreme-angular/ui/text-box';
 import { DxNumberBoxModule } from 'devextreme-angular/ui/number-box';
 import { DxValidatorModule } from 'devextreme-angular/ui/validator';
+import { DxScrollViewModule } from 'devextreme-angular/ui/scroll-view';
 
 /** Application imports */
 import { ReferralComponent, ReferralAdDirective } from './referral.component';
@@ -55,6 +56,7 @@ import { UserCommissionServiceProxy } from '@shared/service-proxies/service-prox
         DxNumberBoxModule,
         DxSelectBoxModule,
         DxValidatorModule,
+        DxScrollViewModule,
         MatTabsModule,
         MatDialogModule,
         ReferralRoutingModule,

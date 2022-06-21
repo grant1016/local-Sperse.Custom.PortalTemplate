@@ -69,11 +69,21 @@
                             letter-spacing: -0.15px;
                             text-align: left;
                             color: #6a6a6a;
+                            img {
+                                width: 12px;
+                                height: auto;
+                                margin: 0 4px 3px;
+                            }
                         }
                         p {
                             font-size: 11px;
-                            font-weight: 600;
-                            margin-bottom: 0;
+                            font-weight: 500;
+                            font-stretch: normal;
+                            font-style: normal;
+                            line-height: normal;
+                            letter-spacing: -0.26px;
+                            text-align: left;
+                            color: #0a0850;
                             &.green {
                                 color: #30b862;
                             }
@@ -84,12 +94,15 @@
         }
 
         .funds-available {
-            width: 150px;
+            width: 200px;
             height: 150px;
             display: flex;
-            border: 15px solid #e5f2ff;
+            border: 8px solid #e5f2ff;
             border-radius: 17px;
             margin: auto;
+            &.active {
+                border: 8px solid #addbc2;
+            }
             .available {
                 margin: auto;
                 h3  {
@@ -124,7 +137,7 @@
     .funds-withdraw {
         margin-left: auto;
         button.request-withdrawal {
-            width: 220px;
+            width: 250px;
             height: 32px;
             margin: auto;
             cursor: pointer;
@@ -139,15 +152,18 @@
             white-space: nowrap;
             text-align: center;
             color: #fff;
+            &.active {
+                background-color: #02843f;
+            }
         }
         .pay-pal {
-            width: 220px;
-            height: 70px;
+            width: 250px;
+            height: 100px;
             border-radius: 5px;
             background-color: #f4f6f8;
             text-align: center;
-            margin: 20px auto;
-            padding: 10px 0;
+            margin: 20px auto 0 0;
+            padding: 30px 0;
             span {
                 font-size: 12px;
                 font-weight: bold;
