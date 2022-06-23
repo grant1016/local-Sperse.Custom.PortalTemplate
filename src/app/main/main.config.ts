@@ -11,26 +11,31 @@ export class MainConfig implements ConfigInterface {
     localizationSource = 'CRM';
     navigation: ConfigNavigation[] = [
         {
-            text: 'Home',
-            route: '/app/home'
-        },
-        {
+            icon: 'dashboard',
             text: 'Dashboard',
             route: '/app/dashboard'
         },
         {
-            text: 'Leads',
+            icon: 'refferals',
+            text: 'RefferedLeads',
             route: '/app/leads'
         },
         {
-            text: 'CRM',
+            icon: 'invoices',
+            text: 'MyInvoices',
+            route: '/app/invoices'
+        },
+        {
+            icon: 'ambassadors',
+            text: 'MyRefferalPortal',
+            route: '/app/reseller-info'
+        },
+        {
+            icon: 'crm',
+            text: 'CRMLogin',
             route: 'platform',
             permission: AppPermissions.CRM,
             feature: AppFeatures.CRM
-        },
-        {
-            text: 'ResellerInfo',
-            route: '/app/reseller-info'
         }
     ];
 }

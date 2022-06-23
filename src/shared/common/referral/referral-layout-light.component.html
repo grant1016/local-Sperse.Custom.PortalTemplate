@@ -1,11 +1,10 @@
-<referral-info *ngIf="showReferralInfo"></referral-info>
 <h1>{{ ls.l('Referral.CommissionHistoryTitle') }}</h1>
 <mat-tab-group [(selectedIndex)]="selectedTabIndex">
-    <mat-tab [label]="ls.l('Referral.Overview')">
+    <!-- mat-tab [label]="ls.l('Referral.Overview')">
         <div>
             DASHBOARD HERE
         </div>
-    </mat-tab>
+    </mat-tab -->
     <mat-tab [label]="ls.l('Referral.LinkGenerator')">
         <link-generator></link-generator>
     </mat-tab>

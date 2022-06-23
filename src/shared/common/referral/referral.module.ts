@@ -90,9 +90,15 @@ import { UserCommissionServiceProxy } from '@shared/service-proxies/service-prox
         CommissionAmountItemComponent,
         WithdrawalDialogComponent
     ],
-    providers: [ CurrencyPipe, DatePipe, ReferralExportService, ReferralService, UserCommissionServiceProxy ],
+    providers: [ 
+        CurrencyPipe, 
+        DatePipe, 
+        ReferralExportService, 
+        ReferralService, 
+        UserCommissionServiceProxy,
+        {provide: 'layout', useValue: 'light'}
+    ],
     entryComponents: [ WithdrawalDialogComponent ],
     bootstrap: [ ReferralComponent ]
 })
-export class ReferralModule {
-}
+export class ReferralModule {}

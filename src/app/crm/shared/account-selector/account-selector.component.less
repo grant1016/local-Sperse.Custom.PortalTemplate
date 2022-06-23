@@ -1,0 +1,33 @@
+:host {
+    .compact {
+        ::ng-deep .dx-texteditor.dx-editor-outlined {
+            background-color: transparent;
+
+            dx-text-box {
+                background-color: transparent;
+
+                .dx-texteditor-input {
+                    border: 0;
+                }
+            }
+        }
+
+        ::ng-deep h1.title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #171c1d;
+            padding: 12px 8px;
+            line-height: 1.35715;
+            margin: 0;
+        }
+    }
+
+    ::ng-deep dx-drop-down-box {
+        &.dx-state-disabled {
+            opacity: 1!important;
+            .dx-texteditor-buttons-container {
+                display: none;
+            }
+        }
+    }
+}

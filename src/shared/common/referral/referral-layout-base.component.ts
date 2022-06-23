@@ -20,7 +20,7 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ReferralLayoutBaseComponent implements OnDestroy {
-    selectedTabIndex: number = 0;
+    selectedTabIndex: number = 1;
     showReferralInfo = true;
     constructor(
         private changeDetectorRef: ChangeDetectorRef,

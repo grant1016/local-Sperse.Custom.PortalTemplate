@@ -70,29 +70,31 @@ export class TopBarComponent implements OnDestroy {
             });
         });
         this.appService.subscribeModuleChange((config: ConfigInterface) => {
-            this.config = config;
-            this.menu = new PanelMenu(
-                'MainMenu',
-                'MainMenu',
-                this.initMenu(
-                    config.navigation,
-                    config.localizationSource,
-                    0
-                )
-            );
-            const selectedIndex = this.navbarItems.findIndex((navBarItem: PanelMenuItem) => {
-                return navBarItem.route === this.router.url.split('?')[0];
-            });
-            this.navbarItems = this.menu.items;
-            this.selectedIndex = selectedIndex === -1 ? this.selectedIndex : selectedIndex;
-            if (this.navBar && this.navBar.instance) {
-                this.navBar.instance.option({
-                    'items': this.navbarItems,
-                    'selectedIndex': this.selectedIndex,
-                    'selectedItems': [this.navbarItems[this.selectedIndex]]
+            if (config) {
+                this.config = config;
+                this.menu = new PanelMenu(
+                    'MainMenu',
+                    'MainMenu',
+                    this.initMenu(
+                        config.navigation,
+                        config.localizationSource,
+                        0
+                    )
+                );
+                const selectedIndex = this.navbarItems.findIndex((navBarItem: PanelMenuItem) => {
+                    return navBarItem.route === this.router.url.split('?')[0];
                 });
+                this.navbarItems = this.menu.items;
+                this.selectedIndex = selectedIndex === -1 ? this.selectedIndex : selectedIndex;
+                if (this.navBar && this.navBar.instance) {
+                    this.navBar.instance.option({
+                        'items': this.navbarItems,
+                        'selectedIndex': this.selectedIndex,
+                        'selectedItems': [this.navbarItems[this.selectedIndex]]
+                    });
+                }
+                this.appService.topMenu = this.menu;
             }
-            this.appService.topMenu = this.menu;
         });
     }
 

@@ -33,7 +33,9 @@ import { AppStoreService } from '@app/store/app-store.service';
 import { LeadsComponent } from './leads/leads.component';
 import { PipelinesStoreActions } from '@app/store';
 import { CountsAndTotalsModule } from '@shared/crm/dashboard-widgets/counts-and-totals/counts-and-totals.module';
-
+import { AccountSelectorComponent } from './shared/account-selector/account-selector.component';
+import { InvoicesComponent } from './invoices/invoices.component';
+import { CrmService } from '@app/crm/crm.service';
 
 @NgModule({
     imports: [
@@ -60,13 +62,17 @@ import { CountsAndTotalsModule } from '@shared/crm/dashboard-widgets/counts-and-
     declarations: [
         LeadsComponent,
         StarsListComponent,
-        CrmDashboardComponent
+        CrmDashboardComponent,
+        AccountSelectorComponent,
+        InvoicesComponent
     ],
     exports: [
         LeadsComponent,
-        CrmDashboardComponent
+        CrmDashboardComponent,
+        AccountSelectorComponent
     ],
     providers: [
+        CrmService,
         CalendarService
     ]
 })

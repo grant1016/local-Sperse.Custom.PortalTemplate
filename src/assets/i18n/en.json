@@ -43,6 +43,10 @@
         "VersusEstimated": "Versus Estimated",
         "Navigation_ResellerInfo": "Reseller Info",
         "CRMDashboard_RecentLeads": "Recent Leads",
-        "CRMDashboard_LastNLeadsRecords": "Last {0} leads registered"
+        "CRMDashboard_LastNLeadsRecords": "Last {0} leads registered",
+        "RefferedLeads": "Reffered Leads",
+        "MyInvoices": "My Invoices",
+        "MyRefferalPortal": "My Refferal Portal",
+        "CRMLogin": "CRM Login"
     }
 }

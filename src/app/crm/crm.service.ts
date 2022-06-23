@@ -1,0 +1,63 @@
+/** Core imports */
+import { Injectable } from '@angular/core';
+
+/** Third party imports */
+import { Observable, ReplaySubject, of } from '@node_modules/rxjs';
+
+/** Application imports */
+import { AppPermissions } from '@shared/AppPermissions';
+import { AppPermissionService } from '@shared/common/auth/permission.service';
+import { AppSessionService, ILoginInfo } from '@shared/common/session/app-session.service';
+import { DictionaryServiceProxy, OrganizationUnitShortDto } from '@shared/service-proxies/service-proxies';
+
+@Injectable()
+export class CrmService {
+    selectedOrgUnitIds: ReplaySubject<number[]> = new ReplaySubject<number[]>(1);
+    selectedOrgUnitIds$: Observable<number[]> = this.selectedOrgUnitIds.asObservable();
+
+    userInfo: ILoginInfo = this.appSessionService.getShownLoginInfo();
+    initialOrgUnits: OrganizationUnitShortDto[];
+    selectedAccount: OrganizationUnitShortDto;
+    showLoadingSpinner = true;
+    hasData: boolean;
+
+    constructor(
+        private appSessionService: AppSessionService,
+        private permissionService: AppPermissionService,
+        public dictionaryProxy: DictionaryServiceProxy
+    ) {
+        this.getOrgUnits().subscribe((data: OrganizationUnitShortDto[])  => {
+            if (!this.selectedAccount) {
+                this.initialOrgUnits = data;
+                if (data.length) {
+                    this.selectedAccount = data[0];
+                    this.selectedOrgUnitIds.next([this.selectedAccount.id]);
+                } else {
+                    this.selectedAccount = new OrganizationUnitShortDto({
+                        id: this.userInfo.contactId,
+                        displayName: this.userInfo.fullName,
+                        parentId: null
+                    });
+                    this.selectedOrgUnitIds.next([]);
+                }
+            }
+            this.loadStatus(this.selectedAccount);
+        });
+    }
+
+    getOrgUnits(search?: string): Observable<OrganizationUnitShortDto[]> {
+        return this.permissionService.isGranted(AppPermissions.CRM) ?
+            this.dictionaryProxy.getOrganizationUnits(search, 50, true) : of([]);
+    }
+
+    loadStatus(item: OrganizationUnitShortDto) {
+        this.hasData = true;
+        this.showLoadingSpinner = false;
+        this.selectedAccount = item;
+        /*this.dashboardServiceProxy.getStatus(undefined, item.id).subscribe((status: GetCRMStatusOutput) => {
+            this.hasData = status.hasData;
+            this.showLoadingSpinner = false;
+            this.selectedAccount = item;
+        });*/
+    }
+}

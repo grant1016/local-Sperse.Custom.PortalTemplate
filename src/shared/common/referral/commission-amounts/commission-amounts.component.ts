@@ -1,6 +1,6 @@
 /** Core imports */
 import { ChangeDetectionStrategy, ComponentFactoryResolver, ViewChild,
-    Directive, Component, ViewContainerRef, OnInit } from '@angular/core';
+    Directive, Component, ViewContainerRef, OnInit, Inject } from '@angular/core';
 
 /** Application imports */
 import { CommissionAmountsLayoutBaseComponent } from './commission-amounts-layout-base.component';
@@ -20,10 +20,10 @@ export class CommissionAmountsAdDirective {
 })
 export class CommissionAmountsComponent implements OnInit {
     @ViewChild(CommissionAmountsAdDirective, { static: true }) adDirective: CommissionAmountsAdDirective;
-    showBaseLayout = false;
 
     constructor(
-        private componentFactoryResolver: ComponentFactoryResolver
+        private componentFactoryResolver: ComponentFactoryResolver,
+        @Inject('layout') private layout: string
     ) {}
 
     ngOnInit(): void {
@@ -33,7 +33,7 @@ export class CommissionAmountsComponent implements OnInit {
     private loadLayoutComponent() {
         this.adDirective.viewContainerRef.createComponent(
             this.componentFactoryResolver.resolveComponentFactory(
-                this.showBaseLayout ? CommissionAmountsLayoutBaseComponent : CommissionAmountsLayoutLightComponent
+                this.layout ? CommissionAmountsLayoutLightComponent : CommissionAmountsLayoutBaseComponent
             )
         );
     }

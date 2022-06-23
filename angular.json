@@ -20,7 +20,7 @@
                 "underscore", "underscore.string", "lodash", "moment-timezone",
                 "ngx-google-places-autocomplete", "ng2-cache-service", "@bugsnag/js", 
                 "buffer", "@angularclass/hmr", "devextreme", "uuid", "primeng", 
-                "exceljs", "jquery-calendar"
+                "exceljs", "jquery-calendar", "iv-viewer"
             ],
             "assets": [
               "src/assets",
@@ -255,7 +255,7 @@
                 "underscore", "underscore.string", "lodash", "moment-timezone",
                 "ngx-google-places-autocomplete", "ng2-cache-service", "@bugsnag/js", 
                 "buffer", "@angularclass/hmr", "devextreme", "uuid", "primeng", 
-                "exceljs", "jquery-calendar"
+                "exceljs", "jquery-calendar", "iv-viewer"
             ],
             "assets": [
               "src/assets",

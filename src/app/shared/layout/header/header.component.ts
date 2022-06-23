@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, Injector, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Injector, OnInit } from '@angular/core';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
@@ -27,7 +27,8 @@ import { UserDropdownMenuItemModel } from '@shared/common/layout/user-management
     templateUrl: './header.component.html',
     styleUrls: ['./header.component.less'],
     selector: 'app-header',
-    providers: [ CommonUserInfoServiceProxy ]
+    providers: [ CommonUserInfoServiceProxy ],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class HeaderComponent implements OnInit {
 
@@ -40,7 +41,7 @@ export class HeaderComponent implements OnInit {
     unreadChatMessageCount = 0;
     remoteServiceBaseUrl: string = AppConsts.remoteServiceBaseUrl;
     chatConnected = false;
-    userCompany$: Observable<string>;
+    userCompany$: Observable<string> = this.appSession.userCompany$;
     dropdownMenuItems: UserDropdownMenuItemModel[] = this.userManagementService.defaultDropDownItems;
 
     constructor(
@@ -60,9 +61,6 @@ export class HeaderComponent implements OnInit {
     ngOnInit() {
         this.languages = this.ls.languages.filter((l: abp.localization.ILanguageInfo) => l.isDisabled === false);
         this.currentLanguage = this.ls.currentLanguage;
-        this.userCompany$ = this.commonUserInfoService.getCompany().pipe(
-            map(x => isEqual(x, {}) ? null : x)
-        );
         let tenant = this.appSession.tenant;
         if (tenant && tenant.customLayoutType && tenant.customLayoutType != LayoutType.Default)
             this.customLayoutType = kebabCase(tenant.customLayoutType);
@@ -98,5 +96,4 @@ export class HeaderComponent implements OnInit {
     get chatEnabled(): boolean {
         return !this.abpSessionService.tenantId || this.feature.isEnabled(AppFeatures.AppChatFeature);
     }
-
 }

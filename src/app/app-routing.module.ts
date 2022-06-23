@@ -5,6 +5,7 @@ import { RouterModule } from '@angular/router';
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
 import { LeadsComponent } from '@app/crm/leads/leads.component';
+import { InvoicesComponent } from '@app/crm/invoices/invoices.component';
 import { DashboardComponent } from '@app/main/dashboard/dashboard.component';
 import { CrmDashboardComponent } from '@app/crm/dashboard/dashboard.component';
 import { RedirectGuard } from '@shared/common/redirect-guard/redirect-guard';
@@ -36,6 +37,11 @@ import { AppComponent } from './app.component';
                     {
                         path: 'dashboard',
                         component: CrmDashboardComponent,
+                        data: { localizationSource: AppConsts.localization.CRMLocalizationSourceName }
+                    },
+                    {
+                        path: 'invoices',
+                        component: InvoicesComponent,
                         data: { localizationSource: AppConsts.localization.CRMLocalizationSourceName }
                     },
                     {

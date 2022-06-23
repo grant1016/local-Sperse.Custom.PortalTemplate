@@ -1,6 +1,6 @@
 /** Core imports */
 import { ChangeDetectionStrategy, ComponentFactoryResolver, ViewChild,
-    Directive, Component, ViewContainerRef, OnInit } from '@angular/core';
+    Directive, Component, ViewContainerRef, OnInit, Inject } from '@angular/core';
 
 /** Application imports */
 import { ReferralInfoLayoutBaseComponent } from './referral-info-layout-base.component';
@@ -20,10 +20,10 @@ export class ReferralInfoAdDirective {
 })
 export class ReferralInfoComponent implements OnInit {
     @ViewChild(ReferralInfoAdDirective, { static: true }) adDirective: ReferralInfoAdDirective;
-    showBaseLayout = false;
 
     constructor(
-        private componentFactoryResolver: ComponentFactoryResolver
+        private componentFactoryResolver: ComponentFactoryResolver,
+        @Inject('layout') private layout: string
     ) {}
 
     ngOnInit(): void {
@@ -33,7 +33,7 @@ export class ReferralInfoComponent implements OnInit {
     private loadLayoutComponent() {
         this.adDirective.viewContainerRef.createComponent(
             this.componentFactoryResolver.resolveComponentFactory(
-                this.showBaseLayout ? ReferralInfoLayoutBaseComponent : ReferralInfoLayoutLightComponent
+                this.layout ? ReferralInfoLayoutLightComponent : ReferralInfoLayoutBaseComponent
             )
         );
     }
