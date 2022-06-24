@@ -1,4 +1,4 @@
-<h1>{{ ls.l('Referral.CommissionHistoryTitle') }}</h1>
+<h1>{{ ls.l('Referral.' + getSelectedTabTitle()) }}</h1>
 <mat-tab-group [(selectedIndex)]="selectedTabIndex">
     <!-- mat-tab [label]="ls.l('Referral.Overview')">
         <div>

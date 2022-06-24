@@ -47,6 +47,8 @@
         "RefferedLeads": "Reffered Leads",
         "MyInvoices": "My Invoices",
         "MyRefferalPortal": "My Refferal Portal",
-        "CRMLogin": "CRM Login"
+        "CRMLogin": "CRM Login",
+        "AddLink": "Add Link",
+        "GetLinks": "Get Links"
     }
 }

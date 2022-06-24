@@ -1,12 +1,87 @@
-<dx-text-box mode="search"
-             valueChangeEvent="keyup"
-             width="300px"
-             (onValueChanged)="search($event)">
-</dx-text-box>
-<dx-data-grid [dataSource]="displayedLinks$ | async" [allowColumnResizing]="true">
-    <dxi-column dataField="imgSrc" cellTemplate="imgTemplate" width="50px" caption=""></dxi-column>
-    <dxi-column dataField="link" cssClass="clipboard-holder"></dxi-column>
-    <div *dxTemplate="let cellData of 'imgTemplate'">
-        <img [src]="cellData.value" class="image">
-    </div>
-</dx-data-grid>
+<div class="top-bar">
+    <dx-text-box mode="search"
+                 valueChangeEvent="keyup"
+                 width="300px"
+                 height="30px"
+                 (onValueChanged)="search($event)">
+    </dx-text-box>
+    <button class="btn btn-primary" (click)="addNewTrackingLink()">{{ls.l('AddLink')}}</button>
+</div>
+<div class="grid">
+    <div class="tab">{{ls.l('GetLinks')}}</div>
+    <dx-data-grid
+        [dataSource]="displayedLinks$ | async"
+        [allowColumnResizing]="true"
+        [rowAlternationEnabled]="true"
+        [hoverStateEnabled]="true">
+        <dxi-column dataField="imgSrc"
+                    cellTemplate="imgTemplate"
+                    width="48"
+                    cssClass="image"
+                    caption=""></dxi-column>
+        <dxi-column dataField="category"
+                    width="15%"
+                    minWidth="128"
+                    caption="Products of Services"
+                    cssClass="clipboard-holder category"></dxi-column>
+        <dxi-column dataField="companyName"
+                    width="15%"
+                    minWidth="128"
+                    caption="Link Description"
+                    cssClass="clipboard-holder company"></dxi-column>
+        <dxi-column dataField="phoneNumber"
+                    width="140"
+                    alignment="center"
+                    cssClass="clipboard-holder tabular phone"></dxi-column>
+        <dxi-column dataField="copyYourReferralLink"
+                    cellTemplate="linkTemplate"
+                    width="33%"
+                    minWidth="300"
+                    cssClass="link"></dxi-column>
+        <dxi-column dataField="suggestedCopy"
+                    width="345"
+                    cellTemplate="suggestedTemplate"
+                    cssClass="suggested-copy"></dxi-column>
+        <div *dxTemplate="let cellData of 'imgTemplate'">
+            <img [src]="cellData.value" class="image">
+        </div>
+        <div *dxTemplate="let cellData of 'linkTemplate'" class="ref-link-template">
+            <div class="link-value">{{ cellData.value }}</div>
+            <div class="share-link">
+                <p class="md">{{ ls.l('Referral.ShareLink') }}</p>
+                <p class="sm">{{ ls.l('Share')}}</p>
+                <ul>
+                    <li (click)="shareInFacebook(cellData.value)">
+                        <img src="./assets/common/icons/social/Facebook.svg">
+                    </li>
+                    <li (click)="shareInLinkedIn(cellData.row.data.suggestedCopy, cellData.value)">
+                        <img src="./assets/common/icons/social/Linkedin.svg">
+                    </li>
+                    <li (click)="shareInTwitter(cellData.row.data.suggestedCopy, cellData.value)">
+                        <img src="./assets/common/icons/social/Twitter.svg">
+                    </li>
+                    <li (click)="shareInPinterest(cellData.row.data.suggestedCopy, cellData.value)">
+                        <img src="./assets/common/icons/social/Pinterest.svg">
+                    </li>
+                    <li (click)="shareByEmail(cellData.row.data.suggestedCopy, cellData.value)">
+                        <img src="./assets/common/icons/social/email.svg">
+                    </li>
+                </ul>
+            </div>
+            <i class="save-to-clipboard" (click)="copy(cellData.value)"></i>
+        </div>
+        <div *dxTemplate="let cellData of 'suggestedTemplate'" class="suggested-template">
+            <div #tooltip="matTooltip"
+                 [matTooltip]="cellData.text"
+                 matTooltipClass="suggest-tooltip">
+                {{ window.innerWidth > 1440
+                   ? cellData.text.length > 78
+                     ? cellData.text.substring(0, 78) + '...'
+                     : cellData.text
+                   : cellData.text }}
+            </div>
+            <i class="save-to-clipboard" (click)="copy(cellData.value)"></i>
+        </div>
+        <dxo-paging [pageSize]="12"></dxo-paging>
+    </dx-data-grid>
+</div>

@@ -1,11 +1,14 @@
 /** Core imports */
 import { NgModule } from '@angular/core';
 import { CommonModule, CurrencyPipe, DatePipe } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 /** Third party imports */
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatInputModule } from '@angular/material/input';
 import { DxDataGridModule } from 'devextreme-angular/ui/data-grid';
 import { DxSelectBoxModule } from 'devextreme-angular/ui/select-box';
 import { DxTextBoxModule } from 'devextreme-angular/ui/text-box';
@@ -39,18 +42,21 @@ import { DxDataGridDirective } from '@shared/common/dx-data-grid/dx-data-grid.di
 import { 
     CommissionAmountsComponent, 
     CommissionAmountsAdDirective } from '@shared/common/referral/commission-amounts/commission-amounts.component';
+import { UserCommissionServiceProxy, LinkTrackingServiceProxy } from '@shared/service-proxies/service-proxies';
 import { CommissionAmountsLayoutBaseComponent } from '@shared/common/referral/commission-amounts/commission-amounts-layout-base.component';
 import { CommissionAmountsLayoutLightComponent } from '@shared/common/referral/commission-amounts/commission-amounts-layout-light.component';
 import { CommissionAmountBlockComponent } from '@shared/common/referral/commission-amounts/commission-amount-block/commission-amount-block.component';
 import { CommissionAmountItemComponent } from '@shared/common/referral/commission-amounts/commission-amount-item/commission-amount-item.component';
 import { WithdrawalDialogComponent } from '@shared/common/referral/commission-amounts/withdrawal-dialog/withdrawal-dialog.component';
+import { AddLinkDialogComponent } from './shared/add-link-dialog/add-link-dialog.component';
 import { ReferralExportService } from '@shared/common/referral/referral-export.service';
 import { ReferralService } from '@shared/common/referral/referral.service';
-import { UserCommissionServiceProxy } from '@shared/service-proxies/service-proxies';
 
 @NgModule({
     imports: [
         CommonModule,
+        FormsModule, 
+        ReactiveFormsModule,
         DxDataGridModule,
         DxTextBoxModule,
         DxNumberBoxModule,
@@ -58,7 +64,9 @@ import { UserCommissionServiceProxy } from '@shared/service-proxies/service-prox
         DxValidatorModule,
         DxScrollViewModule,
         MatTabsModule,
+        MatInputModule,
         MatDialogModule,
+        MatTooltipModule,
         ReferralRoutingModule,
         UserPhotoModule,
         MatExpansionModule,
@@ -88,17 +96,22 @@ import { UserCommissionServiceProxy } from '@shared/service-proxies/service-prox
         CommissionAmountsLayoutLightComponent,
         CommissionAmountBlockComponent,
         CommissionAmountItemComponent,
-        WithdrawalDialogComponent
+        WithdrawalDialogComponent,
+        AddLinkDialogComponent
     ],
     providers: [ 
         CurrencyPipe, 
         DatePipe, 
         ReferralExportService, 
         ReferralService, 
-        UserCommissionServiceProxy,
+        UserCommissionServiceProxy, 
+        LinkTrackingServiceProxy,
         {provide: 'layout', useValue: 'light'}
     ],
-    entryComponents: [ WithdrawalDialogComponent ],
+    entryComponents: [ 
+        WithdrawalDialogComponent, 
+        AddLinkDialogComponent 
+    ],
     bootstrap: [ ReferralComponent ]
 })
 export class ReferralModule {}
