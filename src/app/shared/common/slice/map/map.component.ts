@@ -41,7 +41,7 @@ export class MapComponent implements OnChanges {
     @Input() data: MapData;
     @Input() dataIsGrouped = true;
     @Input() palette: string[] = [ '#ade8ff', '#86ddff', '#5fd2ff', '#38c8ff', '#11bdff', '#00a8ea' ];
-    @Input() infoItems: InfoItem[];
+    @Input() infoItems: any[];
     @Input() width: number;
     @Input() height: number;
     @Input() dataIsLoading;
@@ -99,19 +99,19 @@ export class MapComponent implements OnChanges {
     }
 
     private getElementTotal(element): number {
-        let total = 0;
+        let total = 0, countryData = this.data[element.attribute('iso_a2')];
         if (!this.dataIsGrouped && this.mapService.selectedMapAreaItem.getValue().key === MapArea.World) {
-            const countryData = this.data[element.attribute('iso_a2')];
-            for (let stateCode in countryData) {
-                total += +(countryData[stateCode] && countryData[stateCode].total);
-            }
+            if (countryData)
+                for (let stateCode in countryData) {
+                    total += +(countryData[stateCode] && countryData[stateCode].total);
+                }
         } else {
             let stateData = this.dataIsGrouped
                 ? (this.mapService.selectedMapAreaItem.value.key === MapArea.World
-                    ? this.data[element.attribute('iso_a2')]
+                    ? countryData
                     : this.data[element.attribute('postal')]
                   )
-                : this.data[element.attribute('iso_a2')][element.attribute('postal')];
+                : (countryData || {})[element.attribute('postal')];
             total = +(stateData && stateData.total);
         }
         return total;

@@ -1,6 +1,5 @@
 <header class="section-header">
     <h1 class="title">{{l('Invoices')}}</h1>
-    <app-account-selector [symbolWidth]="11" [minWidth]="300" [compact]="true"></app-account-selector>
     <button class="icon reload" (click)="refresh()"></button>
 </header>
 <div class="reports-wrapper" [hidden]="isDataLoaded && dataSource.totalCount() < 1">

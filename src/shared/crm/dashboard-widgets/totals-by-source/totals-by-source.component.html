@@ -17,13 +17,26 @@
             <div class="round-progress">
                 <dx-pie-chart [dataSource]="data"
                               [type]="'doughnut'"
-                              [innerRadius]="0.9"
+                              [innerRadius]="0.95"
                               [customizePoint]="customizePoint"
                               (onPointHoverChanged)="onPointHoverChanged($event)"
-                              [legend]="{verticalAlignment: 'bottom', horizontalAlignment: 'center'}"
                               (onDrawn)="onDrawn($event)">
                     <dxo-common-series-settings [argumentField]="selectedArgumentField$ | async"></dxo-common-series-settings>
                     <dxi-series [valueField]="selectedValueField$ | async"></dxi-series>
+                    <dxo-legend
+                        [columnCount]="5"
+                        [margin]="{
+                            top: 30
+                        }"
+                        itemTextPosition="right"
+                        hoverMode="none"
+                        horizontalAlignment="center"
+                        verticalAlignment="bottom"
+                        markerTemplate="markerTemplate">
+                        <svg *dxTemplate="let item of 'markerTemplate'" width="17" height="6">
+                            <rect width="17" height="6" attr.fill="{{ getLegendMarkerColor(item) }}" />
+                        </svg>
+                    </dxo-legend>
                     <dxo-animation [enabled]="false"></dxo-animation>
                 </dx-pie-chart>
             </div>

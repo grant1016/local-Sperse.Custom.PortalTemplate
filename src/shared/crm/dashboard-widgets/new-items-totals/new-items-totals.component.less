@@ -1,5 +1,7 @@
 :host {
     display: block;
+    background: #fff;
+    padding: 30px;
 
     .new-items-status {
         height: 100%;
@@ -10,6 +12,7 @@
     header {
         display: inline-block;
         width: 100%;
+        margin-top: 10px;
     }
 
     app-no-data {
@@ -21,7 +24,6 @@
         flex: 1 auto;
         display: flex;
         flex-direction: column;
-        padding-top: 5px;
         justify-content: space-between;
         height: 100%;
 
@@ -49,40 +51,30 @@
             }
         }
 
-        .chart-head:not(:first-child) {
-            padding-top: 15px;
+        .chart-head {
+            padding-top: 25px;
         }
 
         .ending-count,
         .starting-count,
         .new-clients-added,
         .chart-head {
-            font-style: normal;
-            font-stretch: normal;
-            color: #677380;
             font-size: 15px;
-            font-weight: 500;
-            line-height: 1.6;
-            letter-spacing: normal;
             display: flex;
             align-items: center;
-            margin-bottom: 6px;
+            margin-bottom: 12px;
+
+            line-height: 1.27;
+            letter-spacing: 0.3px;
+            color: rgb(82, 82, 82);
 
             .value {
+                margin-left: auto;
+                font-size: 22px;
+                font-weight: 600;
+                line-height: 0.64;
                 text-align: right;
-                & > div {
-                    font-size: 12px;
-                    font-weight: normal;
-                    font-stretch: normal;
-                    font-style: normal;
-                    line-height: 1.17;
-                    letter-spacing: normal;
-                    color: #677380;
-                    &:first-child {
-                        font-size: 18px;
-                        font-weight: 600;
-                    }
-                }
+                color: rgb(0, 0, 0);
             }
         }
 
@@ -103,10 +95,11 @@
         }
         .chart-line {
             width: 100%;
-            border-radius: 11.5px;
+            border-radius: 6px;
+
             div {
-                height: 16px;
-                border-radius: 11.5px;
+                height: 12px;
+                border-radius: 6px;
             }
         }
     }
@@ -120,9 +113,8 @@
     }
 
     .title {
-        font-size: 20px;
-        font-weight: 700;
-        letter-spacing: normal;
+        font-size: 22px;
+        font-weight: bold;
         color: #212c36;
         float: left;
         margin-bottom: 0;

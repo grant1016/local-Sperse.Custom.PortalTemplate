@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 
 /** Third party imports */
 import { BehaviorSubject, Observable, ReplaySubject, combineLatest, of } from 'rxjs';
-import { catchError, finalize, switchMap, map, tap } from 'rxjs/operators';
+import { catchError, finalize, switchMap, map, tap, distinctUntilChanged } from 'rxjs/operators';
 import * as moment from 'moment';
 
 /** Application imports */
@@ -18,6 +18,7 @@ import { LayoutService } from '@app/shared/layout/layout.service';
 import { CalendarService } from '@app/shared/common/calendar-button/calendar.service';
 import { CalendarValuesModel } from '@shared/common/widgets/calendar/calendar-values.model';
 import { DateHelper } from '@shared/helpers/DateHelper';
+import { ContactGroup } from '@shared/AppEnums';
 import { TotalsDataField } from '@shared/crm/dashboard-widgets/counts-and-totals/totals-data-field.interface';
 
 @Injectable()
@@ -66,8 +67,24 @@ export class DashboardWidgetsService  {
     ];
     private _refresh: BehaviorSubject<null> = new BehaviorSubject<null>(null);
     refresh$: Observable<null> = this._refresh.asObservable();
-    private _sourceContactId: BehaviorSubject<number> = new BehaviorSubject<number>(undefined);
-    sourceContactId$: Observable<number> = this._sourceContactId.asObservable();
+    private _contactId: BehaviorSubject<number> = new BehaviorSubject<number>(undefined);
+    contactId$: Observable<number> = this._contactId.asObservable();
+    private _contactGroupId: BehaviorSubject<ContactGroup> = new BehaviorSubject<ContactGroup>(ContactGroup.Client);
+    contactGroupId$: Observable<ContactGroup> = this._contactGroupId.asObservable().pipe(
+        map((value: ContactGroup) => value || ContactGroup.Client), distinctUntilChanged());
+    private _sourceOrgUnitIds: ReplaySubject<number[]> = new ReplaySubject<number[]>(1);
+    sourceOrgUnitIds$: Observable<number[]> = this._sourceOrgUnitIds.asObservable();
+    private stagesColors = {
+        '-4': '#f02929',
+        '-3': '#f05b29',
+        '-2': '#f4ae55',
+        '-1': '#f7d15e',
+        '0': '#00aeef',
+        '1': '#b6cf5e',
+        '2': '#86c45d',
+        '3': '#46aa6e',
+        '4': '#0e9360'
+    };
 
     constructor(
         private permissionService: AppPermissionService,
@@ -79,16 +96,17 @@ export class DashboardWidgetsService  {
     ) {
         combineLatest(
             this.period$,
-            this.sourceContactId$,
+            this.contactId$,
+            this.sourceOrgUnitIds$,
             this.refresh$
         ).pipe(
             tap(() => this.totalsDataLoading.next(true)),
-            switchMap(([period, sourceContactId, refresh]: [PeriodModel, number, null]) => this.dashboardServiceProxy.getTotals(
+            switchMap(([period, contactId, orgUnitIds, ]: [PeriodModel, number, number[], null]) => this.dashboardServiceProxy.getTotals(
                 period && period.from,
                 period && period.to,
-                undefined,
-                sourceContactId,
-                undefined
+                ContactGroup.Client,
+                contactId,
+                orgUnitIds
             ).pipe(
                 catchError(() => of(new GetTotalsOutput())),
                 finalize(() => this.totalsDataLoading.next(false))
@@ -98,15 +116,28 @@ export class DashboardWidgetsService  {
         });
     }
 
-    filterBySourceContactId(sourceContactId?: number) {
-        this._sourceContactId.next(sourceContactId);
-    }
-
     refresh() {
         this._refresh.next(null);
     }
 
+    getStageDefaultColorByStageSortOrder(stageSortOrder: number): string {
+        let color = this.stagesColors[stageSortOrder];
+        if (!color) {
+            let maxSortOrder = parseInt(Object.keys(this.stagesColors).pop());
+            color = this.stagesColors[maxSortOrder > stageSortOrder ? maxSortOrder * -1 : maxSortOrder];
+        }
+        return color;
+    }
+
     getPercentage(value, total) {
         return (total ? Math.round(value / total * 100) : 0)  + '%';
+    }
+
+    setContactIdForTotals(contactId?: number) {
+        this._contactId.next(contactId);
+    }
+
+    setOrgUnitIdsForTotals(orgUnitIds?: number[]) {
+        this._sourceOrgUnitIds.next(orgUnitIds);
     }
 }

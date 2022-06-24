@@ -11,7 +11,7 @@ import { AppSessionService, ILoginInfo } from '@shared/common/session/app-sessio
 import { DictionaryServiceProxy, OrganizationUnitShortDto } from '@shared/service-proxies/service-proxies';
 
 @Injectable()
-export class CrmService {
+export class AccountSelectorService {
     selectedOrgUnitIds: ReplaySubject<number[]> = new ReplaySubject<number[]>(1);
     selectedOrgUnitIds$: Observable<number[]> = this.selectedOrgUnitIds.asObservable();
 

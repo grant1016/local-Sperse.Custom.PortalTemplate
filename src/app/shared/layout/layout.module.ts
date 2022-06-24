@@ -32,6 +32,7 @@ import { UserManagementModule } from '@shared/common/layout/user-management-list
 import { UserMenuComponent } from './user-menu/user-menu.component';
 import { UserPhotoModule } from '@app/shared/common/user-photo/user-photo.module';
 import { InplaceEditModule } from '@app/shared/common/inplace-edit/inplace-edit.module';
+import { AccountSelectorModule } from './account-selector/account-selector.module';
 
 /** @todo Used for chart bar and dropdown. Reimplement in future */
 import 'assets/metronic/src/js/framework/base/util.js';
@@ -77,7 +78,8 @@ let COMPONENTS = [
         ProgressBarModule,
         TableModule,
         PaginatorModule,
-        UserManagementModule
+        UserManagementModule,
+        AccountSelectorModule
     ],
     declarations: COMPONENTS,
     exports: COMPONENTS,

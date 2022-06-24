@@ -10,6 +10,8 @@ import {
 } from '@angular/core';
 
 /** Third party imports */
+import * as _ from 'underscore';
+import { Store, select } from '@ngrx/store';
 import { DxPieChartComponent } from 'devextreme-angular/ui/pie-chart';
 import { BehaviorSubject, Observable, combineLatest, of } from 'rxjs';
 import {
@@ -22,11 +24,14 @@ import {
     takeUntil,
     map,
     pluck,
-    withLatestFrom
+    withLatestFrom,
+    first
 } from 'rxjs/operators';
 
 /** Application imports */
-import { DashboardServiceProxy, StageDto } from 'shared/service-proxies/service-proxies';
+import { AppStore, PipelinesStoreSelectors } from '@app/store';
+import { StageDtoExtended } from '@app/store/pipelines-store/stage-dto-extended.interface';
+import { DashboardServiceProxy } from 'shared/service-proxies/service-proxies';
 import { DashboardWidgetsService } from '../dashboard-widgets.service';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { LayoutType } from '@shared/service-proxies/service-proxies';
@@ -57,8 +62,14 @@ export class TotalsBySourceComponent implements OnInit, OnDestroy {
         this.layoutService.getLayoutColor('purple'),
         this.layoutService.getLayoutColor('green'),
         this.layoutService.getLayoutColor('orange'),
-        '#ecf0f3'
+        '#bde0ff',
+        '#6da6d9',
+        '#a2e18c',
+        '#54c24d',
+        '#fed142',
+        '#ffab3e'
     ];
+
     rawData: any[];
     percentage: string;
     rangeCount: string;
@@ -73,6 +84,16 @@ export class TotalsBySourceComponent implements OnInit, OnDestroy {
         valueField: 'count',
         getColor: (item) => {
             return StarsHelper.getStarColorByType(this.rawData[item.index].colorType);
+        }
+    }, {
+        key: 'stageDistribution',
+        label: this.ls.l('TotalsByStageDistribution'),
+        method: this.dashboardServiceProxy.getLeadsCountByStage,
+        argumentField: 'key',
+        valueField: 'count',
+        getColor: (item) => {
+            const stage: StageDtoExtended = this.getStageByName(item.argument);
+            return this.dashboardWidgetsService.getStageDefaultColorByStageSortOrder(stage.sortOrder);
         }
     }, {
         key: 'ageDistribution',
@@ -103,9 +124,11 @@ export class TotalsBySourceComponent implements OnInit, OnDestroy {
     selectedTotal$: Observable<ITotalOption> = this.selectedTotal.asObservable();
     selectedArgumentField$: Observable<string> = this.selectedTotal$.pipe(pluck('argumentField'));
     selectedValueField$: Observable<string> = this.selectedTotal$.pipe(pluck('valueField'));
+    stages: StageDtoExtended[];
     loading = false;
 
     constructor(
+        private store$: Store<AppStore.State>,
         private dashboardWidgetsService: DashboardWidgetsService,
         private dashboardServiceProxy: DashboardServiceProxy,
         private elementRef: ElementRef,
@@ -115,22 +138,32 @@ export class TotalsBySourceComponent implements OnInit, OnDestroy {
         private appSession: AppSessionService,
         private layoutService: LayoutService,
         public ls: AppLocalizationService
-    ) {}
+    ) {
+        this.store$.pipe(select(PipelinesStoreSelectors.getPipelinesStages({
+            purpose: AppConsts.PipelinePurposeIds.lead,
+            contactGroupId: ContactGroup.Client
+        }))).pipe(first()).subscribe((stages: StageDtoExtended[]) =>  this.stages = stages);
+    }
 
     ngOnInit() {
         this.data$ = combineLatest(
             this.selectedTotal$,
             this.dashboardWidgetsService.period$,
-            this.dashboardWidgetsService.sourceContactId$,
-            this.dashboardWidgetsService.refresh$,
+            this.dashboardWidgetsService.contactGroupId$,
+            this.dashboardWidgetsService.contactId$,
+            this.dashboardWidgetsService.sourceOrgUnitIds$,
+            this.dashboardWidgetsService.refresh$
         ).pipe(
             takeUntil(this.lifeCycleService.destroy$),
             tap(() => {
                 this.loading = true;
                 this.loadingService.startLoading(this.elementRef.nativeElement);
             }),
-            switchMap(([selectedTotal, period, sourceContactId, ]: [ITotalOption, PeriodModel, number, null]) => selectedTotal.method.call(
-                this.dashboardServiceProxy, period && period.from || new Date('2000-01-01'), period && period.to || new Date(), undefined, sourceContactId).pipe(
+            switchMap(([selectedTotal, period, groupId, contactId, orgUnitIds, ]:
+                           [ITotalOption, PeriodModel, string, number, number[], null]) => selectedTotal.method.call(
+                    this.dashboardServiceProxy, period && period.from || new Date('2000-01-01'),
+                    period && period.to || new Date(), groupId, contactId, orgUnitIds
+                ).pipe(
                     catchError(() => of([])),
                     finalize(() => this.loadingService.finishLoading(this.elementRef.nativeElement))
                 )
@@ -166,11 +199,17 @@ export class TotalsBySourceComponent implements OnInit, OnDestroy {
         };
     }
 
+    private getStageByName(stageName: string): StageDtoExtended  {
+        return _.findWhere(this.stages, {name: stageName});
+    }
+
     private getItemColor(item) {
         return item.argument == 'Unknown'
             ? '#bbb'
             : this.selectedTotal.value.getColor ? this.selectedTotal.value.getColor(item) : this.rangeColors[item.index];
     }
+
+    getLegendMarkerColor = (item) => item.marker.fill;
 
     onPointHoverChanged($event) {
         let isHoverIn = $event.target.fullState, item = $event.target;

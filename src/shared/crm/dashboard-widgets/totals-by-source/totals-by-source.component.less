@@ -1,15 +1,26 @@
 :host {
     display: block;
+    background: #fff;
+    padding: 30px;
 
     .wrapper {
         width: 100%;
         text-align: center;
         .round-progress {
-            width: 100%;
-            height: 400px;
             max-width: 100%;
+            height: 498px;
             display: inline-block;
+
+            dx-pie-chart {
+                height: 100%;
+            }
+
+            @media all and (min-width: 1399px) {
+                width: 100%;
+                max-width: 500px;
+            }
         }
+
         header {
             display: flex;
             justify-content: space-between;
@@ -24,19 +35,38 @@
             }
 
             .title {
-                font-size: 20px;
-                font-weight: 700;
-                fill: #212c36;
+                font-size: 22px;
+                font-weight: bold;
+                color: #000;
                 cursor: default;
                 margin-bottom: 0;
-                white-space: nowrap;
             }
 
-            ::ng-deep .dx-selectbox .dx-texteditor-buttons-container {
-                position: relative;
-                height: 44px;
+            ::ng-deep .dx-selectbox {
+                .dx-texteditor-buttons-container {
+                    position: relative;
+                    height: 44px;
+
+                    .dx-dropdowneditor-icon {
+                        color: #525252;
+                        font-size: 14px;
+
+                        &::before {
+                            content: '\f016';
+                        }
+                    }
+                }
+
+                .dx-texteditor-input {
+                    text-align: right;
+                    padding-right: 5px;
+                    border: 0;
+                    font-weight: 400;
+                    color: #525252;
+                }
             }
         }
+
         .totalsNumbers {
             position: absolute;
             display: flex;

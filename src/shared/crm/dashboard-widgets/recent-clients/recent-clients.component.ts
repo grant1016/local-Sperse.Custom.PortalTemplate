@@ -15,6 +15,7 @@ import { AppHttpInterceptor } from '@shared/http/appHttpInterceptor';
 import { DashboardWidgetsService } from '@shared/crm/dashboard-widgets/dashboard-widgets.service';
 import { IRecentClientsSelectItem } from '@shared/crm/dashboard-widgets/recent-clients/recent-clients-select-item.interface';
 import { DateHelper } from '@shared/helpers/DateHelper';
+import { ContactGroup } from '@shared/AppEnums';
 
 @Component({
     selector: 'recent-clients',
@@ -31,21 +32,19 @@ export class RecentClientsComponent implements OnInit {
     selectItems: IRecentClientsSelectItem[] = [
         {
             name: this.ls.l('CRMDashboard_RecentLeads'),
-            message: this.ls.ls('CRM', 'CRMDashboard_LastNLeadsRecords',  [this.recordsCount]),
+            message: this.ls.ls('CRM', 'CRMDashboard_LastNEntitiesRecords',  this.recordsCount, this.ls.l('ContactGroup_Client').toLowerCase()),
             dataLink: '',
-            allRecordsLink: '/app/crm/leads',
-            dataSource: this.dashboardWidgetsService.sourceContactId$.pipe(switchMap(sourceContactId => 
-                this.dashboardServiceProxy.getRecentlyCreatedLeads(this.recordsCount, undefined, sourceContactId, undefined)
-            ))
+            allRecordsLink: '/app/leads',
+            dataSource: (contactId: number, orgUnitIds: number[]): Observable<GetRecentlyCreatedCustomersOutput[]> =>
+                this.dashboardServiceProxy.getRecentlyCreatedLeads(this.recordsCount, ContactGroup.Client, contactId, orgUnitIds)
         },
         {
             name: this.ls.l('CRMDashboard_RecentClients'),
             message: this.ls.ls('CRM', 'CRMDashboard_LastNClientsRecords', [this.recordsCount]),
             dataLink: 'app/crm/contact',
-            allRecordsLink: '/app/crm/clients',
-            dataSource: this.dashboardWidgetsService.sourceContactId$.pipe(switchMap(sourceContactId => 
-                this.dashboardServiceProxy.getRecentlyCreatedCustomers(this.recordsCount, undefined, sourceContactId, undefined)
-            ))
+            allRecordsLink: '',
+            dataSource: (contactId: number, orgUnitIds: number[]): Observable<GetRecentlyCreatedCustomersOutput[]> =>
+                this.dashboardServiceProxy.getRecentlyCreatedCustomers(this.recordsCount, ContactGroup.Client, contactId, orgUnitIds)
         }
     ];
 
@@ -66,12 +65,14 @@ export class RecentClientsComponent implements OnInit {
     ngOnInit() {
         this.recentlyCreatedCustomers$ = combineLatest(
             this.selectedItem$,
+            this.dashboardWidgetsService.contactId$,
+            this.dashboardWidgetsService.sourceOrgUnitIds$,
             this.dashboardWidgetsService.refresh$
         ).pipe(
-            tap(() => this.loadingService.startLoading(this.elementRef.nativeElement)),            
-            switchMap(([selectedItem]) => selectedItem.dataSource.pipe(
-                tap(() => this.loadingService.finishLoading(this.elementRef.nativeElement)),
-                catchError(() => of([]))
+            tap(() => this.loadingService.startLoading(this.elementRef.nativeElement)),
+            switchMap(([selectedItem, contactId, orgUnitIds, ]) => selectedItem.dataSource(contactId, orgUnitIds).pipe(
+                catchError(() => of([])),
+                finalize(() => this.loadingService.finishLoading(this.elementRef.nativeElement))
             ))
         );
     }

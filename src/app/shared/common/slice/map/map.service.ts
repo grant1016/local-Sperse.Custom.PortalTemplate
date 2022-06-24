@@ -108,7 +108,7 @@ export class MapService {
         );
     }
 
-    getMapInfoItems(mapData$: Observable<any>, mapArea$: Observable<MapArea>): Observable<InfoItem[]> {
+    getMapInfoItems(mapData$: Observable<any>, mapArea$: Observable<MapArea>): Observable<any[]> {
         return mapData$.pipe(
             withLatestFrom(mapArea$),
             map(([mapData, mapArea]: [any, MapArea]) => {
@@ -129,7 +129,7 @@ export class MapService {
                         maxGroupValue = !maxGroupValue || contact.count > maxGroupValue ? contact.count : maxGroupValue;
                     }
                 });
-                let mapInfoItems: InfoItem[] = [
+                let mapInfoItems: any[] = [
                     {
                         label: this.ls.l('Totals'),
                         value: mapData.totalCount

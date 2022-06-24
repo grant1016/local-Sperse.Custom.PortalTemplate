@@ -8,21 +8,32 @@
                 (onSelectionChanged)="onSelectionChanged($event)">
             </dx-select-box>
             <span>{{selectedItem.value.message}}</span>
-            <a [routerLink]="selectedItem.value.allRecordsLink">{{ls.ls(localization, 'CRMDashboard_SeeAllRecords')}}<i class="fa fa-angle-right"></i></a>
+            <a [routerLink]="selectedItem.value.allRecordsLink" *ngIf="selectedItem.value.allRecordsLink">
+                {{ls.ls(localization, 'CRMDashboard_SeeAllRecords')}}
+                <i class="fa fa-angle-right"></i>
+            </a>
         </h2>
     </header>
 
     <ng-container *ngIf="recentlyCreatedCustomers$ | async as recentlyCreatedCustomers">
         <div class="grid-wrapper" *ngIf="recentlyCreatedCustomers && recentlyCreatedCustomers.length; else noData">
             <dx-data-grid id="gridContainer" class="grid-compact-view"
+                          height="448"
                           [dataSource]="recentlyCreatedCustomers"
                           (onDataErrorOccurred)="httpInterceptor.handleError($event.error)"
                           (onCellClick)="onCellClick($event)">
-                <dxi-column dataField="fullName" [caption]="ls.ls(localization, 'Customer.Name')"></dxi-column>
-                <dxi-column dataField="creationTime" [caption]="ls.ls(localization, 'Created')" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
+                <dxi-column dataField="fullName" [caption]="ls.ls(localization, 'Customer.Name')"
+                            cellTemplate="fullName"></dxi-column>
+                <dxi-column dataField="creationTime" [caption]="ls.ls(localization, 'Created')" cellTemplate="dateCell"
+                            cssClass="tabular"></dxi-column>
+
+                <div *dxTemplate="let cellData of 'fullName'">
+                    <span class="fw-600">{{cellData.value}}</span>
+                </div>
                 <div *dxTemplate="let cellData of 'dateCell'">
                     {{cellData.value | date: formatting.dateTime : userTimezone}}
                 </div>
+                <dxo-scrolling showScrollbar="never"></dxo-scrolling>
                 <dxo-paging [pageSize]="10"></dxo-paging>
             </dx-data-grid>
         </div>

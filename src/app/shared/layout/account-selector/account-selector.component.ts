@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 import { first, map } from 'rxjs/operators';
 
 /** Application imports */
-import { CrmService } from '@app/crm/crm.service';
+import { AccountSelectorService } from './account-selector.service';
 import { OrganizationUnitShortDto } from '@shared/service-proxies/service-proxies';
 
 @Component({
@@ -30,7 +30,7 @@ export class AccountSelectorComponent {
     searchValue = '';
 
     constructor(
-        public crmService: CrmService
+        public crmService: AccountSelectorService
     ) {}
 
     valueChanged(event) {

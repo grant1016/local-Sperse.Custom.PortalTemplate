@@ -11,6 +11,7 @@ import { finalize } from 'rxjs/operators';
 import startCase from 'lodash/startCase';
 
 /** Application imports */
+import { AccountSelectorService } from '@app/shared/layout/account-selector/account-selector.service';
 import { AppConsts } from '@shared/AppConsts';
 import { AppPermissions } from '@shared/AppPermissions';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
@@ -23,7 +24,6 @@ import { RequestHelper } from '@shared/helpers/RequestHelper';
 import { InvoiceFields } from './invoice-fields.enum';
 import { UserInvoiceDto } from './invoice-dto.interface';
 import { KeysEnum } from '@shared/common/keys.enum/keys.enum';
-import { CrmService } from '@app/crm/crm.service';
 
 @Component({
     selector: 'app-invoices',
@@ -51,10 +51,10 @@ export class InvoicesComponent extends AppComponentBase {
         private oDataService: ODataService,
         private permissionService: AppPermissionService,
         private userInvoiceProxy: UserInvoiceServiceProxy,
-        public crmService: CrmService
+        public accountSelectorService: AccountSelectorService
     ) {
         super(injector);
-        this.crmService.selectedOrgUnitIds$.subscribe((ids: number[]) => {
+        this.accountSelectorService.selectedOrgUnitIds$.subscribe((ids: number[]) => {
             this.dataSource = new DataSource({
                 sort: [{ selector: 'Date', desc: true }],
                 requireTotalCount: true,

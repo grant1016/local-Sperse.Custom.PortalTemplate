@@ -9,6 +9,7 @@
                      class="logo-layout"/>
             </a>
         </div>
+        <app-account-selector [symbolWidth]="11" [minWidth]="300" [compact]="true"></app-account-selector>
         <contact-info-panel *ngIf="appService.showContactInfoPanel" [data]="appService.contactInfo"></contact-info-panel>
         <user-management-list>
             <li *ngIf="languages.length"

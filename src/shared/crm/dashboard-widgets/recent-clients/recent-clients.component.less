@@ -1,12 +1,15 @@
 ﻿:host {
     display: block;
-    padding-bottom: 10px;
+    background: #fff;
+    padding: 28px 30px 42px;
 
     header {
-        padding-left: 10px;
-        padding-top: 15px;
         display: inline-block;
         width: 100%;
+    }
+
+    .fw-600 {
+        font-weight: 600 !important;
     }
 
     .title {
@@ -22,7 +25,7 @@
         margin-bottom: 3px;
 
         ::ng-deep .dx-selectbox {
-            width: 210px;
+            width: 235px;
 
             input {
                 padding-right: 0;
@@ -60,17 +63,24 @@
         }
 
         a {
-            font-size: 15px;
-            font-weight: 500;
-            color: #17AEEB;
             float: right;
             padding-right: 20px;
             margin-left: auto;
             cursor: pointer;
+
+            font-size: 15px;
+            font-weight: 600;
+            line-height: 1.67;
             letter-spacing: 0.3px;
+            color: #e4661d;
+            transition: .2s;
 
             i {
                 margin-left: 8px;
+            }
+
+            &:hover {
+                color: darken(#e4661d, 10%);
             }
         }
     }
@@ -119,5 +129,9 @@
 
     @media (min-width: 1200px) {
         min-height: 330px;
+    }
+
+    app-no-data {
+        min-height: 378px;
     }
 }
