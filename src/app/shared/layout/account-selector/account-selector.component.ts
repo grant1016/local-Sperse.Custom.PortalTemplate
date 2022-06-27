@@ -20,9 +20,9 @@ export class AccountSelectorComponent {
     @Input() symbolWidth = 20;
     @Input() minWidth = 400;
     @Input() compact = false;
-    disabled$: Observable<boolean> = this.crmService.selectedOrgUnitIds$.pipe(
+    disabled$: Observable<boolean> = this.accountSelectorService.selectedOrgUnitIds$.pipe(
         first(),
-        map(() => this.crmService.initialOrgUnits.length <= 1)
+        map(() => this.accountSelectorService.initialOrgUnits.length <= 1)
     );
     dropDownWidth: number;
     listComponent: any;
@@ -30,26 +30,26 @@ export class AccountSelectorComponent {
     searchValue = '';
 
     constructor(
-        public crmService: AccountSelectorService
+        public accountSelectorService: AccountSelectorService
     ) {}
 
     valueChanged(event) {
         this.calculateDropDownWidth(event.itemData);
-        this.crmService.selectedOrgUnitIds.next([event.itemData.id]);
-        this.crmService.loadStatus(event.itemData);
+        this.accountSelectorService.selectedOrgUnitIds.next([event.itemData.id]);
+        this.accountSelectorService.selectedAccount = event.itemData;
         this.dropDown.instance.close();
     }
 
     getSelectedName() {
-        return this.crmService.selectedAccount
-            ? this.crmService.selectedAccount.displayName
-            : this.crmService.userInfo.fullName;
+        return this.accountSelectorService.selectedAccount
+            ? this.accountSelectorService.selectedAccount.displayName
+            : this.accountSelectorService.userInfo.fullName;
     }
 
     calculateDropDownWidth(selectedAccount: OrganizationUnitShortDto) {
         const textValue = selectedAccount
             ? selectedAccount.displayName
-            : this.crmService.userInfo.fullName;
+            : this.accountSelectorService.userInfo.fullName;
 
         textValue.length * this.symbolWidth + 45 > this.minWidth
             ? this.dropDownWidth = textValue.length * this.symbolWidth + 45
@@ -58,7 +58,7 @@ export class AccountSelectorComponent {
 
     loadOrgUnits(searchValue?: string): Observable<OrganizationUnitShortDto[]> {
         this.searchValue = searchValue;
-        return this.crmService.getOrgUnits(searchValue);
+        return this.accountSelectorService.getOrgUnits(searchValue);
     }
 
     onSearchChanged = (event) => {
@@ -81,6 +81,6 @@ export class AccountSelectorComponent {
 
     onInitialized(event) {
         this.listComponent = event.component;
-        event.component.option('items', this.crmService.initialOrgUnits);
+        event.component.option('items', this.accountSelectorService.initialOrgUnits);
     }
 }

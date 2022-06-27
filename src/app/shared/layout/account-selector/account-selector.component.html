@@ -1,7 +1,7 @@
 <div [class.compact]="compact">
     <dx-drop-down-box
         [disabled]="disabled$ | async"
-        [visible]="!!crmService.initialOrgUnits"
+        [visible]="!!accountSelectorService.initialOrgUnits"
         accessKey="accounts-dropdown" 
         fieldTemplate="field">
         <div *dxTemplate="let data of 'content'" class="accounts-dropdown">
@@ -9,7 +9,7 @@
                      searchExpr="displayName"
                      [searchEditorOptions]="{onValueChanged: onSearchChanged}"
                      [searchTimeout]="1000"
-                     [selectedItemKeys]="[crmService.selectedAccount]"
+                     [selectedItemKeys]="[accountSelectorService.selectedAccount]"
                      selectionMode="single"
                      (onInitialized)="onInitialized($event)"
                      (onItemClick)="valueChanged($event)">
@@ -21,7 +21,7 @@
         <div *dxTemplate="let data of 'field'">
             <dx-text-box [value]="getSelectedName()"
                          [hint]="getSelectedName()"
-                         (onContentReady)="calculateDropDownWidth(crmService.selectedAccount)"
+                         (onContentReady)="calculateDropDownWidth(accountSelectorService.selectedAccount)"
                          [readOnly]="true"
                          [width]="dropDownWidth">
             </dx-text-box>

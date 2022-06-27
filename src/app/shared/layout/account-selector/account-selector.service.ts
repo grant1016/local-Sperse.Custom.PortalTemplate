@@ -19,7 +19,6 @@ export class AccountSelectorService {
     initialOrgUnits: OrganizationUnitShortDto[];
     selectedAccount: OrganizationUnitShortDto;
     showLoadingSpinner = true;
-    hasData: boolean;
 
     constructor(
         private appSessionService: AppSessionService,
@@ -41,23 +40,12 @@ export class AccountSelectorService {
                     this.selectedOrgUnitIds.next([]);
                 }
             }
-            this.loadStatus(this.selectedAccount);
+            this.showLoadingSpinner = false;
         });
     }
 
     getOrgUnits(search?: string): Observable<OrganizationUnitShortDto[]> {
         return this.permissionService.isGranted(AppPermissions.CRM) ?
             this.dictionaryProxy.getOrganizationUnits(search, 50, true) : of([]);
-    }
-
-    loadStatus(item: OrganizationUnitShortDto) {
-        this.hasData = true;
-        this.showLoadingSpinner = false;
-        this.selectedAccount = item;
-        /*this.dashboardServiceProxy.getStatus(undefined, item.id).subscribe((status: GetCRMStatusOutput) => {
-            this.hasData = status.hasData;
-            this.showLoadingSpinner = false;
-            this.selectedAccount = item;
-        });*/
     }
 }

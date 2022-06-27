@@ -5,7 +5,7 @@
                 <calendar-button></calendar-button>
                 <button class="icon reload" (click)="refresh()"></button>
             </div>
-            <div class="dashboard-widgets" *ngIf="accountSelectorService.selectedAccount && accountSelectorService.hasData">
+            <div class="dashboard-widgets" *ngIf="accountSelectorService.selectedAccount">
                 <counts-and-totals *ngIf="isGrantedCustomers || isGrantedOrders"
                                    [data]="totalsData$ | async"
                                    [fields]="totalsDataFields">
@@ -24,7 +24,6 @@
                 </div>
                 <clients-by-region *ngIf="isGrantedCustomers"></clients-by-region>
             </div>
-            <app-no-data *ngIf="!accountSelectorService.showLoadingSpinner && !accountSelectorService.hasData"></app-no-data>
         </div>
         <loading-spinner *ngIf="accountSelectorService.showLoadingSpinner"></loading-spinner>
     </div>
