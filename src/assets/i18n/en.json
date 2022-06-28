@@ -48,7 +48,20 @@
         "MyInvoices": "My Invoices",
         "MyRefferalPortal": "My Refferal Portal",
         "CRMLogin": "CRM Login",
-        "AddLink": "Add Link",
-        "GetLinks": "Get Links"
+        "GetLinks": "Get Links",
+        "AddTrackingLink": {
+            "EditLink": "Edit Link",
+            "AddLink": "Add Link",
+            "AddNewLink": "Add New Link",
+            "EnterLink": "Enter Link",
+            "UrlRequired": "Link is required",
+            "UrlPatternInvalid": "Link is not valid",
+            "EnterCompanyName": "Enter Company Name",
+            "CompanyNameRequired": "Company Name is required",
+            "EnterCategory": "Enter Category",
+            "CategoryRequired": "Category is required",    
+            "EnterSuggestedCopy": "Enter Suggested Copy",
+            "SuggestedCopyRequired": "Suggested Copy is required"
+        }
     }
 }

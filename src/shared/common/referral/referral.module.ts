@@ -42,7 +42,7 @@ import { DxDataGridDirective } from '@shared/common/dx-data-grid/dx-data-grid.di
 import { 
     CommissionAmountsComponent, 
     CommissionAmountsAdDirective } from '@shared/common/referral/commission-amounts/commission-amounts.component';
-import { UserCommissionServiceProxy, LinkTrackingServiceProxy } from '@shared/service-proxies/service-proxies';
+import { UserCommissionServiceProxy, AffiliateLinkServiceProxy } from '@shared/service-proxies/service-proxies';
 import { CommissionAmountsLayoutBaseComponent } from '@shared/common/referral/commission-amounts/commission-amounts-layout-base.component';
 import { CommissionAmountsLayoutLightComponent } from '@shared/common/referral/commission-amounts/commission-amounts-layout-light.component';
 import { CommissionAmountBlockComponent } from '@shared/common/referral/commission-amounts/commission-amount-block/commission-amount-block.component';
@@ -50,6 +50,7 @@ import { CommissionAmountItemComponent } from '@shared/common/referral/commissio
 import { WithdrawalDialogComponent } from '@shared/common/referral/commission-amounts/withdrawal-dialog/withdrawal-dialog.component';
 import { AddLinkDialogComponent } from './shared/add-link-dialog/add-link-dialog.component';
 import { ReferralExportService } from '@shared/common/referral/referral-export.service';
+import { CountryPhoneNumberModule } from '@shared/common/phone-numbers/country-phone-number.module';
 import { ReferralService } from '@shared/common/referral/referral.service';
 
 @NgModule({
@@ -70,7 +71,8 @@ import { ReferralService } from '@shared/common/referral/referral.service';
         ReferralRoutingModule,
         UserPhotoModule,
         MatExpansionModule,
-        InplaceEditModule
+        InplaceEditModule,
+        CountryPhoneNumberModule
     ],
     exports: [ DxDataGridDirective ],
     declarations: [
@@ -105,7 +107,7 @@ import { ReferralService } from '@shared/common/referral/referral.service';
         ReferralExportService, 
         ReferralService, 
         UserCommissionServiceProxy, 
-        LinkTrackingServiceProxy,
+        AffiliateLinkServiceProxy,
         {provide: 'layout', useValue: 'light'}
     ],
     entryComponents: [ 

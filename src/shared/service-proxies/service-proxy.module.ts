@@ -36,7 +36,6 @@ import * as ApiServiceProxies from './service-proxies';
         ApiServiceProxies.HostDashboardServiceProxy,
         ApiServiceProxies.PaymentServiceProxy,
         ApiServiceProxies.InvoiceServiceProxy,
-        ApiServiceProxies.UiCustomizationSettingsServiceProxy,
         ApiServiceProxies.LocalizationServiceProxy,
         ApiServiceProxies.PersonContactServiceProxy,
         ApiServiceProxies.MemberSubscriptionServiceProxy,

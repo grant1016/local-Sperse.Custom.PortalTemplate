@@ -50,6 +50,7 @@
         height: 30px;
     }
 
+    .text-template,
     .ref-link-template,
     .suggested-template {
         .save-to-clipboard {
@@ -68,6 +69,7 @@
         }
 
         td {
+            cursor: pointer;
             line-height: 29px;
             border: none!important;
             font-size: 12px!important;
@@ -84,7 +86,9 @@
                 transform: translateY(-50%);
             }
 
-
+            &.phone,
+            &.company,
+            &.category,
             &.suggested-copy {
                 white-space: normal;
                 overflow: visible;
@@ -95,6 +99,9 @@
             }
 
             &.link,
+            &.phone,
+            &.company,
+            &.category,
             &.suggested-copy {
                 position: relative;
                 padding-right: 25px;
@@ -105,6 +112,7 @@
                 }
 
                 &:hover {
+                    .text-template,
                     .ref-link-template,
                     .suggested-template {
                         .save-to-clipboard {

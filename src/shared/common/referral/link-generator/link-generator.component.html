@@ -5,7 +5,7 @@
                  height="30px"
                  (onValueChanged)="search($event)">
     </dx-text-box>
-    <button class="btn btn-primary" (click)="addNewTrackingLink()">{{ls.l('AddLink')}}</button>
+    <button class="btn btn-primary" (click)="addEditNewLink()">{{ls.l('AddLink')}}</button>
 </div>
 <div class="grid">
     <div class="tab">{{ls.l('GetLinks')}}</div>
@@ -13,8 +13,9 @@
         [dataSource]="displayedLinks$ | async"
         [allowColumnResizing]="true"
         [rowAlternationEnabled]="true"
-        [hoverStateEnabled]="true">
-        <dxi-column dataField="imgSrc"
+        [hoverStateEnabled]="true"
+        (onCellClick)="addEditNewLink($event.data)">
+        <dxi-column dataField="imageUrl"
                     cellTemplate="imgTemplate"
                     width="48"
                     cssClass="image"
@@ -23,16 +24,19 @@
                     width="15%"
                     minWidth="128"
                     caption="Products of Services"
-                    cssClass="clipboard-holder category"></dxi-column>
+                    cellTemplate="textTemplate"
+                    cssClass="category"></dxi-column>
         <dxi-column dataField="companyName"
                     width="15%"
                     minWidth="128"
                     caption="Link Description"
-                    cssClass="clipboard-holder company"></dxi-column>
+                    cellTemplate="textTemplate"
+                    cssClass="company"></dxi-column>
         <dxi-column dataField="phoneNumber"
                     width="140"
                     alignment="center"
-                    cssClass="clipboard-holder tabular phone"></dxi-column>
+                    cellTemplate="textTemplate"
+                    cssClass="tabular phone"></dxi-column>
         <dxi-column dataField="copyYourReferralLink"
                     cellTemplate="linkTemplate"
                     width="33%"
@@ -42,8 +46,12 @@
                     width="345"
                     cellTemplate="suggestedTemplate"
                     cssClass="suggested-copy"></dxi-column>
+        <div *dxTemplate="let cellData of 'textTemplate'" class="text-template">
+            <span>{{ cellData.value }}</span>
+            <i class="save-to-clipboard" (click)="copy(cellData.value)"></i>
+        </div>
         <div *dxTemplate="let cellData of 'imgTemplate'">
-            <img [src]="cellData.value" class="image">
+            <img [src]="cellData.value || 'assets/common/icons/link2.svg'" class="image">
         </div>
         <div *dxTemplate="let cellData of 'linkTemplate'" class="ref-link-template">
             <div class="link-value">{{ cellData.value }}</div>
