@@ -20,7 +20,12 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ReferralLayoutBaseComponent implements OnDestroy {
-    selectedTabIndex: number = 1;
+    readonly DASHBOARD_TAB_INDEX    = 0;
+    readonly LINKS_TAB_INDEX        = 1;
+    readonly COMMISSIONS_TAB_INDEX  = 2;
+    readonly LEDGER_TAB_INDEX       = 3;
+
+    selectedTabIndex: number = this.DASHBOARD_TAB_INDEX;
     showReferralInfo = true;
     constructor(
         private changeDetectorRef: ChangeDetectorRef,

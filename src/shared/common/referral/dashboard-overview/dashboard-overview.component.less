@@ -1,0 +1,160 @@
+:host {
+    .referral-link-wrapper {
+        display: flex;
+        justify-content: space-between;
+        background-color: #f7f9fa;
+        margin: 30px;
+        height: 200px;
+        border-radius: 10px;
+
+        .left {
+            flex-basis: 20%;
+            font-size: 13px;
+            text-align: left;
+            margin: 30px 0 0 20px;
+            color: #0a0850;
+        }
+
+        .center {
+            margin: 20px;
+            padding: 10px;
+            flex-basis: 60%;
+            max-width: 630px;
+            background-color: #fff;
+            h1 {
+                white-space: nowrap;
+                font-size: 17px;
+                font-weight: 600;
+                span {
+                    color: #1b6634;
+                    text-decoration: underline;
+                }
+            }
+            h3 {
+                font-size: 11px;
+            }
+            ::ng-deep dx-select-box, 
+            ::ng-deep dx-text-box.url {
+                display: inline-block;
+                input {
+                    border: 1px solid #dfdfdf;
+                }
+            }
+            ::ng-deep dx-text-box.url {
+                margin-left: 120px;
+            }
+            ::ng-deep dx-select-box {
+                position: absolute;
+                .dx-dropdowneditor-icon {
+                    background: transparent!important;
+                }
+                .dx-dropdowneditor-input-wrapper.dx-selectbox-container {
+                    width: 120px;
+                }
+                .dx-placeholder::before {
+                    padding: 7px 20px 8px;
+                }
+                input {
+                    padding-left: 15px;
+                    border-radius: 10px 0 0 10px;
+                    background: #dfdfdf;
+                }
+            }
+            p {
+                margin: 12px 0;
+                font-size: 12px;
+                font-weight: 600;
+                display: inline-block;
+            }
+            .social {
+                display: inline-block;
+            }
+            button {
+                width: 85px;
+                height: 45px;
+                background: #1b6634;
+                cursor: pointer;
+                color: #fff;
+                border: none;
+                position: relative;
+                bottom: 2px;
+                border-radius: 0 10px 10px 0px;
+            }
+            .link-text-area {
+                margin-top: 20px;
+            }
+            ul {
+                display: flex;
+                padding-left: 10px;
+                margin-bottom: 0;
+
+                li {
+                    list-style: none;
+                    cursor: pointer;
+
+                    img {
+                        width: 20px;
+                        height: 20px;
+                        transition: .3s;
+                    }
+
+                    &:not(:last-child) {
+                        margin-right: 10px;
+                    }
+                }
+            }
+        }
+
+        .right {
+            color: #0a0850;
+            flex-basis: 20%;
+            margin: 30px 20px 0 0;
+            h3 {
+                color: #f26725;
+                font-size: 18px;
+                font-weight: 600;
+            }
+            p {
+                font-size: 13px;
+            }
+            button {
+                background-color: #fff;
+                border: none;
+                padding: 5px;
+                border-radius: 5px;
+                cursor: pointer;
+                font-size: 12px;
+                font-weight: 500;
+                color: #0a0850;
+            }
+        }
+    }
+    .statistic {
+        display: flex;
+        border-radius: 10px;
+        justify-content: space-around;
+        background-color: #f7f9fa;
+        margin: 0 30px;
+        padding: 20px 0;
+
+        div {
+            width: 100%;
+            text-align: center;
+            border-left: 1px solid #dedede;
+
+            &:first-child {
+                border-left: none;
+            }
+
+            p {
+                color: #119922;
+                font-size: 22px;
+                font-weight: 600;
+            }
+            span {
+                color: #0a0850;
+                font-weight: 500;                    
+            }
+        }
+    }
+}

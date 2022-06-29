@@ -1,0 +1,78 @@
+<div class="referral-link-wrapper">
+    <div class="left">
+        <b>{{ls.l('Your reward for reffering new customers')}}</b>&nbsp;{{ls.l('You get')}}&nbsp;<b>{{ls.l('20% recurring comission')}}</b>&nbsp;{{ls.l('for each reffered customer')}}
+    </div>
+    <div class="center">
+        <h1>{{ls.l('Share this referral link to your friends and followers')}}&nbsp;(&nbsp;<span>{{ls.l('customize link')}}</span>&nbsp;)</h1>
+        <h3>{{ls.l('Click the "links" button to view all available referral links. You can also create your own links with sub-ids')}}</h3>
+        <div class="link-text-area">
+            <dx-select-box
+                accessKey="selectLinks"
+                width="520px" height="45px"
+                [dataSource]="links$ | async"
+                [placeholder]="ls.l('Links')"
+                fieldTemplate="field"
+                (onValueChanged)="onSelectedLinkChanged($event)">
+                <div *dxTemplate="let data of 'item'">
+                    <img [src]="data.imageUrl" width="25px" style="margin: 0 10px 0 0;">{{data.companyName}} - {{data.url}}
+                </div>
+                <div *dxTemplate="let data of 'field'">
+                    <dx-text-box height="43px" [value]="ls.l('Links') + (data ? ' (' + data.index + ')' : '')"></dx-text-box>
+                </div>
+            </dx-select-box>
+            <dx-text-box class="url" 
+                width="65%" height="45px"
+                valueChangeEvent="keyup"
+                [(value)]="selectedLink">
+            </dx-text-box>
+            <button (click)="copyLink()">{{ls.l('Copy')}}</button>
+        </div>
+        <p>{{ls.l('Share on social media:')}}</p>
+        <div class="social">
+            <ul>
+                <li (click)="sharingService.shareInFacebook(selectedLink)">
+                    <img src="./assets/common/icons/social/Facebook.svg">
+                </li>
+                <li (click)="sharingService.shareInLinkedin(selectedLink, suggestedCopy)">
+                    <img src="./assets/common/icons/social/Linkedin.svg">
+                </li>
+                <li (click)="sharingService.shareInTwitter(selectedLink, suggestedCopy)">
+                    <img src="./assets/common/icons/social/Twitter.svg">
+                </li>
+                <li (click)="sharingService.shareInPinterest(selectedLink, '', suggestedCopy)">
+                    <img src="./assets/common/icons/social/Pinterest.svg">
+                </li>
+                <li (click)="sharingService.shareVieEmail(selectedLink, suggestedCopy)">
+                    <img src="./assets/common/icons/social/email.svg">
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="right">
+        <h3>{{ls.l('Important')}}</h3>
+        <p>{{ls.l('You don\'t have a payout method selected. Please select one now so we can pay you.')}}</p>
+        <button>{{ls.l('Select payout method')}}</button>
+    </div>
+</div>
+<div class="statistic">
+    <div>
+        <p>{{totalsData?.totalLeadCount || 0 | number}}</p>
+        <span>{{ls.l('Leads')}}</span>
+    </div>
+    <div>
+        <p>{{totalsData?.totalClientCount || 0 | number}}</p>
+        <span>{{ls.l('Customers')}}</span>
+    </div>
+    <div>
+        <p>{{totalsData?.totalOrderAmount || 0 | currency}}</p>
+        <span>{{ls.l('Revenue')}}</span>
+    </div>
+    <div>
+        <p>{{ledgerTotals?.earnedAmount || 0 | currency}}</p>
+        <span>{{ls.l('Earnings')}}</span>
+    </div>
+    <div>
+        <p>{{ledgerTotals?.pendingEarningsAmount || 0 | currency}}</p>
+        <span>{{ls.l('Pending')}}</span>
+    </div>
+</div>

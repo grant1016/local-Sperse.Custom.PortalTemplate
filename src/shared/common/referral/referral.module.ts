@@ -28,7 +28,6 @@ import { CommissionHistoryLayoutBaseComponent } from '@shared/common/referral/co
 import { CommissionHistoryLayoutLightComponent } from '@shared/common/referral/commission-history/commission-history-layout-light.component';
 import { LedgerBalanceComponent } from '@shared/common/referral/ledger-balance/ledger-balance.component';
 import { LinkGeneratorComponent } from '@shared/common/referral/link-generator/link-generator.component';
-import { LinkTrackingComponent } from '@shared/common/referral/link-tracking/link-tracking.component';
 import { ReferralRoutingModule } from '@shared/common/referral/referral-routing.module';
 import { 
     ReferralInfoComponent, 
@@ -51,6 +50,7 @@ import { WithdrawalDialogComponent } from '@shared/common/referral/commission-am
 import { AddLinkDialogComponent } from './shared/add-link-dialog/add-link-dialog.component';
 import { ReferralExportService } from '@shared/common/referral/referral-export.service';
 import { CountryPhoneNumberModule } from '@shared/common/phone-numbers/country-phone-number.module';
+import { DashboardOverviewComponent } from './dashboard-overview/dashboard-overview.component';
 import { ReferralService } from '@shared/common/referral/referral.service';
 
 @NgModule({
@@ -82,7 +82,6 @@ import { ReferralService } from '@shared/common/referral/referral.service';
         CommissionHistoryLayoutLightComponent,
         LedgerBalanceComponent,
         LinkGeneratorComponent,
-        LinkTrackingComponent,
         ReferralComponent,
         ReferralAdDirective,
         ReferralLayoutBaseComponent,
@@ -99,7 +98,8 @@ import { ReferralService } from '@shared/common/referral/referral.service';
         CommissionAmountBlockComponent,
         CommissionAmountItemComponent,
         WithdrawalDialogComponent,
-        AddLinkDialogComponent
+        AddLinkDialogComponent,
+        DashboardOverviewComponent
     ],
     providers: [ 
         CurrencyPipe, 

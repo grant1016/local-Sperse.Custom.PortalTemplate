@@ -6,7 +6,8 @@
             "text": "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aperiam assumenda autem eligendi eos error et exercitationem, harum, minima neque nihil numquam pariatur quas quis reprehenderit sed soluta ullam voluptas voluptates."
         },
         "Referral": {
-            "Overview": "Overview",
+            "Overview": "Dashboard",
+            "OverviewTitle": "Partner Dashboard",
             "CommissionHistory": "My Commissions",
             "LedgerBalance": "Ledger Balance",
             "LinkGenerator": "My Links",
