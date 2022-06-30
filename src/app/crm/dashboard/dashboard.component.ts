@@ -74,17 +74,22 @@ export class CrmDashboardComponent implements AfterViewInit {
         public dialog: MatDialog,
         public accountSelectorService: AccountSelectorService
     ) {
-        this.accountSelectorService.selectedOrgUnitIds$.pipe().subscribe(ids => {
-            if (this.permission.isGranted(AppPermissions.CRMCustomers))
+        this.accountSelectorService.selectedOrgUnitIds$.pipe(
+            takeUntil(this.lifeCycleSubject.deactivate$)
+        ).subscribe(ids => {
+            if (this.permission.isGranted(AppPermissions.CRMCustomers)) {
                 this.dashboardWidgetsService.setOrgUnitIdsForTotals(ids);
+                this.dashboardWidgetsService.setContactIdForTotals(undefined);
+                this.refresh();
+            }
         });
-    }
+    }    
 
     ngAfterViewInit(): void {
         this.activate();
     }
 
-    refresh(refreshLeadsAndClients: boolean = true) {
+    refresh() {
         this.dashboardWidgetsService.refresh();
     }
 
@@ -128,7 +133,7 @@ export class CrmDashboardComponent implements AfterViewInit {
 
     invalidate() {
         this.lifeCycleSubject.activate$.pipe(first()).subscribe(() => {
-            this.refresh(false);
+            this.refresh();
         });
     }
 

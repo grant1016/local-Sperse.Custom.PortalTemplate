@@ -1,13 +1,15 @@
 /** Core imports */
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, AfterViewInit, OnDestroy } from '@angular/core';
 
 /** Third party imports */
-import { map, first } from 'rxjs/operators';
+import { map, first, takeUntil } from 'rxjs/operators';
 import { ClipboardService } from 'ngx-clipboard';
 
 /** Application imports */
 import { AppPermissions } from '@shared/AppPermissions';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
+import { AppSessionService } from '@shared/common/session/app-session.service';
+import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 import { AccountSelectorService } from '@app/shared/layout/account-selector/account-selector.service';
 import { DashboardWidgetsService } from '@shared/crm/dashboard-widgets/dashboard-widgets.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -20,12 +22,15 @@ import { NotifyService } from 'abp-ng2-module';
     selector: 'dashboard-overview',
     templateUrl: 'dashboard-overview.component.html',
     styleUrls: [ 'dashboard-overview.component.less' ],
-    providers: [ SharingService ],
+    providers: [ SharingService, LifecycleSubjectsService ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class DashboardOverviewComponent {
+export class DashboardOverviewComponent implements AfterViewInit, OnDestroy {
+    selectInitialLink: any;
     links$ = this.referralService.getLinks().pipe(map(links => {
         return links.map((link, index) => {
+            if (!index)
+                this.selectInitialLink = link;
             link['index'] = index + 1;
             return link;
         });
@@ -45,24 +50,34 @@ export class DashboardOverviewComponent {
         private clipboardService: ClipboardService,
         private profileService: ProfileService,
         private sharingService: SharingService,
-        private notifyService: NotifyService
+        private notifyService: NotifyService,
+        private appSessionService: AppSessionService,
+        private lifeCycleSubject: LifecycleSubjectsService
     ) {
-        this.accountSelectorService.selectedOrgUnitIds$.pipe(first()).subscribe(ids => {
-            if (this.permission.isGranted(AppPermissions.CRMCustomers))
-                dashboardService.setOrgUnitIdsForTotals(ids);
-        });
+        this.refresh();
+    }
 
-        dashboardService.totalsData$.pipe(first()).subscribe(totalsData => {
+    ngAfterViewInit() {
+        this.dashboardService.totalsData$.pipe(
+            takeUntil(this.lifeCycleSubject.deactivate$)
+        ).subscribe(totalsData => {
             this.totalsData = totalsData;
-            changeDetectorRef.detectChanges();            
+            this.changeDetectorRef.detectChanges();            
         });
 
-        this.referralService.ledgerTotals$.pipe(first()).subscribe(ledgerTotals => {
+        this.referralService.ledgerTotals$.pipe(
+            takeUntil(this.lifeCycleSubject.deactivate$)
+        ).subscribe(ledgerTotals => {
             this.ledgerTotals = ledgerTotals;
             this.changeDetectorRef.detectChanges();
-        })
+        });
+    }
 
-        dashboardService.refresh();
+    refresh() {
+        this.dashboardService.setOrgUnitIdsForTotals(undefined);
+        this.dashboardService.setContactIdForTotals(
+            this.appSessionService.user.contactId
+        );
     }
 
     onSelectedLinkChanged(event) {
@@ -77,5 +92,9 @@ export class DashboardOverviewComponent {
     copyLink() {
         this.clipboardService.copyFromContent(this.selectedLink);
         this.notifyService.info(this.ls.l('SavedToClipboard'));
+    }
+
+    ngOnDestroy() {
+        this.lifeCycleSubject.deactivate.next();
     }
 }

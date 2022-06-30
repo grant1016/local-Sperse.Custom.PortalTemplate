@@ -5,7 +5,7 @@
                  height="30px"
                  (onValueChanged)="search($event)">
     </dx-text-box>
-    <button class="btn btn-primary" (click)="addEditNewLink()">{{ls.l('AddLink')}}</button>
+    <button class="btn btn-primary" (click)="addEditNewLink()">{{ls.l('AddTrackingLink.AddLink')}}</button>
 </div>
 <div class="grid">
     <div class="tab">{{ls.l('GetLinks')}}</div>
@@ -23,13 +23,13 @@
         <dxi-column dataField="category"
                     width="15%"
                     minWidth="128"
-                    caption="Products of Services"
+                    [caption]="ls.l('Referral.ProductsOrServices')"
                     cellTemplate="textTemplate"
                     cssClass="category"></dxi-column>
         <dxi-column dataField="companyName"
                     width="15%"
                     minWidth="128"
-                    caption="Link Description"
+                    [caption]="ls.l('Referral.LinkDescription')"
                     cellTemplate="textTemplate"
                     cssClass="company"></dxi-column>
         <dxi-column dataField="phoneNumber"

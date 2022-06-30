@@ -12,6 +12,7 @@ import { DxDataGridModule } from 'devextreme-angular/ui/data-grid';
 import { DxTextBoxModule } from 'devextreme-angular/ui/text-box';
 import { DxListModule } from 'devextreme-angular/ui/list';
 import { DxTooltipModule } from 'devextreme-angular/ui/tooltip';
+import { ImageViewerModule } from 'ng2-image-viewer';
 
 /** Application imports */
 import { AppStore } from '@app/store';
@@ -55,7 +56,8 @@ import { InvoicesComponent } from './invoices/invoices.component';
         CRMDashboardWidgetsModule,
         LoadingSpinnerModule,
         StaticListModule,
-        CountsAndTotalsModule
+        CountsAndTotalsModule,
+        ImageViewerModule
     ],
     declarations: [
         LeadsComponent,

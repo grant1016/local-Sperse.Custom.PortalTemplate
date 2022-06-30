@@ -7,7 +7,8 @@ import { ReferralComponent } from '@shared/common/referral/referral.component';
         RouterModule.forChild([
             {
                 path: '',
-                component: ReferralComponent
+                component: ReferralComponent,
+                data: {reuse: true}
             }
         ])
     ],

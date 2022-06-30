@@ -51,10 +51,10 @@ export class LinkGeneratorComponent {
         map(([initialLinks, search]: [GeneratorLink[], string]) => {
             let terms = search.toLowerCase().split(' ');
             return initialLinks.filter((link: GeneratorLink) => {
-                return terms.every(item => link.category.toLowerCase().includes(item))
-                    || terms.every(item => link.companyName.toLowerCase().includes(item))
-                    || terms.every(item => link.copyYourReferralLink.toLowerCase().includes(item))
-                    || terms.every(item => link.suggestedCopy.toLowerCase().includes(item));
+                return link.category && terms.every(item => link.category.toLowerCase().includes(item))
+                    || link.companyName && terms.every(item => link.companyName.toLowerCase().includes(item))
+                    || link.copyYourReferralLink && terms.every(item => link.copyYourReferralLink.toLowerCase().includes(item))
+                    || link.suggestedCopy && terms.every(item => link.suggestedCopy.toLowerCase().includes(item));
             });
         })
     );

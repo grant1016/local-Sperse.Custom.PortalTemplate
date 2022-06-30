@@ -8,18 +8,12 @@
     </div>
     <mat-form-field>
         <mat-label>{{ls.l('AddTrackingLink.EnterCategory')}}</mat-label>
-        <input matInput [(ngModel)]="data.category" [formControl]="category" required>
-        <mat-error *ngIf="url.hasError('required')">
-            {{ls.l('AddTrackingLink.CategoryRequired')}}
-        </mat-error>
+        <input matInput [(ngModel)]="data.category" [formControl]="category">
     </mat-form-field>
 
     <mat-form-field>
         <mat-label>{{ls.l('AddTrackingLink.EnterCompanyName')}}</mat-label>
-        <input matInput [(ngModel)]="data.companyName" [formControl]="companyName" required>
-        <mat-error *ngIf="url.hasError('required')">
-            {{ls.l('AddTrackingLink.CompanyNameRequired')}}
-        </mat-error>
+        <input matInput [(ngModel)]="data.companyName" [formControl]="companyName">
     </mat-form-field>
 
     <mat-form-field>
@@ -37,23 +31,20 @@
         <country-phone-number 
             class="phoneNumber"
             [(phoneNumber)]="data.phoneNumber"
-            [required]="true">
+            [required]="false">
         </country-phone-number>
     </div>
 
     <mat-form-field>
         <mat-label>{{ls.l('AddTrackingLink.EnterSuggestedCopy')}}</mat-label>
-        <input matInput [(ngModel)]="data.suggestedCopy" [formControl]="suggestedCopy" required>
-        <mat-error *ngIf="url.hasError('required')">
-            {{ls.l('AddTrackingLink.SuggestedCopyRequired')}}
-        </mat-error>
+        <input matInput [(ngModel)]="data.suggestedCopy" [formControl]="suggestedCopy">
     </mat-form-field>
 </div>
 <div mat-dialog-actions>
     <button class="btn btn-default" (click)="close()">{{ls.l('Cancel')}}</button>
     <button class="btn btn-primary"
             [mat-dialog-close]="data"
-            [disabled]="isValid()"
+            [disabled]="!this.url.valid"
             cdkFocusInitial>
         {{ls.l('AddTrackingLink.' + (data.id ? 'EditLink' : 'AddLink'))}}
     </button>

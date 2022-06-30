@@ -20,6 +20,7 @@ export class ReferralAdDirective {
 })
 export class ReferralComponent implements OnInit {
     @ViewChild(ReferralAdDirective, { static: true }) adDirective: ReferralAdDirective;
+    componentRef: any;
 
     constructor(
         private componentFactoryResolver: ComponentFactoryResolver,
@@ -31,10 +32,15 @@ export class ReferralComponent implements OnInit {
     }
 
     private loadLayoutComponent() {
-        this.adDirective.viewContainerRef.createComponent(
+        this.componentRef = this.adDirective.viewContainerRef.createComponent(
             this.componentFactoryResolver.resolveComponentFactory(
                 this.layout ? ReferralLayoutLightComponent : ReferralLayoutBaseComponent
             )
-        );
+        ).instance;
+    }
+
+    activate() {
+        if (this.componentRef && this.componentRef.activate)
+            this.componentRef.activate();
     }
 }

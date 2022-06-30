@@ -33,7 +33,7 @@
         <div class="available">
             <img src="assets/common/icons/lock.svg" width="25" height="auto">
             <h3>{{ls.l('Referral.Available')}}</h3>
-            <p class="amount">{{ ledgerTotals?.pendingWithdrawalsAmount | currency }}</p>
+            <p class="amount">{{ ledgerTotals?.availableBalance | currency }}</p>
         </div>
     </div>
     <div class="funds-withdraw">

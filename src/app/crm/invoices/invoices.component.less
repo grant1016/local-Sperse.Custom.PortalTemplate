@@ -71,8 +71,9 @@
     }
 
     app-image-viewer {
-        display: flex;
+        display: block;
         height: 100%;
+        width: 100%;
 
         ::ng-deep #imageViewer {
             margin-top: 0;
@@ -81,7 +82,9 @@
             .image-container {
                 bottom: 0;
             }
-            .inline-icon, i.material-icons, .footer-info {
+
+            .iv-snap-view, .inline-icon, 
+            i.material-icons, .footer-info {
                 display: none;
             }
         }

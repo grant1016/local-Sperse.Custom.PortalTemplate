@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 
 /** Third party imports */
 import { BehaviorSubject, Observable, ReplaySubject, combineLatest, of } from 'rxjs';
-import { catchError, finalize, switchMap, map, tap, distinctUntilChanged } from 'rxjs/operators';
+import { catchError, finalize, switchMap, map, tap, distinctUntilChanged, debounceTime } from 'rxjs/operators';
 import * as moment from 'moment';
 
 /** Application imports */
@@ -100,6 +100,7 @@ export class DashboardWidgetsService  {
             this.sourceOrgUnitIds$,
             this.refresh$
         ).pipe(
+            debounceTime(100),
             tap(() => this.totalsDataLoading.next(true)),
             switchMap(([period, contactId, orgUnitIds, ]: [PeriodModel, number, number[], null]) => this.dashboardServiceProxy.getTotals(
                 period && period.from,

@@ -28,20 +28,15 @@ export class AddLinkDialogComponent {
             Validators.pattern(AppConsts.regexPatterns.extendedSiteUrl)
         ]
     );
-    category = new FormControl('', [Validators.required]);
-    companyName = new FormControl('', [Validators.required]);
-    suggestedCopy = new FormControl('', [Validators.required]);
+    category = new FormControl('', []);
+    companyName = new FormControl('', []);
+    suggestedCopy = new FormControl('', []);
 
     constructor(
         private dialog: MatDialog,
         public ls: AppLocalizationService,
         public dialogRef: MatDialogRef<AddLinkDialogComponent>,
         @Inject(MAT_DIALOG_DATA) public data: AffiliateLinkInfo) {
-    }
-
-    isValid(): boolean {
-        return !this.category.valid || !this.url.valid || !this.companyName.valid 
-            || !this.suggestedCopy.valid || (this.phoneNumber && !this.phoneNumber.isValid());
     }
 
     openUploadDialog() {

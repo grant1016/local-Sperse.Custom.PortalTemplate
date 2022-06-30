@@ -3,15 +3,16 @@
         <b>{{ls.l('Your reward for reffering new customers')}}</b>&nbsp;{{ls.l('You get')}}&nbsp;<b>{{ls.l('20% recurring comission')}}</b>&nbsp;{{ls.l('for each reffered customer')}}
     </div>
     <div class="center">
-        <h1>{{ls.l('Share this referral link to your friends and followers')}}&nbsp;(&nbsp;<span>{{ls.l('customize link')}}</span>&nbsp;)</h1>
+        <h1>{{ls.l('Share this referral link to your friends and followers')}}</h1>
         <h3>{{ls.l('Click the "links" button to view all available referral links. You can also create your own links with sub-ids')}}</h3>
         <div class="link-text-area">
             <dx-select-box
                 accessKey="selectLinks"
-                width="520px" height="45px"
+                width="520px" height="43px"
                 [dataSource]="links$ | async"
                 [placeholder]="ls.l('Links')"
                 fieldTemplate="field"
+                [value]="selectInitialLink"
                 (onValueChanged)="onSelectedLinkChanged($event)">
                 <div *dxTemplate="let data of 'item'">
                     <img [src]="data.imageUrl" width="25px" style="margin: 0 10px 0 0;">{{data.companyName}} - {{data.url}}
@@ -21,7 +22,7 @@
                 </div>
             </dx-select-box>
             <dx-text-box class="url" 
-                width="65%" height="45px"
+                width="65%" height="43px"
                 valueChangeEvent="keyup"
                 [(value)]="selectedLink">
             </dx-text-box>

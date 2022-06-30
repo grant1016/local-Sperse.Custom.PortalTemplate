@@ -1,8 +1,9 @@
 /** Core imports */
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ViewChild } from '@angular/core';
 
 /** Application imports */
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
+import { DashboardOverviewComponent } from './dashboard-overview/dashboard-overview.component';
 import { ReferralLayoutBaseComponent } from './referral-layout-base.component';
 
 @Component({
@@ -13,6 +14,8 @@ import { ReferralLayoutBaseComponent } from './referral-layout-base.component';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ReferralLayoutLightComponent extends ReferralLayoutBaseComponent {
+    @ViewChild(DashboardOverviewComponent) dashboard: DashboardOverviewComponent;
+
     getSelectedTabTitle() {
         switch (this.selectedTabIndex) {
             case this.DASHBOARD_TAB_INDEX:
@@ -24,5 +27,10 @@ export class ReferralLayoutLightComponent extends ReferralLayoutBaseComponent {
             case this.LEDGER_TAB_INDEX:
                 return 'LedgerBalanceTitle';
         }
+    }
+
+    activate() {
+        if (this.dashboard)
+            this.dashboard.refresh();
     }
 }
