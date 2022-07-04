@@ -1,6 +1,6 @@
 <div [@routerTransition]>
-    <app-headline [buttons]="[]"
-        [names]="[ l('Leads') ]"
+    <app-headline 
+        [buttons]="[]"
         [showToggleCompactViewButton]="true"
         [showReloadButton]="ui.showReload"
         [showToggleToolbarButton]="true"
@@ -11,6 +11,15 @@
         (onToggleCompactView)="toggleCompactView()"
         (onToggleFullScreen)="repaintDataGrid(100)"
         (onToggleColumnSelector)="toggleColumnChooser()">
+        <types-dropdown 
+            [items]="pipelineTypes$ | async"
+            [showTotalCount]="true"
+            [totalCount]="totalCount"
+            [totalErrorMsg]="totalErrorMsg"
+            [allowEdit]="false"
+            [value]="selectedPipelineId$ | async"
+            (onValueChanged)="onSelectedPipelineChanged($event)">
+        </types-dropdown>
     </app-headline>
     <app-toolbar [config]="toolbarConfig" [hidden]="appService.toolbarIsHidden$ | async"></app-toolbar>
     <div class="main-wrapper">

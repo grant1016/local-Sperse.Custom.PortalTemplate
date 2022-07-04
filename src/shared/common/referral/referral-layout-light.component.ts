@@ -1,5 +1,5 @@
 /** Core imports */
-import { ChangeDetectionStrategy, Component, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ViewChild, OnInit } from '@angular/core';
 
 /** Application imports */
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
@@ -13,7 +13,7 @@ import { ReferralLayoutBaseComponent } from './referral-layout-base.component';
     providers: [LifecycleSubjectsService],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ReferralLayoutLightComponent extends ReferralLayoutBaseComponent {
+export class ReferralLayoutLightComponent extends ReferralLayoutBaseComponent implements OnInit {
     @ViewChild(DashboardOverviewComponent) dashboard: DashboardOverviewComponent;
 
     getSelectedTabTitle() {
@@ -29,8 +29,19 @@ export class ReferralLayoutLightComponent extends ReferralLayoutBaseComponent {
         }
     }
 
+    ngOnInit() {
+        this.activate();
+    }
+
     activate() {
+        this.accountSelectorService.showAccountSelector.next(false);
         if (this.dashboard)
-            this.dashboard.refresh();
+            this.dashboard.activate();
+    }
+
+    deactivate() {
+        this.accountSelectorService.showAccountSelector.next(true);
+        if (this.dashboard)
+            this.dashboard.deactivate();
     }
 }

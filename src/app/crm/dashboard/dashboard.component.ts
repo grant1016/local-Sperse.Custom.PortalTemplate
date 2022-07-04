@@ -73,16 +73,7 @@ export class CrmDashboardComponent implements AfterViewInit {
         public ls: AppLocalizationService,
         public dialog: MatDialog,
         public accountSelectorService: AccountSelectorService
-    ) {
-        this.accountSelectorService.selectedOrgUnitIds$.pipe(
-            takeUntil(this.lifeCycleSubject.deactivate$)
-        ).subscribe(ids => {
-            if (this.permission.isGranted(AppPermissions.CRMCustomers)) {
-                this.dashboardWidgetsService.setOrgUnitIdsForTotals(ids);
-                this.dashboardWidgetsService.setContactIdForTotals(undefined);
-            }
-        });
-    }    
+    ) {}    
 
     ngAfterViewInit(): void {
         this.activate();
@@ -105,12 +96,19 @@ export class CrmDashboardComponent implements AfterViewInit {
     }
 
     subscribeToRefreshParam() {
-        this.activatedRoute.queryParams
-            .pipe(
-                takeUntil(this.lifeCycleSubject.deactivate$),
-                filter(params => !!params['refresh'])
-            )
-            .subscribe(() => this.refresh() );
+        this.activatedRoute.queryParams.pipe(
+            takeUntil(this.lifeCycleSubject.deactivate$),
+            filter(params => !!params['refresh'])
+        ).subscribe(() => this.refresh() );
+
+        this.accountSelectorService.selectedOrgUnitIds$.pipe(
+            takeUntil(this.lifeCycleSubject.deactivate$)
+        ).subscribe(ids => {
+            if (this.permission.isGranted(AppPermissions.CRMCustomers)) {
+                this.dashboardWidgetsService.setOrgUnitIdsForTotals(ids);
+                this.dashboardWidgetsService.setContactIdForTotals(undefined);
+            }
+        });
     }
 
     repaint() {

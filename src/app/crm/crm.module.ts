@@ -8,6 +8,7 @@ import * as ngCommon from '@angular/common';
 import { Store } from '@ngrx/store';
 import { DxScrollViewModule } from 'devextreme-angular/ui/scroll-view';
 import { DxDropDownBoxModule } from 'devextreme-angular/ui/drop-down-box';
+import { DxSelectBoxModule } from 'devextreme-angular/ui/select-box';
 import { DxDataGridModule } from 'devextreme-angular/ui/data-grid';
 import { DxTextBoxModule } from 'devextreme-angular/ui/text-box';
 import { DxListModule } from 'devextreme-angular/ui/list';
@@ -34,6 +35,7 @@ import { AppStoreService } from '@app/store/app-store.service';
 import { LeadsComponent } from './leads/leads.component';
 import { PipelinesStoreActions } from '@app/store';
 import { CountsAndTotalsModule } from '@shared/crm/dashboard-widgets/counts-and-totals/counts-and-totals.module';
+import { TypesDropdownComponent } from '@app/crm/shared/types-dropdown/types-dropdown.component';
 import { InvoicesComponent } from './invoices/invoices.component';
 
 @NgModule({
@@ -49,6 +51,7 @@ import { InvoicesComponent } from './invoices/invoices.component';
         DxTooltipModule,
         DxDataGridModule,
         ActionMenuModule,
+        DxSelectBoxModule,
         PhoneFormatModule,
         DxScrollViewModule,
         DxDropDownBoxModule,
@@ -63,6 +66,7 @@ import { InvoicesComponent } from './invoices/invoices.component';
         LeadsComponent,
         StarsListComponent,
         CrmDashboardComponent,
+        TypesDropdownComponent,
         InvoicesComponent
     ],
     exports: [

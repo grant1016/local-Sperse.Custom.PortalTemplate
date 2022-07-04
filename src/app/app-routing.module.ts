@@ -37,7 +37,7 @@ import { AppComponent } from './app.component';
                     {
                         path: 'dashboard',
                         component: CrmDashboardComponent,
-                        data: { localizationSource: AppConsts.localization.CRMLocalizationSourceName }
+                        data: { reuse: true, localizationSource: AppConsts.localization.CRMLocalizationSourceName }
                     },
                     {
                         path: 'invoices',

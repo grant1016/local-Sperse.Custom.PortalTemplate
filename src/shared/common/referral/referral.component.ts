@@ -43,4 +43,9 @@ export class ReferralComponent implements OnInit {
         if (this.componentRef && this.componentRef.activate)
             this.componentRef.activate();
     }
+
+    deactivate() {
+        if (this.componentRef && this.componentRef.deactivate)
+            this.componentRef.deactivate();
+    }
 }

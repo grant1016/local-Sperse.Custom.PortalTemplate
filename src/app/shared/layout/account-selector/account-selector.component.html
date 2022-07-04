@@ -1,4 +1,4 @@
-<div [class.compact]="compact">
+<div [class.compact]="compact" *ngIf="accountSelectorService.showAccountSelector$ | async">
     <dx-drop-down-box
         [disabled]="disabled$ | async"
         [visible]="!!accountSelectorService.initialOrgUnits"

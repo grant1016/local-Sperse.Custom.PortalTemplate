@@ -2,7 +2,7 @@
 import { Injectable } from '@angular/core';
 
 /** Third party imports */
-import { Observable, ReplaySubject, of } from '@node_modules/rxjs';
+import { Observable, ReplaySubject, BehaviorSubject, of } from '@node_modules/rxjs';
 
 /** Application imports */
 import { AppPermissions } from '@shared/AppPermissions';
@@ -14,6 +14,8 @@ import { DictionaryServiceProxy, OrganizationUnitShortDto } from '@shared/servic
 export class AccountSelectorService {
     selectedOrgUnitIds: ReplaySubject<number[]> = new ReplaySubject<number[]>(1);
     selectedOrgUnitIds$: Observable<number[]> = this.selectedOrgUnitIds.asObservable();
+    showAccountSelector: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
+    showAccountSelector$: Observable<boolean> = this.showAccountSelector.asObservable();
 
     userInfo: ILoginInfo = this.appSessionService.getShownLoginInfo();
     initialOrgUnits: OrganizationUnitShortDto[];

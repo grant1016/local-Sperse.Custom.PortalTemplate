@@ -8,6 +8,7 @@ import { takeUntil } from 'rxjs/operators';
 /** Application imports */
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { AccountSelectorService } from '@app/shared/layout/account-selector/account-selector.service';
 
 @Component({
     selector: 'referral-layout-base',
@@ -30,6 +31,7 @@ export class ReferralLayoutBaseComponent implements OnDestroy {
     constructor(
         private changeDetectorRef: ChangeDetectorRef,
         private lifeCycleSubject: LifecycleSubjectsService,
+        public accountSelectorService: AccountSelectorService,
         public activatedRoute: ActivatedRoute,
         public ls: AppLocalizationService,
         public router: Router

@@ -10,7 +10,6 @@ import { AppPermissions } from '@shared/AppPermissions';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
-import { AccountSelectorService } from '@app/shared/layout/account-selector/account-selector.service';
 import { DashboardWidgetsService } from '@shared/crm/dashboard-widgets/dashboard-widgets.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { ProfileService } from '@shared/common/profile-service/profile.service';
@@ -43,7 +42,6 @@ export class DashboardOverviewComponent implements AfterViewInit, OnDestroy {
     constructor(
         public ls: AppLocalizationService,
         public permission: AppPermissionService,
-        public accountSelectorService: AccountSelectorService,
         public dashboardService: DashboardWidgetsService,
         public changeDetectorRef: ChangeDetectorRef,
         public referralService: ReferralService,
@@ -94,7 +92,15 @@ export class DashboardOverviewComponent implements AfterViewInit, OnDestroy {
         this.notifyService.info(this.ls.l('SavedToClipboard'));
     }
 
-    ngOnDestroy() {
+    activate() {
+        this.refresh();
+    }
+
+    deactivate() {
         this.lifeCycleSubject.deactivate.next();
+    }
+
+    ngOnDestroy() {
+        this.deactivate();
     }
 }

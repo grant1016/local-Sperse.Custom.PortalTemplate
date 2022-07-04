@@ -6,8 +6,8 @@ import DataSource from 'devextreme/data/data_source';
 import ODataStore from 'devextreme/data/odata/store';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { select, Store } from '@ngrx/store';
-import { BehaviorSubject, combineLatest, concat, Observable } from 'rxjs';
-import { filter, first, skip, switchMap, takeUntil } from 'rxjs/operators';
+import { BehaviorSubject, combineLatest, concat, Observable, ReplaySubject } from 'rxjs';
+import { filter, first, skip, switchMap, takeUntil, map, distinctUntilChanged } from 'rxjs/operators';
 import invert from 'lodash/invert';
 
 /** Application imports */
@@ -57,6 +57,8 @@ import { LeadFields } from '@app/crm/leads/lead-fields.enum';
 import { ActionMenuGroup } from '@app/shared/common/action-menu/action-menu-group.interface';
 import { ExportService } from '@shared/common/export/export.service';
 import { ODataService } from '@shared/common/odata/odata.service';
+import { TypeItem } from '@app/crm/shared/types-dropdown/type-item.interface';
+import { PipelineDto } from '@shared/service-proxies/service-proxies';
 
 @Component({
     templateUrl: './leads.component.html',
@@ -89,6 +91,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     private _activate: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
     private activate$: Observable<boolean> = this._activate.asObservable();
     private readonly CONTACT_GROUP_CACHE_KEY = 'CONTACT_GROUP';
+    pipelinePurposeId = AppConsts.PipelinePurposeIds.lead;
 
     rowsViewHeight: number;
     get selectedLeads(): LeadDto[] {
@@ -118,9 +121,39 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             ]
         }
     ];
-    contactGroupId: BehaviorSubject<ContactGroup> = new BehaviorSubject(ContactGroup.Client);
-    contactGroupId$: Observable<ContactGroup> = this.contactGroupId.asObservable();
     defaultGridPagerConfig = DataGridService.defaultGridPagerConfig;
+    pipelines$: Observable<PipelineDto[]> = this.store$.pipe(
+        select(PipelinesStoreSelectors.getPipelines({
+            purpose: this.pipelinePurposeId
+        })),
+        filter((pipelines: PipelineDto[]) => !!pipelines)
+    );
+    pipelineTypes$: Observable<TypeItem[]> = this.pipelines$.pipe(
+        map((pipelines: PipelineDto[]) => {
+            return pipelines.map((pipeline: PipelineDto) => {
+                return {
+                    text: pipeline.name,
+                    value: pipeline.id
+                };
+            });
+        })
+    );
+    private _selectedPipelineId: ReplaySubject<number> = new ReplaySubject(1);
+    selectedPipelineId$: Observable<number> = this._selectedPipelineId.asObservable().pipe(
+        distinctUntilChanged()
+    );
+    selectedPipeline$: Observable<PipelineDto> = combineLatest(
+        this.pipelines$,
+        this.selectedPipelineId$
+    ).pipe(
+        map(([pipelines, pipelineId]: [PipelineDto[], number]) => {
+            return pipelines.find((pipeline: PipelineDto) => pipeline.id == pipelineId);
+        })
+    );
+    contactGroupId: BehaviorSubject<ContactGroup> = new BehaviorSubject(ContactGroup.Client);
+    contactGroupId$: Observable<ContactGroup> = this.selectedPipeline$.pipe(
+        map((pipeline: PipelineDto) => pipeline.contactGroupId)
+    );
 
     stages = [];
     selectedClientKeys = [];
@@ -161,6 +194,14 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         },
         options: { method: 'filterByFilterElement' }
     });
+    pipelineFilter = new FilterModel({
+        hidden: true,
+        caption: 'pipelineId',
+        items: {
+            PipelineId: new FilterItemModel({ isClearAllowed: false }, true)
+        }
+    });
+
 
     formatting = AppConsts.formatting;
     permissions = AppPermissions;
@@ -169,6 +210,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     );
   
 
+    totalErrorMsg: string;
     readonly leadFields: KeysEnum<LeadDto> = LeadFields;
     toolbarConfig: ToolbarGroupModel[];
     totalCount: number;
@@ -186,6 +228,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         public accountSelectorService: AccountSelectorService
     ) {        
         super(injector);
+        this.setInitialPipelineId();
         this.odataRequestValues$ = concat(
             this.oDataService.getODataFilter(this.filters, this.filtersService.getCheckCustom),
             combineLatest(this.filterChanged$, this.accountSelectorService.selectedOrgUnitIds$).pipe(
@@ -194,59 +237,64 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         ).pipe(
             filter((odataRequestValues: ODataRequestValues) => !!odataRequestValues)
         );
-        this.dataSource = {
-            uri: this.dataSourceURI,
-            requireTotalCount: true,
-            store: {
-                key: this.leadFields.Id,
-                type: 'odata',
-                url: this.oDataService.getODataUrl(this.dataSourceURI),
-                version: AppConsts.ODataVersion,
-                beforeSend: (request) => {
-                    request.params.contactGroupId = this.contactGroupId.value;
-                    request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
-                    request.params.$select = DataGridService.getSelectFields(
-                        this.dataGrid,
-                        [
-                            this.leadFields.Id,
-                            this.leadFields.CustomerId,
-                            this.leadFields.OrganizationId,
-                            this.leadFields.UserId,
-                            this.leadFields.Email,
-                            this.leadFields.Phone
-                        ]
-                    );
-                    request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
-                },
-                deserializeDates: false
-            }
-        };
-        this.totalDataSource = new DataSource({
-            paginate: false,
-            store: new ODataStore({
-                url: this.oDataService.getODataUrl(this.totalDataSourceURI),
-                version: AppConsts.ODataVersion,
-                beforeSend: (request) => {
-                    this.totalCount = undefined;
-                    request.params.contactGroupId = this.contactGroupId.value;
-                    if (this.searchValue)
-                        request.params.quickSearchString = this.searchValue;
-                    request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
-                    request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
-                },
-                onLoaded: (count: any) => {
-                    this.totalCount = count;
+        this.selectedPipelineId$.pipe(first()).subscribe((selectedPipelineId: number) => {
+            this.pipelineFilter.items.PipelineId.value = selectedPipelineId;
+            this.dataSource = {
+                uri: this.dataSourceURI,
+                requireTotalCount: true,
+                store: {
+                    key: this.leadFields.Id,
+                    type: 'odata',
+                    url: this.oDataService.getODataUrl(this.dataSourceURI, [this.pipelineFilter.getODataFilterObject()]),
+                    version: AppConsts.ODataVersion,
+                    beforeSend: (request) => {
+                        request.params.contactGroupId = this.contactGroupId.value;
+                        request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
+                        request.params.$select = DataGridService.getSelectFields(
+                            this.dataGrid,
+                            [
+                                this.leadFields.Id,
+                                this.leadFields.CustomerId,
+                                this.leadFields.OrganizationId,
+                                this.leadFields.UserId,
+                                this.leadFields.Email,
+                                this.leadFields.Phone
+                            ]
+                        );
+                        request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
+                    },
+                    deserializeDates: false
                 }
-            })
+            };
+            this.totalDataSource = new DataSource({
+                paginate: false,
+                store: new ODataStore({
+                    version: AppConsts.ODataVersion,
+                    beforeSend: (request) => {
+                        this.totalCount = undefined;
+                        request.params.contactGroupId = this.contactGroupId.value;
+                        if (this.searchValue)
+                            request.params.quickSearchString = this.searchValue;
+                        request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
+                        request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
+                    },
+                    onLoaded: (count: any) => {
+                        this.totalCount = count;
+                    },
+                    errorHandler: (e: any) => {
+                        this.totalErrorMsg = this.l('AnHttpErrorOccured');
+                    }
+                })
+            });
+            this.searchValue = '';
+            this.handleDataGridUpdate();
         });
-        this.searchValue = '';
     }
 
     ngOnInit() {
-
         this.activate();
         this.initStages();
-        this.handleDataGridUpdate();
+        this.listenAndUpdateContactGroup();
         this.handleFiltersPining();
     }
 
@@ -260,6 +308,14 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             skip(1)
         ).subscribe(() => {
             this.repaintDataGrid(1000);
+        });
+    }
+
+    private listenAndUpdateContactGroup() {
+        this.contactGroupId$.pipe(
+            takeUntil(this.lifeCycleSubjectsService.destroy$),
+        ).subscribe((selectedContactGroup: ContactGroup) => {
+            this.contactGroupId.next(selectedContactGroup);
         });
     }
 
@@ -278,6 +334,12 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 
     private get contactGroup(): string {
         return invert(ContactGroup)[this.contactGroupId.value.toString()];
+    }
+
+    private setInitialPipelineId() {
+        this.pipelines$.subscribe((pipelines: PipelineDto[]) => {
+            this._selectedPipelineId.next(pipelines[0].id);
+        });
     }
 
     toggleToolbar() {
@@ -317,6 +379,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             this.filtersService.checkIfAnySelected();
         } else {
             this.filtersService.setup(this.filters = [
+                this.pipelineFilter,
                 this.filterByAccountId,
                 new FilterModel({
                     component: FilterInputsComponent,
@@ -611,10 +674,9 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 this.searchColumns, this.searchValue, undefined,
                 quickSearch ? [ quickSearch ] : undefined
             ).subscribe((filterQuery: string) => {
-                if (filterQuery && filterQuery !== 'canceled') {
-                    this.dataSource.store.url = this.oDataService.getODataUrl(this.dataSourceURI, filterQuery);
+                if (this.dataSource && filterQuery && filterQuery !== 'canceled') {
                     this.totalDataSource['_store']['_requestDispatcher']['_url'] = this.oDataService.getODataUrl(this.totalDataSourceURI, filterQuery);
-                    this.totalDataSource.load();
+                    setTimeout(() => this.totalDataSource.load());
                 }
             });
         }
@@ -723,5 +785,14 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     onMenuItemClick(event) {
         event.itemData.action.call(this);
         this.actionEvent = null;
+    }
+
+    onSelectedPipelineChanged(event) {
+        if (event.previousValue != event.value) {
+            this.filterModelStages.clearFilterItems();
+            this.filterModelStages.isSelected = false;
+            this.pipelineFilter.items.PipelineId.value = +event.value;
+            this._selectedPipelineId.next(event.value);
+        }
     }
 }
