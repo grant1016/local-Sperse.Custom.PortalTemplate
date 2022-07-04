@@ -80,7 +80,6 @@ export class CrmDashboardComponent implements AfterViewInit {
             if (this.permission.isGranted(AppPermissions.CRMCustomers)) {
                 this.dashboardWidgetsService.setOrgUnitIdsForTotals(ids);
                 this.dashboardWidgetsService.setContactIdForTotals(undefined);
-                this.refresh();
             }
         });
     }    

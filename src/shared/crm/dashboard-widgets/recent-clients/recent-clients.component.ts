@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 
 /** Third party imports */
 import { Observable, BehaviorSubject, combineLatest, of } from 'rxjs';
-import { catchError, finalize, switchMap, tap, distinctUntilChanged } from 'rxjs/operators';
+import { catchError, finalize, switchMap, tap, distinctUntilChanged, debounceTime } from 'rxjs/operators';
 
 /** Application imports */
 import { DashboardServiceProxy, GetRecentlyCreatedCustomersOutput } from '@shared/service-proxies/service-proxies';
@@ -69,6 +69,7 @@ export class RecentClientsComponent implements OnInit {
             this.dashboardWidgetsService.sourceOrgUnitIds$,
             this.dashboardWidgetsService.refresh$
         ).pipe(
+            debounceTime(100),
             tap(() => this.loadingService.startLoading(this.elementRef.nativeElement)),
             switchMap(([selectedItem, contactId, orgUnitIds, ]) => selectedItem.dataSource(contactId, orgUnitIds).pipe(
                 catchError(() => of([])),

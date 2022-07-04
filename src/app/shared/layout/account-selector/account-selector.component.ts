@@ -9,6 +9,7 @@ import { first, map } from 'rxjs/operators';
 /** Application imports */
 import { AccountSelectorService } from './account-selector.service';
 import { OrganizationUnitShortDto } from '@shared/service-proxies/service-proxies';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 
 @Component({
     selector: 'app-account-selector',
@@ -30,12 +31,14 @@ export class AccountSelectorComponent {
     searchValue = '';
 
     constructor(
+        public ls: AppLocalizationService,
         public accountSelectorService: AccountSelectorService
     ) {}
 
     valueChanged(event) {
         this.calculateDropDownWidth(event.itemData);
-        this.accountSelectorService.selectedOrgUnitIds.next([event.itemData.id]);
+        this.accountSelectorService.selectedOrgUnitIds.next(
+            event.itemData.id == -1 ? undefined : [event.itemData.id]);
         this.accountSelectorService.selectedAccount = event.itemData;
         this.dropDown.instance.close();
     }
@@ -69,7 +72,7 @@ export class AccountSelectorComponent {
                 this.searchValue = searchValue;
                 abp.ui.setBusy(this.listComponent.element());
                 this.loadOrgUnits(searchValue).subscribe((organizationUnits: OrganizationUnitShortDto[]) => {
-                    this.listComponent.option('dataSource', organizationUnits);
+                    this.updateItemsList(organizationUnits);
                     event.component.option('value', searchValue);
                     abp.ui.clearBusy(this.listComponent.element());
                 });
@@ -81,6 +84,17 @@ export class AccountSelectorComponent {
 
     onInitialized(event) {
         this.listComponent = event.component;
-        event.component.option('items', this.accountSelectorService.initialOrgUnits);
+        this.updateItemsList(this.accountSelectorService.initialOrgUnits);
+    }
+
+    updateItemsList(items) {
+        this.listComponent.option('items', [
+            new OrganizationUnitShortDto({
+                id: -1,
+                displayName: this.ls.l('All') + ' ' + this.ls.l('OrganizationUnits'),
+                parentId: undefined
+            }),
+            ...items
+        ]);
     }
 }

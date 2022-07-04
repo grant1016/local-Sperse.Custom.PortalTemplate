@@ -25,7 +25,8 @@ import {
     map,
     pluck,
     withLatestFrom,
-    first
+    first,
+    debounceTime
 } from 'rxjs/operators';
 
 /** Application imports */
@@ -154,6 +155,7 @@ export class TotalsBySourceComponent implements OnInit, OnDestroy {
             this.dashboardWidgetsService.sourceOrgUnitIds$,
             this.dashboardWidgetsService.refresh$
         ).pipe(
+            debounceTime(100),
             takeUntil(this.lifeCycleService.destroy$),
             tap(() => {
                 this.loading = true;

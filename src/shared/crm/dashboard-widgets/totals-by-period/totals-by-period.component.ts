@@ -32,7 +32,8 @@ import {
     pluck,
     publishReplay,
     refCount,
-    withLatestFrom
+    withLatestFrom,
+    debounceTime
 } from 'rxjs/operators';
 import { Store, select } from '@ngrx/store';
 import * as moment from 'moment-timezone';
@@ -153,6 +154,7 @@ export class TotalsByPeriodComponent implements DoCheck, OnInit, OnDestroy {
             this.dashboardWidgetsService.sourceOrgUnitIds$,
             this.dashboardWidgetsService.refresh$
         ).pipe(
+            debounceTime(100),
             takeUntil(this.destroy$),
             tap(() => this.loadingService.startLoading()),
             switchMap(([period, isCumulative, contactId, contactGroupId, orgUnitIds, ]:

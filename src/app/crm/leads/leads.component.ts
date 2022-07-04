@@ -184,8 +184,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         private filterStatesService: FilterStatesService,
         public appService: AppService,
         public accountSelectorService: AccountSelectorService
-    ) {
-        
+    ) {        
         super(injector);
         this.odataRequestValues$ = concat(
             this.oDataService.getODataFilter(this.filters, this.filtersService.getCheckCustom),

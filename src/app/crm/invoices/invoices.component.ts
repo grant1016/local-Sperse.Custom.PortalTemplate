@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, Injector, ViewChild } from '@angular/core';
+import { Component, Injector, ViewChild, OnDestroy } from '@angular/core';
 
 /** Core imports */
 import DataSource from 'devextreme/data/data_source';
@@ -7,10 +7,11 @@ import ODataStore from 'devextreme/data/odata/store';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { ImageViewerComponent } from 'ng2-image-viewer';
 import { Observable } from 'rxjs';
-import { finalize } from 'rxjs/operators';
+import { finalize, takeUntil } from 'rxjs/operators';
 import startCase from 'lodash/startCase';
 
 /** Application imports */
+import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 import { AccountSelectorService } from '@app/shared/layout/account-selector/account-selector.service';
 import { AppConsts } from '@shared/AppConsts';
 import { AppPermissions } from '@shared/AppPermissions';
@@ -29,9 +30,9 @@ import { KeysEnum } from '@shared/common/keys.enum/keys.enum';
     selector: 'app-invoices',
     templateUrl: './invoices.component.html',
     styleUrls: ['./invoices.component.less'],
-    providers: [ UserInvoiceServiceProxy ]
+    providers: [ UserInvoiceServiceProxy, LifecycleSubjectsService ]
 })
-export class InvoicesComponent extends AppComponentBase {
+export class InvoicesComponent extends AppComponentBase implements OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
     @ViewChild(ImageViewerComponent) imageViewer: ImageViewerComponent;
     readonly invoiceFields: KeysEnum<UserInvoiceDto> = InvoiceFields;
@@ -51,10 +52,13 @@ export class InvoicesComponent extends AppComponentBase {
         private oDataService: ODataService,
         private permissionService: AppPermissionService,
         private userInvoiceProxy: UserInvoiceServiceProxy,
+        private lifeCycleSubject: LifecycleSubjectsService,
         public accountSelectorService: AccountSelectorService
     ) {
         super(injector);
-        this.accountSelectorService.selectedOrgUnitIds$.subscribe((ids: number[]) => {
+        this.accountSelectorService.selectedOrgUnitIds$.pipe(
+            takeUntil(this.lifeCycleSubject.deactivate$)
+        ).subscribe((ids?: number[]) => {
             this.dataSource = new DataSource({
                 sort: [{ selector: 'Date', desc: true }],
                 requireTotalCount: true,
@@ -74,7 +78,7 @@ export class InvoicesComponent extends AppComponentBase {
                     beforeSend: (request) => {
                         request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                         if (this.permissionService.isGranted(AppPermissions.CRM))
-                            request.params.payerOrganizationUnitId = this.selectedOrgUnitId = ids[0];
+                            request.params.payerOrganizationUnitId = this.selectedOrgUnitId = ids ? ids[0] : undefined;
                     },
                     onLoaded: (data) => {
                         this.isDataLoaded = true;
@@ -129,5 +133,9 @@ export class InvoicesComponent extends AppComponentBase {
 
     refresh() {
         this.dataGrid.instance.refresh();
+    }
+
+    ngOnDestroy() {
+        this.lifeCycleSubject.deactivate.next();
     }
 }

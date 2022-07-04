@@ -13,7 +13,7 @@ import { Params, Router } from '@angular/router';
 
 /** Third party imports */
 import { combineLatest, Observable, of } from 'rxjs';
-import { catchError, first, finalize, map, switchMap, takeUntil, tap } from 'rxjs/operators';
+import { catchError, first, finalize, map, switchMap, takeUntil, tap, debounceTime } from 'rxjs/operators';
 
 /** Application imports */
 import { DashboardServiceProxy } from 'shared/service-proxies/service-proxies';
@@ -66,6 +66,7 @@ export class ClientsByRegionComponent implements OnInit, OnDestroy {
             this.dashboardWidgetsService.sourceOrgUnitIds$,
             this.dashboardWidgetsService.refresh$
         ).pipe(
+            debounceTime(100),
             takeUntil(this.lifeCycleService.destroy$),
             tap(() => this.loadingService.startLoading(this.elementRef.nativeElement)),
             switchMap(([period, contactId, orgUnitIds, ]: [PeriodModel, number, number[], null]) => this.dashboardServiceProxy.getContactsByRegion(
