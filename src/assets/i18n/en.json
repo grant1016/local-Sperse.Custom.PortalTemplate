@@ -40,6 +40,8 @@
             "AmountIsRequired": "Amount is required",
             "ThanksForRequest": "Thank you for you request",
             "YouCantRequestMoreThen": "You can't request more then {0}",
+            "ShareLink": "Share this link on social media",
+            "CopyYourReferralLink": "Get & Share link URL",
             "Tier1": "T1",
             "Tier2": "T2"
         },
