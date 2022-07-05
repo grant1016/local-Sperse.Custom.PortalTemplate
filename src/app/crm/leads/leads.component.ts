@@ -706,13 +706,13 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             purpose: AppConsts.PipelinePurposeIds.lead,
             contactGroupId: this.contactGroupId.value
         }))).pipe(first()).subscribe(pipeline => {
-            this.stages = pipeline.stages.map(stage => {
+            this.stages = pipeline ? pipeline.stages.map(stage => {
                 return {
                     id: pipeline.id + ':' + stage.id,
                     index: stage.sortOrder,
                     name: stage.name
                 };
-            }).sort((prev, next) => prev.index > next.index ? -1 : 1);
+            }).sort((prev, next) => prev.index > next.index ? -1 : 1) : [];
         });
         this.initToolbarConfig();
     }

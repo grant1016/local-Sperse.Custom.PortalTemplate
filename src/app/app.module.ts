@@ -16,7 +16,6 @@ import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { DashboardComponent } from '@app/main/dashboard/dashboard.component';
 import { MemberSubscriptionServiceProxy } from '@shared/service-proxies/service-proxies';
-import { AccessDeniedComponent } from './main/access-denied/access-denied.component';
 import { ExportGoogleSheetService } from '@shared/common/export/export-google-sheets/export-google-sheets';
 import { ExportService } from '@shared/common/export/export.service';
 import { AppStoreService } from '@app/store/app-store.service';
@@ -26,8 +25,7 @@ import { InstanceServiceProxy, TenantSubscriptionServiceProxy } from '@shared/se
 @NgModule({
     declarations: [
         AppComponent,
-        DashboardComponent,
-        AccessDeniedComponent
+        DashboardComponent
     ],
     imports: [
         ngCommon.CommonModule,

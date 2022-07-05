@@ -28,6 +28,7 @@ import { NotifyService } from 'abp-ng2-module';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class UserMenuComponent {
+    helpLink = location.protocol + '//' + abp.setting.values['Integrations:Zendesk:AccountUrl'];
     affiliateCode$: Observable<string> = this.profileService.accessCode$;
     affiliateValidationRules = [
         {

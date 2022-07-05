@@ -40,6 +40,8 @@ import { LoadingSpinnerModule } from '@app/shared/common/loading-spinner/loading
 import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { ProfileService } from '@shared/common/profile-service/profile.service';
 import { StatesService } from '@root/store/states-store/states.service';
+import { AccessDeniedComponent } from '@app/main/access-denied/access-denied.component';
+import { AppUrlService } from '@shared/common/nav/app-url.service';
 import { RootStoreModule } from '@root/store';
 
 export function errorHandlerFactory(
@@ -192,7 +194,8 @@ function handleLogoutRequest(authService: AppAuthService) {
         })
     ],
     declarations: [
-        RootComponent
+        RootComponent,
+        AccessDeniedComponent
     ],
     providers: [
         AppPreloadingStrategy,
@@ -237,7 +240,8 @@ function handleLogoutRequest(authService: AppAuthService) {
             useFactory: errorHandlerFactory,
             deps: [ BugsnagService ]
         },
-        AppPermissionService
+        AppPermissionService,
+        AppUrlService
     ],
     bootstrap: [ RootComponent ]
 })

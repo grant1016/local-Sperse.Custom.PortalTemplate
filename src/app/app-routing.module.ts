@@ -27,26 +27,28 @@ import { AppComponent } from './app.component';
                     },
                     {
                         path: 'home',
-                        component: DashboardComponent
+                        component: DashboardComponent,
+                        data: { feature: 'Portal.Dashboard'}    
                     },
                     {
                         path: 'leads',
                         component: LeadsComponent,
-                        data: { localizationSource: AppConsts.localization.CRMLocalizationSourceName }
+                        data: { feature: 'Portal.Leads', localizationSource: AppConsts.localization.CRMLocalizationSourceName }
                     },        
                     {
                         path: 'dashboard',
                         component: CrmDashboardComponent,
-                        data: { reuse: true, localizationSource: AppConsts.localization.CRMLocalizationSourceName }
+                        data: { feature: 'Portal.Dashboard', reuse: true, localizationSource: AppConsts.localization.CRMLocalizationSourceName }
                     },
                     {
                         path: 'invoices',
                         component: InvoicesComponent,
-                        data: { localizationSource: AppConsts.localization.CRMLocalizationSourceName }
+                        data: { feature: 'Portal.Invoices', localizationSource: AppConsts.localization.CRMLocalizationSourceName }
                     },
                     {
                         path: 'reseller-info',
-                        loadChildren: () => import('shared/common/referral/referral.module').then(m => m.ReferralModule)
+                        loadChildren: () => import('shared/common/referral/referral.module').then(m => m.ReferralModule),
+                        data: { feature: 'Portal.Reseller'}    
                     }
                 ]
             }

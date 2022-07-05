@@ -13,22 +13,26 @@ export class MainConfig implements ConfigInterface {
         {
             icon: 'dashboard',
             text: 'Dashboard',
-            route: '/app/dashboard'
+            route: '/app/dashboard',
+            feature: AppFeatures.PortalDashboard
         },
         {
             icon: 'refferals',
             text: 'RefferedLeads',
-            route: '/app/leads'
+            route: '/app/leads',
+            feature: AppFeatures.PortalLeads
         },
         {
             icon: 'invoices',
             text: 'MyInvoices',
-            route: '/app/invoices'
+            route: '/app/invoices',
+            feature: AppFeatures.PortalInvoices
         },
         {
             icon: 'ambassadors',
             text: 'MyRefferalPortal',
-            route: '/app/reseller-info'
+            route: '/app/reseller-info',
+            feature: AppFeatures.PortalReseller
         },
         {
             icon: 'crm',
