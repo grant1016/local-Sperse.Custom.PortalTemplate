@@ -29,6 +29,7 @@ const routes: Routes = [
             {
                 path: 'account',
                 loadChildren: () => import('account/account.module').then(m => m.AccountModule), //Lazy load account module
+                data: { localizationSource: 'Platform' }
             },
             {
                 path: 'app',

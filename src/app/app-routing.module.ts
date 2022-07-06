@@ -9,6 +9,7 @@ import { InvoicesComponent } from '@app/crm/invoices/invoices.component';
 import { DashboardComponent } from '@app/main/dashboard/dashboard.component';
 import { CrmDashboardComponent } from '@app/crm/dashboard/dashboard.component';
 import { RedirectGuard } from '@shared/common/redirect-guard/redirect-guard';
+import { LocalizationResolver } from '@shared/common/localization-resolver';
 import { AppFeatures } from '@shared/AppFeatures';
 import { AppComponent } from './app.component';
 
@@ -19,7 +20,7 @@ import { AppComponent } from './app.component';
                 path: '',
                 component: AppComponent,
                 canActivate: [],
-                canActivateChild: [],
+                canActivateChild: [LocalizationResolver],
                 children: [
                     {
                         path: '',

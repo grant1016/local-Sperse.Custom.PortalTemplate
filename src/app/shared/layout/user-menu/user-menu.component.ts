@@ -1,5 +1,5 @@
 /** Core imports */
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
 
 /** Third party imports  */
 import { MatDialog } from '@angular/material/dialog';
@@ -47,6 +47,7 @@ export class UserMenuComponent {
 
     constructor(
         private dialog: MatDialog,
+        private changeDetectorRef: ChangeDetectorRef,
         private permissionService: AppPermissionService,
         private contactProxy: ContactServiceProxy,
         private profileService: ProfileService,
@@ -75,6 +76,7 @@ export class UserMenuComponent {
 
     updateAffiliateCode(value): void {
         this.profileService.updateAccessCode(value);
+        this.changeDetectorRef.markForCheck();
     }
 
     getThumbnailSrc(thumbnailId?: string): string {

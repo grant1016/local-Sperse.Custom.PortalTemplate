@@ -30,7 +30,7 @@ export class MainConfig implements ConfigInterface {
         },
         {
             icon: 'ambassadors',
-            text: 'MyRefferalPortal',
+            text: 'MyReferralPortal',
             route: '/app/reseller-info',
             feature: AppFeatures.PortalReseller
         },
