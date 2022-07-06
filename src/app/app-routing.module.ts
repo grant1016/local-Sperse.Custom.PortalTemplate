@@ -9,6 +9,7 @@ import { InvoicesComponent } from '@app/crm/invoices/invoices.component';
 import { DashboardComponent } from '@app/main/dashboard/dashboard.component';
 import { CrmDashboardComponent } from '@app/crm/dashboard/dashboard.component';
 import { RedirectGuard } from '@shared/common/redirect-guard/redirect-guard';
+import { AppFeatures } from '@shared/AppFeatures';
 import { AppComponent } from './app.component';
 
 @NgModule({
@@ -28,27 +29,27 @@ import { AppComponent } from './app.component';
                     {
                         path: 'home',
                         component: DashboardComponent,
-                        data: { feature: 'Portal.Dashboard'}    
+                        data: {feature: AppFeatures.PortalDashboard}    
                     },
                     {
                         path: 'leads',
                         component: LeadsComponent,
-                        data: { feature: 'Portal.Leads', localizationSource: AppConsts.localization.CRMLocalizationSourceName }
+                        data: {feature: AppFeatures.PortalLeads, localizationSource: AppConsts.localization.CRMLocalizationSourceName }
                     },        
                     {
                         path: 'dashboard',
                         component: CrmDashboardComponent,
-                        data: { feature: 'Portal.Dashboard', reuse: true, localizationSource: AppConsts.localization.CRMLocalizationSourceName }
+                        data: {feature: AppFeatures.PortalDashboard, reuse: true, localizationSource: AppConsts.localization.CRMLocalizationSourceName }
                     },
                     {
                         path: 'invoices',
                         component: InvoicesComponent,
-                        data: { feature: 'Portal.Invoices', localizationSource: AppConsts.localization.CRMLocalizationSourceName }
+                        data: {feature: AppFeatures.PortalInvoices, localizationSource: AppConsts.localization.CRMLocalizationSourceName }
                     },
                     {
                         path: 'reseller-info',
                         loadChildren: () => import('shared/common/referral/referral.module').then(m => m.ReferralModule),
-                        data: { feature: 'Portal.Reseller'}    
+                        data: {feature: AppFeatures.PortalReseller}    
                     }
                 ]
             }

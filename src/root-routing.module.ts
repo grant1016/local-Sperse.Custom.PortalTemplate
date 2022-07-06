@@ -4,6 +4,7 @@ import { Observable, of } from 'rxjs';
 import { RouteGuard } from '@shared/common/auth/route-guard';
 import { LocalizationResolver } from '@shared/common/localization-resolver';
 import { AccessDeniedComponent } from '@app/main/access-denied/access-denied.component';                    
+import { AppFeatures } from '@shared/AppFeatures';
 
 @Injectable()
 export class AppPreloadingStrategy implements PreloadingStrategy {
@@ -32,7 +33,7 @@ const routes: Routes = [
             {
                 path: 'app',
                 loadChildren: () => import('app/app.module').then(m => m.AppModule), //Lazy load desktop module
-                data: { feature: 'Portal', localizationSource: 'Platform' }
+                data: { feature: AppFeatures.Portal, localizationSource: 'Platform' }
             },
             {
                 path: 'public',
