@@ -8,6 +8,7 @@ import { LeadsComponent } from '@app/crm/leads/leads.component';
 import { InvoicesComponent } from '@app/crm/invoices/invoices.component';
 import { DashboardComponent } from '@app/main/dashboard/dashboard.component';
 import { CrmDashboardComponent } from '@app/crm/dashboard/dashboard.component';
+import { AppRedirectGuard } from '@app/shared/common/auth/app-redirect-guard';
 import { RedirectGuard } from '@shared/common/redirect-guard/redirect-guard';
 import { LocalizationResolver } from '@shared/common/localization-resolver';
 import { AppFeatures } from '@shared/AppFeatures';
@@ -24,8 +25,7 @@ import { AppComponent } from './app.component';
                 children: [
                     {
                         path: '',
-                        redirectTo: 'dashboard',
-                        pathMatch: 'full'
+                        canActivate: [AppRedirectGuard]
                     },
                     {
                         path: 'home',

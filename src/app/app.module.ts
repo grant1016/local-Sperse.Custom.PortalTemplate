@@ -6,6 +6,7 @@ import * as ngCommon from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 
 /** Application imports */
+import { AppRedirectGuard } from '@app/shared/common/auth/app-redirect-guard';
 import { AppStoreModule } from '@app/store/app-store.module';
 import { LayoutModule } from './shared/layout/layout.module';
 import { CommonModule } from '@shared/common/common.module';
@@ -41,6 +42,7 @@ import { InstanceServiceProxy, TenantSubscriptionServiceProxy } from '@shared/se
         })
     ],
     providers: [
+        AppRedirectGuard,
         AppService,
         ExportService,
         AppStoreService,
