@@ -1,0 +1,62 @@
+<dx-scroll-view showScrollbar="onHover" height="calc(100vh - 75px)">
+    <user-photo [profilePictureUrl]="profilePictureUrl$ | async"></user-photo>
+    <div class="field name">
+        <h1>{{appSession.user.name}} {{appSession.user.surname}}</h1>
+        <h3>{{appSession.userCompany$ | async}}</h3>
+    </div>
+    <div class="field affiliate">
+        <label>{{ ls.l('AffiliateInfo') }}:&nbsp;</label>
+        <inplace-edit #affiliateCode
+            [ngClass]="{'edit-mode': affiliateCode.isEditModeEnabled}"
+            [editPlaceholder]="ls.l('AffiliateEditPlaceholder')"
+            [value]="affiliateCode$ | async"
+            [showInlineEditButton]="true"
+            [isDeleteEnabled]="true"
+            [lDeleteConfirmTitle]="ls.l('DeleteContactHeader', ls.l('AffiliateCode'))"
+            [lDeleteConfirmMessage]="ls.l('DeleteContactMessage', ls.l('AffiliateCode').toLowerCase())"
+            [validationRules]="affiliateValidationRules"
+            (valueChanged)="updateAffiliateCode($event)"
+            (itemDeleted)="updateAffiliateCode('')">
+        </inplace-edit>
+    </div>
+    <div class="navigation-links">
+        <ul class="navigation">
+            <ng-container *ngFor="let item of navigationItems">
+                <li [ngClass]="{'selected': item.route.startsWith('/') && childLink.isActive}" *ngIf="!(item.hidden$ ? (item.hidden$ | async) : item.hidden)">
+                    <div class="img"><img [src]="'assets/common/icons/' + item.icon + (item.route.startsWith('/') && childLink.isActive ? '-active' : '') + '.svg'" [alt]="item.text"></div>        
+                    <a #childLink="routerLinkActive" 
+                        [routerLink]="item.route.startsWith('/') ? [item.route] : []" 
+                        [routerLinkActive]="item.route.startsWith('/') ? 'selected' : ''" 
+                        (click)="navigate(item)">
+                        {{ item.text }}
+                    </a>
+                </li>
+            </ng-container>
+        </ul>
+        <div class="bottom-links">
+            <hr>
+            <ul class="navigation settings">
+                <li>
+                    <div class="img"><img src="assets/common/icons/settings.svg" [alt]="ls.l('MySettings')"></div>        
+                    <a (click)="changeMySettings()">
+                        {{ ls.l('MySettings') }}
+                    </a>
+                </li>
+                <li>
+                    <div class="img"><img src="assets/common/icons/information.svg" [alt]="ls.l('Help')"></div>        
+                    <a [href]="helpLink" target="_blank">
+                        {{ ls.l('Help') }}
+                    </a>
+                </li>
+            </ul>
+            <ul class="navigation logout">
+                <li>
+                    <div class="img"><img src="assets/common/icons/logout-gray.svg" [alt]="ls.l('Logout')"></div>        
+                    <a (click)="authService.logout(true)">
+                        {{ ls.l('Logout') }}
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</dx-scroll-view>

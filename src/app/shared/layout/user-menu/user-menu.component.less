@@ -1,0 +1,147 @@
+:host {
+    z-index: 999;
+    background: #f6f4f0;
+    position: relative;
+    min-width: 20%;
+
+    ::ng-deep user-photo {
+        display: block;
+        padding: 20px 20px 10px 20px;
+        text-align: center;
+        img {
+            border: 5px solid #fff!important;
+            font-size: 9px;
+        }
+    }
+
+    .field {
+        margin: 0 20px;
+        &.name {
+            h1 {
+                font-size: 16px;
+                font-weight: 600;
+                font-stretch: normal;
+                font-style: normal;
+                line-height: normal;
+                letter-spacing: -0.33px;
+                text-align: center;
+                color: #12222e;
+            }
+            h3 {
+                font-size: 11px;
+                font-weight: normal;
+                font-stretch: normal;
+                font-style: normal;
+                line-height: normal;
+                letter-spacing: -0.24px;
+                text-align: center;
+                color: #788084;
+            }
+        }        
+        &.affiliate {
+            margin-top: 40px;
+            text-align: center;
+            border-radius: 6px;
+            border: dashed 1px #bab4a8;
+            padding: 0 10px;
+
+            label {
+                display: inline-block;
+                font-size: 10px;
+                font-weight: 500;
+                font-stretch: normal;
+                font-style: normal;
+                line-height: normal;
+                letter-spacing: -0.23px;
+                text-align: left;
+                color: #0a0850;
+                margin: auto;
+            }
+
+            ::ng-deep inplace-edit {
+                max-width: 80%;
+                display: inline-block;
+                .placeholder a {
+                    font-size: 10px;
+                    font-weight: bold;
+                    letter-spacing: -0.23px;
+                    text-align: center;
+                    color: #2838b2;
+                }
+                .actions i {
+                    font-size: 12px!important;
+                    padding: 2px!important;
+                }
+                .inplace-edit-view-mode {
+                    font-size: 10px;
+                    font-weight: bold;
+                    letter-spacing: -0.23px;
+                    text-align: center;
+                    color: #2838b2;
+                }
+                &.edit-mode {
+                    display: block;
+                    position: relative;
+                    left: -10px;
+                }
+            }
+        }
+    }
+
+    ul.navigation {
+        padding-left: 0;
+        margin: 30px 20px;
+
+        li {
+            display: flex;
+            list-style: none;
+            padding: 5px 20px;
+            margin: 10px 0;
+            a {
+                white-space: nowrap;
+                font-size: 12px;
+                font-weight: normal;
+                font-stretch: normal;
+                font-style: normal;
+                line-height: 2.2;
+                letter-spacing: -0.26px;
+                text-align: left;
+                color: #616a6e;
+                &.selected {
+                    color: #fff;
+                }
+            }
+            .img {
+                margin-right: 9px;
+                width: 1.333em;
+            }
+            &.selected {
+                border-radius: 6px;
+                background-color: #f26725;
+            }
+            &.disabled {
+                a, img {
+                    opacity: 0.5;
+                    pointer-events: none;
+                }
+            }
+        }
+        &.logout {
+            margin: 0;
+            opacity: 0.9;
+            background-color: #efede9;
+            padding: 5px 20px;
+        }
+    }
+
+    hr {
+        margin: 0 40px;
+    }
+
+    .navigation-links {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        height: calc(100vh - 320px);
+    }
+}

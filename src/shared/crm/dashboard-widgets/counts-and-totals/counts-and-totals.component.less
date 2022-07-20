@@ -1,19 +1,21 @@
 :host {
     display: block;
-    min-height: 71px;
-    padding: 28px 0;
+    min-height: 144px;
+    padding: 28px 30px;
+    background: #fff;
     border-bottom: 1px solid #e5e9ec;
+
     .totals-list {
         .total-item {
-            padding: 0 24px;
+            padding: 0;
             border-radius: 4px;
             position: relative;
 
             .chart-head {
-                width: 100vw;
                 height: 34px;
-                display: table-cell;
-                vertical-align: bottom;
+                display: flex;
+                justify-content: space-between;
+                align-items: flex-end;
                 font-size: 14px;
                 font-weight: 400;
                 font-style: normal;
@@ -22,21 +24,17 @@
                 color: #677380;
                 span {
                     font-weight: 500;
+                    line-height: 1;
                 }
                 span:first-child {
-                    padding-top: 6px;
-                    float: left;
-                    font-size: 17px;
+                    font-size: 23px;
                     font-weight: bold;
-                    letter-spacing: normal;
                     color: #212c36;
                 }
+
                 span:last-child {
-                    float: right;
-                    font-size: 25px;
+                    font-size: 27px;
                     font-weight: 600;
-                    line-height: 0.96;
-                    letter-spacing: normal;
                 }
                 .plus {
                     position: relative;
@@ -44,37 +42,38 @@
                 }
             }
 
-            .chart-progress {
-                color: #D4D4D4;
-                span:first-child {
-                    float: left;
-                    font-size: 13px;
-                    line-height: 1.46;
-                    letter-spacing: 0.26px;
-                    color: #677380;
-                }
-                span:last-child {
-                    float: right;
-                    font-size: 15px;
-                    font-weight: 600;
-                    line-height: 1.27;
-                    letter-spacing: 0.3px;
-                    color: #677380;
-                }
-            }
 
             .chart-line {
                 width: 100%;
                 background-color: #F1F5F6;
-                border-radius: 6.5px;
-                margin-bottom: 6px;
-                margin-top: 8px;
+                border-radius: 8px;
+                margin-bottom: 10px;
+                margin-top: 15px;
                 div {
-                    height: 10px;
-                    border-radius: 6.5px;
+                    height: 16px;
+                    border-radius: 8px;
                 }
             }
-            
+
+            .chart-footer {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+
+                .caption,
+                .percent-value {
+                    font-size: 14px;
+                    color: #525252;
+                    line-height: 1.36;
+                    letter-spacing: 0.28px;
+                }
+
+                .caption {}
+                .percent-value {
+                    font-weight: 500;
+                }
+            }
+
             .versus {
                 display: flex;
                 justify-content: space-between;

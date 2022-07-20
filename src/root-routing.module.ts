@@ -3,6 +3,8 @@ import { RouterModule, Route, Router, Routes, NavigationEnd, PreloadingStrategy 
 import { Observable, of } from 'rxjs';
 import { RouteGuard } from '@shared/common/auth/route-guard';
 import { LocalizationResolver } from '@shared/common/localization-resolver';
+import { AccessDeniedComponent } from '@app/main/access-denied/access-denied.component';                    
+import { AppFeatures } from '@shared/AppFeatures';
 
 @Injectable()
 export class AppPreloadingStrategy implements PreloadingStrategy {
@@ -15,22 +17,24 @@ export class AppPreloadingStrategy implements PreloadingStrategy {
 const routes: Routes = [
     {
         path: '',
-        canActivate: [ RouteGuard ],
-        canActivateChild: [ RouteGuard, LocalizationResolver ],
+        canActivate: [ RouteGuard, LocalizationResolver ],
+        canActivateChild: [ RouteGuard ],
         children: [
             {
                 path: '',
                 redirectTo: 'app',
                 pathMatch: 'full'
             },
+            { path: 'access-denied', component: AccessDeniedComponent },
             {
                 path: 'account',
                 loadChildren: () => import('account/account.module').then(m => m.AccountModule), //Lazy load account module
+                data: { localizationSource: 'Platform' }
             },
             {
                 path: 'app',
                 loadChildren: () => import('app/app.module').then(m => m.AppModule), //Lazy load desktop module
-                data: { localizationSource: 'Platform' }
+                data: { feature: AppFeatures.Portal, localizationSource: 'Platform' }
             },
             {
                 path: 'public',

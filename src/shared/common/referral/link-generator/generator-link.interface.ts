@@ -1,5 +1,9 @@
 export interface GeneratorLink {
-    imgSrc: string;
-    initialLink: string;
-    link: string;
+    imageUrl: string;
+    copyYourReferralLink?: string;
+    url: string;
+    category: string;
+    companyName: string;
+    phoneNumber: string;
+    suggestedCopy: string;
 }

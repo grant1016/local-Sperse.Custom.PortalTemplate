@@ -1,0 +1,160 @@
+:host {
+    .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        min-height: 83px;
+        background-color: #f7f9fa;
+        padding: 0 30px;
+
+        .title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #000;
+            margin: 0;
+        }
+
+        .icon {
+            background: #fff;
+            display: block;
+            height: 45px;
+            width: 45px;
+            border-radius: 50%;
+            cursor: pointer;
+            position: relative;
+            border: 1px solid #e5e9ec;
+            outline: none;
+
+            &:after {
+                height: 100%;
+                width: 100%;
+                display: block;
+                content: '';
+                background-repeat: no-repeat;
+                background-position: center;
+            }
+
+            &.reload:after {
+                background-image: url('../../../assets/common/icons/reload.svg');
+                background-size: 20px;
+            }
+        }
+
+        app-account-selector {
+            margin-right: auto;
+            margin-left: 15px;
+        }
+    }
+
+    .reports-wrapper {
+        display: grid;
+        grid-template-columns: 50% 50%;
+
+        .grid-side {
+
+        }
+
+        .pdf-side {
+            border-top: 1px solid #e5e9ec;
+            border-left: 1px solid #e5e9ec;
+            background: #bdbdbd
+        }
+
+        ::ng-deep #gridContainer {
+            height: calc(~"100vh - 158px");
+
+            .dx-datagrid .dx-command-edit + td::before,
+            .dx-datagrid-headers .dx-column-lines td.dx-command-edit + td::before {
+                content: none;
+            }
+        }
+    }
+
+    app-image-viewer {
+        display: block;
+        height: 100%;
+        width: 100%;
+
+        ::ng-deep #imageViewer {
+            margin-top: 0;
+            height: 100%;
+
+            .image-container {
+                bottom: 0;
+            }
+
+            .iv-snap-view, .inline-icon, 
+            i.material-icons, .footer-info {
+                display: none;
+            }
+        }
+    }
+
+    ::ng-deep .dx-datagrid {
+        .invoice-id {
+            font-size: 15px;
+            font-weight: 500;
+            line-height: 1.6;
+            letter-spacing: 0.3px;
+            color: rgb(0, 0, 0);
+        }
+
+        .dx-row {
+            .dx-link.dx-link-edit {
+                width: 19px !important;
+            }
+        }
+
+        div.status-wrapper {
+            display: flex;
+            justify-content: center;
+        }
+
+        div.status {
+            width: 110px;
+            height: 26px;
+            background: #f3f7fa;
+            padding: 2px 15px;
+            border-radius: 15px;
+            font-size: 11px;
+            font-weight: 600;
+            font-stretch: normal;
+            font-style: normal;
+            line-height: 2.18;
+            letter-spacing: 0.88px;
+            text-transform: uppercase;
+            text-align: center;
+            color: #40596b;
+            &:before {
+                content: "\A";
+                width: 7px;
+                height: 7px;
+                border-radius: 50%;
+                display: inline-block;
+                margin-right: 5px;
+                background: #dedede;
+            }
+            &.final:before {
+                background: #1fb430;
+            }
+            &.pending:before {
+                background: #f1a72d;
+            }
+            &.sent:before {
+                background: #fff939;
+            }
+            &.draft:before {
+                background: rgba(64, 89, 107, 0.28);
+            }
+            &.partiallypaid {
+                width: 145px;
+                &:before {
+                    background: #248392;
+                }
+            }
+            &.paid:before {
+                background: #3acddc;
+            }
+        }
+    }
+}

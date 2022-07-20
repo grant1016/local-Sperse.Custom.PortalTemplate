@@ -1,7 +1,7 @@
 import { Component, OnInit, AfterViewInit, Input, ViewChild, Output, EventEmitter } from '@angular/core';
-import { AppConsts } from '@shared/AppConsts';
 import { PhoneNumberComponent } from '../../../node_modules/ngx-international-phone-number/src';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { AppConsts } from '@shared/AppConsts';
 
 @Component({
     selector: 'country-phone-number',

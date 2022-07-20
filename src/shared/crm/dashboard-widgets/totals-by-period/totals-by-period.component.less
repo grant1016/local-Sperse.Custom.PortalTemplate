@@ -3,8 +3,8 @@
     min-height: 330px;
     background-color: #FFFFFF;
     position: relative;
-    padding-top: 30px;
     display: block;
+    padding: 28px 37px;
 
     header {
         width: 100%;
@@ -22,22 +22,19 @@
             }
 
             .title {
-                font-size: 20px;
-                font-weight: 700;
-                letter-spacing: normal;
+                font-size: 22px;
+                font-weight: bold;
                 color: #212c36;
+                line-height: 48px;
                 margin: 0 23px 0 0;
-                line-height: 1.2;
-                padding: 5px 0;
-                line-height: 1.2;
             }
 
             .legend {
                 display: none;
                 flex-direction: column;
                 position: absolute;
-                top: 23px;
-                right: 0;
+                top: 32px;
+                right: 30px;
                 padding: 5px 5px 0 10px;
                 background: #fff;
                 border: 2px solid transparent;
@@ -54,7 +51,8 @@
                     display: flex;
                     align-items: center;
                     cursor: pointer;
-                    margin-bottom: 10px;
+                    margin-bottom: 0;
+
                     span.legendText {
                         font-size: 12px;
                         margin-right: 5px;
@@ -79,12 +77,12 @@
                         }
 
                         .legendMarker {
-                            width: 8px;
-                            height: 8px;
+                            width: 10px;
+                            height: 10px;
                             display: inline-block;
-                            margin-right: 2px;
+                            margin-right: 3px;
                             position: relative;
-                            top: -1px;
+                            top: 0;
                         }
                     }
 
@@ -108,7 +106,7 @@
                 border-radius: 0;
                 background-color: transparent;
                 @media (min-width: 1410px) {
-                    width: 378px;
+                    width: 425px;
                 }
                 .dx-texteditor-input, input.form-control {
                     color: #677380;

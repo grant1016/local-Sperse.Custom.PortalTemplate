@@ -10,14 +10,10 @@
                         {{ls.ls(localization, 'CRMDashboard_NewAdded', [ls.ls(localization, field.title).toLowerCase()])}}
                         <div class="value">
                             <ng-container *ngIf="field.type == 'currency'">
-                                <div  [ngStyle]="{'color': field.color}">{{ totalsData[field.name.replace('total', 'new')] | currency: 'USD' : true : '1.0-0' }}</div>
-                                <div *ngIf="totalsData[field.name.replace('total', 'new')] != 0">
-                                    of {{ totalsData[field.name] | currency : 'USD' : true : '1.0-0' }}
-                                </div>
+                                <span>{{ totalsData[field.name.replace('total', 'new')] | currency: 'USD' : true : '1.0-0' }}</span>
                             </ng-container>
                             <ng-container *ngIf="field.type == 'number'">
-                                <div [ngStyle]="{'color': field.color}">{{ totalsData[field.name.replace('total', 'new')] | number }}</div>
-                                <div>of {{ totalsData[field.name] | number }}</div>
+                                <span>{{ totalsData[field.name.replace('total', 'new')] | number }}</span>
                             </ng-container>
                         </div>
                     </div>

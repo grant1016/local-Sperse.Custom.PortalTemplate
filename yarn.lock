@@ -6470,6 +6470,11 @@ istanbul-reports@^3.0.2:
     html-escaper "^2.0.0"
     istanbul-lib-report "^3.0.0"
 
+iv-viewer@^2.0.1:
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/iv-viewer/-/iv-viewer-2.0.1.tgz#566cdcfc2f2cefbb5b3c3654d3b22df1af805c8f"
+  integrity sha512-dPwFs3fHGJAwE9APaJB3UpEaxoTAG6N1wraKv48SjDvOP+CMzUmFbW+TWpyKVSpjRmpCsMdCoBFiLRAFsTkulA==
+
 jasmine-core@^3.6.0:
   version "3.99.0"
   resolved "https://registry.yarnpkg.com/jasmine-core/-/jasmine-core-3.99.0.tgz#99a3da0d38ba2de82614d9198b7b1bc1c32a5960"

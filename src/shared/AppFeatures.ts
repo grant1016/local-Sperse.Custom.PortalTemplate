@@ -2,6 +2,7 @@ export enum AppFeatures {
     Admin = 'Admin',
     AdminAdvanced = 'Admin.Advanced',
     AdminCustomizations = 'Admin.Customizations',
+    AdvancedProfiles = 'AdvancedProfiles',
     API = 'API',
     AppChatFeature = 'App.ChatFeature',
     AppChatFeatureTenantToHost = 'App.ChatFeature.TenantToHost',
@@ -21,11 +22,18 @@ export enum AppFeatures {
     CRMMaxActiveContactCount = 'CRM.MaxActiveContactCount',
     CRMMaxActivePartnerCount = 'CRM.MaxActivePartnerCount',
     CRMMaxUserCount = 'CRM.MaxUserCount',
+    CRMSalesTalk = 'CRM.SalesTalk',
     HUB = 'HUB',
+    InboundOutboundSMS = 'InboundOutboundSMS',
     MaxSpaceGB = 'MaxSpaceGB',
     Notification = 'Notification',
     PFM = 'PFM',
     PFMApplications = 'PFM.Applications',
     PFMCreditReport = 'PFM.CreditReport',
-    PFMMaxUserCount = 'PFM.MaxUserCount'
+    PFMMaxUserCount = 'PFM.MaxUserCount',
+    Portal = 'Portal',
+    PortalDashboard = 'Portal.Dashboard',
+    PortalInvoices = 'Portal.Invoices',
+    PortalLeads = 'Portal.Leads',
+    PortalReseller = 'Portal.Reseller'
 }

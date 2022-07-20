@@ -6,8 +6,8 @@ import DataSource from 'devextreme/data/data_source';
 import ODataStore from 'devextreme/data/odata/store';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { select, Store } from '@ngrx/store';
-import { BehaviorSubject, combineLatest, concat, from, Observable, of } from 'rxjs';
-import { filter, first, map, skip, switchMap, takeUntil } from 'rxjs/operators';
+import { BehaviorSubject, combineLatest, concat, Observable, ReplaySubject } from 'rxjs';
+import { filter, first, skip, switchMap, takeUntil, map, distinctUntilChanged } from 'rxjs/operators';
 import invert from 'lodash/invert';
 
 /** Application imports */
@@ -33,10 +33,6 @@ import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-
 import { FilterRangeComponent } from '@shared/filters/range/filter-range.component';
 import { FilterStatesComponent } from '@shared/filters/states/filter-states.component';
 import { FilterStatesModel } from '@shared/filters/states/filter-states.model';
-import {
-    LayoutType,
-    PipelineDto,
-} from '@shared/service-proxies/service-proxies';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { TagsListComponent } from '@app/shared/common/lists/tags-list/tags-list.component';
 import { ListsListComponent } from '@app/shared/common/lists/lists-list/lists-list.component';
@@ -51,6 +47,7 @@ import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
 import { ActionMenuService } from '@app/shared/common/action-menu/action-menu.service';
 import { ToolBarComponent } from '@app/shared/common/toolbar/toolbar.component';
 import { FilterStatesService } from '@shared/filters/states/filter-states.service';
+import { AccountSelectorService } from '@app/shared/layout/account-selector/account-selector.service';
 import { FilterMultilineInputComponent } from '@root/shared/filters/multiline-input/filter-multiline-input.component';
 import { FilterMultilineInputModel } from '@root/shared/filters/multiline-input/filter-multiline-input.model';
 import { ODataRequestValues } from '@shared/common/odata/odata-request-values.interface';
@@ -60,6 +57,8 @@ import { LeadFields } from '@app/crm/leads/lead-fields.enum';
 import { ActionMenuGroup } from '@app/shared/common/action-menu/action-menu-group.interface';
 import { ExportService } from '@shared/common/export/export.service';
 import { ODataService } from '@shared/common/odata/odata.service';
+import { TypeItem } from '@app/crm/shared/types-dropdown/type-item.interface';
+import { PipelineDto } from '@shared/service-proxies/service-proxies';
 
 @Component({
     templateUrl: './leads.component.html',
@@ -83,6 +82,17 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     private readonly totalDataSourceURI = 'Lead/$count';
     private readonly dateField = 'LeadDate';
     private _selectedLeads: LeadDto[];
+    private rootComponent: any;
+    private exportCallback: Function;
+    private filters: FilterModel[];
+    private odataRequestValues$: any;
+    private _refresh: BehaviorSubject<null> = new BehaviorSubject<null>(null);
+    private refresh$: Observable<null> = this._refresh.asObservable();
+    private _activate: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
+    private activate$: Observable<boolean> = this._activate.asObservable();
+    private readonly CONTACT_GROUP_CACHE_KEY = 'CONTACT_GROUP';
+    pipelinePurposeId = AppConsts.PipelinePurposeIds.lead;
+
     rowsViewHeight: number;
     get selectedLeads(): LeadDto[] {
         return this._selectedLeads || [];
@@ -111,9 +121,39 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             ]
         }
     ];
-    contactGroupId: BehaviorSubject<ContactGroup> = new BehaviorSubject(ContactGroup.Client);
-    contactGroupId$: Observable<ContactGroup> = this.contactGroupId.asObservable();
     defaultGridPagerConfig = DataGridService.defaultGridPagerConfig;
+    pipelines$: Observable<PipelineDto[]> = this.store$.pipe(
+        select(PipelinesStoreSelectors.getPipelines({
+            purpose: this.pipelinePurposeId
+        })),
+        filter((pipelines: PipelineDto[]) => !!pipelines)
+    );
+    pipelineTypes$: Observable<TypeItem[]> = this.pipelines$.pipe(
+        map((pipelines: PipelineDto[]) => {
+            return pipelines.map((pipeline: PipelineDto) => {
+                return {
+                    text: pipeline.name,
+                    value: pipeline.id
+                };
+            });
+        })
+    );
+    private _selectedPipelineId: ReplaySubject<number> = new ReplaySubject(1);
+    selectedPipelineId$: Observable<number> = this._selectedPipelineId.asObservable().pipe(
+        distinctUntilChanged()
+    );
+    selectedPipeline$: Observable<PipelineDto> = combineLatest(
+        this.pipelines$,
+        this.selectedPipelineId$
+    ).pipe(
+        map(([pipelines, pipelineId]: [PipelineDto[], number]) => {
+            return pipelines.find((pipeline: PipelineDto) => pipeline.id == pipelineId);
+        })
+    );
+    contactGroupId: BehaviorSubject<ContactGroup> = new BehaviorSubject(ContactGroup.Client);
+    contactGroupId$: Observable<ContactGroup> = this.selectedPipeline$.pipe(
+        map((pipeline: PipelineDto) => pipeline.contactGroupId)
+    );
 
     stages = [];
     selectedClientKeys = [];
@@ -140,27 +180,40 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             countryStates: new FilterStatesModel(this.filterStatesService)
         }
     });
+    filterByAccountId: FilterModel = new FilterModel({
+        component: FilterCheckBoxesComponent,
+        field: 'SourceOrganizationUnitId',
+        caption: '',
+        hidden: true,
+        items: {
+            element: new FilterCheckBoxesModel({
+                nameField: 'SourceOrganizationUnitId',
+                selectedKeys$: this.accountSelectorService.selectedOrgUnitIds$,
+                isClearAllowed: false
+            })
+        },
+        options: { method: 'filterByFilterElement' }
+    });
+    pipelineFilter = new FilterModel({
+        hidden: true,
+        caption: 'pipelineId',
+        items: {
+            PipelineId: new FilterItemModel({ isClearAllowed: false }, true)
+        }
+    });
 
-    private rootComponent: any;
-    private exportCallback: Function;
-    private filters: FilterModel[];
+
     formatting = AppConsts.formatting;
-
     permissions = AppPermissions;
     filterChanged$: Observable<FilterModel[]> = this.filtersService.filtersChanged$.pipe(
         filter(() => this.componentIsActivated)
     );
-    odataRequestValues$: Observable<ODataRequestValues>;
-    private _refresh: BehaviorSubject<null> = new BehaviorSubject<null>(null);
-    private refresh$: Observable<null> = this._refresh.asObservable();
+  
 
-    private readonly CONTACT_GROUP_CACHE_KEY = 'CONTACT_GROUP';
+    totalErrorMsg: string;
     readonly leadFields: KeysEnum<LeadDto> = LeadFields;
-    totalCount: number;
     toolbarConfig: ToolbarGroupModel[];
-    private _activate: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
-    private activate$: Observable<boolean> = this._activate.asObservable();
-    hasBulkPermission: boolean = this.permission.isGranted(AppPermissions.CRMBulkUpdates);
+    totalCount: number;
 
     constructor(
         injector: Injector,
@@ -171,82 +224,82 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         private lifeCycleSubjectsService: LifecycleSubjectsService,
         private sessionService: AppSessionService,
         private filterStatesService: FilterStatesService,
-        public appService: AppService
-    ) {
+        public appService: AppService,
+        public accountSelectorService: AccountSelectorService
+    ) {        
         super(injector);
+        this.setInitialPipelineId();
         this.odataRequestValues$ = concat(
-            this.oDataService.getODataFilter(
-                [this.filterDate, this.filterCountryStates],
-                this.filtersService.getCheckCustom
-            ).pipe(first()),
-            this.filterChanged$.pipe(
+            this.oDataService.getODataFilter(this.filters, this.filtersService.getCheckCustom),
+            combineLatest(this.filterChanged$, this.accountSelectorService.selectedOrgUnitIds$).pipe(
                 switchMap(() => this.oDataService.getODataFilter(this.filters, this.filtersService.getCheckCustom))
             )
         ).pipe(
             filter((odataRequestValues: ODataRequestValues) => !!odataRequestValues)
         );
-        this.dataSource = {
-            uri: this.dataSourceURI,
-            requireTotalCount: true,
-            store: {
-                key: this.leadFields.Id,
-                type: 'odata',
-                url: this.oDataService.getODataUrl(this.dataSourceURI, this.getInitialFilter()),
-                version: AppConsts.ODataVersion,
-                beforeSend: (request) => {
-                    request.params.contactGroupId = this.contactGroupId.value;
-                    request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
-                    request.params.$select = DataGridService.getSelectFields(
-                        this.dataGrid,
-                        [
-                            this.leadFields.Id,
-                            this.leadFields.CustomerId,
-                            this.leadFields.OrganizationId,
-                            this.leadFields.UserId,
-                            this.leadFields.Email,
-                            this.leadFields.Phone,
-                        ]
-                    );
-                    request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
-                },
-                deserializeDates: false
-            }
-        };
-        this.totalDataSource = new DataSource({
-            paginate: false,
-            store: new ODataStore({
-                version: AppConsts.ODataVersion,
-                beforeSend: (request) => {
-                    this.totalCount = undefined;
-                    request.params.contactGroupId = this.contactGroupId.value;
-                    request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
-                    request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
-                },
-                onLoaded: (count: any) => {
-                    this.totalCount = count;
+        this.selectedPipelineId$.pipe(first()).subscribe((selectedPipelineId: number) => {
+            this.pipelineFilter.items.PipelineId.value = selectedPipelineId;
+            this.dataSource = {
+                uri: this.dataSourceURI,
+                requireTotalCount: true,
+                store: {
+                    key: this.leadFields.Id,
+                    type: 'odata',
+                    url: this.oDataService.getODataUrl(this.dataSourceURI, [this.pipelineFilter.getODataFilterObject()]),
+                    version: AppConsts.ODataVersion,
+                    beforeSend: (request) => {
+                        request.params.contactGroupId = this.contactGroupId.value;
+                        request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
+                        request.params.$select = DataGridService.getSelectFields(
+                            this.dataGrid,
+                            [
+                                this.leadFields.Id,
+                                this.leadFields.CustomerId,
+                                this.leadFields.OrganizationId,
+                                this.leadFields.UserId,
+                                this.leadFields.Email,
+                                this.leadFields.Phone
+                            ]
+                        );
+                        request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
+                    },
+                    deserializeDates: false
                 }
-            })
+            };
+            this.totalDataSource = new DataSource({
+                paginate: false,
+                store: new ODataStore({
+                    version: AppConsts.ODataVersion,
+                    beforeSend: (request) => {
+                        this.totalCount = undefined;
+                        request.params.contactGroupId = this.contactGroupId.value;
+                        if (this.searchValue)
+                            request.params.quickSearchString = this.searchValue;
+                        request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
+                        request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
+                    },
+                    onLoaded: (count: any) => {
+                        this.totalCount = count;
+                    },
+                    errorHandler: (e: any) => {
+                        this.totalErrorMsg = this.l('AnHttpErrorOccured');
+                    }
+                })
+            });
+            this.searchValue = '';
+            this.handleDataGridUpdate();
         });
-        this.searchValue = '';
     }
 
     ngOnInit() {
-        this.initStages();
-        this.handleTotalCountUpdate();
-        this.handleDataGridUpdate();
         this.activate();
+        this.initStages();
+        this.listenAndUpdateContactGroup();
         this.handleFiltersPining();
     }
 
     ngAfterViewInit() {
         this.initDataSource();
-    }
-
-    private getInitialFilter() {
-        return [
-            this.filterDate.getODataFilterObject(),
-            this.filtersService.getCheckCustom(this.filterCountryStates)
-        ];
     }
 
     private handleFiltersPining() {
@@ -258,20 +311,11 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         });
     }
 
-    private handleTotalCountUpdate() {
-        combineLatest(
-            this.odataRequestValues$,
-            this.refresh$,
-            this.contactGroupId$
-        ).pipe(
+    private listenAndUpdateContactGroup() {
+        this.contactGroupId$.pipe(
             takeUntil(this.lifeCycleSubjectsService.destroy$),
-        ).subscribe(([odataRequestValues, ]) => {
-            let url = this.oDataService.getODataUrl(this.totalDataSourceURI,
-                odataRequestValues.filter, null, odataRequestValues.params);
-            if (url && this.oDataService.requestLengthIsValid(url)) {
-                this.totalDataSource['_store']['_requestDispatcher']['_url'] = url;
-                this.totalDataSource.load();
-            }
+        ).subscribe((selectedContactGroup: ContactGroup) => {
+            this.contactGroupId.next(selectedContactGroup);
         });
     }
 
@@ -281,6 +325,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             this.contactGroupId$,
             this.refresh$
         ).pipe(
+            skip(1),
             takeUntil(this.lifeCycleSubjectsService.destroy$)
         ).subscribe(() => {
             this.processFilterInternal();
@@ -289,6 +334,12 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 
     private get contactGroup(): string {
         return invert(ContactGroup)[this.contactGroupId.value.toString()];
+    }
+
+    private setInitialPipelineId() {
+        this.pipelines$.subscribe((pipelines: PipelineDto[]) => {
+            this._selectedPipelineId.next(pipelines[0].id);
+        });
     }
 
     toggleToolbar() {
@@ -328,6 +379,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             this.filtersService.checkIfAnySelected();
         } else {
             this.filtersService.setup(this.filters = [
+                this.pipelineFilter,
+                this.filterByAccountId,
                 new FilterModel({
                     component: FilterInputsComponent,
                     operator: 'startswith',
@@ -531,52 +584,6 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 ]
             },
             {
-                location: 'before',
-                locateInMenu: 'auto',
-                items: [
-                    {
-                        name: 'stage',
-                        disabled: this.manageDisabled,
-                        action: this.toggleStages.bind(this),
-                        attr: {
-                            'filter-selected': this.filterModelStages && this.filterModelStages.isSelected
-                        }
-                    },
-                    {
-                        name: 'lists',
-                        disabled: !this.permission.checkCGPermission(this.contactGroupId.value, ''),
-                        action: this.toggleLists.bind(this),
-                        attr: {
-                            'filter-selected': this.filterModelLists && this.filterModelLists.isSelected
-                        }
-                    },
-                    {
-                        name: 'tags',
-                        disabled: !this.permission.checkCGPermission(this.contactGroupId.value, ''),
-                        action: this.toggleTags.bind(this),
-                        attr: {
-                            'filter-selected': this.filterModelTags && this.filterModelTags.isSelected
-                        }
-                    },
-                    {
-                        name: 'rating',
-                        disabled: !this.permission.checkCGPermission(this.contactGroupId.value, ''),
-                        action: this.toggleRating.bind(this),
-                        attr: {
-                            'filter-selected': this.filterModelRating && this.filterModelRating.isSelected
-                        }
-                    },
-                    {
-                        name: 'star',
-                        disabled: !this.permission.checkCGPermission(this.contactGroupId.value, ''),
-                        action: this.toggleStars.bind(this),
-                        attr: {
-                            'filter-selected': this.filterModelStar && this.filterModelStar.isSelected
-                        }
-                    }
-                ]
-            },
-            {
                 location: 'after',
                 locateInMenu: 'auto',
                 items: [
@@ -598,7 +605,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                                     icon: 'xls'
                                 },
                                 {
-                                    action: this.exportData.bind(this, options => 
+                                    action: this.exportData.bind(this, options =>
                                         this.exportService.exportToCSV(
                                             options,
                                             this.dataGrid,
@@ -609,7 +616,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                                     icon: 'sheet'
                                 },
                                 {
-                                    action: this.exportData.bind(this, options => 
+                                    action: this.exportData.bind(this, options =>
                                         this.exportService.exportToGoogleSheet(
                                             options,
                                             this.dataGrid,
@@ -667,11 +674,9 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 this.searchColumns, this.searchValue, undefined,
                 quickSearch ? [ quickSearch ] : undefined
             ).subscribe((filterQuery: string) => {
-                if (filterQuery && filterQuery !== 'canceled') {
-                    this.totalDataSource['_store']['_requestDispatcher']['_url'] = this.oDataService
-                        .getODataUrl(this.totalDataSourceURI, filterQuery);
-                    this.dataSource.store.url = this.oDataService
-                        .getODataUrl(this.dataSourceURI, filterQuery);
+                if (this.dataSource && filterQuery && filterQuery !== 'canceled') {
+                    this.totalDataSource['_store']['_requestDispatcher']['_url'] = this.oDataService.getODataUrl(this.totalDataSourceURI, filterQuery);
+                    setTimeout(() => this.totalDataSource.load());
                 }
             });
         }
@@ -684,9 +689,11 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     private setDataGridInstance() {
         let instance = this.dataGrid && this.dataGrid.instance;
         if (instance && !instance.option('dataSource')) {
-            instance.option('dataSource', this.dataSource);
-            this.processFilterInternal();
-            this.isDataLoaded = false;
+            this.accountSelectorService.selectedOrgUnitIds$.pipe(first()).subscribe(() => {
+                instance.option('dataSource', this.dataSource);
+                this.filtersService.change(this.filters);
+                this.isDataLoaded = false;
+            });
         }
     }
 
@@ -699,13 +706,13 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             purpose: AppConsts.PipelinePurposeIds.lead,
             contactGroupId: this.contactGroupId.value
         }))).pipe(first()).subscribe(pipeline => {
-            this.stages = pipeline.stages.map(stage => {
+            this.stages = pipeline ? pipeline.stages.map(stage => {
                 return {
                     id: pipeline.id + ':' + stage.id,
                     index: stage.sortOrder,
                     name: stage.name
                 };
-            }).sort((prev, next) => prev.index > next.index ? -1 : 1);
+            }).sort((prev, next) => prev.index > next.index ? -1 : 1) : [];
         });
         this.initToolbarConfig();
     }
@@ -714,26 +721,6 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         let col = $event.column;
         if (col && col.command)
             return;
-    }
-
-    toggleStages() {
-        this.stagesComponent.toggle();
-    }
-
-    toggleLists() {
-        this.listsComponent.toggle();
-    }
-
-    toggleTags() {
-        this.tagsComponent.toggle();
-    }
-
-    toggleRating() {
-        this.ratingComponent.toggle();
-    }
-
-    toggleStars() {
-        this.starsListComponent.toggle();
     }
 
     toggleColumnChooser() {
@@ -798,5 +785,14 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     onMenuItemClick(event) {
         event.itemData.action.call(this);
         this.actionEvent = null;
+    }
+
+    onSelectedPipelineChanged(event) {
+        if (event.previousValue != event.value) {
+            this.filterModelStages.clearFilterItems();
+            this.filterModelStages.isSelected = false;
+            this.pipelineFilter.items.PipelineId.value = +event.value;
+            this._selectedPipelineId.next(event.value);
+        }
     }
 }

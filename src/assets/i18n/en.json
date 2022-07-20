@@ -6,9 +6,12 @@
             "text": "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aperiam assumenda autem eligendi eos error et exercitationem, harum, minima neque nihil numquam pariatur quas quis reprehenderit sed soluta ullam voluptas voluptates."
         },
         "Referral": {
-            "CommissionHistory": "Commission history",
+            "Overview": "Dashboard",
+            "OverviewTitle": "Partner Dashboard",
+            "CommissionHistory": "My Commissions",
             "LedgerBalance": "Ledger Balance",
-            "LinkGenerator": "Link Generator",
+            "LinkDescription": "Link Description",
+            "LinkGenerator": "My Links",
             "LinkTracking": "Link Tracking",
             "Balance": "Balance",
             "TotalsAmountsPosted": "Totals Amounts Posted",
@@ -18,7 +21,9 @@
             "Withdrawal": "Withdrawal",
             "PendingAmounts": "Pending Amounts",
             "Available": "Available",
+            "ProductsOrServices": "Products or Services",
             "RequestWithdrawal": "Request a withdrawal",
+            "NoTransactionHistory": "There is no transaction history in your account.",
             "CommissionHistoryTitle": "Your commission transaction history",
             "LedgerBalanceTitle": "Your payout ledger history",
             "DownloadTheReport": "Download the report",
@@ -35,12 +40,33 @@
             "AmountIsRequired": "Amount is required",
             "ThanksForRequest": "Thank you for you request",
             "YouCantRequestMoreThen": "You can't request more then {0}",
+            "ShareLink": "Share this link on social media",
+            "CopyYourReferralLink": "Get & Share link URL",
             "Tier1": "T1",
             "Tier2": "T2"
         },
         "VersusEstimated": "Versus Estimated",
         "Navigation_ResellerInfo": "Reseller Info",
         "CRMDashboard_RecentLeads": "Recent Leads",
-        "CRMDashboard_LastNLeadsRecords": "Last {0} leads registered"
+        "CRMDashboard_LastNLeadsRecords": "Last {0} leads registered",
+        "RefferedLeads": "Reffered Leads",
+        "MyInvoices": "My Invoices",
+        "MyReferralPortal": "My Referral Portal",
+        "CRMLogin": "CRM Login",
+        "GetLinks": "Get Links",
+        "AddTrackingLink": {
+            "EditLink": "Edit Link",
+            "AddLink": "Add Link",
+            "AddNewLink": "Add New Link",
+            "EnterLink": "Enter Link",
+            "UrlRequired": "Link is required",
+            "UrlPatternInvalid": "Link is not valid",
+            "EnterCompanyName": "Enter Company Name",
+            "CompanyNameRequired": "Company Name is required",
+            "EnterCategory": "Enter Category",
+            "CategoryRequired": "Category is required",    
+            "EnterSuggestedCopy": "Enter Suggested Copy",
+            "SuggestedCopyRequired": "Suggested Copy is required"
+        }
     }
 }

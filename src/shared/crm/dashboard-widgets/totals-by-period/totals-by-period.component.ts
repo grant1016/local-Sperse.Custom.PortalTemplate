@@ -32,7 +32,8 @@ import {
     pluck,
     publishReplay,
     refCount,
-    withLatestFrom
+    withLatestFrom,
+    debounceTime
 } from 'rxjs/operators';
 import { Store, select } from '@ngrx/store';
 import * as moment from 'moment-timezone';
@@ -61,7 +62,7 @@ import { LoadingService } from '@shared/common/loading-service/loading.service';
     selector: 'totals-by-period',
     templateUrl: './totals-by-period.component.html',
     styleUrls: ['./totals-by-period.component.less'],
-    providers: [ DashboardServiceProxy, DecimalPipe ],
+    providers: [ DecimalPipe ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TotalsByPeriodComponent implements DoCheck, OnInit, OnDestroy {
@@ -147,22 +148,26 @@ export class TotalsByPeriodComponent implements DoCheck, OnInit, OnDestroy {
     ngOnInit() {
         this.totalsData$ = combineLatest(
             this.dashboardWidgetsService.period$,
-            this.dashboardWidgetsService.sourceContactId$,
             this.isCumulative$,
+            this.dashboardWidgetsService.contactId$,
+            this.dashboardWidgetsService.contactGroupId$,
+            this.dashboardWidgetsService.sourceOrgUnitIds$,
             this.dashboardWidgetsService.refresh$
         ).pipe(
+            debounceTime(100),
             takeUntil(this.destroy$),
             tap(() => this.loadingService.startLoading()),
-            switchMap(([period, sourceContactId, isCumulative, ]: [PeriodModel, number, boolean, null]) => {
+            switchMap(([period, isCumulative, contactId, contactGroupId, orgUnitIds, ]:
+                           [PeriodModel, boolean, number, string, number[], null]) => {
                 const totalsByPeriodModel = this.savePeriod(period);
                 return this.loadCustomersAndLeadsStats(
                     totalsByPeriodModel,
                     period.from,
                     period.to,
                     isCumulative,
-                    sourceContactId,
-                    undefined,
-                    undefined
+                    contactId,
+                    contactGroupId,
+                    orgUnitIds
                 ).pipe(
                     catchError(() => of([])),
                     finalize(() => this.loadingService.finishLoading())
@@ -218,7 +223,7 @@ export class TotalsByPeriodComponent implements DoCheck, OnInit, OnDestroy {
 
     ngDoCheck() {
         if (this.elementRef.nativeElement.offsetWidth) {
-            const newWidgetWidth = this.elementRef.nativeElement.offsetWidth;
+            const newWidgetWidth = this.elementRef.nativeElement.offsetWidth - 74;
             if (newWidgetWidth !== this.widgetWidth) {
                 this.widgetWidth = newWidgetWidth;
                 this.changeDetectorRef.detectChanges();
@@ -287,17 +292,7 @@ export class TotalsByPeriodComponent implements DoCheck, OnInit, OnDestroy {
             map((stage: StageDtoExtended) => ({
                 valueField: stageId.toString(),
                 name: stage && (stage.name + (stage.contactGroupId !== ContactGroup.Client ? (' ' + invert(ContactGroup)[stage.contactGroupId]) : '')),
-                color: stage && (stage.color || {
-                    '-4': '#f02929',
-                    '-3': '#f05b29',
-                    '-2': '#f4ae55',
-                    '-1': '#f7d15e',
-                    '0': '#00aeef',
-                    '1': '#b6cf5e',
-                    '2': '#86c45d',
-                    '3': '#46aa6e',
-                    '4': '#0e9360'
-                }[stage.sortOrder]),
+                color: stage && (stage.color || this.dashboardWidgetsService.getStageDefaultColorByStageSortOrder(stage.sortOrder)),
                 type: 'stackedBar',
                 sortOrder: stage && stage.sortOrder
             }))
@@ -367,7 +362,7 @@ export class TotalsByPeriodComponent implements DoCheck, OnInit, OnDestroy {
     }
 
     /** Factory for method that customize axis */
-
+    
     getYearlyBottomAxisCustomizer(elem) {
         return this.getMonthlyBottomAxisCustomizer(elem);
     }

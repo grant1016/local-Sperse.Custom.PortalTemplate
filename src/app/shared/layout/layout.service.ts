@@ -5,6 +5,7 @@ import { LayoutType } from '@shared/service-proxies/service-proxies';
 @Injectable()
 export class LayoutService {
     public showPageLogo = true;
+    public showTopNavBar = false;
     public showPlatformSelectMenu = true;
     public showNotificationsButton = true;
     public showChatButton = true;

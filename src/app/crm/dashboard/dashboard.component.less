@@ -2,27 +2,82 @@
     display: block;
     position: relative;
 
+    .widgets-wrapper {
+        background-color: #f7f9fa;
+        height: 100%;
+        min-height: calc(~"100vh - 75px");
+        padding: 20px;
+    }
+
+    app-no-data {
+        height: calc(~"100vh - 195px");
+        flex: auto;
+
+        @media all and (min-width: 1399px) {
+            height: calc(~"100vh - 245px");
+        }
+    }
+
+    .icon {
+        background: #fff;
+        display: block;
+        height: 45px;
+        width: 45px;
+        border-radius: 50%;
+        cursor: pointer;
+        position: relative;
+        border: 1px solid #e5e9ec;
+
+        &:after {
+            height: 100%;
+            width: 100%;
+            display: block;
+            content: '';
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+
+        &.reload:after {
+            background-image: url('../../../assets/common/icons/reload.svg');
+            background-size: 20px;
+        }
+    }
+
     .wrapper {
         max-width: 100%!important;
+        width: 100%;
         height: 100%;
+
+        display: flex;
+        flex-direction: column;
     }
 
-    .title {
-        position: absolute;
-        left: 0px;
-        h2, dx-drop-down-box {
-            display: inline-block;
+    .head-wrapper {
+        display: flex;
+        align-items: center;
+
+        calendar-button {
+            margin-left: auto;
         }
-        ::ng-deep dx-drop-down-box {
-            margin-left: 20px;
-            input {
-                border: none!important;
+
+        .title {
+            h2, dx-drop-down-box {
+                display: inline-block;
+            }
+
+            ::ng-deep dx-drop-down-box {
+                background: transparent;
+
+                dx-text-box {
+                }
+
+                input {
+                    border: none;
+                    background: transparent;
+                    font-size: 34px;
+                }
             }
         }
-    }
-
-    .widgets-wrapper {
-        height: calc(~"100vh - 170px");
     }
 
     ::ng-deep app-headline .headline-content {
@@ -40,51 +95,74 @@
     }
 
     .right-side {
-        &.recent-clients {
-            padding-left: 14px;
-            padding-right: 14px;
+        recent-clients {
+            margin-top: 30px;
         }
     }
 
     .dashboard-widgets {
-        height: calc(~"100vh - 200px");
+        margin-top: 30px;
+
         .counts-and-totals {
             border-bottom: 1px solid #e5e9ec;
         }
+
         .analytics-wrap {
             display: flex;
             flex-flow: row wrap;
             justify-content: space-between;
             align-items: flex-start;
+            margin-top: 30px;
 
             .right-side {
-                border-left: 1px solid #e5e9ec;
+                padding: 0;
+
+                @media all and (min-width: 1200px) {
+                    padding-right: 0;
+                    padding-left: 15px;
+                }
             }
 
-            .left-side > * {
-                background-color: #FFFFFF;
-                position: relative;
-                @media (min-width: 1200px) {
-                    min-height: 295px;
+            .left-side {
+                padding: 0;
+
+                @media all and (min-width: 1200px) {
+                    padding-left: 0;
+                    padding-right: 15px;
+                }
+
+                new-items-totals {
+                    + totals-by-source {
+                        margin-top: 30px;
+                    }
+                }
+
+                > * {
+                    position: relative;
+
+                    @media (min-width: 1200px) {
+                        min-height: 335px;
+                    }
                 }
             }
         }
+
         ::ng-deep new-items-totals .content-wrap {
-            border-bottom: 1px solid #E5E9EC;
-            padding-bottom: 30px;
+            padding-bottom: 25px;
         }
+
         new-items-totals,
         totals-by-period {
             padding-top: 25px;
         }
 
         totals-by-period {
-            border-bottom: 1px solid #e5e9ec;
             padding-bottom: 30px;
-        };
 
-        totals-by-source {
-            padding-top: 25px;
+            @media all and (max-width: 1199px) {
+                margin-top: 30px;
+            }
+
         };
     }
 
@@ -110,7 +188,7 @@
         }
 
         .sperse-crm {
-            color: #f3f6fa;
+            color: #c8cbcd;
             font-family: Montserrat;
             font-size: 133px;
             font-weight: 600;
@@ -118,7 +196,7 @@
         }
 
         .second-line {
-            color: #f3f6fa;
+            color: #c8cbcd;
             font-family: Montserrat;
             font-size: 44px;
             font-weight: bold;
@@ -149,4 +227,16 @@
             line-height: 22px;
         }
     }
+}
+
+.name {
+    font-size: 18px;
+    font-weight: 500;
+    line-height: 1.6;
+    color: #525252;
+    margin-bottom: 0;
+}
+
+.company {
+    font-size: 13px;
 }

@@ -8,6 +8,7 @@ import { DOCUMENT } from '@angular/common';
 import { filter, takeUntil } from 'rxjs/operators';
 
 /** Application imports */
+import { LayoutService } from '@app/shared/layout/layout.service';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { FiltersService } from '@shared/filters/filters.service';
 import { AppService } from './app.service';
@@ -28,6 +29,7 @@ export class AppComponent extends AppComponentBase implements OnInit, OnDestroy 
         public appService: AppService,
         private renderer: Renderer2,
         public filtersService: FiltersService,
+        public layoutService: LayoutService,
         @Inject(DOCUMENT) private document: any
     ) {
         super(injector);

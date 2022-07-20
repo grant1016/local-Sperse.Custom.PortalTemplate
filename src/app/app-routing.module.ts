@@ -5,9 +5,13 @@ import { RouterModule } from '@angular/router';
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
 import { LeadsComponent } from '@app/crm/leads/leads.component';
+import { InvoicesComponent } from '@app/crm/invoices/invoices.component';
 import { DashboardComponent } from '@app/main/dashboard/dashboard.component';
 import { CrmDashboardComponent } from '@app/crm/dashboard/dashboard.component';
+import { AppRedirectGuard } from '@app/shared/common/auth/app-redirect-guard';
 import { RedirectGuard } from '@shared/common/redirect-guard/redirect-guard';
+import { LocalizationResolver } from '@shared/common/localization-resolver';
+import { AppFeatures } from '@shared/AppFeatures';
 import { AppComponent } from './app.component';
 
 @NgModule({
@@ -17,30 +21,36 @@ import { AppComponent } from './app.component';
                 path: '',
                 component: AppComponent,
                 canActivate: [],
-                canActivateChild: [],
+                canActivateChild: [LocalizationResolver],
                 children: [
                     {
                         path: '',
-                        redirectTo: 'dashboard',
-                        pathMatch: 'full'
+                        canActivate: [AppRedirectGuard]
                     },
                     {
                         path: 'home',
-                        component: DashboardComponent
+                        component: DashboardComponent,
+                        data: {feature: AppFeatures.PortalDashboard}    
                     },
                     {
                         path: 'leads',
                         component: LeadsComponent,
-                        data: { localizationSource: AppConsts.localization.CRMLocalizationSourceName }
+                        data: {feature: AppFeatures.PortalLeads, localizationSource: AppConsts.localization.CRMLocalizationSourceName }
                     },        
                     {
                         path: 'dashboard',
                         component: CrmDashboardComponent,
-                        data: { localizationSource: AppConsts.localization.CRMLocalizationSourceName }
+                        data: {feature: AppFeatures.PortalDashboard, reuse: true, localizationSource: AppConsts.localization.CRMLocalizationSourceName }
+                    },
+                    {
+                        path: 'invoices',
+                        component: InvoicesComponent,
+                        data: {feature: AppFeatures.PortalInvoices, localizationSource: AppConsts.localization.CRMLocalizationSourceName }
                     },
                     {
                         path: 'reseller-info',
-                        loadChildren: () => import('shared/common/referral/referral.module').then(m => m.ReferralModule)
+                        loadChildren: () => import('shared/common/referral/referral.module').then(m => m.ReferralModule),
+                        data: {feature: AppFeatures.PortalReseller}    
                     }
                 ]
             }

@@ -2,18 +2,18 @@
 import {
     ChangeDetectionStrategy,
     ChangeDetectorRef,
-    Component,
     ElementRef,
+    Component,
+    ViewChild,
     OnDestroy,
-    OnInit,
-    ViewChild
+    OnInit
 } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
 import { Params, Router } from '@angular/router';
 
 /** Third party imports */
 import { combineLatest, Observable, of } from 'rxjs';
-import { catchError, first, finalize, map, switchMap, takeUntil, tap } from 'rxjs/operators';
+import { catchError, first, finalize, map, switchMap, takeUntil, tap, debounceTime } from 'rxjs/operators';
 
 /** Application imports */
 import { DashboardServiceProxy } from 'shared/service-proxies/service-proxies';
@@ -38,7 +38,7 @@ import { PeriodModel } from '@app/shared/common/period/period.model';
     providers: [
         LifecycleSubjectsService,
         MapService,
-        { provide: 'selectedMapArea', useValue: MapArea.World }
+        { provide: 'selectedMapArea', useValue: MapArea.USA }
     ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
@@ -47,7 +47,6 @@ export class ClientsByRegionComponent implements OnInit, OnDestroy {
     data$: Observable<MapData>;
     pipe: any = new DecimalPipe('en-US');
     palette: string[] = this.layoutService.getMapPalette();
-
     constructor(
         private dashboardWidgetsService: DashboardWidgetsService,
         private dashboardServiceProxy: DashboardServiceProxy,
@@ -62,18 +61,20 @@ export class ClientsByRegionComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         this.data$ = combineLatest(
-            this.dashboardWidgetsService.period$,            
-            this.dashboardWidgetsService.sourceContactId$,
+            this.dashboardWidgetsService.period$,
+            this.dashboardWidgetsService.contactId$,
+            this.dashboardWidgetsService.sourceOrgUnitIds$,
             this.dashboardWidgetsService.refresh$
         ).pipe(
+            debounceTime(100),
             takeUntil(this.lifeCycleService.destroy$),
             tap(() => this.loadingService.startLoading(this.elementRef.nativeElement)),
-            switchMap(([period, sourceContactId, refresh]: [PeriodModel, number, null]) => this.dashboardServiceProxy.getContactsByRegion(
+            switchMap(([period, contactId, orgUnitIds, ]: [PeriodModel, number, number[], null]) => this.dashboardServiceProxy.getContactsByRegion(
                 period && period.from,
                 period && period.to,
-                undefined,
-                sourceContactId,
-                undefined
+                ContactGroup.Client,
+                contactId,
+                orgUnitIds
             ).pipe(
                 catchError(() => of([])),
                 finalize(() => this.loadingService.finishLoading(this.elementRef.nativeElement))

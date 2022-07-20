@@ -33,8 +33,8 @@ export class NotificationsComponent implements OnInit {
     loading = false;
     selectBoxList = [
         { value: undefined, text: this.ls.l('All') },
-        { value: UserNotificationState._0, text: this.ls.l('Unread') },
-        { value: UserNotificationState._1, text: this.ls.l('Read') }
+        { value: UserNotificationState.Unread, text: this.ls.l('Unread') },
+        { value: UserNotificationState.Read, text: this.ls.l('Read') }
     ];
     notificationsDataSource = new DataSource({
         key: 'userNotificationId',
@@ -43,6 +43,8 @@ export class NotificationsComponent implements OnInit {
             this.processToalCountRequest();
             return this.notificationService.getUserNotifications(
                 this.readStateFilter,
+                undefined,
+                undefined,
                 loadOptions.take,
                 loadOptions.skip
             ).pipe(
@@ -100,7 +102,7 @@ export class NotificationsComponent implements OnInit {
 
         abp.event.on('app.notifications.read', (userNotificationId: number) => {
             /** If we show only unread - then reload list */
-            if (this.readStateFilter === UserNotificationState._0) {
+            if (this.readStateFilter === UserNotificationState.Unread) {
                 this.loadNotifications();
             } else {
                 /** Else just mark grid row as read */

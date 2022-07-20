@@ -1,0 +1,91 @@
+<div class="grid">
+    <header>
+        <h1>{{ ls.l('Referral.CommissionHistoryTitle') }}</h1>
+        <button (click)="downloadReport()" [disabled]="!isDataLoaded">{{ ls.l('Referral.DownloadTheReport') }}</button>
+    </header>
+    <div class="grid-container">
+        <dx-data-grid class="commission-history-grid main-component-view limitedPagerTotal"
+            accesskey="narrowHeaderPanel"
+            [noDataText]="ls.l('Referral.NoTransactionHistory')"
+            [renderAsync]="true"
+            [allowColumnReordering]="true"
+            [columnAutoWidth]="true"
+            [dataSource]="dataSource"
+            [allowColumnResizing]="true"
+            [hoverStateEnabled]="true"
+            [showBorders]="true"
+            [loadPanel]="{ enabled: false }"
+            [remoteOperations]="{
+              filtering: false,
+              grouping: true,
+              groupPaging: true,
+              paging: true,
+              sorting: true,
+              summary: true
+            }"
+            [pager]="defaultGridPagerConfig"
+            (click)="onGridClick($event)"
+            (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
+            <dxo-group-panel [visible]="true"></dxo-group-panel>
+            <dxo-scrolling rowRenderingMode="virtual"></dxo-scrolling>
+            <dxi-column [dataField]="commissionFields.OrderDate"
+                        [caption]="ls.l('Referral.OrderDate')"
+                        dataType="date"
+                        sortOrder="desc"
+                        cssClass="clipboard-holder tabular"
+                        [format]="dateFormat">
+            </dxi-column>
+            <dxi-column [dataField]="commissionFields.OrderNumber"
+                        alignment="left"
+                        [width]="100"
+                        [caption]="ls.l('Referral.OrderId')"
+                        cssClass="clipboard-holder">
+            </dxi-column>
+            <dxi-column [dataField]="commissionFields.CustomerName"
+                        [caption]="ls.l('Referral.CustomerName')"
+                        cssClass="clipboard-holder">
+            </dxi-column>
+            <dxi-column [dataField]="commissionFields.ProductName"
+                        [caption]="ls.l('Referral.ProductName')"
+                        [width]="150"
+                        cssClass="clipboard-holder">
+            </dxi-column>
+            <dxi-column [dataField]="commissionFields.ProductAmount"
+                        [caption]="ls.l('Referral.SaleAmount')"
+                        cellTemplate="amountCell"
+                        [width]="185"
+                        cssClass="padding-right">
+            </dxi-column>
+            <dxi-column [dataField]="commissionFields.Tier"
+                        [caption]="ls.l('Referral.Tier')"
+                        cellTemplate="tierCell"
+                        [width]="70">
+            </dxi-column>
+            <dxi-column [dataField]="commissionFields.CommissionAmount"
+                        [caption]="ls.l('Referral.Commission')"
+                        cellTemplate="amountCell"
+                        [width]="185"
+                        cssClass="padding-right">
+            </dxi-column>
+            <dxi-column [dataField]="commissionFields.Status"
+                        [caption]="ls.l('Referral.Status')"
+                        cellTemplate="statusCell"
+                        cssClass="padding-right">
+            </dxi-column>
+            <dxo-sorting mode="multiple"></dxo-sorting>
+            <dxo-paging [pageSize]="20"></dxo-paging>
+            <div *dxTemplate="let cellData of 'amountCell'" class="clipboard-holder">
+                <span class="amountCell"
+                      [ngStyle]="{ color: cellData.column.field === commissionFields.CommissionAmount ? getCellColor(cellData.row.data) : '' }">
+                    {{ cellData.value | currency }}
+                </span>
+            </div>
+            <div *dxTemplate="let cellData of 'statusCell'" class="clipboard-holder">
+                <span [ngStyle]="{ color: getCellColor(cellData.row.data) }">{{ cellData.value }}</span>
+            </div>
+            <div *dxTemplate="let cellData of 'tierCell'" class="clipboard-holder">
+                {{ ls.l('Referral.' + cellData.value) }}
+            </div>
+        </dx-data-grid>
+    </div>
+</div>

@@ -89,6 +89,7 @@
     "google-libphonenumber": "^3.1.11",
     "inputmask": "^3.3.7",
     "ion-rangeslider": "^2.2.0",
+    "iv-viewer": "^2.0.1",
     "jasmine-spec-reporter": "~5.0.0",
     "jquery": "^3.2.1",
     "jquery-form": "^4.2.1",

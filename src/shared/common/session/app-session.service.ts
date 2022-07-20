@@ -1,12 +1,28 @@
+/** Core imports */
 import { AbpMultiTenancyService } from 'abp-ng2-module';
 import { Injectable } from '@angular/core';
+
+/** Third party imports */
+import { Observable } from 'rxjs';
+import { map, publishReplay, refCount } from 'rxjs/operators';
+import isEqual from 'lodash/isEqual';
+
+/** Application imports */
 import {
     ApplicationInfoDto,
     LayoutType,
     SessionServiceProxy,
     TenantLoginInfoDto,
-    UserLoginInfoDto
+    UserLoginInfoDto,
+    CommonUserInfoServiceProxy
 } from '@shared/service-proxies/service-proxies';
+
+export interface ILoginInfo {
+    contactId: number | undefined;
+    fullName: string | undefined;
+    email: string | undefined;
+    tenantName: string | undefined;
+}
 
 @Injectable()
 export class AppSessionService {
@@ -14,9 +30,16 @@ export class AppSessionService {
     private _tenant: TenantLoginInfoDto;
     private _application: ApplicationInfoDto;
 
+    userCompany$: Observable<string> = this.commonUserInfoService.getCompany().pipe(
+        map(x => isEqual(x, {}) ? null : x),
+        publishReplay(), 
+        refCount()
+    );
+
     constructor(
         private sessionService: SessionServiceProxy,
-        private abpMultiTenancyService: AbpMultiTenancyService
+        private abpMultiTenancyService: AbpMultiTenancyService,
+        private commonUserInfoService: CommonUserInfoServiceProxy
     ) {
         abp.event.on('profilePictureChanged', (thumbnailId) => {
             this.user.profileThumbnailId = thumbnailId;
@@ -64,10 +87,12 @@ export class AppSessionService {
         return (this._tenant ? this._tenant.tenancyName : '.') + '\\' + userName;
     }
 
-    getShownLoginInfo(): { fullName, email, tenantName?} {
-        let info: { fullName, email, tenantName? } = {
+    getShownLoginInfo(): ILoginInfo {
+        let info: ILoginInfo = {
+            contactId: this._user && this._user.contactId,
             fullName: this._user && (this._user.name + ' ' + this._user.surname),
-            email: this._user && this._user.emailAddress
+            email: this._user && this._user.emailAddress,
+            tenantName: undefined
         };
 
         if (this.abpMultiTenancyService.isEnabled) {

@@ -1,85 +1,30 @@
-<app-headline
-        [showReloadButton]="ui.showReload"
-        (onReload)="refresh()">
-    <div class="title">
-        <dx-drop-down-box
-            width="350px"
-            accessKey="accounts-dropdown" 
-            [showClearButton]="true" 
-            [(value)]="selectedAccount" 
-            [fieldTemplate]="'field'" 
-            (onOptionChanged)="onDropDownChanged($event)">
-            <div *dxTemplate="let data of 'content'" class="accounts-dropdown">
-                <dx-list [items]="contactAccounts"                         
-                         [searchEnabled]="true"
-                         [searchEditorOptions]="{
-                               onKeyUp: searchChanged
-                         }"
-                         [selectedItemKeys]="[selectedAccount]"
-                         selectionMode="single"
-                         (onItemClick)="valueChanged($event)">
-                    <div *dxTemplate="let account of 'item'">
-                        <div class="name" *ngIf="account.CompanyName"
-                             [title]="account?.CompanyName">{{ account?.CompanyName }}</div>
-                        <div class="company" *ngIf="account.Name" [title]="account?.Name">{{ account?.Name }}</div>
-                        <div class="company" *ngIf="!account.CompanyName && !account.Name"
-                             [title]="account?.Email">{{ account?.Email }}</div>
-                    </div>
-                </dx-list>
-            </div>
-            <div *dxTemplate="let data of 'field'">
-                <dx-text-box [value]="getSelectedName()" [placeholder]="ls.l('SourceContactName')" [hint]="getSelectedName()" [readOnly]="true"></dx-text-box>
-            </div>
-        </dx-drop-down-box>
-    </div>
-    <calendar-button></calendar-button>
-</app-headline>
-<div [@routerTransition]>
+<dx-scroll-view [height]="'calc(100vh - 75px)'" showScrollbar="onHover">
     <div class="widgets-wrapper">
         <div class="wrapper">
-            <div class="dashboard-stub" *ngIf="showWelcomeSection$ | async">
-                <div>
-                    <img class="logo-crm" alt="CRM Logo" src="./assets/common/icons/cfo.png"/>
-                    <span class="sperse-crm big-gray-text">{{ls.ls(localization, 'CRM')}}</span>
-                </div>
-                <p class="second-line big-gray-text">{{ls.ls(localization, 'CRM_Long')}}</p>
-                <p class="welcome-crm">{{ls.ls(localization, 'CRMDashboard_WelcomeText')}}</p>
-                <p class="text-crm">{{ls.ls(localization, 'CRMDashboard_StartText')}}</p>
-                <p class="manage-crm" *ngIf="hasCustomersPermission || hasOrdersPermission">
-                    {{ls.ls(localization, 'CRMDashboard_ManageText')}}
-                    <ng-container *ngIf="hasCustomersPermission">
-                        <a [routerLink]="['/app/crm/leads']">{{ls.ls(localization, 'Leads')}}</a>, <a
-                            [routerLink]="['/app/crm/clients']">{{ls.ls(localization, 'Clients')}}</a>
-                    </ng-container>
-                    <ng-container *ngIf="hasCustomersPermission && hasOrdersPermission"> and</ng-container>
-                    <a *ngIf="hasOrdersPermission"
-                       [routerLink]="['/app/crm/orders']">{{ls.ls(localization, 'Orders')}}</a>
-                </p>
-                <button *ngIf="hasPermissionToAddClient" (click)="addClient()"
-                        class="btn btn-layout add-client">{{ ls.ls(localization, 'CRMDashboard_AddClient') }}</button>
+            <div class="head-wrapper">
+                <calendar-button></calendar-button>
+                <button class="icon reload" (click)="refresh()"></button>
             </div>
-            <dx-scroll-view *ngIf="showDefaultSection$ | async" showScrollbar="onHover">
-                <div class="dashboard-widgets">
-                    <counts-and-totals *ngIf="isGrantedCustomers || isGrantedOrders"
-                                       [data]="totalsData$ | async"
-                                       [fields]="totalsDataFields">
-                    </counts-and-totals>
-                    <div class="analytics-wrap">
-                        <div class="left-side col-xl-4">
-                            <new-items-totals *ngIf="isGrantedCustomers || isGrantedOrders"></new-items-totals>
-                            <totals-by-source *ngIf="isGrantedCustomers"></totals-by-source>
-                        </div>
-                        <div class="right-side col-xl-8">
-                            <ng-container *ngIf="isGrantedCustomers">
-                                <totals-by-period></totals-by-period>
-                                <recent-clients></recent-clients>
-                            </ng-container>
-                        </div>
+            <div class="dashboard-widgets" *ngIf="accountSelectorService.selectedAccount">
+                <counts-and-totals *ngIf="isGrantedCustomers || isGrantedOrders"
+                                   [data]="totalsData$ | async"
+                                   [fields]="totalsDataFields">
+                </counts-and-totals>
+                <div class="analytics-wrap">
+                    <div class="left-side col-xl-4">
+                        <new-items-totals *ngIf="isGrantedCustomers || isGrantedOrders"></new-items-totals>
+                        <totals-by-source *ngIf="isGrantedCustomers"></totals-by-source>
                     </div>
-                    <clients-by-region *ngIf="isGrantedCustomers"></clients-by-region>
+                    <div class="right-side col-xl-8">
+                        <ng-container *ngIf="isGrantedCustomers">
+                            <totals-by-period></totals-by-period>
+                            <recent-clients></recent-clients>
+                        </ng-container>
+                    </div>
                 </div>
-            </dx-scroll-view>
-            <loading-spinner *ngIf="showLoadingSpinner"></loading-spinner>
+                <clients-by-region *ngIf="isGrantedCustomers"></clients-by-region>
+            </div>
         </div>
+        <loading-spinner *ngIf="accountSelectorService.showLoadingSpinner"></loading-spinner>
     </div>
-</div>
+</dx-scroll-view>

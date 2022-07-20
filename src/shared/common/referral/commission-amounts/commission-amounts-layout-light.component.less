@@ -1,0 +1,193 @@
+:host {
+    display: flex;
+    flex-direction: column;
+
+    h1 {
+      font-family: Poppins;
+      font-size: 16px;
+      font-weight: 600;
+      font-stretch: normal;
+      font-style: normal;
+      line-height: 2.0;
+      letter-spacing: -0.35px;
+      text-align: left;
+      color: #010043;
+    }
+
+    h3 {
+      font-family: Poppins;
+      font-size: 11px;
+      font-weight: normal;
+      font-stretch: normal;
+      font-style: normal;
+      line-height: 1.69;
+      letter-spacing: -0.08px;
+      text-align: left;
+      color: #61656a;
+    }
+
+    .amounts-container {
+        display: flex;
+        padding: 20px 25px;
+        justify-content: space-between;
+
+        .funds-amounts {
+            margin-right: auto;
+            .amounts {
+                display: flex;
+                .pending {
+                    background-color: #f8f7f4;
+                }
+                .posted {
+                    margin-right: 20px;
+                    background-color: #f4f6f8;
+                }
+                .posted, .pending {
+                    color: #e2efda;
+                    min-width: 180px;                
+                    border-radius: 5px;
+                    padding: 10px;
+                    h3 {
+                        font-size: 11px;
+                        font-weight: 500;
+                        font-stretch: normal;
+                        font-style: normal;
+                        line-height: normal;
+                        letter-spacing: -0.26px;
+                        text-align: left;
+                        color: #0a0850;
+                    }
+                    .earned, .withdrawn {                        
+                        display: inline-block;
+                        padding: 0 19px 0 0;
+                        h4 {
+                            font-size: 10px;
+                            font-weight: normal;
+                            font-stretch: normal;
+                            font-style: normal;
+                            line-height: normal;
+                            letter-spacing: -0.15px;
+                            text-decoration: underline;
+                            text-align: left;
+                            color: #6a6a6a;
+                            img {
+                                width: 12px;
+                                height: auto;
+                                margin: 0 4px 3px;
+                            }
+                        }
+                        p {
+                            font-size: 11px;
+                            font-weight: 500;
+                            font-stretch: normal;
+                            font-style: normal;
+                            line-height: normal;
+                            letter-spacing: -0.26px;
+                            text-align: left;
+                            color: #0a0850;
+                            &.green {
+                                color: #30b862;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        .funds-available {
+            width: 200px;
+            height: 150px;
+            display: flex;
+            border: 8px solid #e5f2ff;
+            border-radius: 17px;
+            margin: auto;
+            &.active {
+                border: 8px solid #addbc2;
+            }
+            .available {
+                margin: auto;
+                h3  {
+                    font-size: 12px;
+                    font-weight: 500;
+                    font-stretch: normal;
+                    font-style: normal;
+                    line-height: normal;
+                    letter-spacing: -0.26px;
+                    text-align: center;
+                    color: #0a0850;
+                    margin: 0;
+                }
+                p {
+                    font-size: 18px;
+                    font-weight: 500;
+                    font-stretch: normal;
+                    font-style: normal;
+                    line-height: normal;
+                    text-align: center;
+                    color: #0a0850;
+                }
+                img {
+                    margin: auto;
+                    display: block;
+                    padding: 10px 0;
+                }
+            }
+        }
+    }
+
+    .funds-withdraw {
+        margin-left: auto;
+        button.request-withdrawal {
+            width: 250px;
+            height: 32px;
+            margin: auto;
+            cursor: pointer;
+            border-radius: 5px;
+            background-color: #02008a;
+            font-size: 12px;
+            font-weight: bold;
+            font-stretch: normal;
+            font-style: normal;
+            line-height: normal;
+            letter-spacing: -0.26px;
+            white-space: nowrap;
+            text-align: center;
+            color: #fff;
+            &.active {
+                background-color: #02843f;
+            }
+        }
+        .pay-pal {
+            width: 250px;
+            height: 100px;
+            border-radius: 5px;
+            background-color: #f4f6f8;
+            text-align: center;
+            margin: 20px auto 0 0;
+            padding: 30px 0;
+            span {
+                font-size: 12px;
+                font-weight: bold;
+                font-stretch: normal;
+                font-style: normal;
+                line-height: normal;
+                letter-spacing: -0.27px;
+                text-align: left;
+                color: #0a0850;
+                img {
+                    margin-left: 5px;
+                }
+            }
+            .email {
+                font-size: 11px;
+                font-weight: normal;
+                font-stretch: normal;
+                font-style: normal;
+                line-height: normal;
+                letter-spacing: -0.26px;
+                text-align: center;
+                color: #0a0850;
+            }
+        }
+    }
+}

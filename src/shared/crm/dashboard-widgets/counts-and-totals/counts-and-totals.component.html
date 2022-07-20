@@ -10,10 +10,12 @@
                     {{ data[field.name] | number }}
                 </span>
             </div>
-            <div class="chart-line"><div [ngStyle]="{width: field.percent, 'background-color': field.color}"></div></div>
-            <div *ngIf="field.estimated" class="versus">
-                <span class="estimated-label">{{ ls.l('VersusEstimated') }}</span>
-                <span class="estimated-value">{{ field.estimated }}</span>
+            <div class="chart-line">
+                <div [ngStyle]="{width: field.percent, 'background-color': field.color}"></div>
+            </div>
+            <div class="chart-footer">
+                <span class="caption">{{ls.ls(localization, 'VersusEstimated')}}</span>
+                <span class="percent-value">{{0.1 | percent}}</span>
             </div>
             <!--<div class="chart-progress"><span>{{ls.l('Progress')}}</span><span>{{ field.percent }}</span></div>-->
         </div>

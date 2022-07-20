@@ -11,26 +11,35 @@ export class MainConfig implements ConfigInterface {
     localizationSource = 'CRM';
     navigation: ConfigNavigation[] = [
         {
-            text: 'Home',
-            route: '/app/home'
-        },
-        {
+            icon: 'dashboard',
             text: 'Dashboard',
-            route: '/app/dashboard'
+            route: '/app/dashboard',
+            feature: AppFeatures.PortalDashboard
         },
         {
-            text: 'Leads',
-            route: '/app/leads'
+            icon: 'refferals',
+            text: 'RefferedLeads',
+            route: '/app/leads',
+            feature: AppFeatures.PortalLeads
         },
         {
-            text: 'CRM',
+            icon: 'invoices',
+            text: 'MyInvoices',
+            route: '/app/invoices',
+            feature: AppFeatures.PortalInvoices
+        },
+        {
+            icon: 'ambassadors',
+            text: 'MyReferralPortal',
+            route: '/app/reseller-info',
+            feature: AppFeatures.PortalReseller
+        },
+        {
+            icon: 'crm',
+            text: 'CRMLogin',
             route: 'platform',
             permission: AppPermissions.CRM,
             feature: AppFeatures.CRM
-        },
-        {
-            text: 'ResellerInfo',
-            route: '/app/reseller-info'
         }
     ];
 }

@@ -53,7 +53,7 @@ export class RouteGuard implements CanActivate, CanActivateChild {
         if ((route.data && route.data['permission'] && route.data['permission'] === 'Detect.Route') || isStateRoot)
             this.router.navigate([this.selectBestRoute()]);
         else
-            this.router.navigate(['/app/access-denied']);
+            this.router.navigate(['/access-denied']);
 
         return false;
     }
@@ -64,7 +64,7 @@ export class RouteGuard implements CanActivate, CanActivateChild {
 
     selectBestRoute(): string {
         return (abp.session.multiTenancySide == abp.multiTenancy.sides.TENANT ?
-            this.getBestRouteForTenant() : this.getBestRouteForHost()) || '/app/access-denied';
+            this.getBestRouteForTenant() : this.getBestRouteForHost()) || '/access-denied';
     }
 
     getBestRouteForTenant(preferedModule = null): string {

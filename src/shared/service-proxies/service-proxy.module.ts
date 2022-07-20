@@ -36,11 +36,11 @@ import * as ApiServiceProxies from './service-proxies';
         ApiServiceProxies.HostDashboardServiceProxy,
         ApiServiceProxies.PaymentServiceProxy,
         ApiServiceProxies.InvoiceServiceProxy,
-        ApiServiceProxies.UiCustomizationSettingsServiceProxy,
         ApiServiceProxies.LocalizationServiceProxy,
         ApiServiceProxies.PersonContactServiceProxy,
         ApiServiceProxies.MemberSubscriptionServiceProxy,
         ApiServiceProxies.MemberSettingsServiceProxy,
+        ApiServiceProxies.CommonUserInfoServiceProxy,
         { provide: HTTP_INTERCEPTORS, useClass: AbpHttpInterceptor, multi: true }
     ]
 })

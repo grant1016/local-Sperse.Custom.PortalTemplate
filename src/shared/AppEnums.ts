@@ -1,62 +1,13 @@
 import {
-    ChatMessageReadState,
-    ChatSide,
-    FriendshipState,
-    SettingScopes,
-    UserNotificationState,
-    TenantAvailabilityState,
-    ChartDateInterval
-//    RegisterTenantInputSubscriptionStartType,
-
+    SettingScopes
 } from '@shared/service-proxies/service-proxies';
 import { AppPermissions } from '@shared/AppPermissions';
 
-export class AppChatMessageReadState {
-    static Unread: number = ChatMessageReadState._1;
-    static Read: number = ChatMessageReadState._2;
-}
-
-export class AppChatSide {
-    static Sender: number = ChatSide._1;
-    static Receiver: number = ChatSide._2;
-}
-
-export class AppFriendshipState {
-    static Accepted: number = FriendshipState._1;
-    static Blocked: number = FriendshipState._2;
-}
-
-
 export class AppTimezoneScope {
-    static Application: number = SettingScopes._1;
-    static Tenant: number = SettingScopes._2;
-    static User: number = SettingScopes._4;
+    static Application: number = SettingScopes.Application;
+    static Tenant: number = SettingScopes.Tenant;
+    static User: number = SettingScopes.User;
 }
-
-export class AppUserNotificationState {
-    static Unread: number = UserNotificationState._0;
-    static Read: number = UserNotificationState._1;
-}
-
-export class AppTenantAvailabilityState {
-    static Available: number = TenantAvailabilityState._1;
-    static InActive: number = TenantAvailabilityState._2;
-    static NotFound: number = TenantAvailabilityState._3;
-}
-
-export class AppIncomeStatisticsDateInterval {
-    static Daily: number = ChartDateInterval._1;
-    static Weekly: number = ChartDateInterval._2;
-    static Monthly: number = ChartDateInterval._3;
-}
-/*
-export class SubscriptionStartType {
-
-    static Free: number = RegisterTenantInputSubscriptionStartType._1;
-    static Trial: number = RegisterTenantInputSubscriptionStartType._2;
-    static Paid: number = RegisterTenantInputSubscriptionStartType._3;
-}
-*/
 
 export class AppEditionExpireAction {
     static DeactiveTenant = 'DeactiveTenant';

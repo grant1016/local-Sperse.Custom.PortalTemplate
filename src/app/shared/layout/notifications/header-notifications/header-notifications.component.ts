@@ -6,7 +6,8 @@ import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 
 /** Application imports */
-import { InstanceServiceProxy, NotificationServiceProxy, TenantSubscriptionServiceProxy, UserNotificationDto, UserNotificationState, GetNotificationsOutput } from '@shared/service-proxies/service-proxies';
+import { InstanceServiceProxy, NotificationServiceProxy, TenantSubscriptionServiceProxy, 
+    UserNotificationDto, UserNotificationState, GetNotificationsOutput } from '@shared/service-proxies/service-proxies';
 import { IFormattedUserNotification, UserNotificationHelper } from '../UserNotificationHelper';
 import { AppService } from '@app/app.service';
 import { NotificationsComponent } from '@app/shared/layout/notifications/notifications.component';
@@ -123,7 +124,9 @@ export class HeaderNotificationsComponent implements OnInit {
     }
 
     loadNotifications(): void {
-        this.notificationService.getUserNotifications(UserNotificationState._0, 3, 0).subscribe((result: GetNotificationsOutput) => {
+        this.notificationService.getUserNotifications(
+            UserNotificationState.Unread, undefined, undefined, 3, 0
+        ).subscribe((result: GetNotificationsOutput) => {
             this.unreadNotificationCount = result.items.length;
             this.notifications = [];
             $.each(result.items, (index, item: UserNotificationDto) => {

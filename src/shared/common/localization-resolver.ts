@@ -50,7 +50,8 @@ export class LocalizationResolver implements CanActivate, CanActivateChild {
     checkLoadLocalization(sourceName) {
         let cultureName = abp.localization.currentLanguage.name,
             source: any = abp.localization.sources.find(item => item.name == sourceName);
-        if (abp.localization.values[sourceName])
+        if (abp.localization.values[sourceName] && 
+                Object.keys(abp.localization.values[sourceName]).length !== 0)
             return of(true);
 
         abp.localization.values[sourceName] = <any>{};

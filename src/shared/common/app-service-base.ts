@@ -3,7 +3,7 @@ import { Injector } from '@angular/core';
 import { DefaultUrlSerializer, UrlTree } from '@angular/router';
 
 /** Third party imports */
-import { Subscription, Subject } from 'rxjs';
+import { Subscription, BehaviorSubject } from 'rxjs';
 import camelCase from 'lodash/camelCase';
 import cloneDeep from 'lodash/cloneDeep';
 
@@ -17,7 +17,7 @@ import { Module } from './module.interface';
 export abstract class AppServiceBase {
     private readonly MODULE_DEFAULT: string;
 
-    private config: Subject<ConfigInterface> = new Subject<ConfigInterface>();
+    private config: BehaviorSubject<ConfigInterface> = new BehaviorSubject<ConfigInterface>(null);
     private subscribers: Array<Subscription> = [];
     private modules: Array<Module>;
     private configs: { [id: string]: ConfigInterface; };

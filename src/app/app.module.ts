@@ -6,6 +6,7 @@ import * as ngCommon from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 
 /** Application imports */
+import { AppRedirectGuard } from '@app/shared/common/auth/app-redirect-guard';
 import { AppStoreModule } from '@app/store/app-store.module';
 import { LayoutModule } from './shared/layout/layout.module';
 import { CommonModule } from '@shared/common/common.module';
@@ -16,7 +17,6 @@ import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { DashboardComponent } from '@app/main/dashboard/dashboard.component';
 import { MemberSubscriptionServiceProxy } from '@shared/service-proxies/service-proxies';
-import { AccessDeniedComponent } from './main/access-denied/access-denied.component';
 import { ExportGoogleSheetService } from '@shared/common/export/export-google-sheets/export-google-sheets';
 import { ExportService } from '@shared/common/export/export.service';
 import { AppStoreService } from '@app/store/app-store.service';
@@ -26,8 +26,7 @@ import { InstanceServiceProxy, TenantSubscriptionServiceProxy } from '@shared/se
 @NgModule({
     declarations: [
         AppComponent,
-        DashboardComponent,
-        AccessDeniedComponent
+        DashboardComponent
     ],
     imports: [
         ngCommon.CommonModule,
@@ -43,6 +42,7 @@ import { InstanceServiceProxy, TenantSubscriptionServiceProxy } from '@shared/se
         })
     ],
     providers: [
+        AppRedirectGuard,
         AppService,
         ExportService,
         AppStoreService,

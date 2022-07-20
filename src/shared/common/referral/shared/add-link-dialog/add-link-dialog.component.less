@@ -1,0 +1,45 @@
+:host {
+    .mat-form-field {
+        display: block;
+    }
+
+    .btn-primary {
+        background-color: #1e5484;
+        border-color: #1e5484;
+
+        &:hover {
+            background-color: lighten(#1e5484, 10%);
+            border-color: lighten(#1e5484, 10%);
+        }
+    }
+
+    .logo-area {
+        width: auto;
+        height: 130px;
+        cursor: pointer;
+        background-color: #F4F4F4;
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-position: center;
+    }
+
+    ::ng-deep country-phone-number {
+        height: 50px;
+        display: block;
+        margin: 3px 0;
+        .wrapper {
+            width: 100%!important;
+            height: 35px;
+        }
+        .input-group {
+            border-bottom: none!important;
+        }
+        international-phone-number {
+            border-bottom: 1px solid rgba(0,0,0,.42);
+            display: block;
+        }
+        input {
+            padding: 0px;
+        }
+    }
+}

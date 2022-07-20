@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="14.54" height="19.387" viewBox="0 0 14.54 19.387">
+  <g id="invoices_8480" data-name="invoices 8480" transform="translate(0)">
+    <g id="shopping-list" transform="translate(0)">
+      <g id="invoices_8055" data-name="invoices 8055" transform="translate(2.424 7.271)">
+        <g id="invoices_8054" data-name="invoices 8054">
+          <path id="invoices_5914" data-name="invoices 5914" d="M132.693,192.186a.608.608,0,0,0-.858,0l-1.994,2-.783-.784a.606.606,0,0,0-.857.857l1.212,1.212a.6.6,0,0,0,.428.178.608.608,0,0,0,.429-.177l2.423-2.423A.606.606,0,0,0,132.693,192.186Z" transform="translate(-128.024 -192.008)" fill="#616a6e"/>
+        </g>
+      </g>
+      <g id="invoices_8057" data-name="invoices 8057" transform="translate(2.424 12.117)">
+        <g id="invoices_8056" data-name="invoices 8056">
+          <path id="invoices_5915" data-name="invoices 5915" d="M132.693,320.186a.608.608,0,0,0-.858,0l-1.994,2-.783-.783a.606.606,0,0,0-.857.857l1.212,1.212a.607.607,0,0,0,.857,0l2.423-2.423A.606.606,0,0,0,132.693,320.186Z" transform="translate(-128.024 -320.008)" fill="#616a6e"/>
+        </g>
+      </g>
+      <g id="invoices_8059" data-name="invoices 8059" transform="translate(8.482 8.482)">
+        <g id="invoices_8058" data-name="invoices 8058">
+          <path id="invoices_5916" data-name="invoices 5916" d="M291.029,224h-2.423a.606.606,0,0,0,0,1.212h2.423a.606.606,0,1,0,0-1.212Z" transform="translate(-288 -224)" fill="#616a6e"/>
+        </g>
+      </g>
+      <g id="invoices_8061" data-name="invoices 8061" transform="translate(8.482 13.329)">
+        <g id="invoices_8060" data-name="invoices 8060">
+          <path id="invoices_5917" data-name="invoices 5917" d="M291.029,352h-2.423a.606.606,0,0,0,0,1.212h2.423a.606.606,0,1,0,0-1.212Z" transform="translate(-288 -352)" fill="#616a6e"/>
+        </g>
+      </g>
+      <g id="invoices_8063" data-name="invoices 8063">
+        <g id="invoices_8062" data-name="invoices 8062">
+          <path id="invoices_5918" data-name="invoices 5918" d="M77.329,2.423H74.905V1.818a.606.606,0,0,0-.606-.606H72.985a1.819,1.819,0,0,0-3.429,0H68.241a.606.606,0,0,0-.606.606v.606H65.212A1.214,1.214,0,0,0,64,3.635V18.176a1.214,1.214,0,0,0,1.212,1.212H77.329a1.214,1.214,0,0,0,1.212-1.212V3.635A1.214,1.214,0,0,0,77.329,2.423Zm-8.482,0h1.212a.606.606,0,0,0,.606-.606.606.606,0,1,1,1.212,0,.606.606,0,0,0,.606.606h1.212V3.635H68.847Zm8.482,15.752H65.212V3.635h2.423v.606a.606.606,0,0,0,.606.606H74.3a.606.606,0,0,0,.606-.606V3.635h2.423Z" transform="translate(-64)" fill="#616a6e"/>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>
