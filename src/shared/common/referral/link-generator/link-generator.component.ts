@@ -9,6 +9,8 @@ import { map, switchMap } from 'rxjs/operators';
 
 /** Application imports */
 import { NotifyService } from 'abp-ng2-module';
+import { AppPermissions } from '@shared/AppPermissions';
+import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { ProfileService } from '@shared/common/profile-service/profile.service';
 import { GeneratorLink } from '@shared/common/referral/link-generator/generator-link.interface';
@@ -59,11 +61,13 @@ export class LinkGeneratorComponent {
         })
     );
     public window = window;
+    manageAllowed = this.permissionService.isGranted(AppPermissions.CRMManageAffiliateLinks);
 
     constructor(
+        private permissionService: AppPermissionService,
         private clipboardService: ClipboardService,
         private notifyService: NotifyService,
-        public ls: AppLocalizationService,
+        public ls: AppLocalizationService,        
         private profileService: ProfileService,
         private sharingService: SharingService,
         private referralService: ReferralService,
@@ -105,6 +109,9 @@ export class LinkGeneratorComponent {
     }
 
     addEditNewLink(linkInfo?) {
+        if (!this.manageAllowed)
+            return ;
+
         const dialogRef = this.dialog.open(AddLinkDialogComponent, {
             width: '420px',
             data: new AffiliateLinkInfo(linkInfo || {})
