@@ -5,7 +5,7 @@
                  height="30px"
                  (onValueChanged)="search($event)">
     </dx-text-box>
-    <button class="btn btn-primary" (click)="addEditNewLink()">{{ls.l('AddTrackingLink.AddLink')}}</button>
+    <button *ngIf="manageAllowed" class="btn btn-primary" (click)="addEditNewLink()">{{ls.l('AddTrackingLink.AddLink')}}</button>
 </div>
 <div class="grid">
     <div class="tab">{{ls.l('GetLinks')}}</div>
