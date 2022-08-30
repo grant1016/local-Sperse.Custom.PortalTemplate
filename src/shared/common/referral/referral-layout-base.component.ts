@@ -6,9 +6,12 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { takeUntil } from 'rxjs/operators';
 
 /** Application imports */
+import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { AccountSelectorService } from '@app/shared/layout/account-selector/account-selector.service';
+import { AppPermissions } from '@shared/AppPermissions'
+import { AppFeatures } from '@shared/AppFeatures'
 
 @Component({
     selector: 'referral-layout-base',
@@ -26,12 +29,16 @@ export class ReferralLayoutBaseComponent implements OnDestroy {
     readonly COMMISSIONS_TAB_INDEX  = 2;
     readonly LEDGER_TAB_INDEX       = 3;
 
+    isCRMEnabled = this.permission.isGranted(AppPermissions.CRM);
+    isCRMCommissionsEnabled = abp.features.isEnabled(AppFeatures.CRMCommissions);
+
     selectedTabIndex: number = this.DASHBOARD_TAB_INDEX;
     showReferralInfo = true;
     constructor(
         private changeDetectorRef: ChangeDetectorRef,
         private lifeCycleSubject: LifecycleSubjectsService,
         public accountSelectorService: AccountSelectorService,
+        public permission: AppPermissionService,
         public activatedRoute: ActivatedRoute,
         public ls: AppLocalizationService,
         public router: Router
