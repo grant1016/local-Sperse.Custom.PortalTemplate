@@ -3,8 +3,12 @@ import { ChangeDetectionStrategy, ComponentFactoryResolver, ViewChild,
     Directive, Component, ViewContainerRef, OnInit, Inject } from '@angular/core';
 
 /** Application imports */
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { ReferralLayoutBaseComponent } from './referral-layout-base.component';
 import { ReferralLayoutLightComponent } from './referral-layout-light.component';
+import { AppPermissions } from '@shared/AppPermissions'
+import { AppFeatures } from '@shared/AppFeatures'
 
 @Directive({
     selector: '[ad-referral]'
@@ -16,19 +20,28 @@ export class ReferralAdDirective {
 @Component({
     selector: 'referral',
     templateUrl: 'referral.component.html',
+    styleUrls: [
+        'referral.component.less'
+    ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ReferralComponent implements OnInit {
     @ViewChild(ReferralAdDirective, { static: true }) adDirective: ReferralAdDirective;
     componentRef: any;
 
+    isCRMEnabled = this.permission.isGranted(AppPermissions.CRM);
+    isCRMCommissionsEnabled = abp.features.isEnabled(AppFeatures.CRMCommissions);
+
     constructor(
         private componentFactoryResolver: ComponentFactoryResolver,
-        @Inject('layout') private layout: string
+        public permission: AppPermissionService,
+        @Inject('layout') private layout: string,
+        public ls: AppLocalizationService
     ) {}
 
     ngOnInit(): void {
-        this.loadLayoutComponent();
+        if (this.isCRMEnabled || this.isCRMCommissionsEnabled)
+            this.loadLayoutComponent();
     }
 
     private loadLayoutComponent() {
