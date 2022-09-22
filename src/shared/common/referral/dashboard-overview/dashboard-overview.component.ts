@@ -2,6 +2,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, AfterViewInit, OnDestroy } from '@angular/core';
 
 /** Third party imports */
+import { of } from 'rxjs';
 import { map, first, takeUntil } from 'rxjs/operators';
 import { ClipboardService } from 'ngx-clipboard';
 
@@ -25,15 +26,18 @@ import { NotifyService } from 'abp-ng2-module';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DashboardOverviewComponent implements AfterViewInit, OnDestroy {
+    isCRMEnabled = this.permission.isGranted(AppPermissions.CRM);
+    isCRMCustomersEnabled = this.permission.isGranted(AppPermissions.CRMCustomers);
+
     selectInitialLink: any;
-    links$ = this.referralService.getLinks().pipe(map(links => {
+    links$ = this.isCRMEnabled ? this.referralService.getLinks().pipe(map(links => {
         return links.map((link, index) => {
             if (!index)
                 this.selectInitialLink = link;
             link['index'] = index + 1;
             return link;
         });
-    }));
+    })) : of([]);
     suggestedCopy: string;
     selectedLink: string;
     ledgerTotals: any;
@@ -56,12 +60,13 @@ export class DashboardOverviewComponent implements AfterViewInit, OnDestroy {
     }
 
     ngAfterViewInit() {
-        this.dashboardService.totalsData$.pipe(
-            takeUntil(this.lifeCycleSubject.deactivate$)
-        ).subscribe(totalsData => {
-            this.totalsData = totalsData;
-            this.changeDetectorRef.detectChanges();            
-        });
+        if (this.isCRMCustomersEnabled)
+            this.dashboardService.totalsData$.pipe(
+                takeUntil(this.lifeCycleSubject.deactivate$)
+            ).subscribe(totalsData => {
+                this.totalsData = totalsData;
+                this.changeDetectorRef.detectChanges();            
+            });
 
         this.referralService.ledgerTotals$.pipe(
             takeUntil(this.lifeCycleSubject.deactivate$)
@@ -72,10 +77,12 @@ export class DashboardOverviewComponent implements AfterViewInit, OnDestroy {
     }
 
     refresh() {
-        this.dashboardService.setOrgUnitIdsForTotals(undefined);
-        this.dashboardService.setContactIdForTotals(
-            this.appSessionService.user.contactId
-        );
+        if (this.isCRMCustomersEnabled) {
+            this.dashboardService.setOrgUnitIdsForTotals(undefined);
+            this.dashboardService.setContactIdForTotals(
+                this.appSessionService.user.contactId
+            );
+        }
     }
 
     onSelectedLinkChanged(event) {

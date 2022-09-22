@@ -9,6 +9,7 @@
             <dx-select-box
                 accessKey="selectLinks"
                 width="520px" height="43px"
+                [disabled]="!isCRMEnabled"
                 [dataSource]="links$ | async"
                 [placeholder]="ls.l('Links')"
                 fieldTemplate="field"
@@ -56,11 +57,11 @@
     </div>
 </div>
 <div class="statistic">
-    <div>
+    <div *ngIf="isCRMCustomersEnabled">
         <p>{{totalsData?.totalLeadCount || 0 | number}}</p>
         <span>{{ls.l('Leads')}}</span>
     </div>
-    <div>
+    <div *ngIf="isCRMCustomersEnabled">
         <p>{{totalsData?.totalClientCount || 0 | number}}</p>
         <span>{{ls.l('Customers')}}</span>
     </div>
