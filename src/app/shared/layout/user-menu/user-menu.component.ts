@@ -101,9 +101,10 @@ export class UserMenuComponent {
     navigate(item) {
         let route = item.route;
         if (!route.startsWith('/')) {
-            if (route.indexOf('platform'))
+            if (route.indexOf('platform')) {
+                this.authService.setTokenBeforeRedirect();
                 location.href = AppConsts.remoteServiceBaseUrl;
-            else
+            } else
                 window.open(route, '_blank');
         }
     }
