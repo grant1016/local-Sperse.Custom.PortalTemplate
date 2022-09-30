@@ -4,12 +4,14 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, AfterViewInit, O
 /** Third party imports */
 import { of } from 'rxjs';
 import { map, first, takeUntil } from 'rxjs/operators';
+import { MatDialog } from '@angular/material/dialog';
 import { ClipboardService } from 'ngx-clipboard';
 
 /** Application imports */
 import { AppPermissions } from '@shared/AppPermissions';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { AppSessionService } from '@shared/common/session/app-session.service';
+import { PayoutMethodDialogComponent } from '../shared/payout-method-dialog/payout-method-dialog.component';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 import { DashboardWidgetsService } from '@shared/crm/dashboard-widgets/dashboard-widgets.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -44,6 +46,7 @@ export class DashboardOverviewComponent implements AfterViewInit, OnDestroy {
     totalsData: any;
 
     constructor(
+        public dialog: MatDialog,
         public ls: AppLocalizationService,
         public permission: AppPermissionService,
         public dashboardService: DashboardWidgetsService,
@@ -97,6 +100,12 @@ export class DashboardOverviewComponent implements AfterViewInit, OnDestroy {
     copyLink() {
         this.clipboardService.copyFromContent(this.selectedLink);
         this.notifyService.info(this.ls.l('SavedToClipboard'));
+    }
+
+    showPayoutMethodDialog() {
+        this.dialog.open(PayoutMethodDialogComponent, {
+            width: '420px'
+        });
     }
 
     activate() {

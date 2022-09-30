@@ -53,7 +53,7 @@
     <div class="right">
         <h3>{{ls.l('Important')}}</h3>
         <p>{{ls.l('You don\'t have a payout method selected. Please select one now so we can pay you.')}}</p>
-        <button>{{ls.l('Select payout method')}}</button>
+        <button (click)="showPayoutMethodDialog()">{{ls.l('Select payout method')}}</button>
     </div>
 </div>
 <div class="statistic">

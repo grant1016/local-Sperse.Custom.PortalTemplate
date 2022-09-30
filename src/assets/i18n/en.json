@@ -67,6 +67,19 @@
             "CategoryRequired": "Category is required",    
             "EnterSuggestedCopy": "Enter Suggested Copy",
             "SuggestedCopyRequired": "Suggested Copy is required"
+        },
+        "PaymentMethodDialog": {
+            "Title": "Select Payment Method",
+            "BeneficiaryName": "Beneficiary Name",
+            "BeneficiaryStreetAddress": "Beneficiary Street Address",
+            "BeneficiaryCityAddress": "Beneficiary City Address",
+            "BeneficiaryBankName": "Beneficiary Bank Name",
+            "BeneficiaryBankStreetAddress": "Beneficiary Bank Street Address",
+            "BeneficiaryBankCityAddress": "Beneficiary Bank City Address",
+            "BankAccountNumber": "Bank Account Number",
+            "BankRoutingNumber": "Bank Routing Number",
+            "SwiftCodeForUSDollar": "Swift Code (For US Dollar)",
+            "SwiftCode": "Swift Code"
         }
     }
 }

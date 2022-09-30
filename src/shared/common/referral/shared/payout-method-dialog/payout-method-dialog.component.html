@@ -1,0 +1,72 @@
+<h1 mat-dialog-title>{{ls.l('PaymentMethodDialog.Title')}}</h1>
+<div mat-dialog-content>
+    <mat-form-field>
+        <mat-label>{{ls.l('Types')}}</mat-label>
+        <select matNativeControl [(ngModel)]="setting.type">
+            <option *ngFor="let type of paymentTypes" [value]="type">
+              {{ls.l(type)}}
+            </option>
+        </select>
+    </mat-form-field>
+
+    <mat-form-field *ngIf="setting.type == paymentSettingType.PayPal">
+        <mat-label>{{ls.l('Email')}}<p>*</p></mat-label>
+        <input matInput [(ngModel)]="setting.emailAddress" [formControl]="email">
+    </mat-form-field>
+
+    <mat-form-field *ngIf="setting.type == paymentSettingType.BankTransfer">
+        <mat-label>{{ls.l('PaymentMethodDialog.BeneficiaryName')}}</mat-label>
+        <input matInput [(ngModel)]="setting.beneficiaryName">
+    </mat-form-field>
+
+    <mat-form-field *ngIf="setting.type == paymentSettingType.BankTransfer">
+        <mat-label>{{ls.l('PaymentMethodDialog.BeneficiaryStreetAddress')}}</mat-label>
+        <input matInput [(ngModel)]="setting.beneficiaryStreetAddress">
+    </mat-form-field>
+
+    <mat-form-field *ngIf="setting.type == paymentSettingType.BankTransfer">
+        <mat-label>{{ls.l('PaymentMethodDialog.BeneficiaryCityAddress')}}</mat-label>
+        <input matInput [(ngModel)]="setting.beneficiaryCityAddress">
+    </mat-form-field>
+
+    <mat-form-field *ngIf="setting.type == paymentSettingType.BankTransfer">
+        <mat-label>{{ls.l('PaymentMethodDialog.BeneficiaryBankName')}}</mat-label>
+        <input matInput [(ngModel)]="setting.beneficiaryBankName">
+    </mat-form-field>
+
+    <mat-form-field *ngIf="setting.type == paymentSettingType.BankTransfer">
+        <mat-label>{{ls.l('PaymentMethodDialog.BeneficiaryBankStreetAddress')}}</mat-label>
+        <input matInput [(ngModel)]="setting.beneficiaryBankStreetAddress">
+    </mat-form-field>
+
+    <mat-form-field *ngIf="setting.type == paymentSettingType.BankTransfer">
+        <mat-label>{{ls.l('PaymentMethodDialog.BeneficiaryBankCityAddress')}}</mat-label>
+        <input matInput [(ngModel)]="setting.beneficiaryBankCityAddress">
+    </mat-form-field>
+
+    <mat-form-field *ngIf="setting.type == paymentSettingType.BankTransfer">
+        <mat-label>{{ls.l('PaymentMethodDialog.BankAccountNumber')}}<p>*</p></mat-label>
+        <input matInput [(ngModel)]="setting.bankAccountNumber" [formControl]="bankAccountNumber">
+    </mat-form-field>
+
+    <mat-form-field *ngIf="setting.type == paymentSettingType.BankTransfer">
+        <mat-label>{{ls.l('PaymentMethodDialog.BankRoutingNumber')}}</mat-label>
+        <input matInput [(ngModel)]="setting.bankRoutingNumber">
+    </mat-form-field>
+
+    <mat-form-field *ngIf="setting.type == paymentSettingType.BankTransfer">
+        <mat-label>{{ls.l('PaymentMethodDialog.SwiftCodeForUSDollar')}}</mat-label>
+        <input matInput [(ngModel)]="setting.swiftCodeForUSDollar">
+    </mat-form-field>
+
+    <mat-form-field *ngIf="setting.type == paymentSettingType.BankTransfer">
+        <mat-label>{{ls.l('PaymentMethodDialog.SwiftCode')}}</mat-label>
+        <input matInput [(ngModel)]="setting.swiftCode">
+    </mat-form-field>
+</div>
+<div mat-dialog-actions>
+    <button class="btn btn-default" (click)="close()">{{ls.l('Cancel')}}</button>
+    <button class="btn btn-primary" cdkFocusInitial (click)="update()">
+        {{ls.l('Update')}}
+    </button>
+</div>

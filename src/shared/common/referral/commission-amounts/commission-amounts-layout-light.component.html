@@ -43,9 +43,14 @@
                 (click)="requestWithdrawal()">
             {{ ls.l('Referral.RequestWithdrawal') }}
         </button>
-        <div class="pay-pal">
-            <span>{{ls.l('You\'re connected with')}}<img src="assets/common/icons/paypal-logo.png" width="40px" height="auto"></span>
-            <p class="email">{{userEmailAddress}}</p>
+        <div class="payment-method" *ngIf="paymentSetting">
+            <div class="pay-pal" *ngIf="paymentSetting?.type == paymentSettingType.PayPal">
+                <span>{{ls.l('You\'re connected with')}}<img src="assets/common/icons/paypal-logo.png" width="40px" height="auto"></span>
+                <p class="email">{{paymentSettingType?.emailAddress}}</p>
+            </div>
+            <div class="bank-transfer" *ngIf="paymentSetting?.type == paymentSettingType.BankTransfer">
+                <span>{{ls.l('You have Bank Transfer account configured!')}}</span>
+            </div>
         </div>
     </div>
 </div>
