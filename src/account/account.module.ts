@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { UtilsModule } from '@shared/utils/utils.module';
 import { ModalModule } from 'ngx-bootstrap/modal';
+import { CodeInputModule } from 'angular-code-input';
 import { DxButtonModule } from 'devextreme-angular/ui/button';
 import { DxTextBoxModule } from 'devextreme-angular/ui/text-box';
 import { AccountRoutingModule } from './account-routing.module';
@@ -17,6 +18,8 @@ import { LoginService } from './login/login.service';
 import { SendTwoFactorCodeComponent } from './login/send-two-factor-code.component';
 import { ValidateTwoFactorCodeComponent } from './login/validate-two-factor-code.component';
 import { ForgotPasswordComponent } from './password/forgot-password.component';
+import { CombinedForgotPasswordComponent } from './password/combined-forgot-password.component';
+import { LoginVerificationComponent } from './password/login-verification.component';
 import { ResetPasswordComponent } from './password/reset-password.component';
 import { TenantChangeModalComponent } from './shared/tenant-change-modal.component';
 import { TenantChangeComponent } from './shared/tenant-change.component';
@@ -29,6 +32,7 @@ import { TranslateModule } from '@ngx-translate/core';
         CommonModule,
         FormsModule,
         SignupModule,
+        CodeInputModule,
         ModalModule.forRoot(),
         UtilsModule,
         AccountRoutingModule,
@@ -45,6 +49,8 @@ import { TranslateModule } from '@ngx-translate/core';
         TenantChangeModalComponent,
         LoginComponent,
         ForgotPasswordComponent,
+        LoginVerificationComponent,
+        CombinedForgotPasswordComponent,
         ResetPasswordComponent,
         EmailActivationComponent,
         ConfirmEmailComponent,

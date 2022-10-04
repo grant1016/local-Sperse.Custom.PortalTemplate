@@ -2,7 +2,8 @@ import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { LoginComponent } from './login/login.component';
 import { AutoLoginComponent } from './auto-login/auto-login.component';
-import { ForgotPasswordComponent } from './password/forgot-password.component';
+//import { ForgotPasswordComponent } from './password/forgot-password.component';
+import { CombinedForgotPasswordComponent } from './password/combined-forgot-password.component';
 import { ResetPasswordComponent } from './password/reset-password.component';
 import { EmailActivationComponent } from './email-activation/email-activation.component';
 import { ConfirmEmailComponent } from './email-activation/confirm-email.component';
@@ -21,7 +22,7 @@ import { SignupComponent } from './signup/signup.component';
                 children: [
                     { path: 'login', component: LoginComponent },
                     { path: 'auto-login', component: AutoLoginComponent },
-                    { path: 'forgot-password', component: ForgotPasswordComponent },
+                    { path: 'forgot-password', component: CombinedForgotPasswordComponent },
                     { path: 'reset-password', component: ResetPasswordComponent },
                     { path: 'email-activation', component: EmailActivationComponent },
                     { path: 'confirm-email', component: ConfirmEmailComponent },
