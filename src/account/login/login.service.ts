@@ -179,7 +179,7 @@ export class LoginService {
         this.initExternalLoginProviders();
     }
 
-    processAuthenticateResult(authenticateResult, redirectUrl?: string) {
+    processAuthenticateResult(authenticateResult, redirectUrl?: string, setCookiesOnly = false) {
         this.authenticateResult = authenticateResult;
 
         if (authenticateResult.shouldResetPassword) {
@@ -190,7 +190,8 @@ export class LoginService {
                 queryParams: {
                     userId: authenticateResult.userId,
                     tenantId: tenantId,
-                    resetCode: authenticateResult.passwordResetCode
+                    resetCode: authenticateResult.passwordResetCode,
+                    extlogin: setCookiesOnly
                 }
             });
 
@@ -209,24 +210,36 @@ export class LoginService {
                 redirectUrl = authenticateResult.returnUrl;
             }
 
-            this.login(
-                authenticateResult.accessToken,
-                authenticateResult.encryptedAccessToken,
-                authenticateResult.expireInSeconds,
-                this.authenticateModel.rememberClient,
-                authenticateResult.twoFactorRememberClientToken,
-                redirectUrl
-            );
+            if (setCookiesOnly) {
+                this.authService.setLoginCookies(
+                    authenticateResult.accessToken, 
+                    authenticateResult.encryptedAccessToken, 
+                    authenticateResult.expireInSeconds, 
+                    this.authenticateModel.rememberClient, 
+                    authenticateResult.twoFactorRememberClientToken, 
+                    redirectUrl
+                );
+            } else
+                this.login(
+                    authenticateResult.accessToken,
+                    authenticateResult.encryptedAccessToken,
+                    authenticateResult.expireInSeconds,
+                    this.authenticateModel.rememberClient,
+                    authenticateResult.twoFactorRememberClientToken,
+                    redirectUrl
+                );
 
-        } else if (authenticateResult.detectedTenancies.length > 1) {
+        } else if (!!authenticateResult.detectedTenancies && authenticateResult.detectedTenancies.length > 1) {
             //Select tenant
-            this.router.navigate(['account/select-tenant']);
+            this.router.navigate(['account/select-tenant'],
+                {queryParams: {extlogin: setCookiesOnly}}
+            );
         } else {
             // Unexpected result!
 
             this.logService.warn('Unexpected authenticateResult!');
-            this.router.navigate(['account/login']);
-
+            if (!setCookiesOnly)
+                this.router.navigate(['account/login']);
         }
     }
 
