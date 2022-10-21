@@ -10,8 +10,8 @@ import {
     UserCommissionServiceProxy,
     UpdateAffiliateLinkInput,
     SetAffiliateLinkImageInput,
-    AffiliatePaymentSettingInfo,
-    AffiliatePaymentServiceProxy
+    AffiliatePayoutSettingInfo,
+    AffiliatePayoutServiceProxy
 } from '@shared/service-proxies/service-proxies';
 
 @Injectable()
@@ -23,10 +23,10 @@ export class ReferralService {
         publishReplay(),
         refCount()
     );
-    
+
     private _refreshPaymentSettings: BehaviorSubject<null> = new BehaviorSubject<null>(null);
-    refreshPaymentSettings$: Observable<null> = this._refreshPaymentSettings.asObservable();        
-    affiliatePaymentSettings$: Observable<AffiliatePaymentSettingInfo[]> = this.refreshPaymentSettings$.pipe(
+    refreshPaymentSettings$: Observable<null> = this._refreshPaymentSettings.asObservable();
+    affiliatePaymentSettings$: Observable<AffiliatePayoutSettingInfo[]> = this.refreshPaymentSettings$.pipe(
         switchMap(() => this.paymentProxy.getAll()),
         publishReplay(),
         refCount()
@@ -34,7 +34,7 @@ export class ReferralService {
 
     constructor(
         private ls: AppLocalizationService,
-        private paymentProxy: AffiliatePaymentServiceProxy,
+        private paymentProxy: AffiliatePayoutServiceProxy,
         private userCommission: UserCommissionServiceProxy,
         private affiliateLinkProxy: AffiliateLinkServiceProxy
     ) {}

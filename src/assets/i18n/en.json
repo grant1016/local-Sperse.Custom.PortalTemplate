@@ -70,16 +70,26 @@
         },
         "PaymentMethodDialog": {
             "Title": "Select Payment Method",
-            "BeneficiaryName": "Beneficiary Name",
-            "BeneficiaryStreetAddress": "Beneficiary Street Address",
-            "BeneficiaryCityAddress": "Beneficiary City Address",
-            "BeneficiaryBankName": "Beneficiary Bank Name",
-            "BeneficiaryBankStreetAddress": "Beneficiary Bank Street Address",
-            "BeneficiaryBankCityAddress": "Beneficiary Bank City Address",
-            "BankAccountNumber": "Bank Account Number",
-            "BankRoutingNumber": "Bank Routing Number",
-            "SwiftCodeForUSDollar": "Swift Code (For US Dollar)",
-            "SwiftCode": "Swift Code"
+            "PaymentCurrency": "Payment Currency",
+            "AccountName": "Name on Account",
+            "BankCode": "Bank Code",
+            "AccountNumber": "Account Number",
+            "IBAN": "IBAN",
+            "NationalIDNumber": "National ID Number",
+            "TaxID": "Tax ID",
+            "SWIFT": "SWIFT",
+            "BankName": "Bank Name",
+            "BankAddress": "Bank Address",
+            "BankAddress2": "Bank Address 2",
+            "BankCity": "Bank City",
+            "BankState": "Bank Province",
+            "BankZip": "Bank Zip",
+            "Country": "Country",
+            "IntermediarySwift": "Intermediary Swift",
+            "IntermediaryBankName": "Intermediary Bank Name",
+            "IntermediaryBankCountry": "Intermediary Bank Country",
+            "IntermediaryBankCity": "Intermediary Bank City",
+            "IntermediaryAccountNumber": "Intermediary Account Number"
         }
     }
 }

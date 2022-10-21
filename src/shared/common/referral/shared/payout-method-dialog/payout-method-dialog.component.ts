@@ -9,11 +9,11 @@ import { first, finalize } from 'rxjs/operators';
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { 
-    AffiliatePaymentSettingInfo, 
-    AffiliatePaymentServiceProxy, 
-    AffiliatePaymentSettingInput, 
-    PaymentSettingType 
+import {
+    AffiliatePayoutSettingInfo,
+    AffiliatePayoutServiceProxy,
+    AffiliatePayoutSettingInput,
+    PaymentSettingType
 } from '@shared/service-proxies/service-proxies';
 import { ReferralService } from '@shared/common/referral/referral.service';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
@@ -38,7 +38,7 @@ export class PayoutMethodDialogComponent {
 
     paymentSettingType = PaymentSettingType;
     paymentTypes = [PaymentSettingType.PayPal, PaymentSettingType.BankTransfer];
-    setting: AffiliatePaymentSettingInfo = new AffiliatePaymentSettingInfo();
+    setting: AffiliatePayoutSettingInfo = new AffiliatePayoutSettingInfo();
 
     constructor(
         private dialog: MatDialog,
@@ -46,16 +46,16 @@ export class PayoutMethodDialogComponent {
         public ls: AppLocalizationService,
         private loadingService: LoadingService,
         public referralService: ReferralService,
-        public paymentProxy: AffiliatePaymentServiceProxy,
+        public paymentProxy: AffiliatePayoutServiceProxy,
         public dialogRef: MatDialogRef<PayoutMethodDialogComponent>
     ) {
         this.setting.isDefault = true;
         this.setting.type = PaymentSettingType.PayPal;
         this.referralService.affiliatePaymentSettings$.pipe(
             first()
-        ).subscribe((settings: AffiliatePaymentSettingInfo[]) => {
+        ).subscribe((settings: AffiliatePayoutSettingInfo[]) => {
             if (settings && settings.length)
-                settings.some((setting: AffiliatePaymentSettingInfo) => {
+                settings.some((setting: AffiliatePayoutSettingInfo) => {
                     if (setting.isDefault)
                         this.setting = setting;
                 });
@@ -76,18 +76,27 @@ export class PayoutMethodDialogComponent {
                 this.email.markAsTouched();
                 return abp.notify.error(this.ls.l('InvalidFieldValue', 'Email'));
             }
-            
-            this.setting.beneficiaryName = undefined;
-            this.setting.beneficiaryStreetAddress = undefined;
-            this.setting.beneficiaryCityAddress = undefined;
-            this.setting.beneficiaryBankName = undefined;
-            this.setting.beneficiaryBankStreetAddress = undefined;
-            this.setting.beneficiaryBankCityAddress = undefined;
-            this.setting.bankAccountNumber = undefined;
-            this.setting.bankRoutingNumberForACH = undefined;
-            this.setting.bankRoutingNumber = undefined;
-            this.setting.swiftCodeForUSDollar = undefined;
-            this.setting.swiftCode = undefined;
+
+            this.setting.paymentCurrency = undefined;
+            this.setting.accountName = undefined;
+            this.setting.bankCode = undefined;
+            this.setting.accountNumber = undefined;
+            this.setting.iban = undefined;
+            this.setting.nationalIDNumber = undefined;
+            this.setting.taxID = undefined;
+            this.setting.swift = undefined;
+            this.setting.bankName = undefined;
+            this.setting.bankAddress = undefined;
+            this.setting.bankAddress2 = undefined;
+            this.setting.bankCity = undefined;
+            this.setting.bankState = undefined;
+            this.setting.bankZip = undefined;
+            this.setting.country = undefined;
+            this.setting.intermediarySwift = undefined;
+            this.setting.intermediaryBankName = undefined;
+            this.setting.intermediaryBankCountry = undefined;
+            this.setting.intermediaryBankCity = undefined;
+            this.setting.intermediaryAccountNumber = undefined;
         } else {
             if (!this.bankAccountNumber.valid) {
                 this.bankAccountNumber.markAsTouched();
@@ -99,7 +108,7 @@ export class PayoutMethodDialogComponent {
         this.startLoading();
         this.setting.isDefault = true;
         this.paymentProxy.createOrUpdate(
-            new AffiliatePaymentSettingInput(this.setting)
+            new AffiliatePayoutSettingInput(this.setting)
         ).pipe(
             finalize(() => this.finishLoading())
         ).subscribe(() => {
