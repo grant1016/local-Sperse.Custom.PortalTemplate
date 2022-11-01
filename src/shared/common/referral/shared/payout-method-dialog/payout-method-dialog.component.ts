@@ -100,7 +100,7 @@ export class PayoutMethodDialogComponent {
         } else {
             if (!this.bankAccountNumber.valid) {
                 this.bankAccountNumber.markAsTouched();
-                return abp.notify.error(this.ls.l('FieldRequired', 'BankAccountNumber'));
+                return abp.notify.error(this.ls.l('RequiredField', 'BankAccountNumber'));
             }
             this.setting.emailAddress = undefined;
         }

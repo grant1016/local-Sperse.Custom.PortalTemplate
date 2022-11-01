@@ -11,6 +11,7 @@ import { ClipboardService } from 'ngx-clipboard';
 import { AppPermissions } from '@shared/AppPermissions';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { AppSessionService } from '@shared/common/session/app-session.service';
+import { AffiliatePayoutSettingInfo, PaymentSettingType } from '@shared/service-proxies/service-proxies';
 import { PayoutMethodDialogComponent } from '../shared/payout-method-dialog/payout-method-dialog.component';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 import { DashboardWidgetsService } from '@shared/crm/dashboard-widgets/dashboard-widgets.service';
@@ -30,8 +31,10 @@ import { NotifyService } from 'abp-ng2-module';
 export class DashboardOverviewComponent implements AfterViewInit, OnDestroy {
     isCRMEnabled = this.permission.isGranted(AppPermissions.CRM);
     isCRMCustomersEnabled = this.permission.isGranted(AppPermissions.CRMCustomers);
+    paymentSetting: AffiliatePayoutSettingInfo;
 
     selectInitialLink: any;
+    paymentSettingType = PaymentSettingType;
     links$ = this.isCRMEnabled ? this.referralService.getLinks().pipe(map(links => {
         return links.map((link, index) => {
             if (!index)
@@ -59,6 +62,17 @@ export class DashboardOverviewComponent implements AfterViewInit, OnDestroy {
         private appSessionService: AppSessionService,
         private lifeCycleSubject: LifecycleSubjectsService
     ) {
+        this.referralService.affiliatePaymentSettings$.pipe(
+            takeUntil(this.lifeCycleSubject.deactivate$)
+        ).subscribe((settings: AffiliatePayoutSettingInfo[]) => {
+            if (settings && settings.length)
+                settings.some((setting: AffiliatePayoutSettingInfo) => {
+                    if (setting.isDefault)
+                        this.paymentSetting = setting;
+                });
+            this.changeDetectorRef.detectChanges();
+        });
+
         this.refresh();
     }
 
