@@ -1,6 +1,8 @@
 <div class="referral-link-wrapper">
     <div class="left">
-        <b>{{ls.l('Your reward for reffering new customers')}}</b>&nbsp;{{ls.l('You get')}}&nbsp;<b>{{ls.l('20% recurring comission')}}</b>&nbsp;{{ls.l('for each reffered customer')}}
+        <ng-container *ngIf="userCommissionRates?.affiliateRate || userCommissionRates?.defaultAffiliateRate">
+            <b>{{ls.l('Your reward for referring new customers')}}:</b>&nbsp;{{ls.l('You get')}}&nbsp;<b>{{ls.l('Tier 1 - ') + getAffiliateRate() + ls.l(' and Tire 2 - ') + getAffiliateRateTier2() + ls.l(' recurring comission')}}</b>&nbsp;{{ls.l('for each reffered customer')}}
+        </ng-container>
     </div>
     <div class="center">
         <h1>{{ls.l('Share this referral link to your friends and followers')}}</h1>

@@ -9032,6 +9032,64 @@ export class CommissionServiceProxy {
     }
 
     /**
+     * @return Success
+     */
+    getAvailablePayoutTypes(): Observable<PaymentSettingType[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/Commission/GetAvailablePayoutTypes";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json;odata.metadata=minimal;odata.streaming=true"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetAvailablePayoutTypes(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetAvailablePayoutTypes(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<PaymentSettingType[]>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<PaymentSettingType[]>;
+        }));
+    }
+
+    protected processGetAvailablePayoutTypes(response: HttpResponseBase): Observable<PaymentSettingType[]> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(item);
+            }
+            else {
+                result200 = <any>null;
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<PaymentSettingType[]>(null as any);
+    }
+
+    /**
      * @param body (optional) 
      * @return Success
      */
@@ -31867,6 +31925,58 @@ export class PaymentServiceProxy {
         }
         return _observableOf<string[]>(null as any);
     }
+
+    /**
+     * @return Success
+     */
+    isStripeEnabled(): Observable<boolean> {
+        let url_ = this.baseUrl + "/api/services/CRM/Payment/IsStripeEnabled";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json;odata.metadata=minimal;odata.streaming=true"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processIsStripeEnabled(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processIsStripeEnabled(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<boolean>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<boolean>;
+        }));
+    }
+
+    protected processIsStripeEnabled(response: HttpResponseBase): Observable<boolean> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                result200 = resultData200 !== undefined ? resultData200 : <any>null;
+    
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<boolean>(null as any);
+    }
 }
 
 @Injectable()
@@ -48578,6 +48688,57 @@ export class UserCommissionServiceProxy {
             }));
         }
         return _observableOf<GetLedgerTotalsOutput>(null as any);
+    }
+
+    /**
+     * @return Success
+     */
+    getRatesInfo(): Observable<GetUserCommissionRatesOutput> {
+        let url_ = this.baseUrl + "/api/services/CRM/UserCommission/GetRatesInfo";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json;odata.metadata=minimal;odata.streaming=true"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetRatesInfo(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetRatesInfo(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<GetUserCommissionRatesOutput>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<GetUserCommissionRatesOutput>;
+        }));
+    }
+
+    protected processGetRatesInfo(response: HttpResponseBase): Observable<GetUserCommissionRatesOutput> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = GetUserCommissionRatesOutput.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<GetUserCommissionRatesOutput>(null as any);
     }
 }
 
@@ -73025,6 +73186,58 @@ export class GetUserChatFriendsWithSettingsOutput implements IGetUserChatFriends
 export interface IGetUserChatFriendsWithSettingsOutput {
     serverTime: moment.Moment;
     friends: FriendDto[] | undefined;
+}
+
+export class GetUserCommissionRatesOutput implements IGetUserCommissionRatesOutput {
+    affiliateRate!: number | undefined;
+    affiliateRateTier2!: number | undefined;
+    defaultAffiliateRate!: number | undefined;
+    defaultAffiliateRateTier2!: number | undefined;
+    commissionAffiliateAssignmentMode!: CommissionAffiliateAssignmentMode;
+
+    constructor(data?: IGetUserCommissionRatesOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.affiliateRate = _data["affiliateRate"];
+            this.affiliateRateTier2 = _data["affiliateRateTier2"];
+            this.defaultAffiliateRate = _data["defaultAffiliateRate"];
+            this.defaultAffiliateRateTier2 = _data["defaultAffiliateRateTier2"];
+            this.commissionAffiliateAssignmentMode = _data["commissionAffiliateAssignmentMode"];
+        }
+    }
+
+    static fromJS(data: any): GetUserCommissionRatesOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new GetUserCommissionRatesOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["affiliateRate"] = this.affiliateRate;
+        data["affiliateRateTier2"] = this.affiliateRateTier2;
+        data["defaultAffiliateRate"] = this.defaultAffiliateRate;
+        data["defaultAffiliateRateTier2"] = this.defaultAffiliateRateTier2;
+        data["commissionAffiliateAssignmentMode"] = this.commissionAffiliateAssignmentMode;
+        return data;
+    }
+}
+
+export interface IGetUserCommissionRatesOutput {
+    affiliateRate: number | undefined;
+    affiliateRateTier2: number | undefined;
+    defaultAffiliateRate: number | undefined;
+    defaultAffiliateRateTier2: number | undefined;
+    commissionAffiliateAssignmentMode: CommissionAffiliateAssignmentMode;
 }
 
 export class GetUserForEditOutput implements IGetUserForEditOutput {
