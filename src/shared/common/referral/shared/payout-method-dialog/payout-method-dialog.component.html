@@ -14,6 +14,14 @@
         <input matInput [(ngModel)]="setting.emailAddress" [formControl]="email">
     </mat-form-field>
 
+    <div *ngIf="setting.type == paymentSettingType.Stripe">
+        <div *ngIf="!setting.stripeAccountID">
+            <p><span>{{ls.l('PaymentMethodDialog.StripeAccountIsNotConnected')}}</span><span style="color: red; display: inline;">*</span></p>
+            <button class="btn btn-primary" style="height: 30px; padding: 6px 12px;" (click)="connectStripeAccount()">{{ls.l('PaymentMethodDialog.ConnectStripe')}}</button>
+        </div>
+        <div *ngIf="setting.stripeAccountID"><p>{{ls.l('PaymentMethodDialog.StripeAccountIsConnected')}}</p></div>
+    </div>
+    
     <mat-form-field *ngIf="setting.type == paymentSettingType.BankTransfer">
         <mat-label>{{ls.l('PaymentMethodDialog.PaymentCurrency')}}</mat-label>
         <input matInput [(ngModel)]="setting.paymentCurrency">

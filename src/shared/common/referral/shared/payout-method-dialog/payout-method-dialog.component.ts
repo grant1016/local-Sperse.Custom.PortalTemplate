@@ -17,6 +17,7 @@ import {
 } from '@shared/service-proxies/service-proxies';
 import { ReferralService } from '@shared/common/referral/referral.service';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
+import { MessageService } from 'abp-ng2-module';
 
 @Component({
     selector: 'payout-method-dialog',
@@ -37,12 +38,13 @@ export class PayoutMethodDialogComponent {
     );
 
     paymentSettingType = PaymentSettingType;
-    paymentTypes = [PaymentSettingType.PayPal, PaymentSettingType.BankTransfer];
+    paymentTypes = [PaymentSettingType.PayPal, PaymentSettingType.Stripe, PaymentSettingType.BankTransfer];
     setting: AffiliatePayoutSettingInfo = new AffiliatePayoutSettingInfo();
 
     constructor(
         private dialog: MatDialog,
         private elementRef: ElementRef,
+        private message: MessageService,
         public ls: AppLocalizationService,
         private loadingService: LoadingService,
         public referralService: ReferralService,
@@ -76,33 +78,17 @@ export class PayoutMethodDialogComponent {
                 this.email.markAsTouched();
                 return abp.notify.error(this.ls.l('InvalidFieldValue', 'Email'));
             }
+            this.clearBankTransferFields();
 
-            this.setting.paymentCurrency = undefined;
-            this.setting.accountName = undefined;
-            this.setting.bankCode = undefined;
-            this.setting.accountNumber = undefined;
-            this.setting.iban = undefined;
-            this.setting.nationalIDNumber = undefined;
-            this.setting.taxID = undefined;
-            this.setting.swift = undefined;
-            this.setting.bankName = undefined;
-            this.setting.bankAddress = undefined;
-            this.setting.bankAddress2 = undefined;
-            this.setting.bankCity = undefined;
-            this.setting.bankState = undefined;
-            this.setting.bankZip = undefined;
-            this.setting.country = undefined;
-            this.setting.intermediarySwift = undefined;
-            this.setting.intermediaryBankName = undefined;
-            this.setting.intermediaryBankCountry = undefined;
-            this.setting.intermediaryBankCity = undefined;
-            this.setting.intermediaryAccountNumber = undefined;
-        } else {
+        } else if (this.setting.type == PaymentSettingType.BankTransfer) {
             if (!this.bankAccountNumber.valid) {
                 this.bankAccountNumber.markAsTouched();
                 return abp.notify.error(this.ls.l('RequiredField', 'BankAccountNumber'));
             }
             this.setting.emailAddress = undefined;
+        } else {
+            this.setting.emailAddress = undefined;
+            this.clearBankTransferFields();
         }
 
         this.startLoading();
@@ -118,7 +104,45 @@ export class PayoutMethodDialogComponent {
         });
     }
 
+    clearBankTransferFields() {
+        this.setting.paymentCurrency = undefined;
+        this.setting.accountName = undefined;
+        this.setting.bankCode = undefined;
+        this.setting.accountNumber = undefined;
+        this.setting.iban = undefined;
+        this.setting.nationalIDNumber = undefined;
+        this.setting.taxID = undefined;
+        this.setting.swift = undefined;
+        this.setting.bankName = undefined;
+        this.setting.bankAddress = undefined;
+        this.setting.bankAddress2 = undefined;
+        this.setting.bankCity = undefined;
+        this.setting.bankState = undefined;
+        this.setting.bankZip = undefined;
+        this.setting.country = undefined;
+        this.setting.intermediarySwift = undefined;
+        this.setting.intermediaryBankName = undefined;
+        this.setting.intermediaryBankCountry = undefined;
+        this.setting.intermediaryBankCity = undefined;
+        this.setting.intermediaryAccountNumber = undefined;
+    }
+
     close(): void {
         this.dialogRef.close();
+    }
+
+    connectStripeAccount() {
+        this.message.confirm('', this.ls.l('PaymentMethodDialog.ConnectStripeAccountConfirmation'), (isConfirmed) => {
+            console.log(isConfirmed);
+            if (isConfirmed) {
+                this.startLoading();
+                this.paymentProxy.connectStripeAccount()
+                .pipe(
+                    finalize(() => this.finishLoading())
+                ).subscribe((url) => {
+                    window.location.href = url;
+                });
+            }
+        });
     }
 }

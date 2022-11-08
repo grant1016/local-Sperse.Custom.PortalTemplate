@@ -89,7 +89,11 @@
             "IntermediaryBankName": "Intermediary Bank Name",
             "IntermediaryBankCountry": "Intermediary Bank Country",
             "IntermediaryBankCity": "Intermediary Bank City",
-            "IntermediaryAccountNumber": "Intermediary Account Number"
+            "IntermediaryAccountNumber": "Intermediary Account Number",
+            "ConnectStripeAccountConfirmation": "Do you want to connect Stripe account ?",
+            "StripeAccountIsNotConnected": "Stripe account is not connected",
+            "StripeAccountIsConnected": "Stripe account is connected",
+            "ConnectStripe": "Connect Stripe"
         }
     }
 }
