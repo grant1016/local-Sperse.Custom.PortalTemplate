@@ -5,6 +5,7 @@ import { FormControl, Validators } from '@angular/forms';
 /** Third party imports */
 import { MatDialog, MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { first, finalize } from 'rxjs/operators';
+import { Observable } from 'rxjs';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
@@ -13,6 +14,7 @@ import {
     AffiliatePayoutSettingInfo,
     AffiliatePayoutServiceProxy,
     AffiliatePayoutSettingInput,
+    CommissionServiceProxy,
     PaymentSettingType
 } from '@shared/service-proxies/service-proxies';
 import { ReferralService } from '@shared/common/referral/referral.service';
@@ -22,7 +24,8 @@ import { MessageService } from 'abp-ng2-module';
 @Component({
     selector: 'payout-method-dialog',
     templateUrl: './payout-method-dialog.component.html',
-    styleUrls: ['./payout-method-dialog.component.less']
+    styleUrls: ['./payout-method-dialog.component.less'],
+    providers: [CommissionServiceProxy]
 })
 export class PayoutMethodDialogComponent {
     bankAccountNumber = new FormControl(
@@ -38,7 +41,7 @@ export class PayoutMethodDialogComponent {
     );
 
     paymentSettingType = PaymentSettingType;
-    paymentTypes = [PaymentSettingType.PayPal, PaymentSettingType.Stripe, PaymentSettingType.BankTransfer];
+    paymentTypes$: Observable<PaymentSettingType[]> = this.commissionProxy.getAvailablePayoutTypes();
     setting: AffiliatePayoutSettingInfo = new AffiliatePayoutSettingInfo();
 
     constructor(
@@ -48,6 +51,7 @@ export class PayoutMethodDialogComponent {
         public ls: AppLocalizationService,
         private loadingService: LoadingService,
         public referralService: ReferralService,
+        private commissionProxy: CommissionServiceProxy,
         public paymentProxy: AffiliatePayoutServiceProxy,
         public dialogRef: MatDialogRef<PayoutMethodDialogComponent>
     ) {

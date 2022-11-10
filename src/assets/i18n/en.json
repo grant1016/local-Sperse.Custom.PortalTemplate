@@ -42,6 +42,8 @@
             "YouCantRequestMoreThen": "You can't request more then {0}",
             "ShareLink": "Share this link on social media",
             "CopyYourReferralLink": "Get & Share link URL",
+            "AccountConfigured": "You have {0} account configured!",
+            "BankTransfer": "Bank Transfer",
             "Tier1": "T1",
             "Tier2": "T2"
         },

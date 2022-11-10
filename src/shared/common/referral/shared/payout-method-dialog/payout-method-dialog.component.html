@@ -3,9 +3,11 @@
     <mat-form-field>
         <mat-label>{{ls.l('Types')}}</mat-label>
         <select matNativeControl [(ngModel)]="setting.type">
-            <option *ngFor="let type of paymentTypes" [value]="type">
-              {{ls.l(type)}}
-            </option>
+            <ng-container *ngIf="paymentTypes$ | async as paymentTypes">
+                <option *ngFor="let type of paymentTypes" [value]="type">
+                {{ls.l(type)}}
+                </option>
+            </ng-container>
         </select>
     </mat-form-field>
 
