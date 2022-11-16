@@ -43,6 +43,8 @@ export class PayoutMethodDialogComponent {
     paymentSettingType = PaymentSettingType;
     paymentTypes$: Observable<PaymentSettingType[]> = this.commissionProxy.getAvailablePayoutTypes();
     setting: AffiliatePayoutSettingInfo = new AffiliatePayoutSettingInfo();
+    settings: AffiliatePayoutSettingInfo[];
+    type: PaymentSettingType;
 
     constructor(
         private dialog: MatDialog,
@@ -56,14 +58,17 @@ export class PayoutMethodDialogComponent {
         public dialogRef: MatDialogRef<PayoutMethodDialogComponent>
     ) {
         this.setting.isDefault = true;
-        this.setting.type = PaymentSettingType.PayPal;
+        this.type = PaymentSettingType.PayPal;
         this.referralService.affiliatePaymentSettings$.pipe(
             first()
         ).subscribe((settings: AffiliatePayoutSettingInfo[]) => {
             if (settings && settings.length)
+                this.settings = settings;
                 settings.some((setting: AffiliatePayoutSettingInfo) => {
-                    if (setting.isDefault)
+                    if (setting.isDefault) {
+                        this.type = setting.type;
                         this.setting = setting;
+                    }
                 });
         });
     }
@@ -148,5 +153,16 @@ export class PayoutMethodDialogComponent {
                 });
             }
         });
+    }
+
+    onTypeChanged() {
+        let setting = this.settings.find(item => item.type == this.type);
+        if (setting)
+            setTimeout(() => this.setting = setting, 100);
+        else {
+            this.setting = new AffiliatePayoutSettingInfo();
+            this.setting.type = this.type;
+            this.setting.isDefault = true;
+        }
     }
 }
