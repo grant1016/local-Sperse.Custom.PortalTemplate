@@ -83,12 +83,12 @@ export class DashboardOverviewComponent implements AfterViewInit, OnDestroy {
         this.refresh();
     }
 
-    getAffiliateRate(): string {
-        return ((this.userCommissionRates.affiliateRate || this.userCommissionRates.defaultAffiliateRate) * 100) + '%';
+    getAffiliateRate(): number {
+        return (this.userCommissionRates.affiliateRate || this.userCommissionRates.defaultAffiliateRate) * 100;
     }
 
-    getAffiliateRateTier2(): string {
-        return ((this.userCommissionRates.affiliateRateTier2 || this.userCommissionRates.defaultAffiliateRateTier2) * 100) + '%';
+    getAffiliateRateTier2(): number {
+        return (this.userCommissionRates.affiliateRateTier2 || this.userCommissionRates.defaultAffiliateRateTier2) * 100;
     }
 
     ngAfterViewInit() {
