@@ -11,7 +11,7 @@ import {
     UpdateAffiliateLinkInput,
     SetAffiliateLinkImageInput,
     AffiliatePayoutSettingInfo,
-    AffiliatePayoutServiceProxy
+    AffiliatePayoutSettingServiceProxy
 } from '@shared/service-proxies/service-proxies';
 
 @Injectable()
@@ -34,7 +34,7 @@ export class ReferralService {
 
     constructor(
         private ls: AppLocalizationService,
-        private paymentProxy: AffiliatePayoutServiceProxy,
+        private paymentProxy: AffiliatePayoutSettingServiceProxy,
         private userCommission: UserCommissionServiceProxy,
         private affiliateLinkProxy: AffiliateLinkServiceProxy
     ) {}

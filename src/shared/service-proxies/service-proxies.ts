@@ -1810,7 +1810,7 @@ export class AffiliateLinkServiceProxy {
 }
 
 @Injectable()
-export class AffiliatePayoutServiceProxy {
+export class AffiliatePayoutSettingServiceProxy {
     private http: HttpClient;
     private baseUrl: string;
     protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
@@ -1824,7 +1824,7 @@ export class AffiliatePayoutServiceProxy {
      * @return Success
      */
     getAll(): Observable<AffiliatePayoutSettingInfo[]> {
-        let url_ = this.baseUrl + "/api/services/CRM/AffiliatePayout/GetAll";
+        let url_ = this.baseUrl + "/api/services/CRM/AffiliatePayoutSetting/GetAll";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -1883,7 +1883,7 @@ export class AffiliatePayoutServiceProxy {
      * @return Success
      */
     createOrUpdate(body: AffiliatePayoutSettingInput | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CRM/AffiliatePayout/CreateOrUpdate";
+        let url_ = this.baseUrl + "/api/services/CRM/AffiliatePayoutSetting/CreateOrUpdate";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(body);
@@ -1934,7 +1934,7 @@ export class AffiliatePayoutServiceProxy {
      * @return Success
      */
     connectStripeAccount(): Observable<string> {
-        let url_ = this.baseUrl + "/api/services/CRM/AffiliatePayout/ConnectStripeAccount";
+        let url_ = this.baseUrl + "/api/services/CRM/AffiliatePayoutSetting/ConnectStripeAccount";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -1987,7 +1987,7 @@ export class AffiliatePayoutServiceProxy {
      * @return Success
      */
     delete(type: PaymentSettingType | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CRM/AffiliatePayout/Delete?";
+        let url_ = this.baseUrl + "/api/services/CRM/AffiliatePayoutSetting/Delete?";
         if (type === null)
             throw new Error("The parameter 'type' cannot be null.");
         else if (type !== undefined)
@@ -2032,6 +2032,64 @@ export class AffiliatePayoutServiceProxy {
             }));
         }
         return _observableOf<void>(null as any);
+    }
+
+    /**
+     * @return Success
+     */
+    getAvailablePayoutTypes(): Observable<PaymentSettingType[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/AffiliatePayoutSetting/GetAvailablePayoutTypes";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json;odata.metadata=minimal;odata.streaming=true"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetAvailablePayoutTypes(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetAvailablePayoutTypes(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<PaymentSettingType[]>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<PaymentSettingType[]>;
+        }));
+    }
+
+    protected processGetAvailablePayoutTypes(response: HttpResponseBase): Observable<PaymentSettingType[]> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(item);
+            }
+            else {
+                result200 = <any>null;
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<PaymentSettingType[]>(null as any);
     }
 }
 
@@ -9081,64 +9139,6 @@ export class CommissionServiceProxy {
             }));
         }
         return _observableOf<CommissionPayoutDto[]>(null as any);
-    }
-
-    /**
-     * @return Success
-     */
-    getAvailablePayoutTypes(): Observable<PaymentSettingType[]> {
-        let url_ = this.baseUrl + "/api/services/CRM/Commission/GetAvailablePayoutTypes";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Accept": "application/json;odata.metadata=minimal;odata.streaming=true"
-            })
-        };
-
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetAvailablePayoutTypes(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processGetAvailablePayoutTypes(response_ as any);
-                } catch (e) {
-                    return _observableThrow(e) as any as Observable<PaymentSettingType[]>;
-                }
-            } else
-                return _observableThrow(response_) as any as Observable<PaymentSettingType[]>;
-        }));
-    }
-
-    protected processGetAvailablePayoutTypes(response: HttpResponseBase): Observable<PaymentSettingType[]> {
-        const status = response.status;
-        const responseBlob =
-            response instanceof HttpResponse ? response.body :
-            (response as any).error instanceof Blob ? (response as any).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            if (Array.isArray(resultData200)) {
-                result200 = [] as any;
-                for (let item of resultData200)
-                    result200!.push(item);
-            }
-            else {
-                result200 = <any>null;
-            }
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<PaymentSettingType[]>(null as any);
     }
 
     /**
@@ -93946,6 +93946,7 @@ export interface IStoreEmailInput {
 export class StripeSettings implements IStripeSettings {
     apiKey!: string | undefined;
     webhookSingingSecret!: string | undefined;
+    connectWebhookSingingSecret!: string | undefined;
 
     constructor(data?: IStripeSettings) {
         if (data) {
@@ -93960,6 +93961,7 @@ export class StripeSettings implements IStripeSettings {
         if (_data) {
             this.apiKey = _data["apiKey"];
             this.webhookSingingSecret = _data["webhookSingingSecret"];
+            this.connectWebhookSingingSecret = _data["connectWebhookSingingSecret"];
         }
     }
 
@@ -93974,6 +93976,7 @@ export class StripeSettings implements IStripeSettings {
         data = typeof data === 'object' ? data : {};
         data["apiKey"] = this.apiKey;
         data["webhookSingingSecret"] = this.webhookSingingSecret;
+        data["connectWebhookSingingSecret"] = this.connectWebhookSingingSecret;
         return data;
     }
 }
@@ -93981,6 +93984,7 @@ export class StripeSettings implements IStripeSettings {
 export interface IStripeSettings {
     apiKey: string | undefined;
     webhookSingingSecret: string | undefined;
+    connectWebhookSingingSecret: string | undefined;
 }
 
 export class SubmitAnswerDto implements ISubmitAnswerDto {

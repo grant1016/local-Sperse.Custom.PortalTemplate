@@ -12,7 +12,7 @@ import { AppConsts } from '@shared/AppConsts';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import {
     AffiliatePayoutSettingInfo,
-    AffiliatePayoutServiceProxy,
+    AffiliatePayoutSettingServiceProxy,
     AffiliatePayoutSettingInput,
     CommissionServiceProxy,
     PaymentSettingType
@@ -41,7 +41,7 @@ export class PayoutMethodDialogComponent {
     );
 
     paymentSettingType = PaymentSettingType;
-    paymentTypes$: Observable<PaymentSettingType[]> = this.commissionProxy.getAvailablePayoutTypes();
+    paymentTypes$: Observable<PaymentSettingType[]> = this.paymentProxy.getAvailablePayoutTypes();
     setting: AffiliatePayoutSettingInfo = new AffiliatePayoutSettingInfo();
     settings: AffiliatePayoutSettingInfo[];
     type: PaymentSettingType;
@@ -53,8 +53,7 @@ export class PayoutMethodDialogComponent {
         public ls: AppLocalizationService,
         private loadingService: LoadingService,
         public referralService: ReferralService,
-        private commissionProxy: CommissionServiceProxy,
-        public paymentProxy: AffiliatePayoutServiceProxy,
+        public paymentProxy: AffiliatePayoutSettingServiceProxy,
         public dialogRef: MatDialogRef<PayoutMethodDialogComponent>
     ) {
         this.setting.isDefault = true;
