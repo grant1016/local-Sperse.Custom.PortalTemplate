@@ -64,8 +64,8 @@
                 <span>{{ls.l('You\'re connected with')}}<img src="assets/common/icons/paypal-logo.png" width="40px" height="auto"></span>
                 <p class="email">{{paymentSetting?.emailAddress}}</p>
             </div>
-            <div class="bank-transfer" *ngIf="paymentSetting?.type == paymentSettingType.BankTransfer">
-                <span>{{ls.l('You have Bank Transfer account configured!')}}</span>
+            <div class="bank-transfer" *ngIf="paymentSetting?.type == paymentSettingType.BankTransfer || paymentSetting?.type == paymentSettingType.Stripe">
+                <span>{{ls.l('Referral.AccountConfigured', ls.l(paymentSetting?.type == paymentSettingType.Stripe ? 'Stripe' : 'BankTransfer'))}}</span>
             </div>
             <div class="update-payment">
                 <a (click)="showPayoutMethodDialog()">{{ls.l('Update payout provider details')}}<i class="fa fa-arrow-right"></i></a>

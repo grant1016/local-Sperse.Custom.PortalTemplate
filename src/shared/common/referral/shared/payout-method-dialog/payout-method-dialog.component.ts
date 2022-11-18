@@ -57,7 +57,6 @@ export class PayoutMethodDialogComponent {
         public dialogRef: MatDialogRef<PayoutMethodDialogComponent>
     ) {
         this.setting.isDefault = true;
-        this.type = PaymentSettingType.PayPal;
         this.referralService.affiliatePaymentSettings$.pipe(
             first()
         ).subscribe((settings: AffiliatePayoutSettingInfo[]) => {
