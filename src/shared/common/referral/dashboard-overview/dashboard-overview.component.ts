@@ -8,6 +8,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ClipboardService } from 'ngx-clipboard';
 
 /** Application imports */
+import { AppFeatures } from '@shared/AppFeatures';
 import { AppPermissions } from '@shared/AppPermissions';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { AppSessionService } from '@shared/common/session/app-session.service';
@@ -32,6 +33,8 @@ import { NotifyService } from 'abp-ng2-module';
 export class DashboardOverviewComponent implements AfterViewInit, OnDestroy {
     isCRMEnabled = this.permission.isGranted(AppPermissions.CRM);
     isCRMCustomersEnabled = this.permission.isGranted(AppPermissions.CRMCustomers);
+    isCRMPaymentsEnabled = abp.features.isEnabled(AppFeatures.CRMPayments) &&
+        abp.features.isEnabled(AppFeatures.CRMCommissions);
     paymentSetting: AffiliatePayoutSettingInfo;
 
     selectInitialLink: any;

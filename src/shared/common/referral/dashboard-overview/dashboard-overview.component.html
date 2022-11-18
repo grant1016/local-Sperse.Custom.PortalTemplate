@@ -53,24 +53,26 @@
         </div>
     </div>
     <div class="right">
-        <h3>{{ls.l('Important')}}</h3>
-        <ng-container *ngIf="!paymentSetting">
-            <p>{{ls.l('You don\'t have a payout method selected. Please select one now so we can pay you.')}}</p>
-            <button (click)="showPayoutMethodDialog()">{{ls.l('Select payout method')}}</button>
-        </ng-container>
+        <ng-container *ngIf="isCRMPaymentsEnabled">
+            <h3>{{ls.l('Important')}}</h3>
+            <ng-container *ngIf="!paymentSetting">
+                <p>{{ls.l('You don\'t have a payout method selected. Please select one now so we can pay you.')}}</p>
+                <button (click)="showPayoutMethodDialog()">{{ls.l('Select payout method')}}</button>
+            </ng-container>
 
-        <div class="payment-method" *ngIf="paymentSetting">
-            <div class="pay-pal" *ngIf="paymentSetting?.type == paymentSettingType.PayPal">
-                <span>{{ls.l('You\'re connected with')}}<img src="assets/common/icons/paypal-logo.png" width="40px" height="auto"></span>
-                <p class="email">{{paymentSetting?.emailAddress}}</p>
+            <div class="payment-method" *ngIf="paymentSetting">
+                <div class="pay-pal" *ngIf="paymentSetting?.type == paymentSettingType.PayPal">
+                    <span>{{ls.l('You\'re connected with')}}<img src="assets/common/icons/paypal-logo.png" width="40px" height="auto"></span>
+                    <p class="email">{{paymentSetting?.emailAddress}}</p>
+                </div>
+                <div class="bank-transfer" *ngIf="paymentSetting?.type == paymentSettingType.BankTransfer || paymentSetting?.type == paymentSettingType.Stripe">
+                    <span>{{ls.l('Referral.AccountConfigured', ls.l(paymentSetting?.type == paymentSettingType.Stripe ? 'Stripe' : 'BankTransfer'))}}</span>
+                </div>
+                <div class="update-payment">
+                    <a (click)="showPayoutMethodDialog()">{{ls.l('Update payout provider details')}}<i class="fa fa-arrow-right"></i></a>
+                </div>
             </div>
-            <div class="bank-transfer" *ngIf="paymentSetting?.type == paymentSettingType.BankTransfer || paymentSetting?.type == paymentSettingType.Stripe">
-                <span>{{ls.l('Referral.AccountConfigured', ls.l(paymentSetting?.type == paymentSettingType.Stripe ? 'Stripe' : 'BankTransfer'))}}</span>
-            </div>
-            <div class="update-payment">
-                <a (click)="showPayoutMethodDialog()">{{ls.l('Update payout provider details')}}<i class="fa fa-arrow-right"></i></a>
-            </div>
-        </div>
+        </ng-container>
     </div>
 </div>
 <div class="statistic">
