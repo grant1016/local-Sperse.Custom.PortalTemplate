@@ -95,7 +95,7 @@
             "ConnectStripeAccountConfirmation": "Do you want to connect Stripe account ?",
             "StripeAccountIsNotConnected": "Stripe account is not connected",
             "StripeAccountIsConnected": "Stripe account is connected",
-            "ConnectStripe": "Connect Stripe"
+            "ConnectWith": "Connect with"
         }
     }
 }

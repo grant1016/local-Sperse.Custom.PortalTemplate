@@ -4,7 +4,7 @@ import { FormControl, Validators } from '@angular/forms';
 
 /** Third party imports */
 import { MatDialog, MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { first, finalize } from 'rxjs/operators';
+import { publishReplay, refCount, first, finalize } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 
 /** Application imports */
@@ -41,7 +41,10 @@ export class PayoutMethodDialogComponent {
     );
 
     paymentSettingType = PaymentSettingType;
-    paymentTypes$: Observable<PaymentSettingType[]> = this.paymentProxy.getAvailablePayoutTypes();
+    paymentTypes$: Observable<PaymentSettingType[]> = this.paymentProxy.getAvailablePayoutTypes().pipe(
+        publishReplay(),
+        refCount()
+    );
     setting: AffiliatePayoutSettingInfo = new AffiliatePayoutSettingInfo();
     settings: AffiliatePayoutSettingInfo[];
     type: PaymentSettingType;
@@ -60,12 +63,21 @@ export class PayoutMethodDialogComponent {
         this.referralService.affiliatePaymentSettings$.pipe(
             first()
         ).subscribe((settings: AffiliatePayoutSettingInfo[]) => {
-            if (settings && settings.length)
+            if (settings && settings.length) {
                 this.settings = settings;
                 settings.some((setting: AffiliatePayoutSettingInfo) => {
                     if (setting.isDefault) {
                         this.type = setting.type;
                         this.setting = setting;
+                    }
+                });
+            }
+
+            if (!this.setting.type)
+                this.paymentTypes$.pipe(first()).subscribe(types => { 
+                    if (types.length) {
+                        this.type = types[0];
+                        this.setting.type = this.type;
                     }
                 });
         });
@@ -154,7 +166,7 @@ export class PayoutMethodDialogComponent {
     }
 
     onTypeChanged() {
-        let setting = this.settings.find(item => item.type == this.type);
+        let setting = this.settings && this.settings.find(item => item.type == this.type);
         if (setting)
             setTimeout(() => this.setting = setting, 100);
         else {

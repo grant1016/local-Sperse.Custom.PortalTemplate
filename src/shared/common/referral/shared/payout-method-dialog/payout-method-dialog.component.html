@@ -19,7 +19,9 @@
     <div *ngIf="type == paymentSettingType.Stripe">
         <div *ngIf="!setting.stripeAccountID">
             <p><span>{{ls.l('PaymentMethodDialog.StripeAccountIsNotConnected')}}</span><span style="color: red; display: inline;">*</span></p>
-            <button class="btn btn-primary" style="height: 30px; padding: 6px 12px;" (click)="connectStripeAccount()">{{ls.l('PaymentMethodDialog.ConnectStripe')}}</button>
+            <a role="button" href="javascript:void(0);" class="btn btn-primary stripe-button" (click)="connectStripeAccount()">
+                {{ls.l('PaymentMethodDialog.ConnectWith')}} <img src="assets/common/images/stripe.svg"/>
+            </a>
         </div>
         <div *ngIf="setting.stripeAccountID"><p>{{ls.l('PaymentMethodDialog.StripeAccountIsConnected')}}</p></div>
     </div>
