@@ -1,14 +1,15 @@
 /** Core imports */
-import { Component, Inject, ViewChild, ElementRef } from '@angular/core';
+import { Component, Inject, ViewChild, OnDestroy, ElementRef } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 
 /** Third party imports */
 import { MatDialog, MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { publishReplay, refCount, first, finalize } from 'rxjs/operators';
+import { takeUntil, publishReplay, refCount, first, finalize } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
+import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import {
     AffiliatePayoutSettingInfo,
@@ -25,9 +26,9 @@ import { MessageService } from 'abp-ng2-module';
     selector: 'payout-method-dialog',
     templateUrl: './payout-method-dialog.component.html',
     styleUrls: ['./payout-method-dialog.component.less'],
-    providers: [CommissionServiceProxy]
+    providers: [CommissionServiceProxy, LifecycleSubjectsService]
 })
-export class PayoutMethodDialogComponent {
+export class PayoutMethodDialogComponent implements OnDestroy {
     bankAccountNumber = new FormControl(
         '', [
             Validators.required
@@ -56,12 +57,13 @@ export class PayoutMethodDialogComponent {
         public ls: AppLocalizationService,
         private loadingService: LoadingService,
         public referralService: ReferralService,
+        private lifecycleService: LifecycleSubjectsService,
         public paymentProxy: AffiliatePayoutSettingServiceProxy,
         public dialogRef: MatDialogRef<PayoutMethodDialogComponent>
     ) {
         this.setting.isDefault = true;
         this.referralService.affiliatePaymentSettings$.pipe(
-            first()
+            takeUntil(this.lifecycleService.destroy$)
         ).subscribe((settings: AffiliatePayoutSettingInfo[]) => {
             if (settings && settings.length) {
                 this.settings = settings;
@@ -174,5 +176,9 @@ export class PayoutMethodDialogComponent {
             this.setting.type = this.type;
             this.setting.isDefault = true;
         }
+    }
+
+    ngOnDestroy() {
+        this.lifecycleService.destroy.next();
     }
 }
