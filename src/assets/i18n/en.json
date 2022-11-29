@@ -42,6 +42,8 @@
             "YouCantRequestMoreThen": "You can't request more then {0}",
             "ShareLink": "Share this link on social media",
             "CopyYourReferralLink": "Get & Share link URL",
+            "AccountConfigured": "You have {0} account configured!",
+            "BankTransfer": "Bank Transfer",
             "Tier1": "T1",
             "Tier2": "T2"
         },
@@ -67,6 +69,33 @@
             "CategoryRequired": "Category is required",    
             "EnterSuggestedCopy": "Enter Suggested Copy",
             "SuggestedCopyRequired": "Suggested Copy is required"
+        },
+        "PaymentMethodDialog": {
+            "Title": "Select Payment Method",
+            "PaymentCurrency": "Payment Currency",
+            "AccountName": "Name on Account",
+            "BankCode": "Bank Code",
+            "AccountNumber": "Account Number",
+            "IBAN": "IBAN",
+            "NationalIDNumber": "National ID Number",
+            "TaxID": "Tax ID",
+            "SWIFT": "SWIFT",
+            "BankName": "Bank Name",
+            "BankAddress": "Bank Address",
+            "BankAddress2": "Bank Address 2",
+            "BankCity": "Bank City",
+            "BankState": "Bank Province",
+            "BankZip": "Bank Zip",
+            "Country": "Country",
+            "IntermediarySwift": "Intermediary Swift",
+            "IntermediaryBankName": "Intermediary Bank Name",
+            "IntermediaryBankCountry": "Intermediary Bank Country",
+            "IntermediaryBankCity": "Intermediary Bank City",
+            "IntermediaryAccountNumber": "Intermediary Account Number",
+            "ConnectStripeAccountConfirmation": "Do you want to connect Stripe account ?",
+            "StripeAccountIsNotConnected": "Stripe account is not connected",
+            "StripeAccountIsConnected": "Stripe account is connected",
+            "ConnectWith": "Connect with"
         }
     }
 }

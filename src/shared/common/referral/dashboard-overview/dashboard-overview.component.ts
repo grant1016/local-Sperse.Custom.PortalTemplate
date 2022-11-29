@@ -4,12 +4,17 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, AfterViewInit, O
 /** Third party imports */
 import { of } from 'rxjs';
 import { map, first, takeUntil } from 'rxjs/operators';
+import { MatDialog } from '@angular/material/dialog';
 import { ClipboardService } from 'ngx-clipboard';
 
 /** Application imports */
+import { AppFeatures } from '@shared/AppFeatures';
 import { AppPermissions } from '@shared/AppPermissions';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { AppSessionService } from '@shared/common/session/app-session.service';
+import { AffiliatePayoutSettingInfo, PaymentSettingType, 
+    GetUserCommissionRatesOutput, UserCommissionServiceProxy } from '@shared/service-proxies/service-proxies';
+import { PayoutMethodDialogComponent } from '../shared/payout-method-dialog/payout-method-dialog.component';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 import { DashboardWidgetsService } from '@shared/crm/dashboard-widgets/dashboard-widgets.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -22,14 +27,19 @@ import { NotifyService } from 'abp-ng2-module';
     selector: 'dashboard-overview',
     templateUrl: 'dashboard-overview.component.html',
     styleUrls: [ 'dashboard-overview.component.less' ],
-    providers: [ SharingService, LifecycleSubjectsService ],
+    providers: [ SharingService, LifecycleSubjectsService, UserCommissionServiceProxy ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DashboardOverviewComponent implements AfterViewInit, OnDestroy {
     isCRMEnabled = this.permission.isGranted(AppPermissions.CRM);
     isCRMCustomersEnabled = this.permission.isGranted(AppPermissions.CRMCustomers);
+    isCRMPaymentsEnabled = abp.features.isEnabled(AppFeatures.CRMPayments) &&
+        abp.features.isEnabled(AppFeatures.CRMCommissions);
+    paymentSetting: AffiliatePayoutSettingInfo;
 
     selectInitialLink: any;
+    paymentSettingType = PaymentSettingType;
+    userCommissionRates: GetUserCommissionRatesOutput = new GetUserCommissionRatesOutput();
     links$ = this.isCRMEnabled ? this.referralService.getLinks().pipe(map(links => {
         return links.map((link, index) => {
             if (!index)
@@ -44,6 +54,7 @@ export class DashboardOverviewComponent implements AfterViewInit, OnDestroy {
     totalsData: any;
 
     constructor(
+        public dialog: MatDialog,
         public ls: AppLocalizationService,
         public permission: AppPermissionService,
         public dashboardService: DashboardWidgetsService,
@@ -54,9 +65,33 @@ export class DashboardOverviewComponent implements AfterViewInit, OnDestroy {
         private sharingService: SharingService,
         private notifyService: NotifyService,
         private appSessionService: AppSessionService,
-        private lifeCycleSubject: LifecycleSubjectsService
+        private lifeCycleSubject: LifecycleSubjectsService,
+        private UserCommissionProxy: UserCommissionServiceProxy
     ) {
+        this.UserCommissionProxy.getRatesInfo().subscribe((res: GetUserCommissionRatesOutput) => {
+            this.userCommissionRates = res;
+        });
+
+        this.referralService.affiliatePaymentSettings$.pipe(
+            takeUntil(this.lifeCycleSubject.deactivate$)
+        ).subscribe((settings: AffiliatePayoutSettingInfo[]) => {
+            if (settings && settings.length)
+                settings.some((setting: AffiliatePayoutSettingInfo) => {
+                    if (setting.isDefault)
+                        this.paymentSetting = setting;
+                });
+            this.changeDetectorRef.detectChanges();
+        });
+
         this.refresh();
+    }
+
+    getAffiliateRate(): number {
+        return (this.userCommissionRates.affiliateRate || this.userCommissionRates.defaultAffiliateRate) * 100;
+    }
+
+    getAffiliateRateTier2(): number {
+        return (this.userCommissionRates.affiliateRateTier2 || this.userCommissionRates.defaultAffiliateRateTier2) * 100;
     }
 
     ngAfterViewInit() {
@@ -97,6 +132,12 @@ export class DashboardOverviewComponent implements AfterViewInit, OnDestroy {
     copyLink() {
         this.clipboardService.copyFromContent(this.selectedLink);
         this.notifyService.info(this.ls.l('SavedToClipboard'));
+    }
+
+    showPayoutMethodDialog() {
+        this.dialog.open(PayoutMethodDialogComponent, {
+            width: '420px'
+        });
     }
 
     activate() {

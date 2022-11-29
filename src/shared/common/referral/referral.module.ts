@@ -9,6 +9,7 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
 import { DxDataGridModule } from 'devextreme-angular/ui/data-grid';
 import { DxSelectBoxModule } from 'devextreme-angular/ui/select-box';
 import { DxTextBoxModule } from 'devextreme-angular/ui/text-box';
@@ -48,6 +49,7 @@ import { CommissionAmountBlockComponent } from '@shared/common/referral/commissi
 import { CommissionAmountItemComponent } from '@shared/common/referral/commission-amounts/commission-amount-item/commission-amount-item.component';
 import { WithdrawalDialogComponent } from '@shared/common/referral/commission-amounts/withdrawal-dialog/withdrawal-dialog.component';
 import { AddLinkDialogComponent } from './shared/add-link-dialog/add-link-dialog.component';
+import { PayoutMethodDialogComponent } from './shared/payout-method-dialog/payout-method-dialog.component';
 import { ReferralExportService } from '@shared/common/referral/referral-export.service';
 import { CountryPhoneNumberModule } from '@shared/common/phone-numbers/country-phone-number.module';
 import { DashboardOverviewComponent } from './dashboard-overview/dashboard-overview.component';
@@ -66,6 +68,7 @@ import { ReferralService } from '@shared/common/referral/referral.service';
         DxScrollViewModule,
         MatTabsModule,
         MatInputModule,
+        MatSelectModule,
         MatDialogModule,
         MatTooltipModule,
         ReferralRoutingModule,
@@ -99,6 +102,7 @@ import { ReferralService } from '@shared/common/referral/referral.service';
         CommissionAmountItemComponent,
         WithdrawalDialogComponent,
         AddLinkDialogComponent,
+        PayoutMethodDialogComponent,
         DashboardOverviewComponent
     ],
     providers: [ 
@@ -111,7 +115,8 @@ import { ReferralService } from '@shared/common/referral/referral.service';
         {provide: 'layout', useValue: 'light'}
     ],
     entryComponents: [ 
-        WithdrawalDialogComponent, 
+        WithdrawalDialogComponent,
+        PayoutMethodDialogComponent,
         AddLinkDialogComponent 
     ],
     bootstrap: [ ReferralComponent ]
