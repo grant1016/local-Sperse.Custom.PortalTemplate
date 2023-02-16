@@ -3,7 +3,7 @@ import { Injector, Injectable } from '@angular/core';
 import { HttpEvent, HttpRequest, HttpHandler, HttpHeaders, HttpParams } from '@angular/common/http';
 
 /** Third party imports */
-import { finalize, map, switchMap, catchError } from 'rxjs/operators';
+import { finalize, map, switchMap, catchError, takeUntil, first } from 'rxjs/operators';
 import { Observable, Subject, throwError } from 'rxjs';
 
 /** Application imports */
@@ -23,6 +23,7 @@ export class AppHttpInterceptor extends AbpHttpInterceptor {
         'CRM_ContactCommunication_GetMessages',
         'CRM_Country_GetCountryStates',
         'CRM_DocumentTemplates_GetUrl',
+        'CRM_Activity_GetAll',
         'odata_LeadSlice',
         'odata_SalesSlice',
         'odata_ContactSlice',
@@ -54,6 +55,7 @@ export class AppHttpInterceptor extends AbpHttpInterceptor {
         let poolRequest = this._poolRequests[key];
         if (!poolRequest) {
             poolRequest = this._poolRequests[key] = { request };
+            poolRequest.destroy$ = new Subject<boolean>();
             return poolRequest.subject = this.interceptInternal(request, next);
         }
 
@@ -68,6 +70,8 @@ export class AppHttpInterceptor extends AbpHttpInterceptor {
                 poolRequest.subject.observers.forEach(sub => {
                     sub.unsubscribe();
                 });
+            poolRequest.httpSubscriber.unsubscribe();
+            poolRequest.destroy$.next(true);
             poolRequest.subject.complete();
 
             this._poolRequests[key] = poolRequest;
@@ -77,15 +81,26 @@ export class AppHttpInterceptor extends AbpHttpInterceptor {
     }
 
     private interceptInternal(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-        let key = this.getKeyFromUrl(request);
+        let key = this.getKeyFromUrl(request),
+            interceptObservable = new Subject<HttpEvent<any>>();
             
-        return next.handle(
-            this.normalizeRequestHeaders(request)
+        this._poolRequests[key].httpSubscriber = next.handle(
+             this.normalizeRequestHeaders(request)
         ).pipe(
+            takeUntil(this._poolRequests[key].destroy$),
             finalize(() => delete this._poolRequests[key]),
             catchError((error: any) => this.handleErrorResponseInternal(error)),
             switchMap((event: HttpEvent<any>) => this.handleSuccessResponse(event))
-        );
+        ).subscribe((res: any) => {
+            if (res && res.status == 200)
+                interceptObservable.next(res);
+            else if (res.error)
+                interceptObservable.error(res.error);
+        }, error => {
+            interceptObservable.error(error);
+        });
+
+        return interceptObservable.pipe(first());
     }
 
     private getKeyFromUrl(request: HttpRequest<any>): string {
@@ -108,21 +123,21 @@ export class AppHttpInterceptor extends AbpHttpInterceptor {
     }
 
     handleError(error: any) {
-        if (error.url || error.httpStatus == 0) { //!! dxDataGrid error handling
+        if (error.url || error.httpStatus == 0) { //!! dxDataGrid && OData error handling
             error.name = error.url ? error.name : '';
-            error.message = error.url ? this.configuration.defaultError.message : '';
+            error.message = this.configuration.defaultError.message;
             error.url = '';
         } else if (error.requestOptions && error.requestOptions.url.indexOf('odata') > 0) {
             error.url = '';
             error.name = error.name;
             error.message = this.configuration.defaultError.message;
-        } else {
-            if (!error.error)
-                error.error = new Blob([JSON.stringify(error.errorDetails || error)]);
-            if (error.httpStatus)
-                error.status = error.httpStatus;
-            return this.handleErrorResponseInternal(error);
         }
+
+        if (!error.error)
+            error.error = new Blob([JSON.stringify(error.errorDetails || error)]);
+        if (error.httpStatus)
+            error.status = error.httpStatus;
+        return this.handleErrorResponseInternal(error);
     }
 
     protected normalizeRequestHeaders(request: HttpRequest<any>): HttpRequest<any> {
@@ -160,8 +175,11 @@ export class AppHttpInterceptor extends AbpHttpInterceptor {
         if (this.configuration['avoidErrorHandling'] || (response.url &&
             keys && keys.some(key => response.url.toLowerCase().includes(key.toLowerCase()))
         )) {
+            if (!(response.error instanceof Blob))
+                return throwError(response);
+
             return this.configuration.blobToText(response.error).pipe(map(error => {
-                return JSON.parse(error).error;
+                return JSON.parse(error);
             }));
         } else {
             return super.handleErrorResponse(response);
