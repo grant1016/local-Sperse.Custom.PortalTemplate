@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 
 /** Third party imports */
+import { MatDialog } from '@angular/material/dialog';
 import { Observable } from 'rxjs';
 import { finalize, map, publishReplay, refCount } from 'rxjs/operators';
 import toPairs from 'lodash/toPairs';
@@ -19,6 +20,7 @@ import {
     AuthenticateModel,
     AuthenticateResultModel,
     ExternalAuthenticateModel,
+    LinkedInAuthenticateModel,
     ExternalAuthenticateResultModel,
     ExternalLoginProviderInfoModel,
     TokenAuthServiceProxy,
@@ -40,6 +42,7 @@ export class ExternalLoginProvider extends ExternalLoginProviderInfoModel {
     static readonly FACEBOOK: string = 'Facebook';
     static readonly GOOGLE: string = 'Google';
     static readonly MICROSOFT: string = 'Microsoft';
+    static readonly LINKEDIN: string = 'LinkedIn';
 
     icon: string;
     initialized = false;
@@ -72,6 +75,8 @@ export class LoginService {
     resetPasswordModel: SendPasswordResetCodeInput;
     resetPasswordResult: SendPasswordResetCodeOutput;
     externalLoginProviders$: Observable<ExternalLoginProvider[]>;
+    linkedIdLoginProvider$: Observable<ExternalLoginProvider>;
+    linkedInLastAuthResult: ExternalAuthenticateResultModel;
 
     constructor(
         private tokenAuthService: TokenAuthServiceProxy,
@@ -82,6 +87,7 @@ export class LoginService {
         private logService: LogService,
         private accountService: AccountServiceProxy,
         private authService: AppAuthService,
+        public dialog: MatDialog
     ) {
         this.clear();
         let model = JSON.parse(sessionStorage.getItem('authenticateModel'));
@@ -99,7 +105,19 @@ export class LoginService {
         this.initExternalLoginProviders();
     }
 
-    authenticate(finallyCallback?: () => void, redirectUrl?: string, autoDetectTenancy: boolean = true): void {
+    completeSourceEvent() {
+        if (window.opener)
+            setTimeout(() => {
+                window.opener.postMessage('complete', '*');
+            }, 1000);
+    }
+
+    authenticate(finallyCallback?: () => void, 
+        redirectUrl?: string, 
+        autoDetectTenancy: boolean = true,
+        setCookiesOnly: boolean = false,
+        onSuccessCallback = (result: AuthenticateResultModel) => {}
+    ): void {
         finallyCallback = finallyCallback || (() => { });
         this.authService.stopTokenCheck();
 
@@ -111,22 +129,65 @@ export class LoginService {
 
         this.tokenAuthService
             .authenticate(this.authenticateModel)
-            .pipe(finalize(finallyCallback))
-            .subscribe((result: AuthenticateResultModel) => {
-                this.processAuthenticateResult(result, redirectUrl);
+            .pipe(finalize(finallyCallback)).subscribe((result: AuthenticateResultModel) => {
+                onSuccessCallback(result);
+                this.processAuthenticateResult(result, redirectUrl, setCookiesOnly);
                 this.authService.startTokenCheck();
-            }, () => {
+            }, (error: any) => {
+                this.messageService.error(
+                    (error && error.message) ||
+                    abp.localization.localize('InvalidUserNameOrPassword', 'Platform')
+                );
                 abp.multiTenancy.setTenantIdCookie();
             });
     }
 
-    sendPasswordResetCode(finallyCallback = () => {}, autoDetectTenancy: boolean = true): void {
+    externalAuthenticateByResult(result: ExternalAuthenticateResultModel,
+        finallyCallback?: () => void,
+        redirectUrl?: string,
+        autoDetectTenancy: boolean = true,
+        setCookiesOnly: boolean = false,
+        onSuccessCallback = (result: AuthenticateResultModel) => { }
+    ) {
+        if (!result)
+            return;
+
+        finallyCallback = finallyCallback || (() => { });
+        this.authService.stopTokenCheck();
+        
+        const model = this.externalLoginModal = new ExternalAuthenticateModel();
+        model.authProvider = result.authProvider;
+        model.providerAccessCode = result.providerAccessCode;
+        model.providerKey = '-';
+        model.singleSignIn = UrlHelper.getSingleSignIn();
+        model.returnUrl = UrlHelper.getReturnUrl();
+        model.autoDetectTenancy = autoDetectTenancy;
+
+        this.tokenAuthService.externalAuthenticate(model)
+            .pipe(finalize(finallyCallback))
+            .subscribe((result: ExternalAuthenticateResultModel) => {
+                if (result.waitingForActivation) {
+                    this.messageService.info('You have successfully registered. Waiting for activation!');
+                    return;
+                }
+                onSuccessCallback(result);
+                this.processAuthenticateResult(result, result.returnUrl || AppConsts.appBaseUrl, setCookiesOnly);
+            });
+    }
+
+    sendPasswordResetCode(
+        finallyCallback = () => {}, 
+        autoDetectTenancy: boolean = true,
+        redirectToLogin: boolean = true,
+        onSuccessCallback = () => {} 
+    ): void {
         abp.auth.clearToken();
         this.resetPasswordModel.autoDetectTenancy = autoDetectTenancy;
         this.accountService
             .sendPasswordResetCode(this.resetPasswordModel)
             .pipe(finalize(finallyCallback))
             .subscribe((result: SendPasswordResetCodeOutput) => {
+                onSuccessCallback();
                 if (this.resetPasswordModel.autoDetectTenancy) {
                     this.resetPasswordResult = result;
                 } else {
@@ -134,8 +195,10 @@ export class LoginService {
                 }
 
                 if (result.detectedTenancies.length > 1) {
-                    this.router.navigate(['account/select-tenant']);
-                } else {
+                    this.router.navigate(['account/select-tenant'], 
+                        {queryParams: {extlogin: !redirectToLogin}}
+                    );
+                } else if (redirectToLogin) {
                     this.messageService.success(
                         abp.localization.localize('PasswordResetMailSentMessage', 'Platform'),
                         abp.localization.localize('MailSent', 'Platform')
@@ -147,7 +210,9 @@ export class LoginService {
     externalAuthenticate(provider: ExternalLoginProvider): void {
         this.ensureExternalLoginProviderInitialized(provider, () => {
             this.authService.stopTokenCheck();
-            if (provider.name === ExternalLoginProvider.FACEBOOK) {
+            if (provider.name === ExternalLoginProvider.LINKEDIN) {
+                this.linkedInInitLogin(provider);
+            } if (provider.name === ExternalLoginProvider.FACEBOOK) {
                 this.facebookLogin();
             } else if (provider.name === ExternalLoginProvider.GOOGLE) {
                 gapi.auth2.getAuthInstance().signIn().then(() => {
@@ -173,6 +238,65 @@ export class LoginService {
             },
             { scope: 'email', return_scopes: true, auth_type: 'rerequest' }
         );
+    }
+
+    linkedInInitLogin(provider: ExternalLoginProvider) {
+        window.location.href = 'https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=' + provider.clientId +
+            '&redirect_uri=' + window.location.href +
+            '&state=foobar&scope=r_liteprofile%20r_emailaddress';
+    }
+
+    clearLinkedInParamsAndGetReturnUrl(exchangeCode: string, state: string): Promise<boolean> {
+        return this.router.navigate([], {
+            queryParams: {
+                'code': null,
+                'state': null
+            },
+            queryParamsHandling: 'merge'
+        });
+    }
+
+    linkedInLogin(
+        provider: ExternalLoginProvider, 
+        exchangeCode: string, 
+        state: string, 
+        setCookiesOnly: boolean = false,
+        onSuccessCallback = (result: AuthenticateResultModel) => { }
+    ) {
+        abp.ui.setBusy();
+        //todo check state
+        this.clearLinkedInParamsAndGetReturnUrl(exchangeCode, state)
+            .then(() => {
+                const model = new LinkedInAuthenticateModel();
+                model.authProvider = ExternalLoginProvider.LINKEDIN;
+                model.providerAccessCode = '-';
+                model.providerKey = '-';
+                model.singleSignIn = UrlHelper.getSingleSignIn();
+                model.returnUrl = UrlHelper.getReturnUrl();
+                model.autoDetectTenancy = true;
+
+                model.exchangeCode = exchangeCode;
+                model.loginReturnUrl = window.location.href;
+
+                this.tokenAuthService.linkedInAuthenticate(model)
+                    .pipe(finalize(() => abp.ui.clearBusy()))
+                    .subscribe((result: ExternalAuthenticateResultModel) => {                       
+                        this.linkedInLastAuthResult = result;
+                        if (result.userNotFound) {
+                            this.router.navigate(['account/signup'], {
+                                queryParams: {
+                                    extlogin: setCookiesOnly,
+                                    code: exchangeCode,
+                                    state: state
+                                }
+                            });
+                        } else {
+                            onSuccessCallback(result);
+                            this.processAuthenticateResult(result, 
+                                result.returnUrl || AppConsts.appBaseUrl, setCookiesOnly);
+                        }
+                    });
+            });
     }
 
     init(): void {
@@ -211,6 +335,7 @@ export class LoginService {
             }
 
             if (setCookiesOnly) {
+                this.completeSourceEvent();
                 this.authService.setLoginCookies(
                     authenticateResult.accessToken, 
                     authenticateResult.encryptedAccessToken, 
@@ -229,6 +354,28 @@ export class LoginService {
                     redirectUrl
                 );
 
+        } else if (authenticateResult.userNotFound && abp.features.isEnabled(AppFeatures.PFMApplications)) {
+            // show confirmation msg about creating user
+            this.dialog.open(RegisterConfirmComponent, {
+                width: '600px',
+                id: 'confirm-register',
+                panelClass: ['confirm-register'],
+                data: {
+                    authenticateResult: authenticateResult,
+                    routerUrl: this.router.routerState.snapshot.url.split('?')[0].split('/').pop()
+                }
+            }).afterClosed().subscribe(result => {
+                if (result) {
+                    abp.ui.setBusy();
+                    this.externalLoginModal.autoRegistration = true;
+                    this.externalLoginModal.autoDetectTenancy = true;
+                    this.tokenAuthService.externalAuthenticate(this.externalLoginModal)
+                        .pipe(finalize(() => abp.ui.clearBusy()))
+                        .subscribe((result: ExternalAuthenticateResultModel) => {
+                            this.processAuthenticateResult(result, result.returnUrl || AppConsts.appBaseUrl);
+                        });
+                }
+            });
         } else if (!!authenticateResult.detectedTenancies && authenticateResult.detectedTenancies.length > 1) {
             //Select tenant
             this.router.navigate(['account/select-tenant'],
@@ -299,11 +446,16 @@ export class LoginService {
                 publishReplay(),
                 refCount(),
                 map((providers: ExternalLoginProviderInfoModel[]) => providers.map(p => new ExternalLoginProvider(p)))
+        );
+
+        this.linkedIdLoginProvider$ = this.externalLoginProviders$
+            .pipe(
+                map(providers => providers.find(provider => provider.name === ExternalLoginProvider.LINKEDIN))
             );
     }
 
     ensureExternalLoginProviderInitialized(loginProvider: ExternalLoginProvider, callback: () => void) {
-        if (loginProvider.initialized) {
+        if (loginProvider.initialized || loginProvider.name === ExternalLoginProvider.LINKEDIN) {
             callback();
             return;
         }
@@ -341,7 +493,7 @@ export class LoginService {
             });
         }
     }
-
+    
     private facebookLoginStatusChangeCallback(resp) {
         if (resp.status === 'connected') {
             const model = this.externalLoginModal = new ExternalAuthenticateModel();
@@ -350,6 +502,7 @@ export class LoginService {
             model.providerKey = resp.authResponse.userID;
             model.singleSignIn = UrlHelper.getSingleSignIn();
             model.returnUrl = UrlHelper.getReturnUrl();
+            model.autoDetectTenancy = true;
 
             this.tokenAuthService.externalAuthenticate(model)
                 .subscribe((result: ExternalAuthenticateResultModel) => {
@@ -370,6 +523,7 @@ export class LoginService {
             model.providerKey = gapi.auth2.getAuthInstance().currentUser.get().getBasicProfile().getId();
             model.singleSignIn = UrlHelper.getSingleSignIn();
             model.returnUrl = UrlHelper.getReturnUrl();
+            model.autoDetectTenancy = true;
 
             this.tokenAuthService.externalAuthenticate(model)
                 .subscribe((result: ExternalAuthenticateResultModel) => {
@@ -394,6 +548,7 @@ export class LoginService {
         model.providerKey = WL.getSession().id; // How to get id?
         model.singleSignIn = UrlHelper.getSingleSignIn();
         model.returnUrl = UrlHelper.getReturnUrl();
+        model.autoDetectTenancy = true;
 
         this.tokenAuthService.externalAuthenticate(model)
             .subscribe((result: ExternalAuthenticateResultModel) => {
