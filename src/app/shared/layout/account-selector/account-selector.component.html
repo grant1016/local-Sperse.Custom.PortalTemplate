@@ -1,11 +1,13 @@
 <div [class.compact]="compact" *ngIf="accountSelectorService.showAccountSelector$ | async">
     <dx-drop-down-box
+        [width]="dropDownWidth"
         [disabled]="disabled$ | async"
         [visible]="!!accountSelectorService.initialOrgUnits"
         accessKey="accounts-dropdown" 
         fieldTemplate="field">
         <div *dxTemplate="let data of 'content'" class="accounts-dropdown">
-            <dx-list [searchEnabled]="true"
+            <dx-list accessKey="account-selector"
+                     [searchEnabled]="true"
                      searchExpr="displayName"
                      [searchEditorOptions]="{onValueChanged: onSearchChanged}"
                      [searchTimeout]="1000"
@@ -21,7 +23,6 @@
         <div *dxTemplate="let data of 'field'">
             <dx-text-box [value]="getSelectedName()"
                          [hint]="getSelectedName()"
-                         (onContentReady)="calculateDropDownWidth(accountSelectorService.selectedAccount)"
                          [readOnly]="true"
                          [width]="dropDownWidth">
             </dx-text-box>
