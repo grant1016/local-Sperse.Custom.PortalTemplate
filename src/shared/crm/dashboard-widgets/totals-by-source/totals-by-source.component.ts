@@ -55,6 +55,8 @@ import { AppConsts } from '@shared/AppConsts';
 })
 export class TotalsBySourceComponent implements OnInit, OnDestroy {
     @ViewChild(DxPieChartComponent) chartComponent: DxPieChartComponent;
+
+    onDrawTimeout: any;
     data$: Observable<any[]>;
     totalCount$: Observable<number>;
     totalCount: string;
@@ -159,6 +161,7 @@ export class TotalsBySourceComponent implements OnInit, OnDestroy {
             takeUntil(this.lifeCycleService.destroy$),
             tap(() => {
                 this.loading = true;
+                this.totalNumbersTop = this.rangeCount = this.totalCount = '';
                 this.loadingService.startLoading(this.elementRef.nativeElement);
             }),
             switchMap(([selectedTotal, period, groupId, contactId, orgUnitIds, ]:
@@ -223,7 +226,8 @@ export class TotalsBySourceComponent implements OnInit, OnDestroy {
     }
 
     onDrawn(e) {
-        setTimeout(() => {
+        clearTimeout(this.onDrawTimeout);
+        this.onDrawTimeout = setTimeout(() => {
             this.updatePieChartTopPositions(e);
         }, 600);
     }
@@ -232,10 +236,13 @@ export class TotalsBySourceComponent implements OnInit, OnDestroy {
         const componentTop = this.elementRef.nativeElement.getBoundingClientRect().top;
         const chart = e.element.querySelector('.dxc-series');
         if (componentTop && chart) {
-            const circleBoundingRect = chart.getBoundingClientRect();
-            const circleTop = circleBoundingRect.top;
-            const circleCenterY = circleTop - componentTop + (circleBoundingRect.height) / 2;
-            this.totalNumbersTop = circleCenterY - 55 + 'px';
+            const circleBoundingRect = chart.getBoundingClientRect(),
+                  circleTop = circleBoundingRect.top,
+                  circleCenterY = circleTop - componentTop + (circleBoundingRect.height) / 2,
+                  paddingTop = circleCenterY - 55;
+            if (paddingTop <= 0)
+                return this.onDrawn(e);    
+            this.totalNumbersTop = paddingTop + 'px';
             this.changeDetectorRef.detectChanges();
         }
     }

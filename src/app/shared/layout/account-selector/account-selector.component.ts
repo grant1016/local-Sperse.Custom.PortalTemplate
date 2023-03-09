@@ -83,7 +83,7 @@ export class AccountSelectorComponent {
                 if (acc < item.displayName.length)
                     return item.displayName.length;
                 return acc;
-            }, allDisplayName.length) * this.symbolWidth + 45;
+            }, allDisplayName.length) * this.symbolWidth;
 
         if (maxWidth > this.minWidth && maxWidth < this.maxWidth)
             this.dropDownWidth = maxWidth;
