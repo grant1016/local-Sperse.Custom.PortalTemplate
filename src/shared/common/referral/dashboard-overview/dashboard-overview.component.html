@@ -47,7 +47,7 @@
                     <img src="./assets/common/icons/social/Pinterest.svg">
                 </li>
                 <li (click)="sharingService.shareVieEmail(selectedLink, suggestedCopy)">
-                    <img src="./assets/common/icons/social/email.svg">
+                    <img src="./assets/common/icons/social/Email.svg">
                 </li>
             </ul>
         </div>
@@ -57,7 +57,7 @@
             <h3>{{ls.l('Important')}}</h3>
             <ng-container *ngIf="!paymentSetting">
                 <p>{{ls.l('You don\'t have a payout method selected. Please select one now so we can pay you.')}}</p>
-                <button (click)="showPayoutMethodDialog()">{{ls.l('Select payout method')}}</button>
+                <button *ngIf="isCRMEnabled" (click)="showPayoutMethodDialog()">{{ls.l('Select payout method')}}</button>
             </ng-container>
 
             <div class="payment-method" *ngIf="paymentSetting">

@@ -25,12 +25,26 @@
     ::ng-deep dx-drop-down-box {
         input {
             font-size: 16px;
+            padding-left: 40px;
+        }
+        .dx-texteditor-buttons-container {
+            left: 0px;
         }
         &.dx-state-disabled {
             opacity: 1!important;
             .dx-texteditor-buttons-container {
                 display: none;
             }
+        }
+    }
+}
+
+::ng-deep dx-list[accesskey="account-selector"] {
+    .dx-list-item, .dx-texteditor-input {
+        width: calc(100% - 13px);
+        div.name {
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
     }
 }

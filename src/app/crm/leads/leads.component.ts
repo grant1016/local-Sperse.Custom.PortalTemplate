@@ -150,7 +150,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             return pipelines.find((pipeline: PipelineDto) => pipeline.id == pipelineId);
         })
     );
-    contactGroupId: BehaviorSubject<ContactGroup> = new BehaviorSubject(ContactGroup.Client);
+    contactGroupId: BehaviorSubject<ContactGroup> = new BehaviorSubject(this.getDefaultContactGroup());
     contactGroupId$: Observable<ContactGroup> = this.selectedPipeline$.pipe(
         map((pipeline: PipelineDto) => pipeline.contactGroupId)
     );
@@ -300,6 +300,19 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 
     ngAfterViewInit() {
         this.initDataSource();
+    }
+
+    getDefaultContactGroup(): ContactGroup {
+        if (this.permission.isGranted(AppPermissions.CRMCustomers))
+            return ContactGroup.Client;
+        else if (this.permission.isGranted(AppPermissions.CRMPartners))
+            return ContactGroup.Partner;
+        else if (this.permission.isGranted(AppPermissions.CRMEmployees))
+            return ContactGroup.Employee;
+        else if (this.permission.isGranted(AppPermissions.CRMInvestors))
+            return ContactGroup.Investor;
+        else if (this.permission.isGranted(AppPermissions.CRMVendors))
+            return ContactGroup.Vendor;
     }
 
     private handleFiltersPining() {

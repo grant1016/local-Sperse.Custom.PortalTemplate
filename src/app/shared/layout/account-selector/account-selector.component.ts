@@ -19,7 +19,8 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 export class AccountSelectorComponent {
     @ViewChild(DxDropDownBoxComponent) dropDown: DxDropDownBoxComponent;
     @Input() symbolWidth = 20;
-    @Input() minWidth = 400;
+    @Input() minWidth = 350;
+    @Input() maxWidth = 450;
     @Input() compact = false;
     disabled$: Observable<boolean> = this.accountSelectorService.selectedOrgUnitIds$.pipe(
         first(),
@@ -36,7 +37,6 @@ export class AccountSelectorComponent {
     ) {}
 
     valueChanged(event) {
-        this.calculateDropDownWidth(event.itemData);
         this.accountSelectorService.selectedOrgUnitIds.next(
             event.itemData.id == -1 ? undefined : [event.itemData.id]);
         this.accountSelectorService.selectedAccount = event.itemData;
@@ -47,16 +47,6 @@ export class AccountSelectorComponent {
         return this.accountSelectorService.selectedAccount
             ? this.accountSelectorService.selectedAccount.displayName
             : this.accountSelectorService.userInfo.fullName;
-    }
-
-    calculateDropDownWidth(selectedAccount: OrganizationUnitShortDto) {
-        const textValue = selectedAccount
-            ? selectedAccount.displayName
-            : this.accountSelectorService.userInfo.fullName;
-
-        textValue.length * this.symbolWidth + 45 > this.minWidth
-            ? this.dropDownWidth = textValue.length * this.symbolWidth + 45
-            : this.dropDownWidth = this.minWidth;
     }
 
     loadOrgUnits(searchValue?: string): Observable<OrganizationUnitShortDto[]> {
@@ -88,10 +78,24 @@ export class AccountSelectorComponent {
     }
 
     updateItemsList(items) {
+        let allDisplayName = this.ls.l('All') + ' ' + this.ls.l('OrganizationUnits'),
+            maxWidth = items.reduce((acc, item) => {
+                if (acc < item.displayName.length)
+                    return item.displayName.length;
+                return acc;
+            }, allDisplayName.length) * this.symbolWidth;
+
+        if (maxWidth > this.minWidth && maxWidth < this.maxWidth)
+            this.dropDownWidth = maxWidth;
+        else if (maxWidth < this.minWidth)
+            this.dropDownWidth = this.minWidth;
+        else if (maxWidth > this.maxWidth)
+            this.dropDownWidth = this.maxWidth;
+
         this.listComponent.option('items', [
             new OrganizationUnitShortDto({
                 id: -1,
-                displayName: this.ls.l('All') + ' ' + this.ls.l('OrganizationUnits'),
+                displayName: allDisplayName,
                 parentId: undefined
             }),
             ...items

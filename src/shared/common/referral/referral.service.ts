@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { publishReplay, refCount, switchMap } from 'rxjs/operators';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { AppPermissionService } from '@shared/common/auth/permission.service';
+import { AppPermissions } from '@shared/AppPermissions';
 import {
     GetLedgerTotalsOutput,
     AffiliateLinkInfo,
@@ -27,7 +29,12 @@ export class ReferralService {
     private _refreshPaymentSettings: BehaviorSubject<null> = new BehaviorSubject<null>(null);
     refreshPaymentSettings$: Observable<null> = this._refreshPaymentSettings.asObservable();
     affiliatePaymentSettings$: Observable<AffiliatePayoutSettingInfo[]> = this.refreshPaymentSettings$.pipe(
-        switchMap(() => this.paymentProxy.getAll()),
+        switchMap(() => {
+            if (this.permission.isGranted(AppPermissions.CRM))
+                return this.paymentProxy.getAll();
+            else
+                return [];
+        }),
         publishReplay(),
         refCount()
     );
@@ -36,7 +43,8 @@ export class ReferralService {
         private ls: AppLocalizationService,
         private paymentProxy: AffiliatePayoutSettingServiceProxy,
         private userCommission: UserCommissionServiceProxy,
-        private affiliateLinkProxy: AffiliateLinkServiceProxy
+        private affiliateLinkProxy: AffiliateLinkServiceProxy,
+        private permission: AppPermissionService
     ) {}
 
     refresh() {
