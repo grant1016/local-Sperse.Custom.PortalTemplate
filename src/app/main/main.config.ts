@@ -14,12 +14,14 @@ export class MainConfig implements ConfigInterface {
             icon: 'dashboard',
             text: 'Dashboard',
             route: '/app/dashboard',
+            permission: AppPermissions.CRMCustomers + '|' + AppPermissions.CRMPartners + '|' + AppPermissions.CRMEmployees + '|' + AppPermissions.CRMInvestors + '|' + AppPermissions.CRMVendors + '|' + AppPermissions.CRMOthers,
             feature: AppFeatures.PortalDashboard
         },
         {
             icon: 'refferals',
             text: 'RefferedLeads',
             route: '/app/leads',
+            permission: AppPermissions.CRMCustomers + '|' + AppPermissions.CRMPartners + '|' + AppPermissions.CRMEmployees + '|' + AppPermissions.CRMInvestors + '|' + AppPermissions.CRMVendors + '|' + AppPermissions.CRMOthers,
             feature: AppFeatures.PortalLeads
         },
         {

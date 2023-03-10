@@ -57,7 +57,7 @@
             <h3>{{ls.l('Important')}}</h3>
             <ng-container *ngIf="!paymentSetting">
                 <p>{{ls.l('You don\'t have a payout method selected. Please select one now so we can pay you.')}}</p>
-                <button (click)="showPayoutMethodDialog()">{{ls.l('Select payout method')}}</button>
+                <button *ngIf="isCRMEnabled" (click)="showPayoutMethodDialog()">{{ls.l('Select payout method')}}</button>
             </ng-container>
 
             <div class="payment-method" *ngIf="paymentSetting">

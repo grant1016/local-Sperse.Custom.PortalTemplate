@@ -8,22 +8,31 @@ import {
 /** Application imports */
 import { AppFeatures } from '@root/shared/AppFeatures';
 import { FeatureCheckerService } from 'abp-ng2-module';
+import { AppPermissionService } from '@shared/common/auth/permission.service';
+import { AppPermissions } from '@shared/AppPermissions';
 
 @Injectable()
 export class AppRedirectGuard implements CanActivate {
 
   constructor(
     private router: Router,
-    private feature: FeatureCheckerService
+    private feature: FeatureCheckerService,
+    private permission: AppPermissionService
   ) { }
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
-    var navigatePath = '';
-    if (this.feature.isEnabled(AppFeatures.PortalDashboard))
+    let navigatePath = '',
+        isGrantedCRMGroup = this.permission.isGranted(AppPermissions.CRMCustomers)
+            || this.permission.isGranted(AppPermissions.CRMPartners)
+            || this.permission.isGranted(AppPermissions.CRMEmployees)
+            || this.permission.isGranted(AppPermissions.CRMInvestors)
+            || this.permission.isGranted(AppPermissions.CRMVendors)
+            || this.permission.isGranted(AppPermissions.CRMOthers);
+    if (this.feature.isEnabled(AppFeatures.PortalDashboard) && isGrantedCRMGroup) 
         navigatePath = '/app/dashboard';
     else if (this.feature.isEnabled(AppFeatures.PortalInvoices))   
         navigatePath = '/app/invoices';
-    else if (this.feature.isEnabled(AppFeatures.PortalLeads))   
+    else if (this.feature.isEnabled(AppFeatures.PortalLeads) && isGrantedCRMGroup) 
         navigatePath = '/app/leads';
     else if (this.feature.isEnabled(AppFeatures.PortalReseller))   
         navigatePath = '/app/reseller-info';
