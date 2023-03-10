@@ -28,12 +28,13 @@ export class AppRedirectGuard implements CanActivate {
             || this.permission.isGranted(AppPermissions.CRMInvestors)
             || this.permission.isGranted(AppPermissions.CRMVendors)
             || this.permission.isGranted(AppPermissions.CRMOthers);
-    if (this.feature.isEnabled(AppFeatures.PortalDashboard) && isGrantedCRMGroup) 
-        navigatePath = '/app/dashboard';
-    else if (this.feature.isEnabled(AppFeatures.PortalInvoices))   
-        navigatePath = '/app/invoices';
+    if (this.feature.isEnabled(AppFeatures.PortalDashboard) && 
+        this.permission.isGranted(AppPermissions.CRMCustomers)
+    ) navigatePath = '/app/dashboard';
     else if (this.feature.isEnabled(AppFeatures.PortalLeads) && isGrantedCRMGroup) 
         navigatePath = '/app/leads';
+    else if (this.feature.isEnabled(AppFeatures.PortalInvoices))   
+        navigatePath = '/app/invoices';
     else if (this.feature.isEnabled(AppFeatures.PortalReseller))   
         navigatePath = '/app/reseller-info';
     else

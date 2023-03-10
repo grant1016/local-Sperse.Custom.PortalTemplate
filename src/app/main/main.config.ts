@@ -14,7 +14,7 @@ export class MainConfig implements ConfigInterface {
             icon: 'dashboard',
             text: 'Dashboard',
             route: '/app/dashboard',
-            permission: AppPermissions.CRMCustomers + '|' + AppPermissions.CRMPartners + '|' + AppPermissions.CRMEmployees + '|' + AppPermissions.CRMInvestors + '|' + AppPermissions.CRMVendors + '|' + AppPermissions.CRMOthers,
+            permission: AppPermissions.CRMCustomers,
             feature: AppFeatures.PortalDashboard
         },
         {
