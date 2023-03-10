@@ -20,7 +20,6 @@ import {
     AuthenticateModel,
     AuthenticateResultModel,
     ExternalAuthenticateModel,
-    LinkedInAuthenticateModel,
     ExternalAuthenticateResultModel,
     ExternalLoginProviderInfoModel,
     TokenAuthServiceProxy,
@@ -28,7 +27,8 @@ import {
     AccountServiceProxy,
     SendPasswordResetCodeOutput,
     SignUpMemberResponse,
-    SignUpMemberRequest
+    SignUpMemberRequest,
+    OAuth2ExchangeCodeAuthenticateModel
 } from '@shared/service-proxies/service-proxies';
 import { RegisterConfirmComponent } from '@shared/common/dialogs/register-confirm/register-confirm.component';
 import { AppFeatures } from '@shared/AppFeatures';
@@ -267,7 +267,7 @@ export class LoginService {
         //todo check state
         this.clearLinkedInParamsAndGetReturnUrl(exchangeCode, state)
             .then(() => {
-                const model = new LinkedInAuthenticateModel();
+                const model = new OAuth2ExchangeCodeAuthenticateModel();
                 model.authProvider = ExternalLoginProvider.LINKEDIN;
                 model.providerAccessCode = '-';
                 model.providerKey = '-';
@@ -278,7 +278,7 @@ export class LoginService {
                 model.exchangeCode = exchangeCode;
                 model.loginReturnUrl = window.location.href;
 
-                this.tokenAuthService.linkedInAuthenticate(model)
+                this.tokenAuthService.oAuth2ExchangeCodeAuthenticate(model)
                     .pipe(finalize(() => abp.ui.clearBusy()))
                     .subscribe((result: ExternalAuthenticateResultModel) => {                       
                         this.linkedInLastAuthResult = result;
