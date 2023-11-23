@@ -4,7 +4,7 @@
         <mat-tab *ngIf="isCRMCommissionsEnabled" [label]="ls.l('Referral.Overview')">
             <dashboard-overview></dashboard-overview>
         </mat-tab>
-        <mat-tab *ngIf="isCRMEnabled" [label]="ls.l('Referral.LinkGenerator')">
+        <mat-tab [label]="ls.l('Referral.LinkGenerator')">
             <link-generator></link-generator>
         </mat-tab>
         <mat-tab *ngIf="isCRMCommissionsEnabled" [label]="ls.l('Referral.CommissionHistory')">
