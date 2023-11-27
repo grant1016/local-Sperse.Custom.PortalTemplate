@@ -19,7 +19,7 @@ export class MainConfig implements ConfigInterface {
         },
         {
             icon: 'refferals',
-            text: 'RefferedLeads',
+            text: 'ReferredLeads',
             route: '/app/leads',
             permission: AppPermissions.CRMCustomers + '|' + AppPermissions.CRMPartners + '|' + AppPermissions.CRMEmployees + '|' + AppPermissions.CRMInvestors + '|' + AppPermissions.CRMVendors + '|' + AppPermissions.CRMOthers,
             feature: AppFeatures.PortalLeads

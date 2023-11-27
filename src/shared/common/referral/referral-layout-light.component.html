@@ -1,25 +1,28 @@
 <ng-container>
-    <h1>{{ ls.l('Referral.' + getSelectedTabTitle()) }}</h1>
-    <mat-tab-group [(selectedIndex)]="selectedTabIndex">
-        <mat-tab *ngIf="isCRMCommissionsEnabled" [label]="ls.l('Referral.Overview')">
-            <dashboard-overview></dashboard-overview>
-        </mat-tab>
-        <mat-tab *ngIf="isCRMEnabled" [label]="ls.l('Referral.LinkGenerator')">
-            <link-generator></link-generator>
-        </mat-tab>
-        <mat-tab *ngIf="isCRMCommissionsEnabled" [label]="ls.l('Referral.CommissionHistory')">
-            <div>
-                <commission-amounts></commission-amounts>
-                <commission-history></commission-history>
-            </div>
-        </mat-tab>
-        <mat-tab *ngIf="isCRMCommissionsEnabled" [label]="ls.l('Referral.LedgerBalance')">
-            <div>
-                <commission-amounts></commission-amounts>
-                <dx-scroll-view height="calc(100vh - 325px)" showScrollbar="onHover">
-                    <ledger-balance></ledger-balance>
-                </dx-scroll-view>
-            </div>
-        </mat-tab>
-    </mat-tab-group>
+    <h1 *ngIf="isCRMCommissionsEnabled">{{ ls.l('Referral.' + getSelectedTabTitle()) }}</h1>
+    <link-generator *ngIf="!isCRMCommissionsEnabled; else tabs"></link-generator>
+    <ng-template #tabs>
+        <mat-tab-group [(selectedIndex)]="selectedTabIndex">
+            <mat-tab [label]="ls.l('Referral.Overview')">
+                <dashboard-overview></dashboard-overview>
+            </mat-tab>
+            <mat-tab [label]="ls.l('Referral.LinkGenerator')">
+                <link-generator></link-generator>
+            </mat-tab>
+            <mat-tab [label]="ls.l('Referral.CommissionHistory')">
+                <div>
+                    <commission-amounts></commission-amounts>
+                    <commission-history></commission-history>
+                </div>
+            </mat-tab>
+            <mat-tab [label]="ls.l('Referral.LedgerBalance')">
+                <div>
+                    <commission-amounts></commission-amounts>
+                    <dx-scroll-view height="calc(100vh - 325px)" showScrollbar="onHover">
+                        <ledger-balance></ledger-balance>
+                    </dx-scroll-view>
+                </div>
+            </mat-tab>
+        </mat-tab-group>
+    </ng-template>
 </ng-container>

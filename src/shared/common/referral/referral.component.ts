@@ -29,9 +29,6 @@ export class ReferralComponent implements OnInit {
     @ViewChild(ReferralAdDirective, { static: true }) adDirective: ReferralAdDirective;
     componentRef: any;
 
-    isCRMEnabled = this.permission.isGranted(AppPermissions.CRM);
-    isCRMCommissionsEnabled = abp.features.isEnabled(AppFeatures.CRMCommissions);
-
     constructor(
         private componentFactoryResolver: ComponentFactoryResolver,
         public permission: AppPermissionService,
@@ -40,8 +37,7 @@ export class ReferralComponent implements OnInit {
     ) {}
 
     ngOnInit(): void {
-        if (this.isCRMEnabled || this.isCRMCommissionsEnabled)
-            this.loadLayoutComponent();
+        this.loadLayoutComponent();
     }
 
     private loadLayoutComponent() {

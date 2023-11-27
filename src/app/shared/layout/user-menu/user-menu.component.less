@@ -1,6 +1,7 @@
 :host {
     z-index: 999;
-    background: #f6f4f0;
+    background: #ffffff;
+    border-right: 1px solid rgba(217, 216, 216, 0.7);
     position: relative;
     min-width: 20%;
 
@@ -47,7 +48,7 @@
 
             label {
                 display: inline-block;
-                font-size: 10px;
+                font-size: 12px;
                 font-weight: 500;
                 font-stretch: normal;
                 font-style: normal;
@@ -73,7 +74,7 @@
                     padding: 2px!important;
                 }
                 .inplace-edit-view-mode {
-                    font-size: 10px;
+                    font-size: 12px;
                     font-weight: bold;
                     letter-spacing: -0.23px;
                     text-align: center;
@@ -99,7 +100,7 @@
             margin: 10px 0;
             a {
                 white-space: nowrap;
-                font-size: 12px;
+                font-size: 16px;
                 font-weight: normal;
                 font-stretch: normal;
                 font-style: normal;
@@ -114,6 +115,10 @@
             .img {
                 margin-right: 9px;
                 width: 1.333em;
+                img {
+                    margin: 8px auto;
+                    display: block;
+                }
             }
             &.selected {
                 border-radius: 6px;
@@ -129,7 +134,7 @@
         &.logout {
             margin: 0;
             opacity: 0.9;
-            background-color: #efede9;
+            background-color: #ffffff;
             padding: 5px 20px;
         }
     }

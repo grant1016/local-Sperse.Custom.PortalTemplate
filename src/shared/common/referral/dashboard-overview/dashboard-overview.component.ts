@@ -40,14 +40,14 @@ export class DashboardOverviewComponent implements AfterViewInit, OnDestroy {
     selectInitialLink: any;
     paymentSettingType = PaymentSettingType;
     userCommissionRates: GetUserCommissionRatesOutput = new GetUserCommissionRatesOutput();
-    links$ = this.isCRMEnabled ? this.referralService.getLinks().pipe(map(links => {
+    links$ = this.referralService.getLinks().pipe(map(links => {
         return links.map((link, index) => {
             if (!index)
                 this.selectInitialLink = link;
             link['index'] = index + 1;
             return link;
         });
-    })) : of([]);
+    }));
     suggestedCopy: string;
     selectedLink: string;
     ledgerTotals: any;
