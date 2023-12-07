@@ -38,6 +38,8 @@ export class AdLoginHostDirective {
 })
 export class LoginComponent implements OnInit {
     @ViewChild('loginForm') loginForm;
+    width = innerWidth;
+    remoteServiceBaseUrl = AppConsts.remoteServiceBaseUrl;
     currentYear: number = moment().year();
     tenantName = AppConsts.defaultTenantName;
     conditions = ConditionsType;
