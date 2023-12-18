@@ -7,11 +7,11 @@
                         <a [href]="originUrl">
                            <img *ngIf="!appSession.tenant || !appSession.tenant.logoId"
                                 src="./assets/common/images/app-logo-on-dark.png"
-                                alt="logo" width="auto" height="60"/>
+                                alt="logo" width="auto" height="54"/>
                            <img *ngIf="appSession.tenant && appSession.tenant.logoId"
                                 [src]="remoteServiceBaseUrl + '/api/TenantCustomization/GetLogo?logoId=' + appSession.tenant.logoId"
                                 alt="logo"
-                                width="auto" height="60"/>
+                                width="auto" height="54"/>
                         </a>
                     </div>
 
