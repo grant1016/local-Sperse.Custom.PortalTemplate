@@ -28,8 +28,8 @@ import { SignupComponent } from './signup/signup.component';
                     { path: 'confirm-email', component: ConfirmEmailComponent },
                     { path: 'send-code', component: SendTwoFactorCodeComponent },
                     { path: 'verify-code', component: ValidateTwoFactorCodeComponent },
-                    { path: 'select-tenant', component: SelectTenantComponent },
-                    { path: 'signup', component: SignupComponent }
+                    { path: 'select-tenant', component: SelectTenantComponent }
+                    //{ path: 'signup', component: SignupComponent }
                 ]
             }
         ])

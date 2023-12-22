@@ -40,6 +40,8 @@ export class AdLoginHostDirective {
 export class LoginComponent implements OnInit {
     @ViewChild('loginForm') loginForm;
     width = innerWidth;
+    tenantId = abp.session.tenantId;
+    remoteServiceBaseUrl = AppConsts.remoteServiceBaseUrl;
     isSignUpEnabled = this.appSession.tenant && 
         abp.setting.get('App.UserManagement.IsSignUpPageEnabled') == 'true';
     currentYear: number = moment().year();

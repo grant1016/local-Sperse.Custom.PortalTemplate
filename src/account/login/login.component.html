@@ -67,7 +67,7 @@
                 </ng-container>
 
                 <hr>
-                <p *ngIf="isSignUpEnabled" class="signup-link">Don't have an account? <a routerLink="/account/signup">Sign up now</a></p>
+                <p *ngIf="isSignUpEnabled" class="signup-link">Don't have an account? <a href="{{remoteServiceBaseUrl}}/account/signup{{tenantId ? '?tenantId=' + tenantId : ''}}">Sign up now</a></p>
             </form>
         </div>
     </div>
