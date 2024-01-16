@@ -25,6 +25,7 @@ import { SettingService } from 'abp-ng2-module';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { ConditionsModalComponent } from '@shared/common/conditions-modal/conditions-modal.component';
+import { environment } from '@root/environments/environment';
 
 export class AdLoginHostDirective {
     constructor(public viewContainerRef: ViewContainerRef) { }
@@ -38,9 +39,15 @@ export class AdLoginHostDirective {
 })
 export class LoginComponent implements OnInit {
     @ViewChild('loginForm') loginForm;
+    width = innerWidth;
+    tenantId = abp.session.tenantId;
+    remoteServiceBaseUrl = AppConsts.remoteServiceBaseUrl;
+    isSignUpEnabled = this.appSession.tenant && 
+        abp.setting.get('App.UserManagement.IsSignUpPageEnabled') == 'true';
     currentYear: number = moment().year();
     tenantName = AppConsts.defaultTenantName;
     conditions = ConditionsType;
+    showExternalLogin = false;
     loginInProgress = false;
     showPassword = false;
 
@@ -67,6 +74,7 @@ export class LoginComponent implements OnInit {
         let tenant = this.appSession.tenant;
         if (tenant)
             this.tenantName = tenant.name || tenant.tenancyName;
+        this.showExternalLogin = environment.releaseStage == 'staging' || (tenant && !environment.production);
         if (this.sessionService.userId > 0 && UrlHelper.getReturnUrl() && UrlHelper.getSingleSignIn()) {
             this.sessionAppService.updateUserSignInToken()
                 .subscribe((result: UpdateUserSignInTokenOutput) => {
