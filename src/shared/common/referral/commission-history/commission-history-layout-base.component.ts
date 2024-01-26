@@ -33,6 +33,7 @@ import { CommissionFields } from '@shared/common/referral/commission-history/com
 import { CommissionDto } from '@shared/common/referral/commission-history/commission-dto';
 import { ReferralService } from '@shared/common/referral/referral.service';
 import { GetLedgerTotalsOutput } from '@shared/service-proxies/service-proxies';
+import { SettingsHelper } from '../../../../app/shared/helpers/settings.helper';
 
 @Component({
     selector: 'commission-history-layout-base',
@@ -56,7 +57,7 @@ export class CommissionHistoryLayoutBaseComponent implements OnInit, OnDestroy {
         store: {
             type: 'odata',
             key: this.commissionFields.Id,
-            url: this.getODataUrl('UserCommissions'),
+            url: this.getODataUrl('UserCommissions', [{ CurrencyId: { 'eq': SettingsHelper.getCurrency() } }]),
             version: AppConsts.ODataVersion,
             deserializeDates: false,
             beforeSend: (request) => {
@@ -69,7 +70,11 @@ export class CommissionHistoryLayoutBaseComponent implements OnInit, OnDestroy {
                 }
                 request.params.$select = DataGridService.getSelectFields(
                     this.dataGrid,
-                    [ this.commissionFields.Id ]
+                    [this.commissionFields.Id],
+                    {
+                        ProductAmount: [this.commissionFields.CurrencyId],
+                        CommissionAmount: [this.commissionFields.CurrencyId]
+                    }
                 );
             },
             onLoaded: () => {
@@ -145,7 +150,7 @@ export class CommissionHistoryLayoutBaseComponent implements OnInit, OnDestroy {
                     if (gridCell.column.dataField === this.commissionFields.Id) {
                         excelCell.numFmt = '0';
                     } else if (gridCell.column.cellTemplate === 'amountCell') {
-                        excelCell.numFmt = ReferralExportService.currencyFormat;
+                        excelCell.numFmt = this.referralExportService.currencyFormat;
                     }
                 }
             })

@@ -10,7 +10,7 @@
                         {{ls.ls(localization, 'CRMDashboard_NewAdded', [ls.ls(localization, field.title).toLowerCase()])}}
                         <div class="value">
                             <ng-container *ngIf="field.type == 'currency'">
-                                <span>{{ totalsData[field.name.replace('total', 'new')] | currency: 'USD' : true : '1.0-0' }}</span>
+                                <span>{{ totalsData[field.name.replace('total', 'new')] | currency: currency : 'symbol' : '1.0-0' }}</span>
                             </ng-container>
                             <ng-container *ngIf="field.type == 'number'">
                                 <span>{{ totalsData[field.name.replace('total', 'new')] | number }}</span>

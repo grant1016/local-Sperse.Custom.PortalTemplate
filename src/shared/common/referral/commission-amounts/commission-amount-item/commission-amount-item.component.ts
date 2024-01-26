@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { SettingsHelper } from '@app/shared/helpers/settings.helper';
 
 @Component({
     selector: 'commission-amount-item',
@@ -10,5 +11,7 @@ export class CommissionAmountItemComponent {
     @Input() label: string;
     @Input() value: number;
     @Input() valueColor: string;
+
+    currency = SettingsHelper.getCurrency();
     constructor() {}
 }

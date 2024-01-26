@@ -12,6 +12,7 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 import { GetTotalsOutput } from '@shared/service-proxies/service-proxies';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
+import { SettingsHelper } from '@app/shared/helpers/settings.helper';
 
 @Component({
     selector: 'new-items-totals',
@@ -25,6 +26,7 @@ export class NewItemsTotalsComponent implements OnDestroy, OnInit {
     totalsDataAvailable$: Observable<boolean> = this.dashboardService.totalsDataAvailable$;
     totalsDataLoading$ = this.dashboardService.totalsDataLoading$.pipe(takeUntil(this.lifeCycleService.destroy$));
     localization = AppConsts.localization.CRMLocalizationSourceName;
+    currency: string = SettingsHelper.getCurrency();
 
     constructor(
         private lifeCycleService: LifecycleSubjectsService,

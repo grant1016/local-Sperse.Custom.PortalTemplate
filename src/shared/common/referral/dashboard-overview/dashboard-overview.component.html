@@ -85,15 +85,15 @@
         <span>{{ls.l('Customers')}}</span>
     </div>
     <div>
-        <p>{{totalsData?.totalOrderAmount || 0 | currency}}</p>
+        <p>{{totalsData?.totalOrderAmount || 0 | currency:currency:'symbol'}}</p>
         <span>{{ls.l('Revenue')}}</span>
     </div>
     <div>
-        <p>{{ledgerTotals?.earnedAmount || 0 | currency}}</p>
+        <p>{{ledgerTotals?.earnedAmount || 0 | currency:currency:'symbol'}}</p>
         <span>{{ls.l('Earnings')}}</span>
     </div>
     <div>
-        <p>{{ledgerTotals?.pendingEarningsAmount || 0 | currency}}</p>
+        <p>{{ledgerTotals?.pendingEarningsAmount || 0 | currency:currency:'symbol'}}</p>
         <span>{{ls.l('Pending')}}</span>
     </div>
 </div>

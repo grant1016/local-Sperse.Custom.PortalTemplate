@@ -23,6 +23,7 @@ import { GetTotalsOutput } from '@shared/service-proxies/service-proxies';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { TotalsDataField } from '@shared/crm/dashboard-widgets/counts-and-totals/totals-data-field.interface';
+import { SettingsHelper } from '@app/shared/helpers/settings.helper';
 
 @Component({
     selector: 'counts-and-totals',
@@ -36,6 +37,7 @@ export class CountsAndTotalsComponent implements OnInit, OnChanges, OnDestroy {
     @Input() fields: TotalsDataField[];
     totalsDataLoading$ = this.dashboardService.totalsDataLoading$.pipe(takeUntil(this.lifeCycleService.destroy$));
     localization = AppConsts.localization.CRMLocalizationSourceName;
+    currency: string = SettingsHelper.getCurrency();
 
     constructor(
         private dashboardService: DashboardWidgetsService,

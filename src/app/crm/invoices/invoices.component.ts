@@ -42,10 +42,6 @@ export class InvoicesComponent extends AppComponentBase implements OnDestroy {
     previewContent = '';
     selectedOrgUnitId: number;
     dataSource: DataSource;
-    currencyFormat = {
-        type: 'currency',
-        precision: 2
-    };
 
     constructor(
         injector: Injector,

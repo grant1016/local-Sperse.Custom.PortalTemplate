@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
+import { getCurrencySymbol } from '@angular/common';
 import { Alignment, Border, Borders, Fill, Worksheet } from 'exceljs';
 import { CellRange } from 'devextreme/excel_exporter';
 import * as moment from 'moment';
+import { SettingsHelper } from '@app/shared/helpers/settings.helper';
 
 @Injectable()
 export class ReferralExportService {
@@ -14,7 +16,9 @@ export class ReferralExportService {
         headerRow.getCell(2).font = { size: 18, bold: true };
         headerRow.getCell(2).alignment = { horizontal: 'center' };
     }
-    static currencyFormat = '"$"#,##0.00;[Red]("$"#,##0.00)';
+    currency = SettingsHelper.getCurrency();
+    currencySymbol = getCurrencySymbol(this.currency, 'narrow');
+    currencyFormat = `"${this.currencySymbol}"#,##0.00;[Red]("${this.currencySymbol}"#,##0.00)`;
 
     addAmountsWidget(
         worksheet: Worksheet,
@@ -63,7 +67,7 @@ export class ReferralExportService {
                 size: 14,
                 bold: true
             };
-            valueCell.numFmt = ReferralExportService.currencyFormat;
+            valueCell.numFmt = this.currencyFormat;
             let valueCellBorder: Partial<Borders> = { bottom: this.thinBorder };
             if (index === 0) {
                 let headerCellBorder: Partial<Borders> = { left: this.thinBorder };

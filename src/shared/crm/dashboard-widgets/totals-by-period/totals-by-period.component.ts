@@ -51,7 +51,6 @@ import { DashboardWidgetsService } from '../dashboard-widgets.service';
 import { AppConsts } from '@shared/AppConsts';
 import { GetCustomerAndLeadStatsOutput } from '@shared/service-proxies/service-proxies';
 import { PeriodModel } from '@app/shared/common/period/period.model';
-import { Period } from '@app/shared/common/period/period.enum';
 import { LayoutService } from '@app/shared/layout/layout.service';
 import { StageDtoExtended } from '@app/store/pipelines-store/stage-dto-extended.interface';
 import { ContactGroup } from '@shared/AppEnums';
@@ -70,7 +69,6 @@ export class TotalsByPeriodComponent implements DoCheck, OnInit, OnDestroy {
     totalsData$: Observable<GetCustomerAndLeadStatsOutput[]>;
     startDate: any;
     endDate: any;
-    currency = 'USD';
     localization = AppConsts.localization.CRMLocalizationSourceName;
     clientColor = this.layoutService.getLayoutColor('clientsCount');
     periods: TotalsByPeriodModel[] = [

@@ -13,6 +13,7 @@ import { WithdrawalDialogComponent } from '@shared/common/referral/commission-am
 import { AffiliatePayoutSettingInfo, GetLedgerTotalsOutput, PaymentSettingType } from '@shared/service-proxies/service-proxies';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { ReferralService } from '@shared/common/referral/referral.service';
+import { SettingsHelper } from '@app/shared/helpers/settings.helper';
 
 @Component({
     selector: 'commission-amounts-layout-base',
@@ -25,6 +26,7 @@ export class CommissionAmountsLayoutBaseComponent implements OnInit, OnDestroy {
     ledgerTotals: GetLedgerTotalsOutput;
     paymentSettingType = PaymentSettingType;
     paymentSetting: AffiliatePayoutSettingInfo;
+    currency = SettingsHelper.getCurrency();
 
     constructor(
         private dialog: MatDialog,
