@@ -19,7 +19,7 @@
             <dxi-column alignment="center" width="50px" cellTemplate="actionsCellTemplate" headerCellTemplate="actionsCellTemplate"></dxi-column>
             <a class="dx-link dx-link-edit" *dxTemplate="let cellData of 'actionsCellTemplate'"></a>
             <dxi-column width="15%" [dataField]="invoiceFields.Id" alignment="left" [caption]="l('Invoice')" cellTemplate="invoiceId"></dxi-column>
-            <dxi-column width="15%" [dataField]="invoiceFields.Amount" [format]="currencyFormat" dataType="string" [caption]="l('Amount')"></dxi-column>
+            <dxi-column width="15%" [dataField]="invoiceFields.Amount" [caption]="l('Amount')" cellTemplate="amountTemplate"></dxi-column>
             <dxi-column [dataField]="invoiceFields.Status" [caption]="l('Status')" alignment="center" cellTemplate="statusCell"></dxi-column>
             <dxi-column width="23%" [dataField]="invoiceFields.Date" [caption]="l('Date')" cellTemplate="datetimeCell"></dxi-column>
             <dxi-column width="23%" [dataField]="invoiceFields.DueDate" [caption]="l('Due Date')" cellTemplate="dueDateCell"></dxi-column>
@@ -35,6 +35,9 @@
             </div>
             <div *dxTemplate="let cellData of 'datetimeCell'" class="clipboard-holder">
                 {{ cellData.value | date: formatting.date }}
+            </div>
+            <div *dxTemplate="let cell of 'amountTemplate'" class="clipboard-holder">
+                <span> {{ cell.value | currency:cell.data.CurrencyId:'symbol':'1.2-2' }} </span>
             </div>
             <dxo-selection mode="single"></dxo-selection>
         </dx-data-grid>

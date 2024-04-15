@@ -9,22 +9,22 @@
                 <h3>{{ ls.l('Referral.TotalsAmountsPosted') }}</h3>
                 <div class="earned">
                     <h4><img src="assets/common/icons/earnings.svg">{{ ls.l('Referral.Earned') }}</h4>
-                    <p>{{ ledgerTotals?.earnedAmount | currency }}</p>
+                    <p>{{ ledgerTotals?.earnedAmount | currency:currency:'symbol' }}</p>
                 </div>
                 <div class="withdrawn">
                     <h4><img src="assets/common/icons/profits.svg">{{ ls.l('Referral.Withdrawn') }}</h4>
-                    <p class="green">{{ ledgerTotals?.withdrawnAmount | currency }}</p>
+                    <p class="green">{{ ledgerTotals?.withdrawnAmount | currency:currency:'symbol' }}</p>
                 </div>
             </div>
             <div class="pending">
                 <h3>{{ ls.l('Referral.PendingAmounts') }}</h3>
                 <div class="earned">
                     <h4><img src="assets/common/icons/earnings.svg">{{ ls.l('Referral.Earned') }}</h4>
-                    <p>{{ ledgerTotals?.pendingEarningsAmount | currency }}</p>
+                    <p>{{ ledgerTotals?.pendingEarningsAmount | currency:currency:'symbol' }}</p>
                 </div>
                 <div class="withdrawn">
                     <h4><img src="assets/common/icons/profits.svg">{{ ls.l('Referral.Withdrawn') }}</h4>
-                    <p class="green">{{ ledgerTotals?.pendingWithdrawalsAmount | currency }}</p>
+                    <p class="green">{{ ledgerTotals?.pendingWithdrawalsAmount | currency:currency:'symbol' }}</p>
                 </div>
             </div>            
         </div>
@@ -33,7 +33,7 @@
         <div class="available">
             <img src="assets/common/icons/lock.svg" width="25" height="auto">
             <h3>{{ls.l('Referral.Available')}}</h3>
-            <p class="amount">{{ ledgerTotals?.availableBalance | currency }}</p>
+            <p class="amount">{{ ledgerTotals?.availableBalance | currency:currency:'symbol' }}</p>
         </div>
     </div>
     <div class="funds-withdraw">

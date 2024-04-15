@@ -22,6 +22,7 @@ import { ProfileService } from '@shared/common/profile-service/profile.service';
 import { SharingService } from '@shared/common/sharing-service/sharing.service';
 import { ReferralService } from '@shared/common/referral/referral.service';
 import { NotifyService } from 'abp-ng2-module';
+import { SettingsHelper } from '@app/shared/helpers/settings.helper';
 
 @Component({
     selector: 'dashboard-overview',
@@ -52,6 +53,7 @@ export class DashboardOverviewComponent implements AfterViewInit, OnDestroy {
     selectedLink: string;
     ledgerTotals: any;
     totalsData: any;
+    currency: string = SettingsHelper.getCurrency();
 
     constructor(
         public dialog: MatDialog,

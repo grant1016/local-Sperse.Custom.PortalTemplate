@@ -2,7 +2,7 @@
     <h3>{{ ls.l('Referral.RequestWithdrawal') }}</h3>
     <h4>{{ ls.l('Referral.WithdrawalDescription') }}</h4>
     <dx-number-box [(value)]="withdrawalAmount"
-                   format="$ #,##0.##"
+                   [format]="currencyFormat"
                    [placeholder]="ls.l('Referral.WithdrawalAmount')">
         <dx-validator>
             <dxi-validation-rule type="required"
@@ -10,7 +10,7 @@
             </dxi-validation-rule>
             <dxi-validation-rule type="range"
                                  [max]="data.availableBalance"
-                                 [message]="ls.l('Referral.YouCantRequestMoreThen', this.data.availableBalance | currency)">
+                                 [message]="ls.l('Referral.YouCantRequestMoreThen', this.data.availableBalance | currency:currency:'symbol')">
             </dxi-validation-rule>
         </dx-validator>
     </dx-number-box>

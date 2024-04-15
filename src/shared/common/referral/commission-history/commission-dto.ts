@@ -8,5 +8,6 @@ export interface CommissionDto {
     ProductAmount: number;
     Tier: string;
     CommissionAmount: number;
+    CurrencyId: string;
     Status: string;
 }
