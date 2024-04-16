@@ -214,22 +214,23 @@ export class FiltersService {
                     }
                     if (normalizedValue) {
                         if (!isLongFilter) {
-                            inExpressions.push(`'${normalizedValue.replace(/'/g, '\'\'')}'`);
+                            inExpressions.push(`'${normalizedValue.replace(/'/g, "''")}'`);
                         }
                         normalizedValues.push(normalizedValue);
                     }
                 });
+                data = 'cancelled';
                 if (isLongFilter) {
                     data = {
                         [ServerCacheService.filterNamesToCacheIdNames[filter.caption]]: new AsyncFilter(
                             this.serverCacheService.getServerCacheId(normalizedValues),
                             valuesArray.length
                         )
-                    };
-                } else {
-                    data = inExpressions.length
-                        ? [`${filter.field} in (${encodeURIComponent(inExpressions.join(','))})`]
-                        : 'cancelled';
+                    }
+                } else if (inExpressions.length) {
+                    data = element.manyToMany
+                        ? [`${filter.field}/any(s:s in (${encodeURIComponent(inExpressions.join(','))}))`]
+                        : [`${filter.field} in (${encodeURIComponent(inExpressions.join(','))})`];
                 }
             }
         }
