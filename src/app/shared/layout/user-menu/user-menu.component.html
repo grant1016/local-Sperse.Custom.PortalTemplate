@@ -9,6 +9,7 @@
         <inplace-edit #affiliateCode
             [ngClass]="{'edit-mode': affiliateCode.isEditModeEnabled}"
             [editPlaceholder]="ls.l('AffiliateEditPlaceholder')"
+            lEntityName="Name"
             [value]="affiliateCode$ | async"
             [showInlineEditButton]="true"
             [isDeleteEnabled]="true"
