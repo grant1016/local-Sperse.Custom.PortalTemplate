@@ -28,7 +28,7 @@
                     <a #childLink="routerLinkActive" 
                         [routerLink]="item.route.startsWith('/') ? [item.route] : []" 
                         [routerLinkActive]="item.route.startsWith('/') ? 'selected' : ''" 
-                        (click)="navigate(item)">
+                        (click)="navigate(item, $event)">
                         {{ item.text }}
                     </a>
                 </li>

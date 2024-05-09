@@ -3,9 +3,11 @@ import { AbpMultiTenancyService } from 'abp-ng2-module';
 import { Injectable } from '@angular/core';
 
 /** Third party imports */
+import { Store, select } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { map, publishReplay, refCount } from 'rxjs/operators';
 import isEqual from 'lodash/isEqual';
+import * as _ from 'underscore';
 
 /** Application imports */
 import {
@@ -14,8 +16,10 @@ import {
     SessionServiceProxy,
     TenantLoginInfoDto,
     UserLoginInfoDto,
-    CommonUserInfoServiceProxy
+    CommonUserInfoServiceProxy,
+    CountryDto
 } from '@shared/service-proxies/service-proxies';
+import { CountriesStoreActions, CountriesStoreSelectors, RootStore } from '@root/store';
 
 export interface ILoginInfo {
     contactId: number | undefined;
@@ -29,6 +33,7 @@ export class AppSessionService {
     private _user: UserLoginInfoDto;
     private _tenant: TenantLoginInfoDto;
     private _application: ApplicationInfoDto;
+    private countries: any;
 
     userCompany$: Observable<string> = this.commonUserInfoService.getCompany().pipe(
         map(x => isEqual(x, {}) ? null : x),
@@ -37,10 +42,12 @@ export class AppSessionService {
     );
 
     constructor(
+        private store$: Store<RootStore.State>,
         private sessionService: SessionServiceProxy,
         private abpMultiTenancyService: AbpMultiTenancyService,
         private commonUserInfoService: CommonUserInfoServiceProxy
     ) {
+        this.loadCountries();
         abp.event.on('profilePictureChanged', (thumbnailId) => {
             this.user.profileThumbnailId = thumbnailId;
         });
@@ -130,6 +137,18 @@ export class AppSessionService {
         abp.multiTenancy.setTenantIdCookie(tenantId);
         reload && location.reload();
         return true;
+    }
+
+    getCountryNameByCode(code: string) {
+        let country = _.findWhere(this.countries, { code: code });
+        return country && country.name;
+    }
+
+    private loadCountries(): void {
+        this.store$.dispatch(new CountriesStoreActions.LoadRequestAction());
+        this.store$.pipe(select(CountriesStoreSelectors.getCountries)).subscribe((countries: CountryDto[]) => {
+            this.countries = countries;            
+        });
     }
 
     private isCurrentTenant(tenantId?: number) {

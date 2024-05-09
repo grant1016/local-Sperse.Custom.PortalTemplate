@@ -19,6 +19,7 @@ import { MatSliderModule } from '@angular/material/slider';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
+import { DxScrollViewModule } from 'devextreme-angular/ui/scroll-view';
 import { DxDropDownBoxModule } from 'devextreme-angular/ui/drop-down-box';
 import { DxListModule } from 'devextreme-angular/ui/list';
 import { DxButtonModule } from 'devextreme-angular/ui/button';
@@ -57,6 +58,18 @@ import { ModalDialogModule } from '@shared/common/dialogs/modal/modal-dialog.mod
 import { AbpModule } from 'abp-ng2-module';
 import { UtilsModule } from '@shared/utils/utils.module';
 import { CommonModule } from '@shared/common/common.module';
+import { PaymentsInfoComponent } from './payments-info/payments-info.component';
+import { PaymentWizardComponent } from './payment-wizard/payment-wizard.component';
+import { PaymentSubscriptionsComponent } from './payment-wizard/payment-subscriptions/payment-subscriptions.component';
+import { PackageCardComponent } from './payment-wizard/package-chooser/package-card/package-card.component';
+import { PackageChooserComponent } from './payment-wizard/package-chooser/package-chooser.component';
+import { PaymentStatusComponent } from './payment-wizard/payment-status/payment-status.component';
+import { PaymentOptionsComponent } from './payment-wizard/payment-options/payment-options.component';               
+import { CreditCardComponent } from './payment-wizard/payment-options/credit-card/credit-card.component';
+import { PayPalComponent } from './payment-wizard/payment-options/pay-pal/pay-pal.component';
+import { BankTransferComponent } from './payment-wizard/payment-options/bank-transfer/bank-transfer.component';
+import { ECheckComponent } from './payment-wizard/payment-options/e-check/e-check.component';
+
 import { UploadPhotoDialogComponent } from './upload-photo-dialog/upload-photo-dialog.component';
 import { ConfirmDialogComponent } from './dialogs/confirm/confirm-dialog.component';
 import { HeadLineComponent } from './headline/headline.component';
@@ -71,6 +84,7 @@ import { CalendarButtonComponent } from '@app/shared/common/calendar-button/cale
 import { CalendarDialogComponent } from './dialogs/calendar/calendar-dialog.component';
 import { PeriodComponent } from './period/period.component';
 import { ToolBarComponent } from './toolbar/toolbar.component';
+import { ActionMenuModule } from './action-menu/action-menu.module';
 
 @NgModule({
     imports: [
@@ -104,6 +118,7 @@ import { ToolBarComponent } from './toolbar/toolbar.component';
         ImageCropperModule,
         NgxFileDropModule,
         ModalDialogModule,
+        ActionMenuModule,
 
         DxListModule,
         DxCheckBoxModule,
@@ -135,7 +150,8 @@ import { ToolBarComponent } from './toolbar/toolbar.component';
         DxTooltipModule,
         DxSwitchModule,
         DxTreeListModule,
-        DxSliderModule
+        DxSliderModule,
+        DxScrollViewModule
     ],
     declarations: [
         TimeAgoPipe,
@@ -150,7 +166,18 @@ import { ToolBarComponent } from './toolbar/toolbar.component';
         ConfirmDialogComponent,
         CommonLookupModalComponent,
         CalendarButtonComponent,
-        CalendarDialogComponent
+        CalendarDialogComponent,
+        PaymentsInfoComponent,
+        PaymentWizardComponent,
+        PaymentOptionsComponent,
+        PaymentStatusComponent, 
+        PackageChooserComponent, 
+        PackageCardComponent,
+        PaymentSubscriptionsComponent,
+        BankTransferComponent,
+        CreditCardComponent,
+        PayPalComponent,
+        ECheckComponent
     ],
     exports: [
         TimeAgoPipe,
@@ -165,6 +192,7 @@ import { ToolBarComponent } from './toolbar/toolbar.component';
         ConfirmDialogComponent,
         CommonLookupModalComponent,
         CalendarButtonComponent,
+        PaymentsInfoComponent,
         CalendarDialogComponent
     ],
     providers: [],
@@ -172,7 +200,8 @@ import { ToolBarComponent } from './toolbar/toolbar.component';
         CalendarDialogComponent,
         UploadPhotoDialogComponent,
         ConfirmDialogComponent,
-        CommonLookupModalComponent
+        CommonLookupModalComponent,
+        PaymentWizardComponent  
     ]
 })
 export class AppCommonModule {
