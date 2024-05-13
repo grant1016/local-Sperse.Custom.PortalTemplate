@@ -155,8 +155,7 @@ export class PaymentSubscriptionsComponent extends AppComponentBase implements O
     }
 
     upgradeSubscription() {
-        let productCode = this.actionRecordData.productCode;
-        this.onShowProducts.emit({ upgrade: true, productId: 53 });
+        this.onShowProducts.emit({ upgrade: true, productId: this.actionRecordData.productId });
     }
 
     cancelSubscription() {
