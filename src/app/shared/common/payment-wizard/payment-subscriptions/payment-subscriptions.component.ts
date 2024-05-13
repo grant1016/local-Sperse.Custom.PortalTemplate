@@ -60,7 +60,7 @@ export class PaymentSubscriptionsComponent extends AppComponentBase implements O
         {
             text: this.l('Upgrade'),
             class: 'notes',
-            checkVisible: () => this.showOneTimeActivate(this.actionRecordData) || this.showUpgradeButton(this.actionRecordData),
+            checkVisible: () => this.showUpgradeButton(this.actionRecordData),
             action: this.upgradeSubscription.bind(this)
         },
         {
@@ -140,10 +140,6 @@ export class PaymentSubscriptionsComponent extends AppComponentBase implements O
         event.itemData.action.call(this);
         this.actionRecordData = null;
         this.actionMenu.hide();
-    }
-
-    showOneTimeActivate(data: OrderSubscriptionDto) {
-        return data.statusCode == 'A' && data.paymentPeriodType == RecurringPaymentFrequency.OneTime;
     }
 
     showUpgradeButton(data: OrderSubscriptionDto) {

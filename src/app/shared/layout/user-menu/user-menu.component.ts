@@ -66,7 +66,7 @@ export class UserMenuComponent {
                     if (this.checkMenuItemPermission(item))
                         return item;
                 }).filter(Boolean);
-                this.navigationItems.splice(1, 0, {
+                this.navigationItems.splice(2, 0, {
                     icon: 'dollar',
                     text: 'My Subscriptions',
                     route: 'subscriptions'
