@@ -62,7 +62,7 @@
                                 [renderAsync]="true"
                                 [allowColumnReordering]="true"
                                 [columnAutoWidth]="true"
-                                [cacheEnabled]="false"
+                                [cacheEnabled]="false"                                
                                 [remoteOperations]="{
                                     filtering: false,
                                     grouping: false,
@@ -77,13 +77,13 @@
                                 [columnChooser]="{
                                     height: rowsViewHeight
                                 }"
-                                [pager]="defaultGridPagerConfig"
                                 (onOptionChanged)="onGridOptionChanged($event)"
                                 (onContentReady)="onContentReady($event)"
                                 (onCellClick)="onCellClick($event)"
                                 (onEditingStart)="toggleActionsMenu($event)"
                                 (onSelectionChanged)="onSelectionChanged($event)"
                                 (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
+                            <dxo-pager [visible]="true"></dxo-pager>
                             <dxo-selection
                                     selectAllMode="page"
                                     showCheckBoxesMode="always"
@@ -94,7 +94,7 @@
                                 [popup]="{ onShowing: onShowingPopup, height: '0', width: '0' }"
                                 [allowUpdating]="true">
                             </dxo-editing>
-                            <dxo-scrolling rowRenderingMode="virtual"></dxo-scrolling>
+                            <dxo-scrolling mode="infinite"></dxo-scrolling>                            
                             <dxi-column cssClass="stars" [width]="40" [showInColumnChooser]="false" [allowExporting]="false"></dxi-column>
                             <dxi-column [dataField]="leadFields.Id" [caption]="l('Id')" cssClass="tabular clipboard-holder" [visible]="false" sortOrder="desc"></dxi-column>
                             <dxi-column [dataField]="leadFields.CustomerId" [caption]="l('ContactId')" cssClass="clipboard-holder" [visible]="false"></dxi-column>
