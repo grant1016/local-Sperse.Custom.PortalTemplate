@@ -40,7 +40,7 @@ export class PaymentService {
     }
 
     getUpgradeConfig(productId: number): Observable<ProductInfo[]> {
-        return this.productServiceProxy.getHostUpgradeProductsForProduct(productId).pipe(
+        return this.productServiceProxy.getUpgradeProductsForProduct(productId).pipe(
             publishReplay(),
             refCount()
         );

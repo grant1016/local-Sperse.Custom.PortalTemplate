@@ -1,6 +1,6 @@
 import { Component, AfterViewInit, ChangeDetectionStrategy, Input, Output, EventEmitter } from '@angular/core';
 import {
-    TenantSubscriptionServiceProxy,
+    UserSubscriptionServiceProxy,
     PublicCouponInfo,
     PaymentPeriodType,
     RequestPaymentInput,
@@ -15,7 +15,7 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
     templateUrl: './pay-pal.component.html',
     styleUrls: ['./pay-pal.component.less'],
     changeDetection: ChangeDetectionStrategy.OnPush,
-    providers: [TenantSubscriptionServiceProxy]
+    providers: [UserSubscriptionServiceProxy]
 })
 export class PayPalComponent implements AfterViewInit {
     @Input() productId: number;
@@ -28,7 +28,7 @@ export class PayPalComponent implements AfterViewInit {
     descriptionText = this.ls.l('PayPalPaymentDescriptionText');
 
     constructor(
-        private tenantSubscriptionServiceProxy: TenantSubscriptionServiceProxy,
+        private userSubscriptionServiceProxy: UserSubscriptionServiceProxy,
         private loadingService: LoadingService,
         private ls: AppLocalizationService
     ) {}
@@ -56,8 +56,8 @@ export class PayPalComponent implements AfterViewInit {
                 label: 'pay'
             },
             createSubscription(data, actions) {
-                return self.tenantSubscriptionServiceProxy
-                    .requestProductPayment(new RequestPaymentInput({
+                return self.userSubscriptionServiceProxy
+                    .requestPayment(new RequestPaymentInput({
                         type: RequestPaymentType.PayPal,
                         productId: self.productId,
                         paymentPeriodType: self.paymentPeriodType,

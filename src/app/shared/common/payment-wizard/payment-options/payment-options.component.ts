@@ -18,7 +18,7 @@ import {
     PaymentMethod,
     BankCardInfoDto,
     PaymentRequestInfoDto,
-    TenantSubscriptionServiceProxy,
+    UserSubscriptionServiceProxy,
     PayPalInfoDto,
     PaymentInfoType,
     PaymentPeriodType,
@@ -45,7 +45,7 @@ import { AppService } from '@app/app.service';
     templateUrl: './payment-options.component.html',
     styleUrls: ['./payment-options.component.less'],
     changeDetection: ChangeDetectionStrategy.OnPush,
-    providers: [TenantSubscriptionServiceProxy, PublicProductServiceProxy]
+    providers: [UserSubscriptionServiceProxy, PublicProductServiceProxy]
 })
 export class PaymentOptionsComponent extends AppComponentBase implements OnInit {
     @Input() plan: PaymentOptions;
@@ -108,7 +108,7 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
         injector: Injector,
         private appHttpConfiguration: AppHttpConfiguration,
         private appService: AppService,
-        private tenantSubscriptionServiceProxy: TenantSubscriptionServiceProxy,
+        private userSubscriptionServiceProxy: UserSubscriptionServiceProxy,
         private publicProductService: PublicProductServiceProxy,
         private changeDetector: ChangeDetectorRef,
         private elementRef: ElementRef,
@@ -148,15 +148,15 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
     selectedTabChange(e) {
         if (!this.bankTransferSettings$ && e.tab.textLabel === this.l('BankTransfer')) {
             /** Load transfer data */
-            this.bankTransferSettings$ = this.tenantSubscriptionServiceProxy.getBankTransferSettings();
+            //this.bankTransferSettings$ = this.tenantSubscriptionServiceProxy.getBankTransferSettings();
         }
     }
 
     initPaymentSystems() {
         forkJoin(
             [
-                this.tenantSubscriptionServiceProxy.getPaymentSettingsInfo(),
-                this.tenantSubscriptionServiceProxy.checkPaypalIsApplicable(new RequestPaymentInput({
+                this.userSubscriptionServiceProxy.getPaymentSettingsInfo(),
+                this.userSubscriptionServiceProxy.checkPaypalIsApplicable(new RequestPaymentInput({
                     type: RequestPaymentType.PayPal,
                     paymentPeriodType: this.plan.paymentPeriodType,
                     productId: this.plan.productId,
@@ -241,6 +241,7 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
                 break;
         }
         /** Start submitting data and change status in a case of error or success */
+        /*
         let method: Observable<any> = paymentMethod == PaymentMethods.PayPal
             ? this.tenantSubscriptionServiceProxy.completeSubscriptionPayment(paymentInfo.billingInfo)
             : paymentMethod === PaymentMethods.BankTransfer
@@ -279,6 +280,7 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
                     });
                 }
             );
+            */
     }
 
     getPaymentStatusText(paymentMethod: PaymentMethods, res: any) {
@@ -304,7 +306,7 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
     payByStripe() {
         this.isPayByStripeDisabled = true;
         this.loadingService.startLoading(this.elementRef.nativeElement);
-        this.tenantSubscriptionServiceProxy.requestProductPayment(new RequestPaymentInput({
+        this.userSubscriptionServiceProxy.requestPayment(new RequestPaymentInput({
             type: RequestPaymentType.Stripe,
             productId: this.plan.productId,
             paymentPeriodType: this.plan.paymentPeriodType,
@@ -391,7 +393,7 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
     subscribeToFree() {
         this.onStatusChange.emit({ status: PaymentStatusEnum.BeingConfirmed });
         this.onChangeStep.emit(2);
-        this.tenantSubscriptionServiceProxy.requestProductPayment(new RequestPaymentInput({
+        this.userSubscriptionServiceProxy.requestPayment(new RequestPaymentInput({
             type: RequestPaymentType.Free,
             productId: this.plan.productId,
             paymentPeriodType: this.plan.paymentPeriodType,
