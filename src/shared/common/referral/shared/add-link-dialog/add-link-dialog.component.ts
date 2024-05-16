@@ -46,6 +46,7 @@ export class AddLinkDialogComponent {
                 maxSizeBytes: AppConsts.maxImageSize,
                 title: this.ls.l('Change Link Icon')
             },
+            maxWidth: '669px',
             hasBackdrop: true
         }).afterClosed().pipe(
             filter(Boolean)
