@@ -118,7 +118,7 @@ export class UserManagementService {
                 maxSizeBytes: AppConsts.maxImageSize,
                 title: this.ls.l('ChangeProfilePicture')
             },
-            maxWidth: '669px',
+            maxWidth: AppConsts.maxImageDialogWidth,
             hasBackdrop: true
         });
     }
