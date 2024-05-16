@@ -34,6 +34,7 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppService } from '@app/app.service';
 import { AppConsts } from '@shared/AppConsts';
 import { ActionMenuItem } from '@app/shared/common/action-menu/action-menu-item.interface';
+import { ActionMenuService } from '@app/shared/common/action-menu/action-menu.service';
 import { ActionMenuComponent } from '@app/shared/common/action-menu/action-menu.component';
 import { AppPermissions } from '@root/shared/AppPermissions';
 import { PaymentsInfoService } from '../../payments-info/payments-info.service';
@@ -60,7 +61,7 @@ export class PaymentSubscriptionsComponent extends AppComponentBase implements O
         {
             text: this.l('Upgrade'),
             class: 'notes',
-            checkVisible: () => this.showUpgradeButton(this.actionRecordData),
+            checkVisible: (record: OrderSubscriptionDto) => this.showUpgradeButton(record),
             action: this.upgradeSubscription.bind(this)
         },
         {
@@ -133,6 +134,7 @@ export class PaymentSubscriptionsComponent extends AppComponentBase implements O
 
     toggleActionsMenu(event, data) {
         this.actionRecordData = data;
+        ActionMenuService.prepareActionMenuItems(this.actionMenuItems, this.actionRecordData);
         this.actionMenu.toggle(event.target);
     }
 
