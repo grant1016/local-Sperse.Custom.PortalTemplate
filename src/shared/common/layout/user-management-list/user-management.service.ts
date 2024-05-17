@@ -56,7 +56,13 @@ export class UserManagementService {
             name: this.ls.l('ChangeProfilePicture'),
             id: 'UserProfileChangePictureLink',
             iconClass: 'flaticon-profile-1',
-            onClick: (e) => this.changeProfilePicture(e)
+            onClick: (e) => this.changeProfilePicture(e).subscribe(
+                (base64OrigImage: string) => {
+                    this.profileService.updatePictureUrl(base64OrigImage
+                        ? this.profileService.getPhoto(base64OrigImage)
+                        : this.profileService.getProfilePictureUrl(null));
+                }
+            )
         },
         {
             name: this.ls.l('MySettings'),
