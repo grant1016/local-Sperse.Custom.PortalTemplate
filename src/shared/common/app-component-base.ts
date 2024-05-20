@@ -178,7 +178,9 @@ export abstract class AppComponentBase implements OnDestroy {
     }
 
     onGridOptionChanged(event) {
-        if (event.name == 'paging' || ['asc', 'desc'].indexOf(event.value) >= 0)
+        if (event.component.option('scrolling.mode') != 'infinite' &&
+            (event.name == 'paging' || ['asc', 'desc'].indexOf(event.value) >= 0)
+        )
             this.isDataLoaded = false;
     }
 

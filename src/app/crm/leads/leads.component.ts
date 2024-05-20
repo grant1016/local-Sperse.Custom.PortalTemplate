@@ -672,6 +672,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     searchValueChange(e: object) {
         if (this.searchValue != e['value']) {
             this.searchValue = e['value'];
+            this.dataGrid.instance.pageIndex(0);
             this._refresh.next(null);
         }
     }
