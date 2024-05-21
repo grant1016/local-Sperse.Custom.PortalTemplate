@@ -23,6 +23,9 @@ import { PrimengTableHelper } from '@shared/helpers/PrimengTableHelper';
 import { ModalDialogModule } from './dialogs/modal/modal-dialog.module';
 import { CountryPhoneNumberModule } from './phone-numbers/country-phone-number.module';
 import { PhoneFormatModule } from '@shared/common/pipes/phone-format/phone-format.module';
+import { NumberToWordsPipe } from './pipes/number-to-words/number-to-words.pipe';
+import { DateTimeModule } from '@shared/common/pipes/datetime/datetime.module';
+import { DateTimePipe } from '@shared/common/pipes/datetime/datetime.pipe';
 
 @NgModule({
     declarations: [
@@ -33,7 +36,8 @@ import { PhoneFormatModule } from '@shared/common/pipes/phone-format/phone-forma
         TitleCasePipe,
         RegisterConfirmComponent,
         ConditionsModalComponent,
-        CalendarComponent
+        CalendarComponent,
+        NumberToWordsPipe        
     ],
     exports: [
         CustomNumberPipe,
@@ -44,7 +48,9 @@ import { PhoneFormatModule } from '@shared/common/pipes/phone-format/phone-forma
         NoDataModule,
         CalendarComponent,
         ConditionsModalComponent,
-        RegisterConfirmComponent
+        RegisterConfirmComponent,
+        NumberToWordsPipe,
+        DateTimePipe
     ],
     imports: [
         ngCommon.CommonModule,
@@ -54,7 +60,8 @@ import { PhoneFormatModule } from '@shared/common/pipes/phone-format/phone-forma
         MatDialogModule,
         ModalDialogModule,
         PhoneFormatModule,
-        CountryPhoneNumberModule
+        CountryPhoneNumberModule,
+        DateTimeModule
     ],
     entryComponents: [
         ConditionsModalComponent

@@ -42,6 +42,7 @@ import * as ApiServiceProxies from './service-proxies';
         ApiServiceProxies.MemberSettingsServiceProxy,
         ApiServiceProxies.CommonUserInfoServiceProxy,
         ApiServiceProxies.AffiliatePayoutSettingServiceProxy,
+        ApiServiceProxies.UserPaymentServiceProxy,
         { provide: HTTP_INTERCEPTORS, useClass: AbpHttpInterceptor, multi: true }
     ]
 })

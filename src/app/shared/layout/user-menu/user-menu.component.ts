@@ -7,6 +7,7 @@ import { Observable, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
 /** Application imports  */
+import { PaymentWizardComponent } from '@app/shared/common/payment-wizard/payment-wizard.component';
 import { MySettingsModalComponent } from '@app/shared/layout/profile/my-settings-modal.component';
 import { AppAuthService } from 'shared/common/auth/app-auth.service';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
@@ -65,6 +66,11 @@ export class UserMenuComponent {
                     if (this.checkMenuItemPermission(item))
                         return item;
                 }).filter(Boolean);
+                this.navigationItems.splice(2, 0, {
+                    icon: 'dollar',
+                    text: 'My Subscriptions',
+                    route: 'subscriptions'
+                });
             }
         });
     }
@@ -98,14 +104,30 @@ export class UserMenuComponent {
         });
     }
 
-    navigate(item) {
+    navigate(item, event) {
         let route = item.route;
         if (!route.startsWith('/')) {
-            if (route.indexOf('platform')) {
+            if (route.startsWith('platform')) {
                 this.authService.setTokenBeforeRedirect();
                 location.href = AppConsts.remoteServiceBaseUrl;
+            } else if (route.startsWith('subscriptions')) {
+                this.openPaymentWizardDialog(event);
             } else
                 window.open(route, '_blank');
         }
+    }
+
+    openPaymentWizardDialog(event) {
+        this.dialog.open(PaymentWizardComponent, {
+            height: '800px',
+            width: '1200px',
+            id: 'payment-wizard',
+            panelClass: ['payment-wizard', 'setup'],
+            data: {
+                showSubscriptions: true,
+                module: this.appService.getModuleSubscription().module
+            }
+        }).afterClosed().subscribe(() => { });
+        event.stopPropagation();
     }
 }

@@ -6,6 +6,8 @@ import * as ngCommon from '@angular/common';
 
 /** Third party imports */
 import { Store } from '@ngrx/store';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatInputModule } from '@angular/material/input';
 import { DxScrollViewModule } from 'devextreme-angular/ui/scroll-view';
 import { DxDropDownBoxModule } from 'devextreme-angular/ui/drop-down-box';
 import { DxSelectBoxModule } from 'devextreme-angular/ui/select-box';
@@ -34,6 +36,7 @@ import { ListsModule } from '@app/shared/common/lists/lists.module';
 import { AppStoreService } from '@app/store/app-store.service';
 import { LeadsComponent } from './leads/leads.component';
 import { PipelinesStoreActions } from '@app/store';
+import { CancelSubscriptionDialogComponent } from './contacts/subscriptions/cancel-subscription-dialog/cancel-subscription-dialog.component';
 import { CountsAndTotalsModule } from '@shared/crm/dashboard-widgets/counts-and-totals/counts-and-totals.module';
 import { TypesDropdownComponent } from '@app/crm/shared/types-dropdown/types-dropdown.component';
 import { InvoicesComponent } from './invoices/invoices.component';
@@ -60,18 +63,24 @@ import { InvoicesComponent } from './invoices/invoices.component';
         LoadingSpinnerModule,
         StaticListModule,
         CountsAndTotalsModule,
-        ImageViewerModule
+        ImageViewerModule,
+        MatDialogModule,
+        MatInputModule
     ],
     declarations: [
         LeadsComponent,
         StarsListComponent,
         CrmDashboardComponent,
         TypesDropdownComponent,
+        CancelSubscriptionDialogComponent,
         InvoicesComponent
     ],
     exports: [
         LeadsComponent,
-        CrmDashboardComponent
+        CrmDashboardComponent,
+    ],
+    entryComponents: [
+        CancelSubscriptionDialogComponent
     ],
     providers: [
         CalendarService
