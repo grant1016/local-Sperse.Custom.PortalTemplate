@@ -128,7 +128,7 @@ export class PaymentSubscriptionsComponent extends AppComponentBase implements O
     }
 
     isExpired(cell) {
-        return (cell.data.paymentPeriodType != RecurringPaymentFrequency.LifeTime || cell.data.isTrial == 'true') &&
+        return cell.data.statusCode == 'A' && cell.data.paymentPeriodType != RecurringPaymentFrequency.LifeTime &&
             cell.data.endDate && moment(cell.data.endDate).diff(moment(), 'minutes') <= 0;
     }
 

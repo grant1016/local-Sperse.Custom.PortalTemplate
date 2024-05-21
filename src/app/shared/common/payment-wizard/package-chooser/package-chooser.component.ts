@@ -136,23 +136,10 @@ export class PackageChooserComponent implements OnInit {
             this.loadPackages();
         });
 
-        if (this.appService.moduleSubscriptions.length) {
-            let moduleSubscriptionExpired = this.findSubscriptionByProductId(this.upgradeProductId) || this.subscription || this.appService.moduleSubscriptions[0];
-            if (moduleSubscriptionExpired.paymentPeriodType != PaymentPeriodType.OneTime &&
-                this.appService.subscriptionInGracePeriodBySubscription(moduleSubscriptionExpired)
-            ) {
-                this.currentProductId = moduleSubscriptionExpired.productId;
-                this.selectedBillingPeriod = PaymentService.getBillingPeriod(moduleSubscriptionExpired.paymentPeriodType)
-            }
 
-            if (this.upgradeProductId) {
-                this.widgettitle = this.ls.l('UpgradeSubscriptionOptions', '');
-                this.subtitle = this.ls.l('UpgradeSubscriptionOptionsHint', '');
-            }
-
-            if (!this.widgettitle) {
-                this.widgettitle = this.ls.l('ModuleExpired', '', this.appService.getSubscriptionStatusBySubscription(moduleSubscriptionExpired));
-            }
+        if (this.upgradeProductId) {
+            this.widgettitle = this.ls.l('UpgradeSubscriptionOptions', '');
+            this.subtitle = this.ls.l('UpgradeSubscriptionOptionsHint', '');
         }
     }
 

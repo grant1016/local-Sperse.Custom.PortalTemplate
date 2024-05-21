@@ -45,7 +45,7 @@
     </div>
 
     <div *dxTemplate="let cellData of 'statusCell'" class="status {{isExpired(cellData) ? 'E' : cellData.value}}">
-        {{cellData.value == 'A' ? l(isExpired(cellData) ? 'Expired' : 'Active') : (cellData.value == 'D' ? l('Draft') : l('Cancelled'))}}
+        {{cellData.value == 'A' ? l(isExpired(cellData) ? 'Expired' : 'Active') : cellData.data.status}}
     </div>
 
     <div *dxTemplate="let cellData of 'lastPaymentCell'">
