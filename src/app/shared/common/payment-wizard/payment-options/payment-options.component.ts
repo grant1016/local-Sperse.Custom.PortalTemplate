@@ -22,9 +22,7 @@ import {
     PayPalInfoDto,
     PaymentInfoType,
     PaymentPeriodType,
-    RequestPaymentDto,
     RequestPaymentType,
-    ModuleSubscriptionInfo,
     BankTransferSettingsDto,
     RequestPaymentResult,
     RequestPaymentInput,
@@ -95,6 +93,7 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
     paymentSystemSettings: PaymentSystemSettingsDto;
     hasAnyPaymentSystem;
     showPayPal: boolean = false;
+    showStripe: boolean = false;
 
     isPayByStripeDisabled = false;
 
@@ -153,10 +152,11 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
     }
 
     initPaymentSystems() {
+        this.startLoading();
         forkJoin(
             [
                 this.userSubscriptionServiceProxy.getPaymentSettingsInfo(),
-                this.userSubscriptionServiceProxy.checkPaypalIsApplicable(new RequestPaymentInput({
+                this.userSubscriptionServiceProxy.checkApplicablePaymentTypes(new RequestPaymentInput({
                     type: RequestPaymentType.PayPal,
                     paymentPeriodType: this.plan.paymentPeriodType,
                     productId: this.plan.productId,
@@ -164,15 +164,19 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
                     couponId: this.couponInfo ? this.couponInfo.id : undefined
                 }))
             ]
-        ).subscribe(([settings, isApplicable]) => {
+        ).subscribe(([settings, paymentTypes]) => {
             this.paymentSystemSettings = settings;
-            if (settings.paypalClientId && isApplicable) {
+            if (settings.paypalClientId && paymentTypes.some(v => v == RequestPaymentType.PayPal)) {
                 this.showPayPal = true;
             }
-            this.hasAnyPaymentSystem = settings.stripeIsEnabled || this.showPayPal;
-            if (this.hasAnyPaymentSystem && !settings.stripeIsEnabled)
+            if (settings.stripeIsEnabled && paymentTypes.some(v => v == RequestPaymentType.Stripe)) {
+                this.showStripe = true;
+            }
+            this.hasAnyPaymentSystem = this.showStripe || this.showPayPal;
+            if (this.hasAnyPaymentSystem && !this.showStripe)
                 this.selectedGateway = this.GATEWAY_PAYPAL;
             this.changeDetector.detectChanges();
+            this.finishLoading();
         });
     }
 

@@ -17146,6 +17146,84 @@ export class DashboardServiceProxy {
      * @param sourceOrganizationUnitIds (optional) 
      * @return Success
      */
+    getRecentlySales(topCount: number | undefined, contactGroupId: string | undefined, sourceContactId: number | undefined, sourceOrganizationUnitIds: number[] | undefined): Observable<GetRecentlySalesOutput[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/Dashboard/GetRecentlySales?";
+        if (topCount === null)
+            throw new Error("The parameter 'topCount' cannot be null.");
+        else if (topCount !== undefined)
+            url_ += "TopCount=" + encodeURIComponent("" + topCount) + "&";
+        if (contactGroupId === null)
+            throw new Error("The parameter 'contactGroupId' cannot be null.");
+        else if (contactGroupId !== undefined)
+            url_ += "ContactGroupId=" + encodeURIComponent("" + contactGroupId) + "&";
+        if (sourceContactId === null)
+            throw new Error("The parameter 'sourceContactId' cannot be null.");
+        else if (sourceContactId !== undefined)
+            url_ += "SourceContactId=" + encodeURIComponent("" + sourceContactId) + "&";
+        if (sourceOrganizationUnitIds === null)
+            throw new Error("The parameter 'sourceOrganizationUnitIds' cannot be null.");
+        else if (sourceOrganizationUnitIds !== undefined)
+            sourceOrganizationUnitIds && sourceOrganizationUnitIds.forEach(item => { url_ += "SourceOrganizationUnitIds=" + encodeURIComponent("" + item) + "&"; });
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json;odata.metadata=minimal;odata.streaming=true"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetRecentlySales(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetRecentlySales(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<GetRecentlySalesOutput[]>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<GetRecentlySalesOutput[]>;
+        }));
+    }
+
+    protected processGetRecentlySales(response: HttpResponseBase): Observable<GetRecentlySalesOutput[]> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(GetRecentlySalesOutput.fromJS(item));
+            }
+            else {
+                result200 = <any>null;
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<GetRecentlySalesOutput[]>(null as any);
+    }
+
+    /**
+     * @param topCount (optional) 
+     * @param contactGroupId (optional) 
+     * @param sourceContactId (optional) 
+     * @param sourceOrganizationUnitIds (optional) 
+     * @return Success
+     */
     getRecentlyCreatedLeads(topCount: number | undefined, contactGroupId: string | undefined, sourceContactId: number | undefined, sourceOrganizationUnitIds: number[] | undefined): Observable<GetRecentlyCreatedLeadsOutput[]> {
         let url_ = this.baseUrl + "/api/services/CRM/Dashboard/GetRecentlyCreatedLeads?";
         if (topCount === null)
@@ -46274,10 +46352,15 @@ export class TenantHostServiceProxy {
     }
 
     /**
+     * @param tenantId (optional) 
      * @return Success
      */
-    getMemberPortalUrl(): Observable<GetMemberPortalUrlOutput> {
-        let url_ = this.baseUrl + "/api/services/Platform/TenantHost/GetMemberPortalUrl";
+    getMemberPortalUrl(tenantId: number | undefined): Observable<GetMemberPortalUrlOutput> {
+        let url_ = this.baseUrl + "/api/services/Platform/TenantHost/GetMemberPortalUrl?";
+        if (tenantId === null)
+            throw new Error("The parameter 'tenantId' cannot be null.");
+        else if (tenantId !== undefined)
+            url_ += "tenantId=" + encodeURIComponent("" + tenantId) + "&";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -47961,7 +48044,7 @@ export class TenantPaymentSettingsServiceProxy {
      * @param body (optional) 
      * @return Success
      */
-    updateInvoiceSettings(body: InvoiceSettings | undefined): Observable<void> {
+    updateInvoiceSettings(body: UpdateInvoiceSettingsDto | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CRM/TenantPaymentSettings/UpdateInvoiceSettings";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -51289,8 +51372,8 @@ export class TenantSubscriptionServiceProxy {
      * @param body (optional) 
      * @return Success
      */
-    checkPaypalIsApplicable(body: RequestPaymentInput | undefined): Observable<boolean> {
-        let url_ = this.baseUrl + "/api/services/Platform/TenantSubscription/CheckPaypalIsApplicable";
+    checkApplicablePaymentTypes(body: RequestPaymentInput | undefined): Observable<RequestPaymentType[]> {
+        let url_ = this.baseUrl + "/api/services/Platform/TenantSubscription/CheckApplicablePaymentTypes";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(body);
@@ -51306,20 +51389,20 @@ export class TenantSubscriptionServiceProxy {
         };
 
         return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processCheckPaypalIsApplicable(response_);
+            return this.processCheckApplicablePaymentTypes(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processCheckPaypalIsApplicable(response_ as any);
+                    return this.processCheckApplicablePaymentTypes(response_ as any);
                 } catch (e) {
-                    return _observableThrow(e) as any as Observable<boolean>;
+                    return _observableThrow(e) as any as Observable<RequestPaymentType[]>;
                 }
             } else
-                return _observableThrow(response_) as any as Observable<boolean>;
+                return _observableThrow(response_) as any as Observable<RequestPaymentType[]>;
         }));
     }
 
-    protected processCheckPaypalIsApplicable(response: HttpResponseBase): Observable<boolean> {
+    protected processCheckApplicablePaymentTypes(response: HttpResponseBase): Observable<RequestPaymentType[]> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -51330,8 +51413,14 @@ export class TenantSubscriptionServiceProxy {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                result200 = resultData200 !== undefined ? resultData200 : <any>null;
-    
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(item);
+            }
+            else {
+                result200 = <any>null;
+            }
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -51339,7 +51428,7 @@ export class TenantSubscriptionServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<boolean>(null as any);
+        return _observableOf<RequestPaymentType[]>(null as any);
     }
 
     /**
@@ -56120,8 +56209,8 @@ export class UserSubscriptionServiceProxy {
      * @param body (optional) 
      * @return Success
      */
-    checkPaypalIsApplicable(body: RequestPaymentInput | undefined): Observable<boolean> {
-        let url_ = this.baseUrl + "/api/services/CRM/UserSubscription/CheckPaypalIsApplicable";
+    checkApplicablePaymentTypes(body: RequestPaymentInput | undefined): Observable<RequestPaymentType[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/UserSubscription/CheckApplicablePaymentTypes";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(body);
@@ -56137,20 +56226,20 @@ export class UserSubscriptionServiceProxy {
         };
 
         return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processCheckPaypalIsApplicable(response_);
+            return this.processCheckApplicablePaymentTypes(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processCheckPaypalIsApplicable(response_ as any);
+                    return this.processCheckApplicablePaymentTypes(response_ as any);
                 } catch (e) {
-                    return _observableThrow(e) as any as Observable<boolean>;
+                    return _observableThrow(e) as any as Observable<RequestPaymentType[]>;
                 }
             } else
-                return _observableThrow(response_) as any as Observable<boolean>;
+                return _observableThrow(response_) as any as Observable<RequestPaymentType[]>;
         }));
     }
 
-    protected processCheckPaypalIsApplicable(response: HttpResponseBase): Observable<boolean> {
+    protected processCheckApplicablePaymentTypes(response: HttpResponseBase): Observable<RequestPaymentType[]> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -56161,8 +56250,14 @@ export class UserSubscriptionServiceProxy {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                result200 = resultData200 !== undefined ? resultData200 : <any>null;
-    
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(item);
+            }
+            else {
+                result200 = <any>null;
+            }
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -56170,7 +56265,7 @@ export class UserSubscriptionServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<boolean>(null as any);
+        return _observableOf<RequestPaymentType[]>(null as any);
     }
 
     /**
@@ -58990,6 +59085,7 @@ export class AppearanceSettingsEditDto implements IAppearanceSettingsEditDto {
     buttonHighlightedColor!: string | undefined;
     fontName!: string | undefined;
     borderRadius!: string | undefined;
+    welcomePageAppearance!: string | undefined;
     tabularFont!: string | undefined;
     leftsideMenuColor!: string | undefined;
 
@@ -59012,6 +59108,7 @@ export class AppearanceSettingsEditDto implements IAppearanceSettingsEditDto {
             this.buttonHighlightedColor = _data["buttonHighlightedColor"];
             this.fontName = _data["fontName"];
             this.borderRadius = _data["borderRadius"];
+            this.welcomePageAppearance = _data["welcomePageAppearance"];
             this.tabularFont = _data["tabularFont"];
             this.leftsideMenuColor = _data["leftsideMenuColor"];
         }
@@ -59034,6 +59131,7 @@ export class AppearanceSettingsEditDto implements IAppearanceSettingsEditDto {
         data["buttonHighlightedColor"] = this.buttonHighlightedColor;
         data["fontName"] = this.fontName;
         data["borderRadius"] = this.borderRadius;
+        data["welcomePageAppearance"] = this.welcomePageAppearance;
         data["tabularFont"] = this.tabularFont;
         data["leftsideMenuColor"] = this.leftsideMenuColor;
         return data;
@@ -59049,6 +59147,7 @@ export interface IAppearanceSettingsEditDto {
     buttonHighlightedColor: string | undefined;
     fontName: string | undefined;
     borderRadius: string | undefined;
+    welcomePageAppearance: string | undefined;
     tabularFont: string | undefined;
     leftsideMenuColor: string | undefined;
 }
@@ -80527,6 +80626,74 @@ export interface IGetRecentlyCreatedLeadsOutput {
     creationTime: moment.Moment;
 }
 
+export class GetRecentlySalesOutput implements IGetRecentlySalesOutput {
+    contactId!: number;
+    customerName!: string | undefined;
+    customerEmail!: string | undefined;
+    amount!: number;
+    currency!: string | undefined;
+    paidBy!: PaymentInfoType | undefined;
+    date!: moment.Moment;
+    mentor!: string | undefined;
+    mentorEmail!: string | undefined;
+
+    constructor(data?: IGetRecentlySalesOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.contactId = _data["contactId"];
+            this.customerName = _data["customerName"];
+            this.customerEmail = _data["customerEmail"];
+            this.amount = _data["amount"];
+            this.currency = _data["currency"];
+            this.paidBy = _data["paidBy"];
+            this.date = _data["date"] ? moment(_data["date"].toString()) : <any>undefined;
+            this.mentor = _data["mentor"];
+            this.mentorEmail = _data["mentorEmail"];
+        }
+    }
+
+    static fromJS(data: any): GetRecentlySalesOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new GetRecentlySalesOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["contactId"] = this.contactId;
+        data["customerName"] = this.customerName;
+        data["customerEmail"] = this.customerEmail;
+        data["amount"] = this.amount;
+        data["currency"] = this.currency;
+        data["paidBy"] = this.paidBy;
+        data["date"] = this.date ? this.date.toISOString() : <any>undefined;
+        data["mentor"] = this.mentor;
+        data["mentorEmail"] = this.mentorEmail;
+        return data;
+    }
+}
+
+export interface IGetRecentlySalesOutput {
+    contactId: number;
+    customerName: string | undefined;
+    customerEmail: string | undefined;
+    amount: number;
+    currency: string | undefined;
+    paidBy: PaymentInfoType | undefined;
+    date: moment.Moment;
+    mentor: string | undefined;
+    mentorEmail: string | undefined;
+}
+
 export class GetRefundsAndCancellationsOutput implements IGetRefundsAndCancellationsOutput {
     refunds!: { [key: string]: RefundInfo; } | undefined;
     cancellations!: { [key: string]: number; } | undefined;
@@ -85284,82 +85451,6 @@ export interface IInvoiceReceiptResource {
     url: string | undefined;
 }
 
-export class InvoiceSettings implements IInvoiceSettings {
-    legalName!: string | undefined;
-    address!: string | undefined;
-    taxVatNo!: string | undefined;
-    defaultTemplateId!: number | undefined;
-    attachPDF!: boolean;
-    defaultNote!: string | undefined;
-    showShippingAddress!: boolean;
-    defaultAdvisorContactId!: number | undefined;
-    dueGracePeriod!: number;
-    disableProlongingSubscriptionByQuantity!: boolean;
-    forbiddenPaymentMethods!: InvoicePaymentMethod;
-
-    constructor(data?: IInvoiceSettings) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.legalName = _data["legalName"];
-            this.address = _data["address"];
-            this.taxVatNo = _data["taxVatNo"];
-            this.defaultTemplateId = _data["defaultTemplateId"];
-            this.attachPDF = _data["attachPDF"];
-            this.defaultNote = _data["defaultNote"];
-            this.showShippingAddress = _data["showShippingAddress"];
-            this.defaultAdvisorContactId = _data["defaultAdvisorContactId"];
-            this.dueGracePeriod = _data["dueGracePeriod"];
-            this.disableProlongingSubscriptionByQuantity = _data["disableProlongingSubscriptionByQuantity"];
-            this.forbiddenPaymentMethods = _data["forbiddenPaymentMethods"];
-        }
-    }
-
-    static fromJS(data: any): InvoiceSettings {
-        data = typeof data === 'object' ? data : {};
-        let result = new InvoiceSettings();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["legalName"] = this.legalName;
-        data["address"] = this.address;
-        data["taxVatNo"] = this.taxVatNo;
-        data["defaultTemplateId"] = this.defaultTemplateId;
-        data["attachPDF"] = this.attachPDF;
-        data["defaultNote"] = this.defaultNote;
-        data["showShippingAddress"] = this.showShippingAddress;
-        data["defaultAdvisorContactId"] = this.defaultAdvisorContactId;
-        data["dueGracePeriod"] = this.dueGracePeriod;
-        data["disableProlongingSubscriptionByQuantity"] = this.disableProlongingSubscriptionByQuantity;
-        data["forbiddenPaymentMethods"] = this.forbiddenPaymentMethods;
-        return data;
-    }
-}
-
-export interface IInvoiceSettings {
-    legalName: string | undefined;
-    address: string | undefined;
-    taxVatNo: string | undefined;
-    defaultTemplateId: number | undefined;
-    attachPDF: boolean;
-    defaultNote: string | undefined;
-    showShippingAddress: boolean;
-    defaultAdvisorContactId: number | undefined;
-    dueGracePeriod: number;
-    disableProlongingSubscriptionByQuantity: boolean;
-    forbiddenPaymentMethods: InvoicePaymentMethod;
-}
-
 export class InvoiceSettingsDto implements IInvoiceSettingsDto {
     advisorName!: string | undefined;
     configuredPaymentMethods!: InvoicePaymentMethod;
@@ -85374,6 +85465,7 @@ export class InvoiceSettingsDto implements IInvoiceSettingsDto {
     dueGracePeriod!: number;
     disableProlongingSubscriptionByQuantity!: boolean;
     forbiddenPaymentMethods!: InvoicePaymentMethod;
+    unsupportedPaymentMethods!: InvoicePaymentMethod;
 
     constructor(data?: IInvoiceSettingsDto) {
         if (data) {
@@ -85399,6 +85491,7 @@ export class InvoiceSettingsDto implements IInvoiceSettingsDto {
             this.dueGracePeriod = _data["dueGracePeriod"];
             this.disableProlongingSubscriptionByQuantity = _data["disableProlongingSubscriptionByQuantity"];
             this.forbiddenPaymentMethods = _data["forbiddenPaymentMethods"];
+            this.unsupportedPaymentMethods = _data["unsupportedPaymentMethods"];
         }
     }
 
@@ -85424,6 +85517,7 @@ export class InvoiceSettingsDto implements IInvoiceSettingsDto {
         data["dueGracePeriod"] = this.dueGracePeriod;
         data["disableProlongingSubscriptionByQuantity"] = this.disableProlongingSubscriptionByQuantity;
         data["forbiddenPaymentMethods"] = this.forbiddenPaymentMethods;
+        data["unsupportedPaymentMethods"] = this.unsupportedPaymentMethods;
         return data;
     }
 }
@@ -85442,6 +85536,7 @@ export interface IInvoiceSettingsDto {
     dueGracePeriod: number;
     disableProlongingSubscriptionByQuantity: boolean;
     forbiddenPaymentMethods: InvoicePaymentMethod;
+    unsupportedPaymentMethods: InvoicePaymentMethod;
 }
 
 export enum InvoiceStatus {
@@ -112832,6 +112927,82 @@ export interface IUpdateInvoiceLineInput {
     productCode: string | undefined;
     description: string | undefined;
     sortOrder: number;
+}
+
+export class UpdateInvoiceSettingsDto implements IUpdateInvoiceSettingsDto {
+    legalName!: string | undefined;
+    address!: string | undefined;
+    taxVatNo!: string | undefined;
+    defaultTemplateId!: number | undefined;
+    attachPDF!: boolean;
+    defaultNote!: string | undefined;
+    showShippingAddress!: boolean;
+    defaultAdvisorContactId!: number | undefined;
+    dueGracePeriod!: number;
+    disableProlongingSubscriptionByQuantity!: boolean;
+    forbiddenPaymentMethods!: InvoicePaymentMethod;
+
+    constructor(data?: IUpdateInvoiceSettingsDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.legalName = _data["legalName"];
+            this.address = _data["address"];
+            this.taxVatNo = _data["taxVatNo"];
+            this.defaultTemplateId = _data["defaultTemplateId"];
+            this.attachPDF = _data["attachPDF"];
+            this.defaultNote = _data["defaultNote"];
+            this.showShippingAddress = _data["showShippingAddress"];
+            this.defaultAdvisorContactId = _data["defaultAdvisorContactId"];
+            this.dueGracePeriod = _data["dueGracePeriod"];
+            this.disableProlongingSubscriptionByQuantity = _data["disableProlongingSubscriptionByQuantity"];
+            this.forbiddenPaymentMethods = _data["forbiddenPaymentMethods"];
+        }
+    }
+
+    static fromJS(data: any): UpdateInvoiceSettingsDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateInvoiceSettingsDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["legalName"] = this.legalName;
+        data["address"] = this.address;
+        data["taxVatNo"] = this.taxVatNo;
+        data["defaultTemplateId"] = this.defaultTemplateId;
+        data["attachPDF"] = this.attachPDF;
+        data["defaultNote"] = this.defaultNote;
+        data["showShippingAddress"] = this.showShippingAddress;
+        data["defaultAdvisorContactId"] = this.defaultAdvisorContactId;
+        data["dueGracePeriod"] = this.dueGracePeriod;
+        data["disableProlongingSubscriptionByQuantity"] = this.disableProlongingSubscriptionByQuantity;
+        data["forbiddenPaymentMethods"] = this.forbiddenPaymentMethods;
+        return data;
+    }
+}
+
+export interface IUpdateInvoiceSettingsDto {
+    legalName: string | undefined;
+    address: string | undefined;
+    taxVatNo: string | undefined;
+    defaultTemplateId: number | undefined;
+    attachPDF: boolean;
+    defaultNote: string | undefined;
+    showShippingAddress: boolean;
+    defaultAdvisorContactId: number | undefined;
+    dueGracePeriod: number;
+    disableProlongingSubscriptionByQuantity: boolean;
+    forbiddenPaymentMethods: InvoicePaymentMethod;
 }
 
 export class UpdateInvoiceStatusInput implements IUpdateInvoiceStatusInput {
