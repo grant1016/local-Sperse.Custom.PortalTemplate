@@ -112,15 +112,12 @@
                     <ng-template mat-tab-label="">
                         <img [src]="'./assets/common/icons/paypal-logo.png'">
                     </ng-template>
-                    <pay-pal *ngIf="paymentSystemSettings.paypalClientId && selectedGateway == GATEWAY_PAYPAL"
-                             [productId]="plan.productId"
-                             [currencyId]="plan.currencyId"
-                             [paymentPeriodType]="plan.paymentPeriodType"
-                             [quantity]="quantity"
-                             [couponInfo]="couponInfo"
-                             [clientId]="paymentSystemSettings.paypalClientId"
-                             (onSubmit)="submitData($event, paymentMethods.PayPal)">
-                    </pay-pal>
+                    <div class="paypal-wrap">
+                        <p class="pay-pal-text">
+                            {{ l('PayPalPaymentDescriptionText') }}
+                        </p>
+                        <pay-pal [height]="54" (onApprove)="onPayPalApprove()"></pay-pal>
+                    </div>
                 </mat-tab>
 
             <!--<mat-tab [label]="l('CreditCard')">
