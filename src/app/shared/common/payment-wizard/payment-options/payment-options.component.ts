@@ -390,7 +390,7 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
         }
 
         this.couponLoading = true;
-        this.publicProductService.getCouponInfo(0, this.couponCode, this.plan.currencyId)
+        this.publicProductService.getCouponInfo(this.appSession.tenantId || 0, this.couponCode, this.plan.currencyId)
             .pipe(
                 finalize(() => {
                     this.couponLoading = false;
@@ -398,7 +398,7 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
                 })
             )
             .subscribe(info => {
-                info = Object.keys(info).length == 0 ? null : info;
+                info = info && info.id ? info : null;
                 if (info) {
                     this.setCouponDescription(info);
                 } else {
