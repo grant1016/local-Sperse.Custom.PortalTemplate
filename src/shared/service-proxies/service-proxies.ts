@@ -47870,6 +47870,58 @@ export class TenantPaymentSettingsServiceProxy {
     }
 
     /**
+     * @return Success
+     */
+    updateConnectedAccountPaymentMethods(): Observable<InvoicePaymentMethod> {
+        let url_ = this.baseUrl + "/api/services/CRM/TenantPaymentSettings/UpdateConnectedAccountPaymentMethods";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json;odata.metadata=minimal;odata.streaming=true"
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdateConnectedAccountPaymentMethods(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUpdateConnectedAccountPaymentMethods(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<InvoicePaymentMethod>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<InvoicePaymentMethod>;
+        }));
+    }
+
+    protected processUpdateConnectedAccountPaymentMethods(response: HttpResponseBase): Observable<InvoicePaymentMethod> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                result200 = resultData200 !== undefined ? resultData200 : <any>null;
+    
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<InvoicePaymentMethod>(null as any);
+    }
+
+    /**
      * @param body (optional) 
      * @return Success
      */
@@ -51372,8 +51424,8 @@ export class TenantSubscriptionServiceProxy {
      * @param body (optional) 
      * @return Success
      */
-    checkApplicablePaymentTypes(body: RequestPaymentInput | undefined): Observable<RequestPaymentType[]> {
-        let url_ = this.baseUrl + "/api/services/Platform/TenantSubscription/CheckApplicablePaymentTypes";
+    checkPaymentInfo(body: RequestPaymentInput | undefined): Observable<CheckPaymentInfoOutput> {
+        let url_ = this.baseUrl + "/api/services/Platform/TenantSubscription/CheckPaymentInfo";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(body);
@@ -51389,20 +51441,20 @@ export class TenantSubscriptionServiceProxy {
         };
 
         return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processCheckApplicablePaymentTypes(response_);
+            return this.processCheckPaymentInfo(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processCheckApplicablePaymentTypes(response_ as any);
+                    return this.processCheckPaymentInfo(response_ as any);
                 } catch (e) {
-                    return _observableThrow(e) as any as Observable<RequestPaymentType[]>;
+                    return _observableThrow(e) as any as Observable<CheckPaymentInfoOutput>;
                 }
             } else
-                return _observableThrow(response_) as any as Observable<RequestPaymentType[]>;
+                return _observableThrow(response_) as any as Observable<CheckPaymentInfoOutput>;
         }));
     }
 
-    protected processCheckApplicablePaymentTypes(response: HttpResponseBase): Observable<RequestPaymentType[]> {
+    protected processCheckPaymentInfo(response: HttpResponseBase): Observable<CheckPaymentInfoOutput> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -51413,14 +51465,7 @@ export class TenantSubscriptionServiceProxy {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            if (Array.isArray(resultData200)) {
-                result200 = [] as any;
-                for (let item of resultData200)
-                    result200!.push(item);
-            }
-            else {
-                result200 = <any>null;
-            }
+            result200 = CheckPaymentInfoOutput.fromJS(resultData200);
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -51428,7 +51473,7 @@ export class TenantSubscriptionServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<RequestPaymentType[]>(null as any);
+        return _observableOf<CheckPaymentInfoOutput>(null as any);
     }
 
     /**
@@ -56209,8 +56254,8 @@ export class UserSubscriptionServiceProxy {
      * @param body (optional) 
      * @return Success
      */
-    checkApplicablePaymentTypes(body: RequestPaymentInput | undefined): Observable<RequestPaymentType[]> {
-        let url_ = this.baseUrl + "/api/services/CRM/UserSubscription/CheckApplicablePaymentTypes";
+    checkPaymentInfo(body: RequestPaymentInput | undefined): Observable<CheckPaymentInfoOutput> {
+        let url_ = this.baseUrl + "/api/services/CRM/UserSubscription/CheckPaymentInfo";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(body);
@@ -56226,20 +56271,20 @@ export class UserSubscriptionServiceProxy {
         };
 
         return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processCheckApplicablePaymentTypes(response_);
+            return this.processCheckPaymentInfo(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processCheckApplicablePaymentTypes(response_ as any);
+                    return this.processCheckPaymentInfo(response_ as any);
                 } catch (e) {
-                    return _observableThrow(e) as any as Observable<RequestPaymentType[]>;
+                    return _observableThrow(e) as any as Observable<CheckPaymentInfoOutput>;
                 }
             } else
-                return _observableThrow(response_) as any as Observable<RequestPaymentType[]>;
+                return _observableThrow(response_) as any as Observable<CheckPaymentInfoOutput>;
         }));
     }
 
-    protected processCheckApplicablePaymentTypes(response: HttpResponseBase): Observable<RequestPaymentType[]> {
+    protected processCheckPaymentInfo(response: HttpResponseBase): Observable<CheckPaymentInfoOutput> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -56250,14 +56295,7 @@ export class UserSubscriptionServiceProxy {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            if (Array.isArray(resultData200)) {
-                result200 = [] as any;
-                for (let item of resultData200)
-                    result200!.push(item);
-            }
-            else {
-                result200 = <any>null;
-            }
+            result200 = CheckPaymentInfoOutput.fromJS(resultData200);
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -56265,7 +56303,7 @@ export class UserSubscriptionServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<RequestPaymentType[]>(null as any);
+        return _observableOf<CheckPaymentInfoOutput>(null as any);
     }
 
     /**
@@ -63445,6 +63483,54 @@ export class CheckHostNameDnsMappingOutput implements ICheckHostNameDnsMappingOu
 
 export interface ICheckHostNameDnsMappingOutput {
     hostNameDnsMapped: boolean;
+}
+
+export class CheckPaymentInfoOutput implements ICheckPaymentInfoOutput {
+    applicablePaymentTypes!: RequestPaymentType[] | undefined;
+    previouslyUsed!: boolean;
+
+    constructor(data?: ICheckPaymentInfoOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            if (Array.isArray(_data["applicablePaymentTypes"])) {
+                this.applicablePaymentTypes = [] as any;
+                for (let item of _data["applicablePaymentTypes"])
+                    this.applicablePaymentTypes!.push(item);
+            }
+            this.previouslyUsed = _data["previouslyUsed"];
+        }
+    }
+
+    static fromJS(data: any): CheckPaymentInfoOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new CheckPaymentInfoOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (Array.isArray(this.applicablePaymentTypes)) {
+            data["applicablePaymentTypes"] = [];
+            for (let item of this.applicablePaymentTypes)
+                data["applicablePaymentTypes"].push(item);
+        }
+        data["previouslyUsed"] = this.previouslyUsed;
+        return data;
+    }
+}
+
+export interface ICheckPaymentInfoOutput {
+    applicablePaymentTypes: RequestPaymentType[] | undefined;
+    previouslyUsed: boolean;
 }
 
 export class CloneEmailTemplateInput implements ICloneEmailTemplateInput {
@@ -105278,6 +105364,7 @@ export class StripeSettingsDto implements IStripeSettingsDto {
     isHostAccountEnabled!: boolean;
     connectedAccountId!: string | undefined;
     isConnectedAccountSetUpCompleted!: boolean;
+    unsupportedPaymentMethods!: InvoicePaymentMethod;
     hasRunningImport!: boolean;
 
     constructor(data?: IStripeSettingsDto) {
@@ -105301,6 +105388,7 @@ export class StripeSettingsDto implements IStripeSettingsDto {
             this.isHostAccountEnabled = _data["isHostAccountEnabled"];
             this.connectedAccountId = _data["connectedAccountId"];
             this.isConnectedAccountSetUpCompleted = _data["isConnectedAccountSetUpCompleted"];
+            this.unsupportedPaymentMethods = _data["unsupportedPaymentMethods"];
             this.hasRunningImport = _data["hasRunningImport"];
         }
     }
@@ -105324,6 +105412,7 @@ export class StripeSettingsDto implements IStripeSettingsDto {
         data["isHostAccountEnabled"] = this.isHostAccountEnabled;
         data["connectedAccountId"] = this.connectedAccountId;
         data["isConnectedAccountSetUpCompleted"] = this.isConnectedAccountSetUpCompleted;
+        data["unsupportedPaymentMethods"] = this.unsupportedPaymentMethods;
         data["hasRunningImport"] = this.hasRunningImport;
         return data;
     }
@@ -105340,6 +105429,7 @@ export interface IStripeSettingsDto {
     isHostAccountEnabled: boolean;
     connectedAccountId: string | undefined;
     isConnectedAccountSetUpCompleted: boolean;
+    unsupportedPaymentMethods: InvoicePaymentMethod;
     hasRunningImport: boolean;
 }
 
