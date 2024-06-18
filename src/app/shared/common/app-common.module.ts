@@ -66,7 +66,6 @@ import { PackageChooserComponent } from './payment-wizard/package-chooser/packag
 import { PaymentStatusComponent } from './payment-wizard/payment-status/payment-status.component';
 import { PaymentOptionsComponent } from './payment-wizard/payment-options/payment-options.component';               
 import { CreditCardComponent } from './payment-wizard/payment-options/credit-card/credit-card.component';
-import { PayPalComponent } from './payment-wizard/payment-options/pay-pal/pay-pal.component';
 import { BankTransferComponent } from './payment-wizard/payment-options/bank-transfer/bank-transfer.component';
 import { ECheckComponent } from './payment-wizard/payment-options/e-check/e-check.component';
 
@@ -85,6 +84,7 @@ import { CalendarDialogComponent } from './dialogs/calendar/calendar-dialog.comp
 import { PeriodComponent } from './period/period.component';
 import { ToolBarComponent } from './toolbar/toolbar.component';
 import { ActionMenuModule } from './action-menu/action-menu.module';
+import { PaypalModule } from '@shared/common/paypal/paypal.module';
 
 @NgModule({
     imports: [
@@ -119,6 +119,7 @@ import { ActionMenuModule } from './action-menu/action-menu.module';
         NgxFileDropModule,
         ModalDialogModule,
         ActionMenuModule,
+        PaypalModule,
 
         DxListModule,
         DxCheckBoxModule,
@@ -176,7 +177,6 @@ import { ActionMenuModule } from './action-menu/action-menu.module';
         PaymentSubscriptionsComponent,
         BankTransferComponent,
         CreditCardComponent,
-        PayPalComponent,
         ECheckComponent
     ],
     exports: [

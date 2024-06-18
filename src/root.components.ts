@@ -13,6 +13,7 @@ import { AppSessionService } from '@shared/common/session/app-session.service';
 import { AppUiCustomizationService } from '@shared/common/ui/app-ui-customization.service';
 import { LayoutType, CustomCssType } from '@shared/service-proxies/service-proxies';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
+import { DomHelper } from '@shared/helpers/DomHelper';
 
 /*
     Root App Component (App Selector)
@@ -44,20 +45,20 @@ export class RootComponent implements OnInit, AfterViewInit {
 
     ngOnInit() {
         if (abp && abp.setting && abp.setting.values && abp.setting.values['Integrations:Google:MapsJavascriptApiKey'] && this.SS.userId)
-            this.addScriptLink(AppConsts.googleMapsApiUrl.replace('{KEY}', abp.setting.values['Integrations:Google:MapsJavascriptApiKey']));
+            DomHelper.addScriptLink(AppConsts.googleMapsApiUrl.replace('{KEY}', abp.setting.values['Integrations:Google:MapsJavascriptApiKey']));
 
         //tenant specific custom css
         let tenant = this.SS.tenant;
         if (tenant) {
             let customCss = abp.session.userId ? tenant.portalCustomCssId : tenant.loginCustomCssId;
             if (customCss)
-                this.addStyleSheet(`${CustomCssType.Portal}CustomCss`, AppConsts.remoteServiceBaseUrl + 
+                DomHelper.addStyleSheet(`${CustomCssType.Portal}CustomCss`, AppConsts.remoteServiceBaseUrl + 
                     '/api/TenantCustomization/GetCustomCss/' + customCss + '/' + tenant.id);
 
             if (tenant.customLayoutType && tenant.customLayoutType !== LayoutType.Default) {
                 let layoutName = kebabCase(tenant.customLayoutType);
                 this.document.body.classList.add(layoutName);
-                this.addStyleSheet(tenant.customLayoutType + 'Styles', AppConsts.appBaseHref +
+                DomHelper.addStyleSheet(tenant.customLayoutType + 'Styles', AppConsts.appBaseHref +
                     'assets/common/styles/custom/' + layoutName + '/style.css');
             }
 
@@ -87,38 +88,10 @@ export class RootComponent implements OnInit, AfterViewInit {
             value ? 'add' : 'remove']('overflow-hidden');
     }
 
-    public addScriptLink(src: String, type: String = 'text/javascript', callback = null): void {
-        if (Array.prototype.some.call(this.document.scripts, (script) => {
-            return script.src == src;
-        })) return ;
-
-        let script = this.document.createElement('script');
-        script.type = type;
-        script.src = src;
-        if (callback)
-            script.addEventListener('load', callback);
-        this.document.head.append(script);
-    }
-
-    public removeScriptLink(src: String): void {
-        let script = this.document.querySelector('script[src="' + src + '"]');
-        if (script) script.remove();
-    }
-
-    public addStyleSheet(id: String, href: String, rel: String = 'stylesheet'): void {
-        let link = this.document.createElement('link');
-         _.mapObject({id: id, href: href, rel: rel},
-             (val, key) => {
-                 link.setAttribute(key, val);
-             }
-        );
-        this.document.head.append(link);
-    }
-
     checkSetGoogleAnalyticsCode(tenant) {
         let tenantGACode = '';
         if (tenantGACode) {
-            this.addScriptLink('https://www.googletagmanager.com/gtag/js?id=' + tenantGACode, '', () => {
+            DomHelper.addScriptLink('https://www.googletagmanager.com/gtag/js?id=' + tenantGACode, '', () => {
                 let dataLayer = window['dataLayer'] = window['dataLayer'] || [];
                 dataLayer.push(['js', new Date()]);
                 dataLayer.push(['config', tenantGACode]);
