@@ -20,6 +20,7 @@ import { CalendarValuesModel } from '@shared/common/widgets/calendar/calendar-va
 import { DateHelper } from '@shared/helpers/DateHelper';
 import { ContactGroup } from '@shared/AppEnums';
 import { TotalsDataField } from '@shared/crm/dashboard-widgets/counts-and-totals/totals-data-field.interface';
+import { SettingsHelper } from '@app/shared/helpers/settings.helper';
 
 @Injectable()
 export class DashboardWidgetsService  {
@@ -103,6 +104,7 @@ export class DashboardWidgetsService  {
             debounceTime(100),
             tap(() => this.totalsDataLoading.next(true)),
             switchMap(([period, contactId, orgUnitIds, ]: [PeriodModel, number, number[], null]) => this.dashboardServiceProxy.getTotals(
+                SettingsHelper.getCurrency(),
                 period && period.from,
                 period && period.to,
                 ContactGroup.Client,

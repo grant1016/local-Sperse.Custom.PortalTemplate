@@ -9927,6 +9927,82 @@ export class ContactServiceProxy {
     }
 
     /**
+     * @param contactId (optional) 
+     * @param xref (optional) 
+     * @param affiliateCode (optional) 
+     * @param userId (optional) 
+     * @param userEmail (optional) 
+     * @return Success
+     */
+    getContactData(contactId: number | undefined, xref: string | undefined, affiliateCode: string | undefined, userId: number | undefined, userEmail: string | undefined): Observable<ContactDataDto> {
+        let url_ = this.baseUrl + "/api/services/CRM/Contact/GetContactData?";
+        if (contactId === null)
+            throw new Error("The parameter 'contactId' cannot be null.");
+        else if (contactId !== undefined)
+            url_ += "ContactId=" + encodeURIComponent("" + contactId) + "&";
+        if (xref === null)
+            throw new Error("The parameter 'xref' cannot be null.");
+        else if (xref !== undefined)
+            url_ += "Xref=" + encodeURIComponent("" + xref) + "&";
+        if (affiliateCode === null)
+            throw new Error("The parameter 'affiliateCode' cannot be null.");
+        else if (affiliateCode !== undefined)
+            url_ += "AffiliateCode=" + encodeURIComponent("" + affiliateCode) + "&";
+        if (userId === null)
+            throw new Error("The parameter 'userId' cannot be null.");
+        else if (userId !== undefined)
+            url_ += "UserId=" + encodeURIComponent("" + userId) + "&";
+        if (userEmail === null)
+            throw new Error("The parameter 'userEmail' cannot be null.");
+        else if (userEmail !== undefined)
+            url_ += "UserEmail=" + encodeURIComponent("" + userEmail) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json;odata.metadata=minimal;odata.streaming=true"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetContactData(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetContactData(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<ContactDataDto>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<ContactDataDto>;
+        }));
+    }
+
+    protected processGetContactData(response: HttpResponseBase): Observable<ContactDataDto> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = ContactDataDto.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<ContactDataDto>(null as any);
+    }
+
+    /**
      * @param affiliateCode (optional) 
      * @return Success
      */
@@ -16804,8 +16880,12 @@ export class DashboardServiceProxy {
      * @param sourceOrganizationUnitIds (optional) 
      * @return Success
      */
-    getTotals(startDate: moment.Moment | undefined, endDate: moment.Moment | undefined, contactGroupId: string | undefined, sourceContactId: number | undefined, sourceOrganizationUnitIds: number[] | undefined): Observable<GetTotalsOutput> {
+    getTotals(currencyId: string, startDate: moment.Moment | undefined, endDate: moment.Moment | undefined, contactGroupId: string | undefined, sourceContactId: number | undefined, sourceOrganizationUnitIds: number[] | undefined): Observable<GetTotalsOutput> {
         let url_ = this.baseUrl + "/api/services/CRM/Dashboard/GetTotals?";
+        if (currencyId === undefined || currencyId === null)
+            throw new Error("The parameter 'currencyId' must be defined and cannot be null.");
+        else
+            url_ += "CurrencyId=" + encodeURIComponent("" + currencyId) + "&";
         if (startDate === null)
             throw new Error("The parameter 'startDate' cannot be null.");
         else if (startDate !== undefined)
@@ -17140,14 +17220,19 @@ export class DashboardServiceProxy {
     }
 
     /**
+     * @param currencyId (optional) 
      * @param topCount (optional) 
      * @param contactGroupId (optional) 
      * @param sourceContactId (optional) 
      * @param sourceOrganizationUnitIds (optional) 
      * @return Success
      */
-    getRecentlySales(topCount: number | undefined, contactGroupId: string | undefined, sourceContactId: number | undefined, sourceOrganizationUnitIds: number[] | undefined): Observable<GetRecentlySalesOutput[]> {
+    getRecentlySales(currencyId: string | undefined, topCount: number | undefined, contactGroupId: string | undefined, sourceContactId: number | undefined, sourceOrganizationUnitIds: number[] | undefined): Observable<GetRecentlySalesOutput[]> {
         let url_ = this.baseUrl + "/api/services/CRM/Dashboard/GetRecentlySales?";
+        if (currencyId === null)
+            throw new Error("The parameter 'currencyId' cannot be null.");
+        else if (currencyId !== undefined)
+            url_ += "CurrencyId=" + encodeURIComponent("" + currencyId) + "&";
         if (topCount === null)
             throw new Error("The parameter 'topCount' cannot be null.");
         else if (topCount !== undefined)
@@ -17801,8 +17886,12 @@ export class DashboardServiceProxy {
      * @param sourceOrganizationUnitIds (optional) 
      * @return Success
      */
-    getProductSalesCountByType(startDate: moment.Moment | undefined, endDate: moment.Moment | undefined, contactGroupId: string | undefined, sourceContactId: number | undefined, sourceOrganizationUnitIds: number[] | undefined): Observable<GetCountOutputOfNullableOfProductTypeDecimal[]> {
+    getProductSalesCountByType(currencyId: string, startDate: moment.Moment | undefined, endDate: moment.Moment | undefined, contactGroupId: string | undefined, sourceContactId: number | undefined, sourceOrganizationUnitIds: number[] | undefined): Observable<GetCountOutputOfNullableOfProductTypeDecimal[]> {
         let url_ = this.baseUrl + "/api/services/CRM/Dashboard/GetProductSalesCountByType?";
+        if (currencyId === undefined || currencyId === null)
+            throw new Error("The parameter 'currencyId' must be defined and cannot be null.");
+        else
+            url_ += "CurrencyId=" + encodeURIComponent("" + currencyId) + "&";
         if (startDate === null)
             throw new Error("The parameter 'startDate' cannot be null.");
         else if (startDate !== undefined)
@@ -17884,8 +17973,12 @@ export class DashboardServiceProxy {
      * @param sourceOrganizationUnitIds (optional) 
      * @return Success
      */
-    getProductSalesByType(startDate: moment.Moment | undefined, endDate: moment.Moment | undefined, contactGroupId: string | undefined, sourceContactId: number | undefined, sourceOrganizationUnitIds: number[] | undefined): Observable<GetCountOutputOfNullableOfProductTypeDecimal[]> {
+    getProductSalesByType(currencyId: string, startDate: moment.Moment | undefined, endDate: moment.Moment | undefined, contactGroupId: string | undefined, sourceContactId: number | undefined, sourceOrganizationUnitIds: number[] | undefined): Observable<GetCountOutputOfNullableOfProductTypeDecimal[]> {
         let url_ = this.baseUrl + "/api/services/CRM/Dashboard/GetProductSalesByType?";
+        if (currencyId === undefined || currencyId === null)
+            throw new Error("The parameter 'currencyId' must be defined and cannot be null.");
+        else
+            url_ += "CurrencyId=" + encodeURIComponent("" + currencyId) + "&";
         if (startDate === null)
             throw new Error("The parameter 'startDate' cannot be null.");
         else if (startDate !== undefined)
@@ -25030,6 +25123,120 @@ export class ImportServiceProxy {
         }
         return _observableOf<number>(null as any);
     }
+
+    /**
+     * @param body (optional) 
+     * @return Success
+     */
+    importInvoice(body: ImportInvoiceInput | undefined): Observable<number> {
+        let url_ = this.baseUrl + "/api/services/CRM/Import/ImportInvoice";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json;odata.metadata=minimal;odata.streaming=true",
+                "Accept": "application/json;odata.metadata=minimal;odata.streaming=true"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processImportInvoice(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processImportInvoice(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<number>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<number>;
+        }));
+    }
+
+    protected processImportInvoice(response: HttpResponseBase): Observable<number> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                result200 = resultData200 !== undefined ? resultData200 : <any>null;
+    
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<number>(null as any);
+    }
+
+    /**
+     * @param body (optional) 
+     * @return Success
+     */
+    importProduct(body: ImportProductInput | undefined): Observable<number> {
+        let url_ = this.baseUrl + "/api/services/CRM/Import/ImportProduct";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json;odata.metadata=minimal;odata.streaming=true",
+                "Accept": "application/json;odata.metadata=minimal;odata.streaming=true"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processImportProduct(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processImportProduct(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<number>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<number>;
+        }));
+    }
+
+    protected processImportProduct(response: HttpResponseBase): Observable<number> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                result200 = resultData200 !== undefined ? resultData200 : <any>null;
+    
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<number>(null as any);
+    }
 }
 
 @Injectable()
@@ -28213,508 +28420,6 @@ export class LeadServiceProxy {
     }
 
     protected processUpdateDealInfo(response: HttpResponseBase): Observable<void> {
-        const status = response.status;
-        const responseBlob =
-            response instanceof HttpResponse ? response.body :
-            (response as any).error instanceof Blob ? (response as any).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(null as any);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<void>(null as any);
-    }
-}
-
-@Injectable()
-export class ReceiverServiceProxy {
-    private http: HttpClient;
-    private baseUrl: string;
-    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
-
-    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
-        this.http = http;
-        this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : "";
-    }
-
-    /**
-     * @param firstName (optional) 
-     * @param fn (optional) 
-     * @param first (optional) 
-     * @param fname (optional) 
-     * @param f_name (optional) 
-     * @param first_name (optional) 
-     * @param lastName (optional) 
-     * @param ln (optional) 
-     * @param last (optional) 
-     * @param lname (optional) 
-     * @param l_name (optional) 
-     * @param last_name (optional) 
-     * @param email (optional) 
-     * @param em (optional) 
-     * @param ea (optional) 
-     * @param emailAddress (optional) 
-     * @param email_Address (optional) 
-     * @param phoneNumber (optional) 
-     * @param pn (optional) 
-     * @param phone (optional) 
-     * @param mobilePhone (optional) 
-     * @param cellPhone (optional) 
-     * @param phone_Number (optional) 
-     * @param mobile_Phone (optional) 
-     * @param cell_Phone (optional) 
-     * @param phoneType (optional) 
-     * @param phone_Type (optional) 
-     * @param pt (optional) 
-     * @param businessName (optional) 
-     * @param bn (optional) 
-     * @param business (optional) 
-     * @param business_Name (optional) 
-     * @param company (optional) 
-     * @param companyName (optional) 
-     * @param company_Name (optional) 
-     * @param language (optional) 
-     * @param lg (optional) 
-     * @param lng (optional) 
-     * @param lang (optional) 
-     * @param lingo (optional) 
-     * @param ref (optional) 
-     * @param aff (optional) 
-     * @param via (optional) 
-     * @param a (optional) 
-     * @param refAffiliateCode (optional) 
-     * @param ref_Affiliate_Code (optional) 
-     * @param xref (optional) 
-     * @param сhannel (optional) 
-     * @param campaign (optional) 
-     * @param camp (optional) 
-     * @param sourceCode (optional) 
-     * @param refererUrl (optional) 
-     * @param entryUrl (optional) 
-     * @param userAgent (optional) 
-     * @param clientIp (optional) 
-     * @param siteUrl (optional) 
-     * @param comments (optional) 
-     * @param customField1 (optional) 
-     * @param customField2 (optional) 
-     * @param customField3 (optional) 
-     * @param customField4 (optional) 
-     * @param customField5 (optional) 
-     * @param uTMSource (optional) 
-     * @param uTMMedium (optional) 
-     * @param uTMCampaign (optional) 
-     * @param uTMTerm (optional) 
-     * @param uTMContent (optional) 
-     * @param uTMKeyword (optional) 
-     * @param uTMAdGroup (optional) 
-     * @param uTMName (optional) 
-     * @param assignedUser (optional) 
-     * @param contactGroupId (optional) 
-     * @param matchExisting (optional) 
-     * @return Success
-     */
-    createLeadGet(firstName: string | undefined, fn: string | undefined, first: string | undefined, fname: string | undefined, f_name: string | undefined, first_name: string | undefined, lastName: string | undefined, ln: string | undefined, last: string | undefined, lname: string | undefined, l_name: string | undefined, last_name: string | undefined, email: string | undefined, em: string | undefined, ea: string | undefined, emailAddress: string | undefined, email_Address: string | undefined, phoneNumber: string | undefined, pn: string | undefined, phone: string | undefined, mobilePhone: string | undefined, cellPhone: string | undefined, phone_Number: string | undefined, mobile_Phone: string | undefined, cell_Phone: string | undefined, phoneType: string | undefined, phone_Type: string | undefined, pt: string | undefined, businessName: string | undefined, bn: string | undefined, business: string | undefined, business_Name: string | undefined, company: string | undefined, companyName: string | undefined, company_Name: string | undefined, language: string | undefined, lg: string | undefined, lng: string | undefined, lang: string | undefined, lingo: string | undefined, ref: string | undefined, aff: string | undefined, via: string | undefined, a: string | undefined, refAffiliateCode: string | undefined, ref_Affiliate_Code: string | undefined, xref: string | undefined, сhannel: string | undefined, campaign: string | undefined, camp: string | undefined, sourceCode: string | undefined, refererUrl: string | undefined, entryUrl: string | undefined, userAgent: string | undefined, clientIp: string | undefined, siteUrl: string | undefined, comments: string | undefined, customField1: string | undefined, customField2: string | undefined, customField3: string | undefined, customField4: string | undefined, customField5: string | undefined, uTMSource: string | undefined, uTMMedium: string | undefined, uTMCampaign: string | undefined, uTMTerm: string | undefined, uTMContent: string | undefined, uTMKeyword: string | undefined, uTMAdGroup: string | undefined, uTMName: string | undefined, assignedUser: string | undefined, contactGroupId: string | undefined, matchExisting: boolean | undefined, tenant: string): Observable<void> {
-        let url_ = this.baseUrl + "/receiver/CreateLead/{tenant}?";
-        if (tenant === undefined || tenant === null)
-            throw new Error("The parameter 'tenant' must be defined.");
-        url_ = url_.replace("{tenant}", encodeURIComponent("" + tenant));
-        if (firstName === null)
-            throw new Error("The parameter 'firstName' cannot be null.");
-        else if (firstName !== undefined)
-            url_ += "FirstName=" + encodeURIComponent("" + firstName) + "&";
-        if (fn === null)
-            throw new Error("The parameter 'fn' cannot be null.");
-        else if (fn !== undefined)
-            url_ += "Fn=" + encodeURIComponent("" + fn) + "&";
-        if (first === null)
-            throw new Error("The parameter 'first' cannot be null.");
-        else if (first !== undefined)
-            url_ += "First=" + encodeURIComponent("" + first) + "&";
-        if (fname === null)
-            throw new Error("The parameter 'fname' cannot be null.");
-        else if (fname !== undefined)
-            url_ += "Fname=" + encodeURIComponent("" + fname) + "&";
-        if (f_name === null)
-            throw new Error("The parameter 'f_name' cannot be null.");
-        else if (f_name !== undefined)
-            url_ += "F_name=" + encodeURIComponent("" + f_name) + "&";
-        if (first_name === null)
-            throw new Error("The parameter 'first_name' cannot be null.");
-        else if (first_name !== undefined)
-            url_ += "First_name=" + encodeURIComponent("" + first_name) + "&";
-        if (lastName === null)
-            throw new Error("The parameter 'lastName' cannot be null.");
-        else if (lastName !== undefined)
-            url_ += "LastName=" + encodeURIComponent("" + lastName) + "&";
-        if (ln === null)
-            throw new Error("The parameter 'ln' cannot be null.");
-        else if (ln !== undefined)
-            url_ += "Ln=" + encodeURIComponent("" + ln) + "&";
-        if (last === null)
-            throw new Error("The parameter 'last' cannot be null.");
-        else if (last !== undefined)
-            url_ += "Last=" + encodeURIComponent("" + last) + "&";
-        if (lname === null)
-            throw new Error("The parameter 'lname' cannot be null.");
-        else if (lname !== undefined)
-            url_ += "Lname=" + encodeURIComponent("" + lname) + "&";
-        if (l_name === null)
-            throw new Error("The parameter 'l_name' cannot be null.");
-        else if (l_name !== undefined)
-            url_ += "L_name=" + encodeURIComponent("" + l_name) + "&";
-        if (last_name === null)
-            throw new Error("The parameter 'last_name' cannot be null.");
-        else if (last_name !== undefined)
-            url_ += "Last_name=" + encodeURIComponent("" + last_name) + "&";
-        if (email === null)
-            throw new Error("The parameter 'email' cannot be null.");
-        else if (email !== undefined)
-            url_ += "Email=" + encodeURIComponent("" + email) + "&";
-        if (em === null)
-            throw new Error("The parameter 'em' cannot be null.");
-        else if (em !== undefined)
-            url_ += "Em=" + encodeURIComponent("" + em) + "&";
-        if (ea === null)
-            throw new Error("The parameter 'ea' cannot be null.");
-        else if (ea !== undefined)
-            url_ += "Ea=" + encodeURIComponent("" + ea) + "&";
-        if (emailAddress === null)
-            throw new Error("The parameter 'emailAddress' cannot be null.");
-        else if (emailAddress !== undefined)
-            url_ += "EmailAddress=" + encodeURIComponent("" + emailAddress) + "&";
-        if (email_Address === null)
-            throw new Error("The parameter 'email_Address' cannot be null.");
-        else if (email_Address !== undefined)
-            url_ += "Email_Address=" + encodeURIComponent("" + email_Address) + "&";
-        if (phoneNumber === null)
-            throw new Error("The parameter 'phoneNumber' cannot be null.");
-        else if (phoneNumber !== undefined)
-            url_ += "PhoneNumber=" + encodeURIComponent("" + phoneNumber) + "&";
-        if (pn === null)
-            throw new Error("The parameter 'pn' cannot be null.");
-        else if (pn !== undefined)
-            url_ += "Pn=" + encodeURIComponent("" + pn) + "&";
-        if (phone === null)
-            throw new Error("The parameter 'phone' cannot be null.");
-        else if (phone !== undefined)
-            url_ += "Phone=" + encodeURIComponent("" + phone) + "&";
-        if (mobilePhone === null)
-            throw new Error("The parameter 'mobilePhone' cannot be null.");
-        else if (mobilePhone !== undefined)
-            url_ += "MobilePhone=" + encodeURIComponent("" + mobilePhone) + "&";
-        if (cellPhone === null)
-            throw new Error("The parameter 'cellPhone' cannot be null.");
-        else if (cellPhone !== undefined)
-            url_ += "CellPhone=" + encodeURIComponent("" + cellPhone) + "&";
-        if (phone_Number === null)
-            throw new Error("The parameter 'phone_Number' cannot be null.");
-        else if (phone_Number !== undefined)
-            url_ += "Phone_Number=" + encodeURIComponent("" + phone_Number) + "&";
-        if (mobile_Phone === null)
-            throw new Error("The parameter 'mobile_Phone' cannot be null.");
-        else if (mobile_Phone !== undefined)
-            url_ += "Mobile_Phone=" + encodeURIComponent("" + mobile_Phone) + "&";
-        if (cell_Phone === null)
-            throw new Error("The parameter 'cell_Phone' cannot be null.");
-        else if (cell_Phone !== undefined)
-            url_ += "Cell_Phone=" + encodeURIComponent("" + cell_Phone) + "&";
-        if (phoneType === null)
-            throw new Error("The parameter 'phoneType' cannot be null.");
-        else if (phoneType !== undefined)
-            url_ += "PhoneType=" + encodeURIComponent("" + phoneType) + "&";
-        if (phone_Type === null)
-            throw new Error("The parameter 'phone_Type' cannot be null.");
-        else if (phone_Type !== undefined)
-            url_ += "Phone_Type=" + encodeURIComponent("" + phone_Type) + "&";
-        if (pt === null)
-            throw new Error("The parameter 'pt' cannot be null.");
-        else if (pt !== undefined)
-            url_ += "Pt=" + encodeURIComponent("" + pt) + "&";
-        if (businessName === null)
-            throw new Error("The parameter 'businessName' cannot be null.");
-        else if (businessName !== undefined)
-            url_ += "BusinessName=" + encodeURIComponent("" + businessName) + "&";
-        if (bn === null)
-            throw new Error("The parameter 'bn' cannot be null.");
-        else if (bn !== undefined)
-            url_ += "Bn=" + encodeURIComponent("" + bn) + "&";
-        if (business === null)
-            throw new Error("The parameter 'business' cannot be null.");
-        else if (business !== undefined)
-            url_ += "Business=" + encodeURIComponent("" + business) + "&";
-        if (business_Name === null)
-            throw new Error("The parameter 'business_Name' cannot be null.");
-        else if (business_Name !== undefined)
-            url_ += "Business_Name=" + encodeURIComponent("" + business_Name) + "&";
-        if (company === null)
-            throw new Error("The parameter 'company' cannot be null.");
-        else if (company !== undefined)
-            url_ += "Company=" + encodeURIComponent("" + company) + "&";
-        if (companyName === null)
-            throw new Error("The parameter 'companyName' cannot be null.");
-        else if (companyName !== undefined)
-            url_ += "CompanyName=" + encodeURIComponent("" + companyName) + "&";
-        if (company_Name === null)
-            throw new Error("The parameter 'company_Name' cannot be null.");
-        else if (company_Name !== undefined)
-            url_ += "Company_Name=" + encodeURIComponent("" + company_Name) + "&";
-        if (language === null)
-            throw new Error("The parameter 'language' cannot be null.");
-        else if (language !== undefined)
-            url_ += "Language=" + encodeURIComponent("" + language) + "&";
-        if (lg === null)
-            throw new Error("The parameter 'lg' cannot be null.");
-        else if (lg !== undefined)
-            url_ += "Lg=" + encodeURIComponent("" + lg) + "&";
-        if (lng === null)
-            throw new Error("The parameter 'lng' cannot be null.");
-        else if (lng !== undefined)
-            url_ += "Lng=" + encodeURIComponent("" + lng) + "&";
-        if (lang === null)
-            throw new Error("The parameter 'lang' cannot be null.");
-        else if (lang !== undefined)
-            url_ += "Lang=" + encodeURIComponent("" + lang) + "&";
-        if (lingo === null)
-            throw new Error("The parameter 'lingo' cannot be null.");
-        else if (lingo !== undefined)
-            url_ += "Lingo=" + encodeURIComponent("" + lingo) + "&";
-        if (ref === null)
-            throw new Error("The parameter 'ref' cannot be null.");
-        else if (ref !== undefined)
-            url_ += "Ref=" + encodeURIComponent("" + ref) + "&";
-        if (aff === null)
-            throw new Error("The parameter 'aff' cannot be null.");
-        else if (aff !== undefined)
-            url_ += "Aff=" + encodeURIComponent("" + aff) + "&";
-        if (via === null)
-            throw new Error("The parameter 'via' cannot be null.");
-        else if (via !== undefined)
-            url_ += "Via=" + encodeURIComponent("" + via) + "&";
-        if (a === null)
-            throw new Error("The parameter 'a' cannot be null.");
-        else if (a !== undefined)
-            url_ += "A=" + encodeURIComponent("" + a) + "&";
-        if (refAffiliateCode === null)
-            throw new Error("The parameter 'refAffiliateCode' cannot be null.");
-        else if (refAffiliateCode !== undefined)
-            url_ += "RefAffiliateCode=" + encodeURIComponent("" + refAffiliateCode) + "&";
-        if (ref_Affiliate_Code === null)
-            throw new Error("The parameter 'ref_Affiliate_Code' cannot be null.");
-        else if (ref_Affiliate_Code !== undefined)
-            url_ += "Ref_Affiliate_Code=" + encodeURIComponent("" + ref_Affiliate_Code) + "&";
-        if (xref === null)
-            throw new Error("The parameter 'xref' cannot be null.");
-        else if (xref !== undefined)
-            url_ += "Xref=" + encodeURIComponent("" + xref) + "&";
-        if (сhannel === null)
-            throw new Error("The parameter 'сhannel' cannot be null.");
-        else if (сhannel !== undefined)
-            url_ += "Сhannel=" + encodeURIComponent("" + сhannel) + "&";
-        if (campaign === null)
-            throw new Error("The parameter 'campaign' cannot be null.");
-        else if (campaign !== undefined)
-            url_ += "Campaign=" + encodeURIComponent("" + campaign) + "&";
-        if (camp === null)
-            throw new Error("The parameter 'camp' cannot be null.");
-        else if (camp !== undefined)
-            url_ += "Camp=" + encodeURIComponent("" + camp) + "&";
-        if (sourceCode === null)
-            throw new Error("The parameter 'sourceCode' cannot be null.");
-        else if (sourceCode !== undefined)
-            url_ += "SourceCode=" + encodeURIComponent("" + sourceCode) + "&";
-        if (refererUrl === null)
-            throw new Error("The parameter 'refererUrl' cannot be null.");
-        else if (refererUrl !== undefined)
-            url_ += "RefererUrl=" + encodeURIComponent("" + refererUrl) + "&";
-        if (entryUrl === null)
-            throw new Error("The parameter 'entryUrl' cannot be null.");
-        else if (entryUrl !== undefined)
-            url_ += "EntryUrl=" + encodeURIComponent("" + entryUrl) + "&";
-        if (userAgent === null)
-            throw new Error("The parameter 'userAgent' cannot be null.");
-        else if (userAgent !== undefined)
-            url_ += "UserAgent=" + encodeURIComponent("" + userAgent) + "&";
-        if (clientIp === null)
-            throw new Error("The parameter 'clientIp' cannot be null.");
-        else if (clientIp !== undefined)
-            url_ += "ClientIp=" + encodeURIComponent("" + clientIp) + "&";
-        if (siteUrl === null)
-            throw new Error("The parameter 'siteUrl' cannot be null.");
-        else if (siteUrl !== undefined)
-            url_ += "SiteUrl=" + encodeURIComponent("" + siteUrl) + "&";
-        if (comments === null)
-            throw new Error("The parameter 'comments' cannot be null.");
-        else if (comments !== undefined)
-            url_ += "Comments=" + encodeURIComponent("" + comments) + "&";
-        if (customField1 === null)
-            throw new Error("The parameter 'customField1' cannot be null.");
-        else if (customField1 !== undefined)
-            url_ += "CustomField1=" + encodeURIComponent("" + customField1) + "&";
-        if (customField2 === null)
-            throw new Error("The parameter 'customField2' cannot be null.");
-        else if (customField2 !== undefined)
-            url_ += "CustomField2=" + encodeURIComponent("" + customField2) + "&";
-        if (customField3 === null)
-            throw new Error("The parameter 'customField3' cannot be null.");
-        else if (customField3 !== undefined)
-            url_ += "CustomField3=" + encodeURIComponent("" + customField3) + "&";
-        if (customField4 === null)
-            throw new Error("The parameter 'customField4' cannot be null.");
-        else if (customField4 !== undefined)
-            url_ += "CustomField4=" + encodeURIComponent("" + customField4) + "&";
-        if (customField5 === null)
-            throw new Error("The parameter 'customField5' cannot be null.");
-        else if (customField5 !== undefined)
-            url_ += "CustomField5=" + encodeURIComponent("" + customField5) + "&";
-        if (uTMSource === null)
-            throw new Error("The parameter 'uTMSource' cannot be null.");
-        else if (uTMSource !== undefined)
-            url_ += "UTMSource=" + encodeURIComponent("" + uTMSource) + "&";
-        if (uTMMedium === null)
-            throw new Error("The parameter 'uTMMedium' cannot be null.");
-        else if (uTMMedium !== undefined)
-            url_ += "UTMMedium=" + encodeURIComponent("" + uTMMedium) + "&";
-        if (uTMCampaign === null)
-            throw new Error("The parameter 'uTMCampaign' cannot be null.");
-        else if (uTMCampaign !== undefined)
-            url_ += "UTMCampaign=" + encodeURIComponent("" + uTMCampaign) + "&";
-        if (uTMTerm === null)
-            throw new Error("The parameter 'uTMTerm' cannot be null.");
-        else if (uTMTerm !== undefined)
-            url_ += "UTMTerm=" + encodeURIComponent("" + uTMTerm) + "&";
-        if (uTMContent === null)
-            throw new Error("The parameter 'uTMContent' cannot be null.");
-        else if (uTMContent !== undefined)
-            url_ += "UTMContent=" + encodeURIComponent("" + uTMContent) + "&";
-        if (uTMKeyword === null)
-            throw new Error("The parameter 'uTMKeyword' cannot be null.");
-        else if (uTMKeyword !== undefined)
-            url_ += "UTMKeyword=" + encodeURIComponent("" + uTMKeyword) + "&";
-        if (uTMAdGroup === null)
-            throw new Error("The parameter 'uTMAdGroup' cannot be null.");
-        else if (uTMAdGroup !== undefined)
-            url_ += "UTMAdGroup=" + encodeURIComponent("" + uTMAdGroup) + "&";
-        if (uTMName === null)
-            throw new Error("The parameter 'uTMName' cannot be null.");
-        else if (uTMName !== undefined)
-            url_ += "UTMName=" + encodeURIComponent("" + uTMName) + "&";
-        if (assignedUser === null)
-            throw new Error("The parameter 'assignedUser' cannot be null.");
-        else if (assignedUser !== undefined)
-            url_ += "AssignedUser=" + encodeURIComponent("" + assignedUser) + "&";
-        if (contactGroupId === null)
-            throw new Error("The parameter 'contactGroupId' cannot be null.");
-        else if (contactGroupId !== undefined)
-            url_ += "ContactGroupId=" + encodeURIComponent("" + contactGroupId) + "&";
-        if (matchExisting === null)
-            throw new Error("The parameter 'matchExisting' cannot be null.");
-        else if (matchExisting !== undefined)
-            url_ += "MatchExisting=" + encodeURIComponent("" + matchExisting) + "&";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-            })
-        };
-
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processCreateLeadGet(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processCreateLeadGet(response_ as any);
-                } catch (e) {
-                    return _observableThrow(e) as any as Observable<void>;
-                }
-            } else
-                return _observableThrow(response_) as any as Observable<void>;
-        }));
-    }
-
-    protected processCreateLeadGet(response: HttpResponseBase): Observable<void> {
-        const status = response.status;
-        const responseBlob =
-            response instanceof HttpResponse ? response.body :
-            (response as any).error instanceof Blob ? (response as any).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(null as any);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<void>(null as any);
-    }
-
-    /**
-     * @param matchExisting (optional) 
-     * @param contactGroupId (optional) 
-     * @param assignedUser (optional) 
-     * @param ref (optional) 
-     * @param body (optional) 
-     * @return Success
-     */
-    createLeadPost(tenant: string, matchExisting: boolean | undefined, contactGroupId: string | undefined, assignedUser: string | undefined, ref: string | undefined, body: PublicCreateLeadInput | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/receiver/CreateLead/{tenant}?";
-        if (tenant === undefined || tenant === null)
-            throw new Error("The parameter 'tenant' must be defined.");
-        url_ = url_.replace("{tenant}", encodeURIComponent("" + tenant));
-        if (matchExisting === null)
-            throw new Error("The parameter 'matchExisting' cannot be null.");
-        else if (matchExisting !== undefined)
-            url_ += "matchExisting=" + encodeURIComponent("" + matchExisting) + "&";
-        if (contactGroupId === null)
-            throw new Error("The parameter 'contactGroupId' cannot be null.");
-        else if (contactGroupId !== undefined)
-            url_ += "contactGroupId=" + encodeURIComponent("" + contactGroupId) + "&";
-        if (assignedUser === null)
-            throw new Error("The parameter 'assignedUser' cannot be null.");
-        else if (assignedUser !== undefined)
-            url_ += "assignedUser=" + encodeURIComponent("" + assignedUser) + "&";
-        if (ref === null)
-            throw new Error("The parameter 'ref' cannot be null.");
-        else if (ref !== undefined)
-            url_ += "ref=" + encodeURIComponent("" + ref) + "&";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(body);
-
-        let options_ : any = {
-            body: content_,
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json;odata.metadata=minimal;odata.streaming=true",
-            })
-        };
-
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processCreateLeadPost(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processCreateLeadPost(response_ as any);
-                } catch (e) {
-                    return _observableThrow(e) as any as Observable<void>;
-                }
-            } else
-                return _observableThrow(response_) as any as Observable<void>;
-        }));
-    }
-
-    protected processCreateLeadPost(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -36103,6 +35808,57 @@ export class PaymentServiceProxy {
         }
         return _observableOf<boolean>(null as any);
     }
+
+    /**
+     * @return Success
+     */
+    isPaypalEnabled(): Observable<PaypalSettingsInfo> {
+        let url_ = this.baseUrl + "/api/services/CRM/Payment/IsPaypalEnabled";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json;odata.metadata=minimal;odata.streaming=true"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processIsPaypalEnabled(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processIsPaypalEnabled(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<PaypalSettingsInfo>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<PaypalSettingsInfo>;
+        }));
+    }
+
+    protected processIsPaypalEnabled(response: HttpResponseBase): Observable<PaypalSettingsInfo> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = PaypalSettingsInfo.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<PaypalSettingsInfo>(null as any);
+    }
 }
 
 @Injectable()
@@ -37710,14 +37466,24 @@ export class ProductServiceProxy {
     }
 
     /**
+     * @param filterCustomerPrices (optional) 
+     * @param filterUsedSinglePurchase (optional) 
      * @return Success
      */
-    getSubscriptionProductsByGroupName(groupName: string): Observable<ProductInfo[]> {
+    getSubscriptionProductsByGroupName(groupName: string, filterCustomerPrices: boolean | undefined, filterUsedSinglePurchase: boolean | undefined): Observable<ProductInfo[]> {
         let url_ = this.baseUrl + "/api/services/CRM/Product/GetSubscriptionProductsByGroupName?";
         if (groupName === undefined || groupName === null)
             throw new Error("The parameter 'groupName' must be defined and cannot be null.");
         else
             url_ += "groupName=" + encodeURIComponent("" + groupName) + "&";
+        if (filterCustomerPrices === null)
+            throw new Error("The parameter 'filterCustomerPrices' cannot be null.");
+        else if (filterCustomerPrices !== undefined)
+            url_ += "filterCustomerPrices=" + encodeURIComponent("" + filterCustomerPrices) + "&";
+        if (filterUsedSinglePurchase === null)
+            throw new Error("The parameter 'filterUsedSinglePurchase' cannot be null.");
+        else if (filterUsedSinglePurchase !== undefined)
+            url_ += "filterUsedSinglePurchase=" + encodeURIComponent("" + filterUsedSinglePurchase) + "&";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -37985,6 +37751,58 @@ export class ProductServiceProxy {
     }
 
     protected processUpdateProduct(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(null as any);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(null as any);
+    }
+
+    /**
+     * @param productId (optional) 
+     * @return Success
+     */
+    archiveProduct(productId: number | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Product/ArchiveProduct?";
+        if (productId === null)
+            throw new Error("The parameter 'productId' cannot be null.");
+        else if (productId !== undefined)
+            url_ += "productId=" + encodeURIComponent("" + productId) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processArchiveProduct(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processArchiveProduct(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<void>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<void>;
+        }));
+    }
+
+    protected processArchiveProduct(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -44820,8 +44638,8 @@ export class TenantServiceProxy {
 
     /**
      * @param filter (optional) 
-     * @param creationDateStart (optional) 
-     * @param creationDateEnd (optional) 
+     * @param registrationDateStart (optional) 
+     * @param registrationDateEnd (optional) 
      * @param editionId (optional) 
      * @param editionIdSpecified (optional) 
      * @param sorting (optional) 
@@ -44829,20 +44647,20 @@ export class TenantServiceProxy {
      * @param skipCount (optional) 
      * @return Success
      */
-    getTenants(filter: string | undefined, creationDateStart: moment.Moment | undefined, creationDateEnd: moment.Moment | undefined, editionId: number | undefined, editionIdSpecified: boolean | undefined, sorting: string | undefined, maxResultCount: number | undefined, skipCount: number | undefined): Observable<PagedResultDtoOfTenantListDto> {
+    getTenants(filter: string | undefined, registrationDateStart: moment.Moment | undefined, registrationDateEnd: moment.Moment | undefined, editionId: number | undefined, editionIdSpecified: boolean | undefined, sorting: string | undefined, maxResultCount: number | undefined, skipCount: number | undefined): Observable<PagedResultDtoOfTenantListDto> {
         let url_ = this.baseUrl + "/api/services/Platform/Tenant/GetTenants?";
         if (filter === null)
             throw new Error("The parameter 'filter' cannot be null.");
         else if (filter !== undefined)
             url_ += "Filter=" + encodeURIComponent("" + filter) + "&";
-        if (creationDateStart === null)
-            throw new Error("The parameter 'creationDateStart' cannot be null.");
-        else if (creationDateStart !== undefined)
-            url_ += "CreationDateStart=" + encodeURIComponent(creationDateStart ? "" + creationDateStart.toISOString() : "") + "&";
-        if (creationDateEnd === null)
-            throw new Error("The parameter 'creationDateEnd' cannot be null.");
-        else if (creationDateEnd !== undefined)
-            url_ += "CreationDateEnd=" + encodeURIComponent(creationDateEnd ? "" + creationDateEnd.toISOString() : "") + "&";
+        if (registrationDateStart === null)
+            throw new Error("The parameter 'registrationDateStart' cannot be null.");
+        else if (registrationDateStart !== undefined)
+            url_ += "RegistrationDateStart=" + encodeURIComponent(registrationDateStart ? "" + registrationDateStart.toISOString() : "") + "&";
+        if (registrationDateEnd === null)
+            throw new Error("The parameter 'registrationDateEnd' cannot be null.");
+        else if (registrationDateEnd !== undefined)
+            url_ += "RegistrationDateEnd=" + encodeURIComponent(registrationDateEnd ? "" + registrationDateEnd.toISOString() : "") + "&";
         if (editionId === null)
             throw new Error("The parameter 'editionId' cannot be null.");
         else if (editionId !== undefined)
@@ -47555,14 +47373,19 @@ export class TenantPaymentSettingsServiceProxy {
 
     /**
      * @param includeImportStatus (optional) 
+     * @param includeConnectedAccountInfo (optional) 
      * @return Success
      */
-    getStripeSettings(includeImportStatus: boolean | undefined): Observable<StripeSettingsDto> {
+    getStripeSettings(includeImportStatus: boolean | undefined, includeConnectedAccountInfo: boolean | undefined): Observable<StripeSettingsDto> {
         let url_ = this.baseUrl + "/api/services/CRM/TenantPaymentSettings/GetStripeSettings?";
         if (includeImportStatus === null)
             throw new Error("The parameter 'includeImportStatus' cannot be null.");
         else if (includeImportStatus !== undefined)
             url_ += "includeImportStatus=" + encodeURIComponent("" + includeImportStatus) + "&";
+        if (includeConnectedAccountInfo === null)
+            throw new Error("The parameter 'includeConnectedAccountInfo' cannot be null.");
+        else if (includeConnectedAccountInfo !== undefined)
+            url_ += "includeConnectedAccountInfo=" + encodeURIComponent("" + includeConnectedAccountInfo) + "&";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -57698,6 +57521,7 @@ export class AddBankCardPaymentInput implements IAddBankCardPaymentInput {
     description!: string | undefined;
     orderStage!: string | undefined;
     amount!: number;
+    netAmount!: number | undefined;
     gatewayName!: string | undefined;
     gatewayTransactionId!: string | undefined;
     gatewayOriginTransactionId!: string | undefined;
@@ -57724,6 +57548,7 @@ export class AddBankCardPaymentInput implements IAddBankCardPaymentInput {
             this.description = _data["description"];
             this.orderStage = _data["orderStage"];
             this.amount = _data["amount"];
+            this.netAmount = _data["netAmount"];
             this.gatewayName = _data["gatewayName"];
             this.gatewayTransactionId = _data["gatewayTransactionId"];
             this.gatewayOriginTransactionId = _data["gatewayOriginTransactionId"];
@@ -57750,6 +57575,7 @@ export class AddBankCardPaymentInput implements IAddBankCardPaymentInput {
         data["description"] = this.description;
         data["orderStage"] = this.orderStage;
         data["amount"] = this.amount;
+        data["netAmount"] = this.netAmount;
         data["gatewayName"] = this.gatewayName;
         data["gatewayTransactionId"] = this.gatewayTransactionId;
         data["gatewayOriginTransactionId"] = this.gatewayOriginTransactionId;
@@ -57769,6 +57595,7 @@ export interface IAddBankCardPaymentInput {
     description: string | undefined;
     orderStage: string | undefined;
     amount: number;
+    netAmount: number | undefined;
     gatewayName: string | undefined;
     gatewayTransactionId: string | undefined;
     gatewayOriginTransactionId: string | undefined;
@@ -63944,6 +63771,7 @@ export class CompleteTenantRegistrationInput implements ICompleteTenantRegistrat
     adminPassword!: string;
     noWelcomeEmail!: boolean;
     returnBearerToken!: boolean;
+    registrationDate!: moment.Moment | undefined;
 
     constructor(data?: ICompleteTenantRegistrationInput) {
         if (data) {
@@ -63964,6 +63792,7 @@ export class CompleteTenantRegistrationInput implements ICompleteTenantRegistrat
             this.adminPassword = _data["adminPassword"];
             this.noWelcomeEmail = _data["noWelcomeEmail"];
             this.returnBearerToken = _data["returnBearerToken"];
+            this.registrationDate = _data["registrationDate"] ? moment(_data["registrationDate"].toString()) : <any>undefined;
         }
     }
 
@@ -63984,6 +63813,7 @@ export class CompleteTenantRegistrationInput implements ICompleteTenantRegistrat
         data["adminPassword"] = this.adminPassword;
         data["noWelcomeEmail"] = this.noWelcomeEmail;
         data["returnBearerToken"] = this.returnBearerToken;
+        data["registrationDate"] = this.registrationDate ? this.registrationDate.toISOString() : <any>undefined;
         return data;
     }
 }
@@ -63997,6 +63827,7 @@ export interface ICompleteTenantRegistrationInput {
     adminPassword: string;
     noWelcomeEmail: boolean;
     returnBearerToken: boolean;
+    registrationDate: moment.Moment | undefined;
 }
 
 export class CompleteTenantRegistrationOutput implements ICompleteTenantRegistrationOutput {
@@ -64273,6 +64104,50 @@ export interface IConditionDto {
     descriptionWords: string | undefined;
     attributes: { [key: string]: ConditionAttributeDto; } | undefined;
     transactionTypes: string[] | undefined;
+}
+
+export class ConnectedAccountSettingsDto implements IConnectedAccountSettingsDto {
+    type!: string | undefined;
+    name!: string | undefined;
+    email!: string | undefined;
+
+    constructor(data?: IConnectedAccountSettingsDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.type = _data["type"];
+            this.name = _data["name"];
+            this.email = _data["email"];
+        }
+    }
+
+    static fromJS(data: any): ConnectedAccountSettingsDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new ConnectedAccountSettingsDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["type"] = this.type;
+        data["name"] = this.name;
+        data["email"] = this.email;
+        return data;
+    }
+}
+
+export interface IConnectedAccountSettingsDto {
+    type: string | undefined;
+    name: string | undefined;
+    email: string | undefined;
 }
 
 export enum ConnectionMode {
@@ -64712,6 +64587,210 @@ export interface IContactAgentInput {
     agentCode: string;
     agentName: string | undefined;
     callCenter: string | undefined;
+}
+
+export class ContactDataDto implements IContactDataDto {
+    id!: number;
+    typeId!: string | undefined;
+    fullName!: string | undefined;
+    userId!: number | undefined;
+    contactDate!: moment.Moment;
+    customField1!: string | undefined;
+    customField2!: string | undefined;
+    customField3!: string | undefined;
+    customField4!: string | undefined;
+    customField5!: string | undefined;
+    affiliateContactId!: number | undefined;
+    affiliateContactFullName!: string | undefined;
+    contactAffiliateCodes!: string[] | undefined;
+    contactXrefs!: string[] | undefined;
+    tags!: string[] | undefined;
+    lists!: string[] | undefined;
+    primaryAffiliateCodeAffiliateCode!: string | undefined;
+    primaryAddressId!: number | undefined;
+    primaryEmailId!: number | undefined;
+    primaryPhoneId!: number | undefined;
+    primaryPhotoId!: number | undefined;
+    emails!: ContactEmailDto[] | undefined;
+    phones!: ContactPhoneDto[] | undefined;
+    addresses!: ContactAddressDto[] | undefined;
+    links!: ContactLinkDto[] | undefined;
+    person!: PersonInfoDto | undefined;
+    organization!: OrganizationInfoDto | undefined;
+
+    constructor(data?: IContactDataDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.typeId = _data["typeId"];
+            this.fullName = _data["fullName"];
+            this.userId = _data["userId"];
+            this.contactDate = _data["contactDate"] ? moment(_data["contactDate"].toString()) : <any>undefined;
+            this.customField1 = _data["customField1"];
+            this.customField2 = _data["customField2"];
+            this.customField3 = _data["customField3"];
+            this.customField4 = _data["customField4"];
+            this.customField5 = _data["customField5"];
+            this.affiliateContactId = _data["affiliateContactId"];
+            this.affiliateContactFullName = _data["affiliateContactFullName"];
+            if (Array.isArray(_data["contactAffiliateCodes"])) {
+                this.contactAffiliateCodes = [] as any;
+                for (let item of _data["contactAffiliateCodes"])
+                    this.contactAffiliateCodes!.push(item);
+            }
+            if (Array.isArray(_data["contactXrefs"])) {
+                this.contactXrefs = [] as any;
+                for (let item of _data["contactXrefs"])
+                    this.contactXrefs!.push(item);
+            }
+            if (Array.isArray(_data["tags"])) {
+                this.tags = [] as any;
+                for (let item of _data["tags"])
+                    this.tags!.push(item);
+            }
+            if (Array.isArray(_data["lists"])) {
+                this.lists = [] as any;
+                for (let item of _data["lists"])
+                    this.lists!.push(item);
+            }
+            this.primaryAffiliateCodeAffiliateCode = _data["primaryAffiliateCodeAffiliateCode"];
+            this.primaryAddressId = _data["primaryAddressId"];
+            this.primaryEmailId = _data["primaryEmailId"];
+            this.primaryPhoneId = _data["primaryPhoneId"];
+            this.primaryPhotoId = _data["primaryPhotoId"];
+            if (Array.isArray(_data["emails"])) {
+                this.emails = [] as any;
+                for (let item of _data["emails"])
+                    this.emails!.push(ContactEmailDto.fromJS(item));
+            }
+            if (Array.isArray(_data["phones"])) {
+                this.phones = [] as any;
+                for (let item of _data["phones"])
+                    this.phones!.push(ContactPhoneDto.fromJS(item));
+            }
+            if (Array.isArray(_data["addresses"])) {
+                this.addresses = [] as any;
+                for (let item of _data["addresses"])
+                    this.addresses!.push(ContactAddressDto.fromJS(item));
+            }
+            if (Array.isArray(_data["links"])) {
+                this.links = [] as any;
+                for (let item of _data["links"])
+                    this.links!.push(ContactLinkDto.fromJS(item));
+            }
+            this.person = _data["person"] ? PersonInfoDto.fromJS(_data["person"]) : <any>undefined;
+            this.organization = _data["organization"] ? OrganizationInfoDto.fromJS(_data["organization"]) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): ContactDataDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new ContactDataDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["typeId"] = this.typeId;
+        data["fullName"] = this.fullName;
+        data["userId"] = this.userId;
+        data["contactDate"] = this.contactDate ? this.contactDate.toISOString() : <any>undefined;
+        data["customField1"] = this.customField1;
+        data["customField2"] = this.customField2;
+        data["customField3"] = this.customField3;
+        data["customField4"] = this.customField4;
+        data["customField5"] = this.customField5;
+        data["affiliateContactId"] = this.affiliateContactId;
+        data["affiliateContactFullName"] = this.affiliateContactFullName;
+        if (Array.isArray(this.contactAffiliateCodes)) {
+            data["contactAffiliateCodes"] = [];
+            for (let item of this.contactAffiliateCodes)
+                data["contactAffiliateCodes"].push(item);
+        }
+        if (Array.isArray(this.contactXrefs)) {
+            data["contactXrefs"] = [];
+            for (let item of this.contactXrefs)
+                data["contactXrefs"].push(item);
+        }
+        if (Array.isArray(this.tags)) {
+            data["tags"] = [];
+            for (let item of this.tags)
+                data["tags"].push(item);
+        }
+        if (Array.isArray(this.lists)) {
+            data["lists"] = [];
+            for (let item of this.lists)
+                data["lists"].push(item);
+        }
+        data["primaryAffiliateCodeAffiliateCode"] = this.primaryAffiliateCodeAffiliateCode;
+        data["primaryAddressId"] = this.primaryAddressId;
+        data["primaryEmailId"] = this.primaryEmailId;
+        data["primaryPhoneId"] = this.primaryPhoneId;
+        data["primaryPhotoId"] = this.primaryPhotoId;
+        if (Array.isArray(this.emails)) {
+            data["emails"] = [];
+            for (let item of this.emails)
+                data["emails"].push(item.toJSON());
+        }
+        if (Array.isArray(this.phones)) {
+            data["phones"] = [];
+            for (let item of this.phones)
+                data["phones"].push(item.toJSON());
+        }
+        if (Array.isArray(this.addresses)) {
+            data["addresses"] = [];
+            for (let item of this.addresses)
+                data["addresses"].push(item.toJSON());
+        }
+        if (Array.isArray(this.links)) {
+            data["links"] = [];
+            for (let item of this.links)
+                data["links"].push(item.toJSON());
+        }
+        data["person"] = this.person ? this.person.toJSON() : <any>undefined;
+        data["organization"] = this.organization ? this.organization.toJSON() : <any>undefined;
+        return data;
+    }
+}
+
+export interface IContactDataDto {
+    id: number;
+    typeId: string | undefined;
+    fullName: string | undefined;
+    userId: number | undefined;
+    contactDate: moment.Moment;
+    customField1: string | undefined;
+    customField2: string | undefined;
+    customField3: string | undefined;
+    customField4: string | undefined;
+    customField5: string | undefined;
+    affiliateContactId: number | undefined;
+    affiliateContactFullName: string | undefined;
+    contactAffiliateCodes: string[] | undefined;
+    contactXrefs: string[] | undefined;
+    tags: string[] | undefined;
+    lists: string[] | undefined;
+    primaryAffiliateCodeAffiliateCode: string | undefined;
+    primaryAddressId: number | undefined;
+    primaryEmailId: number | undefined;
+    primaryPhoneId: number | undefined;
+    primaryPhotoId: number | undefined;
+    emails: ContactEmailDto[] | undefined;
+    phones: ContactPhoneDto[] | undefined;
+    addresses: ContactAddressDto[] | undefined;
+    links: ContactLinkDto[] | undefined;
+    person: PersonInfoDto | undefined;
+    organization: OrganizationInfoDto | undefined;
 }
 
 export class ContactDetailsDto implements IContactDetailsDto {
@@ -66429,6 +66508,7 @@ export interface ICounterpartyDto {
 export class CountryDto implements ICountryDto {
     code!: string | undefined;
     name!: string | undefined;
+    currencyId!: string | undefined;
 
     constructor(data?: ICountryDto) {
         if (data) {
@@ -66443,6 +66523,7 @@ export class CountryDto implements ICountryDto {
         if (_data) {
             this.code = _data["code"];
             this.name = _data["name"];
+            this.currencyId = _data["currencyId"];
         }
     }
 
@@ -66457,6 +66538,7 @@ export class CountryDto implements ICountryDto {
         data = typeof data === 'object' ? data : {};
         data["code"] = this.code;
         data["name"] = this.name;
+        data["currencyId"] = this.currencyId;
         return data;
     }
 }
@@ -66464,6 +66546,7 @@ export class CountryDto implements ICountryDto {
 export interface ICountryDto {
     code: string | undefined;
     name: string | undefined;
+    currencyId: string | undefined;
 }
 
 export class CountryStateDto implements ICountryStateDto {
@@ -68269,6 +68352,7 @@ export class CreateEmailTemplateRequest implements ICreateEmailTemplateRequest {
     bcc!: string[] | undefined;
     previewText!: string | undefined;
     body!: string;
+    attachments!: FileInfo[] | undefined;
 
     constructor(data?: ICreateEmailTemplateRequest) {
         if (data) {
@@ -68296,6 +68380,11 @@ export class CreateEmailTemplateRequest implements ICreateEmailTemplateRequest {
             }
             this.previewText = _data["previewText"];
             this.body = _data["body"];
+            if (Array.isArray(_data["attachments"])) {
+                this.attachments = [] as any;
+                for (let item of _data["attachments"])
+                    this.attachments!.push(FileInfo.fromJS(item));
+            }
         }
     }
 
@@ -68323,6 +68412,11 @@ export class CreateEmailTemplateRequest implements ICreateEmailTemplateRequest {
         }
         data["previewText"] = this.previewText;
         data["body"] = this.body;
+        if (Array.isArray(this.attachments)) {
+            data["attachments"] = [];
+            for (let item of this.attachments)
+                data["attachments"].push(item.toJSON());
+        }
         return data;
     }
 }
@@ -68335,6 +68429,7 @@ export interface ICreateEmailTemplateRequest {
     bcc: string[] | undefined;
     previewText: string | undefined;
     body: string;
+    attachments: FileInfo[] | undefined;
 }
 
 export class CreateForecastModelInput implements ICreateForecastModelInput {
@@ -70762,6 +70857,9 @@ export class CreateProductInput implements ICreateProductInput {
     groupName!: string | undefined;
     type!: ProductType;
     price!: number | undefined;
+    customerChoosesPrice!: boolean;
+    minCustomerPrice!: number | undefined;
+    maxCustomerPrice!: number | undefined;
     currencyId!: string;
     commissionableAmount!: number | undefined;
     maxCommissionRate!: number | undefined;
@@ -70775,11 +70873,16 @@ export class CreateProductInput implements ICreateProductInput {
     publishDate!: moment.Moment | undefined;
     publicAllowCoupon!: boolean;
     createUser!: boolean;
+    singlePurchaseAllowed!: boolean;
+    paidEmailTemplateId!: number | undefined;
+    redirectUrl!: string | undefined;
     productServices!: ProductServiceInfo[] | undefined;
     productSubscriptionOptions!: ProductSubscriptionOptionInfo[] | undefined;
     productUpgradeAssignments!: ProductUpgradeAssignmentInfo[] | undefined;
+    recommendedProducts!: RecommendedProductInfo[] | undefined;
     productResources!: ProductResourceDto[] | undefined;
     productEvent!: ProductEventDto | undefined;
+    productDonation!: ProductDonationDto | undefined;
 
     constructor(data?: ICreateProductInput) {
         if (data) {
@@ -70800,6 +70903,9 @@ export class CreateProductInput implements ICreateProductInput {
             this.groupName = _data["groupName"];
             this.type = _data["type"];
             this.price = _data["price"];
+            this.customerChoosesPrice = _data["customerChoosesPrice"];
+            this.minCustomerPrice = _data["minCustomerPrice"];
+            this.maxCustomerPrice = _data["maxCustomerPrice"];
             this.currencyId = _data["currencyId"];
             this.commissionableAmount = _data["commissionableAmount"];
             this.maxCommissionRate = _data["maxCommissionRate"];
@@ -70813,6 +70919,9 @@ export class CreateProductInput implements ICreateProductInput {
             this.publishDate = _data["publishDate"] ? moment(_data["publishDate"].toString()) : <any>undefined;
             this.publicAllowCoupon = _data["publicAllowCoupon"];
             this.createUser = _data["createUser"];
+            this.singlePurchaseAllowed = _data["singlePurchaseAllowed"];
+            this.paidEmailTemplateId = _data["paidEmailTemplateId"];
+            this.redirectUrl = _data["redirectUrl"];
             if (Array.isArray(_data["productServices"])) {
                 this.productServices = [] as any;
                 for (let item of _data["productServices"])
@@ -70828,12 +70937,18 @@ export class CreateProductInput implements ICreateProductInput {
                 for (let item of _data["productUpgradeAssignments"])
                     this.productUpgradeAssignments!.push(ProductUpgradeAssignmentInfo.fromJS(item));
             }
+            if (Array.isArray(_data["recommendedProducts"])) {
+                this.recommendedProducts = [] as any;
+                for (let item of _data["recommendedProducts"])
+                    this.recommendedProducts!.push(RecommendedProductInfo.fromJS(item));
+            }
             if (Array.isArray(_data["productResources"])) {
                 this.productResources = [] as any;
                 for (let item of _data["productResources"])
                     this.productResources!.push(ProductResourceDto.fromJS(item));
             }
             this.productEvent = _data["productEvent"] ? ProductEventDto.fromJS(_data["productEvent"]) : <any>undefined;
+            this.productDonation = _data["productDonation"] ? ProductDonationDto.fromJS(_data["productDonation"]) : <any>undefined;
         }
     }
 
@@ -70854,6 +70969,9 @@ export class CreateProductInput implements ICreateProductInput {
         data["groupName"] = this.groupName;
         data["type"] = this.type;
         data["price"] = this.price;
+        data["customerChoosesPrice"] = this.customerChoosesPrice;
+        data["minCustomerPrice"] = this.minCustomerPrice;
+        data["maxCustomerPrice"] = this.maxCustomerPrice;
         data["currencyId"] = this.currencyId;
         data["commissionableAmount"] = this.commissionableAmount;
         data["maxCommissionRate"] = this.maxCommissionRate;
@@ -70867,6 +70985,9 @@ export class CreateProductInput implements ICreateProductInput {
         data["publishDate"] = this.publishDate ? this.publishDate.toISOString() : <any>undefined;
         data["publicAllowCoupon"] = this.publicAllowCoupon;
         data["createUser"] = this.createUser;
+        data["singlePurchaseAllowed"] = this.singlePurchaseAllowed;
+        data["paidEmailTemplateId"] = this.paidEmailTemplateId;
+        data["redirectUrl"] = this.redirectUrl;
         if (Array.isArray(this.productServices)) {
             data["productServices"] = [];
             for (let item of this.productServices)
@@ -70882,12 +71003,18 @@ export class CreateProductInput implements ICreateProductInput {
             for (let item of this.productUpgradeAssignments)
                 data["productUpgradeAssignments"].push(item.toJSON());
         }
+        if (Array.isArray(this.recommendedProducts)) {
+            data["recommendedProducts"] = [];
+            for (let item of this.recommendedProducts)
+                data["recommendedProducts"].push(item.toJSON());
+        }
         if (Array.isArray(this.productResources)) {
             data["productResources"] = [];
             for (let item of this.productResources)
                 data["productResources"].push(item.toJSON());
         }
         data["productEvent"] = this.productEvent ? this.productEvent.toJSON() : <any>undefined;
+        data["productDonation"] = this.productDonation ? this.productDonation.toJSON() : <any>undefined;
         return data;
     }
 }
@@ -70901,6 +71028,9 @@ export interface ICreateProductInput {
     groupName: string | undefined;
     type: ProductType;
     price: number | undefined;
+    customerChoosesPrice: boolean;
+    minCustomerPrice: number | undefined;
+    maxCustomerPrice: number | undefined;
     currencyId: string;
     commissionableAmount: number | undefined;
     maxCommissionRate: number | undefined;
@@ -70914,11 +71044,16 @@ export interface ICreateProductInput {
     publishDate: moment.Moment | undefined;
     publicAllowCoupon: boolean;
     createUser: boolean;
+    singlePurchaseAllowed: boolean;
+    paidEmailTemplateId: number | undefined;
+    redirectUrl: string | undefined;
     productServices: ProductServiceInfo[] | undefined;
     productSubscriptionOptions: ProductSubscriptionOptionInfo[] | undefined;
     productUpgradeAssignments: ProductUpgradeAssignmentInfo[] | undefined;
+    recommendedProducts: RecommendedProductInfo[] | undefined;
     productResources: ProductResourceDto[] | undefined;
     productEvent: ProductEventDto | undefined;
+    productDonation: ProductDonationDto | undefined;
 }
 
 export class CreateProductOutput implements ICreateProductOutput {
@@ -71234,6 +71369,7 @@ export class CreateTenantInput implements ICreateTenantInput {
     shouldChangePasswordOnNextLogin!: boolean;
     sendActivationEmail!: boolean;
     products!: TenantProductInfo[] | undefined;
+    tenantRegistrationDate!: moment.Moment | undefined;
     tenancyName!: string;
     name!: string;
     connectionString!: string | undefined;
@@ -71268,6 +71404,7 @@ export class CreateTenantInput implements ICreateTenantInput {
                 for (let item of _data["products"])
                     this.products!.push(TenantProductInfo.fromJS(item));
             }
+            this.tenantRegistrationDate = _data["tenantRegistrationDate"] ? moment(_data["tenantRegistrationDate"].toString()) : <any>undefined;
             this.tenancyName = _data["tenancyName"];
             this.name = _data["name"];
             this.connectionString = _data["connectionString"];
@@ -71306,6 +71443,7 @@ export class CreateTenantInput implements ICreateTenantInput {
             for (let item of this.products)
                 data["products"].push(item.toJSON());
         }
+        data["tenantRegistrationDate"] = this.tenantRegistrationDate ? this.tenantRegistrationDate.toISOString() : <any>undefined;
         data["tenancyName"] = this.tenancyName;
         data["name"] = this.name;
         data["connectionString"] = this.connectionString;
@@ -71333,6 +71471,7 @@ export interface ICreateTenantInput {
     shouldChangePasswordOnNextLogin: boolean;
     sendActivationEmail: boolean;
     products: TenantProductInfo[] | undefined;
+    tenantRegistrationDate: moment.Moment | undefined;
     tenancyName: string;
     name: string;
     connectionString: string | undefined;
@@ -72692,6 +72831,9 @@ export interface IDiscardDiscrepanciesInput {
 export class DiscordExternalLoginProviderSettings implements IDiscordExternalLoginProviderSettings {
     appId!: string | undefined;
     appSecret!: string | undefined;
+    serverId!: string | undefined;
+    serverName!: string | undefined;
+    telegramChannelId!: string | undefined;
 
     constructor(data?: IDiscordExternalLoginProviderSettings) {
         if (data) {
@@ -72706,6 +72848,9 @@ export class DiscordExternalLoginProviderSettings implements IDiscordExternalLog
         if (_data) {
             this.appId = _data["appId"];
             this.appSecret = _data["appSecret"];
+            this.serverId = _data["serverId"];
+            this.serverName = _data["serverName"];
+            this.telegramChannelId = _data["telegramChannelId"];
         }
     }
 
@@ -72720,6 +72865,9 @@ export class DiscordExternalLoginProviderSettings implements IDiscordExternalLog
         data = typeof data === 'object' ? data : {};
         data["appId"] = this.appId;
         data["appSecret"] = this.appSecret;
+        data["serverId"] = this.serverId;
+        data["serverName"] = this.serverName;
+        data["telegramChannelId"] = this.telegramChannelId;
         return data;
     }
 }
@@ -72727,6 +72875,9 @@ export class DiscordExternalLoginProviderSettings implements IDiscordExternalLog
 export interface IDiscordExternalLoginProviderSettings {
     appId: string | undefined;
     appSecret: string | undefined;
+    serverId: string | undefined;
+    serverName: string | undefined;
+    telegramChannelId: string | undefined;
 }
 
 export class DiscordExternalLoginProviderSettingsDto implements IDiscordExternalLoginProviderSettingsDto {
@@ -73658,6 +73809,7 @@ export enum EmailTemplateType {
     Invoice = "Invoice",
     Contact = "Contact",
     WelcomeEmail = "WelcomeEmail",
+    ProductPaid = "ProductPaid",
 }
 
 export class EmailUsageTypeDto implements IEmailUsageTypeDto {
@@ -75529,7 +75681,7 @@ export interface IFileDto {
 
 export class FileInfo implements IFileInfo {
     id!: string;
-    name!: string | undefined;
+    name!: string;
 
     constructor(data?: IFileInfo) {
         if (data) {
@@ -75564,7 +75716,7 @@ export class FileInfo implements IFileInfo {
 
 export interface IFileInfo {
     id: string;
-    name: string | undefined;
+    name: string;
 }
 
 export class FilestackSettingsDto implements IFilestackSettingsDto {
@@ -77073,6 +77225,7 @@ export interface IGetAllInput {
 }
 
 export class GetApplicablePaymentMethodsInput implements IGetApplicablePaymentMethodsInput {
+    invoiceId!: number | undefined;
     contactId!: number;
     couponId!: number | undefined;
     currencyId!: string | undefined;
@@ -77093,6 +77246,7 @@ export class GetApplicablePaymentMethodsInput implements IGetApplicablePaymentMe
 
     init(_data?: any) {
         if (_data) {
+            this.invoiceId = _data["invoiceId"];
             this.contactId = _data["contactId"];
             this.couponId = _data["couponId"];
             this.currencyId = _data["currencyId"];
@@ -77117,6 +77271,7 @@ export class GetApplicablePaymentMethodsInput implements IGetApplicablePaymentMe
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["invoiceId"] = this.invoiceId;
         data["contactId"] = this.contactId;
         data["couponId"] = this.couponId;
         data["currencyId"] = this.currencyId;
@@ -77134,6 +77289,7 @@ export class GetApplicablePaymentMethodsInput implements IGetApplicablePaymentMe
 }
 
 export interface IGetApplicablePaymentMethodsInput {
+    invoiceId: number | undefined;
     contactId: number;
     couponId: number | undefined;
     currencyId: string | undefined;
@@ -78862,6 +79018,7 @@ export class GetInvoiceReceiptInfoOutput implements IGetInvoiceReceiptInfoOutput
     downloadInvoiceUrl!: string | undefined;
     downloadReceiptUrl!: string | undefined;
     isTenantInvoice!: boolean;
+    redirectUrls!: string[] | undefined;
     resources!: InvoiceReceiptResource[] | undefined;
     events!: InvoiceEventInfo[] | undefined;
 
@@ -78889,6 +79046,11 @@ export class GetInvoiceReceiptInfoOutput implements IGetInvoiceReceiptInfoOutput
             this.downloadInvoiceUrl = _data["downloadInvoiceUrl"];
             this.downloadReceiptUrl = _data["downloadReceiptUrl"];
             this.isTenantInvoice = _data["isTenantInvoice"];
+            if (Array.isArray(_data["redirectUrls"])) {
+                this.redirectUrls = [] as any;
+                for (let item of _data["redirectUrls"])
+                    this.redirectUrls!.push(item);
+            }
             if (Array.isArray(_data["resources"])) {
                 this.resources = [] as any;
                 for (let item of _data["resources"])
@@ -78924,6 +79086,11 @@ export class GetInvoiceReceiptInfoOutput implements IGetInvoiceReceiptInfoOutput
         data["downloadInvoiceUrl"] = this.downloadInvoiceUrl;
         data["downloadReceiptUrl"] = this.downloadReceiptUrl;
         data["isTenantInvoice"] = this.isTenantInvoice;
+        if (Array.isArray(this.redirectUrls)) {
+            data["redirectUrls"] = [];
+            for (let item of this.redirectUrls)
+                data["redirectUrls"].push(item);
+        }
         if (Array.isArray(this.resources)) {
             data["resources"] = [];
             for (let item of this.resources)
@@ -78952,6 +79119,7 @@ export interface IGetInvoiceReceiptInfoOutput {
     downloadInvoiceUrl: string | undefined;
     downloadReceiptUrl: string | undefined;
     isTenantInvoice: boolean;
+    redirectUrls: string[] | undefined;
     resources: InvoiceReceiptResource[] | undefined;
     events: InvoiceEventInfo[] | undefined;
 }
@@ -79031,6 +79199,7 @@ export class GetLandingPageSettingsDto implements IGetLandingPageSettingsDto {
     productIds!: number[] | undefined;
     faq!: LandingPageWordingSettingsDto[] | undefined;
     tabs!: LandingPageWordingSettingsDto[] | undefined;
+    checkoutFields!: LandingPageCheckoutFieldSettingsDto[] | undefined;
 
     constructor(data?: IGetLandingPageSettingsDto) {
         if (data) {
@@ -79084,6 +79253,11 @@ export class GetLandingPageSettingsDto implements IGetLandingPageSettingsDto {
                 this.tabs = [] as any;
                 for (let item of _data["tabs"])
                     this.tabs!.push(LandingPageWordingSettingsDto.fromJS(item));
+            }
+            if (Array.isArray(_data["checkoutFields"])) {
+                this.checkoutFields = [] as any;
+                for (let item of _data["checkoutFields"])
+                    this.checkoutFields!.push(LandingPageCheckoutFieldSettingsDto.fromJS(item));
             }
         }
     }
@@ -79139,6 +79313,11 @@ export class GetLandingPageSettingsDto implements IGetLandingPageSettingsDto {
             for (let item of this.tabs)
                 data["tabs"].push(item.toJSON());
         }
+        if (Array.isArray(this.checkoutFields)) {
+            data["checkoutFields"] = [];
+            for (let item of this.checkoutFields)
+                data["checkoutFields"].push(item.toJSON());
+        }
         return data;
     }
 }
@@ -79170,6 +79349,7 @@ export interface IGetLandingPageSettingsDto {
     productIds: number[] | undefined;
     faq: LandingPageWordingSettingsDto[] | undefined;
     tabs: LandingPageWordingSettingsDto[] | undefined;
+    checkoutFields: LandingPageCheckoutFieldSettingsDto[] | undefined;
 }
 
 export class GetLanguageForEditOutput implements IGetLanguageForEditOutput {
@@ -80088,10 +80268,15 @@ export class GetProductInfoOutput implements IGetProductInfoOutput {
     publishDate!: moment.Moment | undefined;
     publicAllowCoupon!: boolean;
     createUser!: boolean;
+    paidEmailTemplateId!: number | undefined;
+    redirectUrl!: string | undefined;
     stripeXref!: string | undefined;
+    stripeXrefUrl!: string | undefined;
     paypalXref!: string | undefined;
     productEvent!: ProductEventDto | undefined;
+    productDonation!: ProductDonationDto | undefined;
     productResources!: ProductResourceDto[] | undefined;
+    recommendedProducts!: RecommendedProductInfo[] | undefined;
     id!: number;
     code!: string | undefined;
     name!: string | undefined;
@@ -80099,7 +80284,10 @@ export class GetProductInfoOutput implements IGetProductInfoOutput {
     descriptionHtml!: string | undefined;
     groupId!: number | undefined;
     type!: ProductType;
-    price!: number;
+    price!: number | undefined;
+    customerChoosesPrice!: boolean;
+    minCustomerPrice!: number | undefined;
+    maxCustomerPrice!: number | undefined;
     currencyId!: string | undefined;
     commissionableAmount!: number | undefined;
     maxCommissionRate!: number | undefined;
@@ -80107,6 +80295,8 @@ export class GetProductInfoOutput implements IGetProductInfoOutput {
     unit!: ProductMeasurementUnit | undefined;
     imageUrl!: string | undefined;
     downgradeProductId!: number | undefined;
+    singlePurchaseAllowed!: boolean;
+    isArchived!: boolean;
     productServices!: ProductServiceInfo[] | undefined;
     productSubscriptionOptions!: ProductSubscriptionOptionInfo[] | undefined;
     productUpgradeAssignments!: ProductUpgradeAssignmentInfo[] | undefined;
@@ -80129,13 +80319,22 @@ export class GetProductInfoOutput implements IGetProductInfoOutput {
             this.publishDate = _data["publishDate"] ? moment(_data["publishDate"].toString()) : <any>undefined;
             this.publicAllowCoupon = _data["publicAllowCoupon"];
             this.createUser = _data["createUser"];
+            this.paidEmailTemplateId = _data["paidEmailTemplateId"];
+            this.redirectUrl = _data["redirectUrl"];
             this.stripeXref = _data["stripeXref"];
+            this.stripeXrefUrl = _data["stripeXrefUrl"];
             this.paypalXref = _data["paypalXref"];
             this.productEvent = _data["productEvent"] ? ProductEventDto.fromJS(_data["productEvent"]) : <any>undefined;
+            this.productDonation = _data["productDonation"] ? ProductDonationDto.fromJS(_data["productDonation"]) : <any>undefined;
             if (Array.isArray(_data["productResources"])) {
                 this.productResources = [] as any;
                 for (let item of _data["productResources"])
                     this.productResources!.push(ProductResourceDto.fromJS(item));
+            }
+            if (Array.isArray(_data["recommendedProducts"])) {
+                this.recommendedProducts = [] as any;
+                for (let item of _data["recommendedProducts"])
+                    this.recommendedProducts!.push(RecommendedProductInfo.fromJS(item));
             }
             this.id = _data["id"];
             this.code = _data["code"];
@@ -80145,6 +80344,9 @@ export class GetProductInfoOutput implements IGetProductInfoOutput {
             this.groupId = _data["groupId"];
             this.type = _data["type"];
             this.price = _data["price"];
+            this.customerChoosesPrice = _data["customerChoosesPrice"];
+            this.minCustomerPrice = _data["minCustomerPrice"];
+            this.maxCustomerPrice = _data["maxCustomerPrice"];
             this.currencyId = _data["currencyId"];
             this.commissionableAmount = _data["commissionableAmount"];
             this.maxCommissionRate = _data["maxCommissionRate"];
@@ -80152,6 +80354,8 @@ export class GetProductInfoOutput implements IGetProductInfoOutput {
             this.unit = _data["unit"];
             this.imageUrl = _data["imageUrl"];
             this.downgradeProductId = _data["downgradeProductId"];
+            this.singlePurchaseAllowed = _data["singlePurchaseAllowed"];
+            this.isArchived = _data["isArchived"];
             if (Array.isArray(_data["productServices"])) {
                 this.productServices = [] as any;
                 for (let item of _data["productServices"])
@@ -80186,13 +80390,22 @@ export class GetProductInfoOutput implements IGetProductInfoOutput {
         data["publishDate"] = this.publishDate ? this.publishDate.toISOString() : <any>undefined;
         data["publicAllowCoupon"] = this.publicAllowCoupon;
         data["createUser"] = this.createUser;
+        data["paidEmailTemplateId"] = this.paidEmailTemplateId;
+        data["redirectUrl"] = this.redirectUrl;
         data["stripeXref"] = this.stripeXref;
+        data["stripeXrefUrl"] = this.stripeXrefUrl;
         data["paypalXref"] = this.paypalXref;
         data["productEvent"] = this.productEvent ? this.productEvent.toJSON() : <any>undefined;
+        data["productDonation"] = this.productDonation ? this.productDonation.toJSON() : <any>undefined;
         if (Array.isArray(this.productResources)) {
             data["productResources"] = [];
             for (let item of this.productResources)
                 data["productResources"].push(item.toJSON());
+        }
+        if (Array.isArray(this.recommendedProducts)) {
+            data["recommendedProducts"] = [];
+            for (let item of this.recommendedProducts)
+                data["recommendedProducts"].push(item.toJSON());
         }
         data["id"] = this.id;
         data["code"] = this.code;
@@ -80202,6 +80415,9 @@ export class GetProductInfoOutput implements IGetProductInfoOutput {
         data["groupId"] = this.groupId;
         data["type"] = this.type;
         data["price"] = this.price;
+        data["customerChoosesPrice"] = this.customerChoosesPrice;
+        data["minCustomerPrice"] = this.minCustomerPrice;
+        data["maxCustomerPrice"] = this.maxCustomerPrice;
         data["currencyId"] = this.currencyId;
         data["commissionableAmount"] = this.commissionableAmount;
         data["maxCommissionRate"] = this.maxCommissionRate;
@@ -80209,6 +80425,8 @@ export class GetProductInfoOutput implements IGetProductInfoOutput {
         data["unit"] = this.unit;
         data["imageUrl"] = this.imageUrl;
         data["downgradeProductId"] = this.downgradeProductId;
+        data["singlePurchaseAllowed"] = this.singlePurchaseAllowed;
+        data["isArchived"] = this.isArchived;
         if (Array.isArray(this.productServices)) {
             data["productServices"] = [];
             for (let item of this.productServices)
@@ -80236,10 +80454,15 @@ export interface IGetProductInfoOutput {
     publishDate: moment.Moment | undefined;
     publicAllowCoupon: boolean;
     createUser: boolean;
+    paidEmailTemplateId: number | undefined;
+    redirectUrl: string | undefined;
     stripeXref: string | undefined;
+    stripeXrefUrl: string | undefined;
     paypalXref: string | undefined;
     productEvent: ProductEventDto | undefined;
+    productDonation: ProductDonationDto | undefined;
     productResources: ProductResourceDto[] | undefined;
+    recommendedProducts: RecommendedProductInfo[] | undefined;
     id: number;
     code: string | undefined;
     name: string | undefined;
@@ -80247,7 +80470,10 @@ export interface IGetProductInfoOutput {
     descriptionHtml: string | undefined;
     groupId: number | undefined;
     type: ProductType;
-    price: number;
+    price: number | undefined;
+    customerChoosesPrice: boolean;
+    minCustomerPrice: number | undefined;
+    maxCustomerPrice: number | undefined;
     currencyId: string | undefined;
     commissionableAmount: number | undefined;
     maxCommissionRate: number | undefined;
@@ -80255,6 +80481,8 @@ export interface IGetProductInfoOutput {
     unit: ProductMeasurementUnit | undefined;
     imageUrl: string | undefined;
     downgradeProductId: number | undefined;
+    singlePurchaseAllowed: boolean;
+    isArchived: boolean;
     productServices: ProductServiceInfo[] | undefined;
     productSubscriptionOptions: ProductSubscriptionOptionInfo[] | undefined;
     productUpgradeAssignments: ProductUpgradeAssignmentInfo[] | undefined;
@@ -81482,6 +81710,7 @@ export class GetTemplateReponse implements IGetTemplateReponse {
     bcc!: string[] | undefined;
     previewText!: string | undefined;
     body!: string | undefined;
+    attachments!: Attachment[] | undefined;
 
     constructor(data?: IGetTemplateReponse) {
         if (data) {
@@ -81509,6 +81738,11 @@ export class GetTemplateReponse implements IGetTemplateReponse {
             }
             this.previewText = _data["previewText"];
             this.body = _data["body"];
+            if (Array.isArray(_data["attachments"])) {
+                this.attachments = [] as any;
+                for (let item of _data["attachments"])
+                    this.attachments!.push(Attachment.fromJS(item));
+            }
         }
     }
 
@@ -81536,6 +81770,11 @@ export class GetTemplateReponse implements IGetTemplateReponse {
         }
         data["previewText"] = this.previewText;
         data["body"] = this.body;
+        if (Array.isArray(this.attachments)) {
+            data["attachments"] = [];
+            for (let item of this.attachments)
+                data["attachments"].push(item.toJSON());
+        }
         return data;
     }
 }
@@ -81548,6 +81787,7 @@ export interface IGetTemplateReponse {
     bcc: string[] | undefined;
     previewText: string | undefined;
     body: string | undefined;
+    attachments: Attachment[] | undefined;
 }
 
 export class GetTemplatesResponse implements IGetTemplatesResponse {
@@ -84031,6 +84271,341 @@ export interface IImportInput {
     welcomeEmailTemplateRef: string | undefined;
 }
 
+export class ImportInvoiceAddressInput implements IImportInvoiceAddressInput {
+    countryId!: string | undefined;
+    stateId!: string | undefined;
+    stateName!: string | undefined;
+    city!: string | undefined;
+    zip!: string | undefined;
+    neighborhood!: string | undefined;
+    address1!: string | undefined;
+    address2!: string | undefined;
+    firstName!: string | undefined;
+    lastName!: string | undefined;
+    company!: string | undefined;
+    email!: string | undefined;
+    phone!: string | undefined;
+
+    constructor(data?: IImportInvoiceAddressInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.countryId = _data["countryId"];
+            this.stateId = _data["stateId"];
+            this.stateName = _data["stateName"];
+            this.city = _data["city"];
+            this.zip = _data["zip"];
+            this.neighborhood = _data["neighborhood"];
+            this.address1 = _data["address1"];
+            this.address2 = _data["address2"];
+            this.firstName = _data["firstName"];
+            this.lastName = _data["lastName"];
+            this.company = _data["company"];
+            this.email = _data["email"];
+            this.phone = _data["phone"];
+        }
+    }
+
+    static fromJS(data: any): ImportInvoiceAddressInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new ImportInvoiceAddressInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["countryId"] = this.countryId;
+        data["stateId"] = this.stateId;
+        data["stateName"] = this.stateName;
+        data["city"] = this.city;
+        data["zip"] = this.zip;
+        data["neighborhood"] = this.neighborhood;
+        data["address1"] = this.address1;
+        data["address2"] = this.address2;
+        data["firstName"] = this.firstName;
+        data["lastName"] = this.lastName;
+        data["company"] = this.company;
+        data["email"] = this.email;
+        data["phone"] = this.phone;
+        return data;
+    }
+}
+
+export interface IImportInvoiceAddressInput {
+    countryId: string | undefined;
+    stateId: string | undefined;
+    stateName: string | undefined;
+    city: string | undefined;
+    zip: string | undefined;
+    neighborhood: string | undefined;
+    address1: string | undefined;
+    address2: string | undefined;
+    firstName: string | undefined;
+    lastName: string | undefined;
+    company: string | undefined;
+    email: string | undefined;
+    phone: string | undefined;
+}
+
+export class ImportInvoiceInput implements IImportInvoiceInput {
+    contactId!: number | undefined;
+    contactXref!: string | undefined;
+    orderNumber!: string | undefined;
+    orderAffiliateCode!: string | undefined;
+    status!: InvoiceStatus;
+    number!: string;
+    date!: moment.Moment;
+    dueDate!: moment.Moment | undefined;
+    currencyId!: string;
+    grandTotal!: number;
+    discountTotal!: number | undefined;
+    shippingTotal!: number | undefined;
+    taxTotal!: number | undefined;
+    billingAddress!: ImportInvoiceAddressInput | undefined;
+    shippingAddress!: ImportInvoiceAddressInput | undefined;
+    description!: string | undefined;
+    note!: string | undefined;
+    lines!: ImportInvoiceLineInput[];
+    transactions!: ImportInvoiceTransactionInput[] | undefined;
+    historicalData!: boolean;
+
+    constructor(data?: IImportInvoiceInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+        if (!data) {
+            this.lines = [];
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.contactId = _data["contactId"];
+            this.contactXref = _data["contactXref"];
+            this.orderNumber = _data["orderNumber"];
+            this.orderAffiliateCode = _data["orderAffiliateCode"];
+            this.status = _data["status"];
+            this.number = _data["number"];
+            this.date = _data["date"] ? moment(_data["date"].toString()) : <any>undefined;
+            this.dueDate = _data["dueDate"] ? moment(_data["dueDate"].toString()) : <any>undefined;
+            this.currencyId = _data["currencyId"];
+            this.grandTotal = _data["grandTotal"];
+            this.discountTotal = _data["discountTotal"];
+            this.shippingTotal = _data["shippingTotal"];
+            this.taxTotal = _data["taxTotal"];
+            this.billingAddress = _data["billingAddress"] ? ImportInvoiceAddressInput.fromJS(_data["billingAddress"]) : <any>undefined;
+            this.shippingAddress = _data["shippingAddress"] ? ImportInvoiceAddressInput.fromJS(_data["shippingAddress"]) : <any>undefined;
+            this.description = _data["description"];
+            this.note = _data["note"];
+            if (Array.isArray(_data["lines"])) {
+                this.lines = [] as any;
+                for (let item of _data["lines"])
+                    this.lines!.push(ImportInvoiceLineInput.fromJS(item));
+            }
+            if (Array.isArray(_data["transactions"])) {
+                this.transactions = [] as any;
+                for (let item of _data["transactions"])
+                    this.transactions!.push(ImportInvoiceTransactionInput.fromJS(item));
+            }
+            this.historicalData = _data["historicalData"];
+        }
+    }
+
+    static fromJS(data: any): ImportInvoiceInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new ImportInvoiceInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["contactId"] = this.contactId;
+        data["contactXref"] = this.contactXref;
+        data["orderNumber"] = this.orderNumber;
+        data["orderAffiliateCode"] = this.orderAffiliateCode;
+        data["status"] = this.status;
+        data["number"] = this.number;
+        data["date"] = this.date ? this.date.toISOString() : <any>undefined;
+        data["dueDate"] = this.dueDate ? this.dueDate.toISOString() : <any>undefined;
+        data["currencyId"] = this.currencyId;
+        data["grandTotal"] = this.grandTotal;
+        data["discountTotal"] = this.discountTotal;
+        data["shippingTotal"] = this.shippingTotal;
+        data["taxTotal"] = this.taxTotal;
+        data["billingAddress"] = this.billingAddress ? this.billingAddress.toJSON() : <any>undefined;
+        data["shippingAddress"] = this.shippingAddress ? this.shippingAddress.toJSON() : <any>undefined;
+        data["description"] = this.description;
+        data["note"] = this.note;
+        if (Array.isArray(this.lines)) {
+            data["lines"] = [];
+            for (let item of this.lines)
+                data["lines"].push(item.toJSON());
+        }
+        if (Array.isArray(this.transactions)) {
+            data["transactions"] = [];
+            for (let item of this.transactions)
+                data["transactions"].push(item.toJSON());
+        }
+        data["historicalData"] = this.historicalData;
+        return data;
+    }
+}
+
+export interface IImportInvoiceInput {
+    contactId: number | undefined;
+    contactXref: string | undefined;
+    orderNumber: string | undefined;
+    orderAffiliateCode: string | undefined;
+    status: InvoiceStatus;
+    number: string;
+    date: moment.Moment;
+    dueDate: moment.Moment | undefined;
+    currencyId: string;
+    grandTotal: number;
+    discountTotal: number | undefined;
+    shippingTotal: number | undefined;
+    taxTotal: number | undefined;
+    billingAddress: ImportInvoiceAddressInput | undefined;
+    shippingAddress: ImportInvoiceAddressInput | undefined;
+    description: string | undefined;
+    note: string | undefined;
+    lines: ImportInvoiceLineInput[];
+    transactions: ImportInvoiceTransactionInput[] | undefined;
+    historicalData: boolean;
+}
+
+export class ImportInvoiceLineInput implements IImportInvoiceLineInput {
+    quantity!: number;
+    rate!: number;
+    total!: number;
+    commissionableAmount!: number | undefined;
+    unitId!: ProductMeasurementUnit;
+    productCode!: string | undefined;
+    description!: string | undefined;
+    sortOrder!: number;
+
+    constructor(data?: IImportInvoiceLineInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.quantity = _data["quantity"];
+            this.rate = _data["rate"];
+            this.total = _data["total"];
+            this.commissionableAmount = _data["commissionableAmount"];
+            this.unitId = _data["unitId"];
+            this.productCode = _data["productCode"];
+            this.description = _data["description"];
+            this.sortOrder = _data["sortOrder"];
+        }
+    }
+
+    static fromJS(data: any): ImportInvoiceLineInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new ImportInvoiceLineInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["quantity"] = this.quantity;
+        data["rate"] = this.rate;
+        data["total"] = this.total;
+        data["commissionableAmount"] = this.commissionableAmount;
+        data["unitId"] = this.unitId;
+        data["productCode"] = this.productCode;
+        data["description"] = this.description;
+        data["sortOrder"] = this.sortOrder;
+        return data;
+    }
+}
+
+export interface IImportInvoiceLineInput {
+    quantity: number;
+    rate: number;
+    total: number;
+    commissionableAmount: number | undefined;
+    unitId: ProductMeasurementUnit;
+    productCode: string | undefined;
+    description: string | undefined;
+    sortOrder: number;
+}
+
+export class ImportInvoiceTransactionInput implements IImportInvoiceTransactionInput {
+    date!: moment.Moment;
+    description!: string | undefined;
+    amount!: number;
+    netAmount!: number | undefined;
+    gatewayName!: string | undefined;
+    gatewayTransactionId!: string | undefined;
+
+    constructor(data?: IImportInvoiceTransactionInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.date = _data["date"] ? moment(_data["date"].toString()) : <any>undefined;
+            this.description = _data["description"];
+            this.amount = _data["amount"];
+            this.netAmount = _data["netAmount"];
+            this.gatewayName = _data["gatewayName"];
+            this.gatewayTransactionId = _data["gatewayTransactionId"];
+        }
+    }
+
+    static fromJS(data: any): ImportInvoiceTransactionInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new ImportInvoiceTransactionInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["date"] = this.date ? this.date.toISOString() : <any>undefined;
+        data["description"] = this.description;
+        data["amount"] = this.amount;
+        data["netAmount"] = this.netAmount;
+        data["gatewayName"] = this.gatewayName;
+        data["gatewayTransactionId"] = this.gatewayTransactionId;
+        return data;
+    }
+}
+
+export interface IImportInvoiceTransactionInput {
+    date: moment.Moment;
+    description: string | undefined;
+    amount: number;
+    netAmount: number | undefined;
+    gatewayName: string | undefined;
+    gatewayTransactionId: string | undefined;
+}
+
 export class ImportItemInput implements IImportItemInput {
     contactId!: number | undefined;
     contactXref!: string | undefined;
@@ -84269,6 +84844,9 @@ export class ImportPersonalInput implements IImportPersonalInput {
     interests!: string[] | undefined;
     affiliateCode!: string | undefined;
     isActive!: boolean | undefined;
+    discordUserId!: string | undefined;
+    discordUserName!: string | undefined;
+    telegramUserId!: string | undefined;
     customFields!: CustomFieldsInput | undefined;
 
     constructor(data?: IImportPersonalInput) {
@@ -84327,6 +84905,9 @@ export class ImportPersonalInput implements IImportPersonalInput {
             }
             this.affiliateCode = _data["affiliateCode"];
             this.isActive = _data["isActive"];
+            this.discordUserId = _data["discordUserId"];
+            this.discordUserName = _data["discordUserName"];
+            this.telegramUserId = _data["telegramUserId"];
             this.customFields = _data["customFields"] ? CustomFieldsInput.fromJS(_data["customFields"]) : <any>undefined;
         }
     }
@@ -84385,6 +84966,9 @@ export class ImportPersonalInput implements IImportPersonalInput {
         }
         data["affiliateCode"] = this.affiliateCode;
         data["isActive"] = this.isActive;
+        data["discordUserId"] = this.discordUserId;
+        data["discordUserName"] = this.discordUserName;
+        data["telegramUserId"] = this.telegramUserId;
         data["customFields"] = this.customFields ? this.customFields.toJSON() : <any>undefined;
         return data;
     }
@@ -84432,7 +85016,278 @@ export interface IImportPersonalInput {
     interests: string[] | undefined;
     affiliateCode: string | undefined;
     isActive: boolean | undefined;
+    discordUserId: string | undefined;
+    discordUserName: string | undefined;
+    telegramUserId: string | undefined;
     customFields: CustomFieldsInput | undefined;
+}
+
+export class ImportProductEventInput implements IImportProductEventInput {
+    location!: ProductEventLocation;
+    link!: string | undefined;
+    address!: AddressInfoDto | undefined;
+    date!: moment.Moment | undefined;
+    time!: string | undefined;
+    durationMinutes!: number | undefined;
+    timezone!: string | undefined;
+    languageId!: string | undefined;
+
+    constructor(data?: IImportProductEventInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.location = _data["location"];
+            this.link = _data["link"];
+            this.address = _data["address"] ? AddressInfoDto.fromJS(_data["address"]) : <any>undefined;
+            this.date = _data["date"] ? moment(_data["date"].toString()) : <any>undefined;
+            this.time = _data["time"];
+            this.durationMinutes = _data["durationMinutes"];
+            this.timezone = _data["timezone"];
+            this.languageId = _data["languageId"];
+        }
+    }
+
+    static fromJS(data: any): ImportProductEventInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new ImportProductEventInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["location"] = this.location;
+        data["link"] = this.link;
+        data["address"] = this.address ? this.address.toJSON() : <any>undefined;
+        data["date"] = this.date ? this.date.toISOString() : <any>undefined;
+        data["time"] = this.time;
+        data["durationMinutes"] = this.durationMinutes;
+        data["timezone"] = this.timezone;
+        data["languageId"] = this.languageId;
+        return data;
+    }
+}
+
+export interface IImportProductEventInput {
+    location: ProductEventLocation;
+    link: string | undefined;
+    address: AddressInfoDto | undefined;
+    date: moment.Moment | undefined;
+    time: string | undefined;
+    durationMinutes: number | undefined;
+    timezone: string | undefined;
+    languageId: string | undefined;
+}
+
+export class ImportProductInput implements IImportProductInput {
+    code!: string;
+    name!: string;
+    logoUrl!: string | undefined;
+    description!: string | undefined;
+    descriptionHtml!: string | undefined;
+    groupName!: string | undefined;
+    type!: ProductType;
+    price!: number | undefined;
+    currencyId!: string;
+    unit!: ProductMeasurementUnit | undefined;
+    productSubscriptionOptions!: ImportProductSubscriptionOptionInput[] | undefined;
+    productResources!: ImportProductResourceInput[] | undefined;
+    productEvent!: ImportProductEventInput | undefined;
+
+    constructor(data?: IImportProductInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.code = _data["code"];
+            this.name = _data["name"];
+            this.logoUrl = _data["logoUrl"];
+            this.description = _data["description"];
+            this.descriptionHtml = _data["descriptionHtml"];
+            this.groupName = _data["groupName"];
+            this.type = _data["type"];
+            this.price = _data["price"];
+            this.currencyId = _data["currencyId"];
+            this.unit = _data["unit"];
+            if (Array.isArray(_data["productSubscriptionOptions"])) {
+                this.productSubscriptionOptions = [] as any;
+                for (let item of _data["productSubscriptionOptions"])
+                    this.productSubscriptionOptions!.push(ImportProductSubscriptionOptionInput.fromJS(item));
+            }
+            if (Array.isArray(_data["productResources"])) {
+                this.productResources = [] as any;
+                for (let item of _data["productResources"])
+                    this.productResources!.push(ImportProductResourceInput.fromJS(item));
+            }
+            this.productEvent = _data["productEvent"] ? ImportProductEventInput.fromJS(_data["productEvent"]) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): ImportProductInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new ImportProductInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["code"] = this.code;
+        data["name"] = this.name;
+        data["logoUrl"] = this.logoUrl;
+        data["description"] = this.description;
+        data["descriptionHtml"] = this.descriptionHtml;
+        data["groupName"] = this.groupName;
+        data["type"] = this.type;
+        data["price"] = this.price;
+        data["currencyId"] = this.currencyId;
+        data["unit"] = this.unit;
+        if (Array.isArray(this.productSubscriptionOptions)) {
+            data["productSubscriptionOptions"] = [];
+            for (let item of this.productSubscriptionOptions)
+                data["productSubscriptionOptions"].push(item.toJSON());
+        }
+        if (Array.isArray(this.productResources)) {
+            data["productResources"] = [];
+            for (let item of this.productResources)
+                data["productResources"].push(item.toJSON());
+        }
+        data["productEvent"] = this.productEvent ? this.productEvent.toJSON() : <any>undefined;
+        return data;
+    }
+}
+
+export interface IImportProductInput {
+    code: string;
+    name: string;
+    logoUrl: string | undefined;
+    description: string | undefined;
+    descriptionHtml: string | undefined;
+    groupName: string | undefined;
+    type: ProductType;
+    price: number | undefined;
+    currencyId: string;
+    unit: ProductMeasurementUnit | undefined;
+    productSubscriptionOptions: ImportProductSubscriptionOptionInput[] | undefined;
+    productResources: ImportProductResourceInput[] | undefined;
+    productEvent: ImportProductEventInput | undefined;
+}
+
+export class ImportProductResourceInput implements IImportProductResourceInput {
+    name!: string | undefined;
+    url!: string;
+
+    constructor(data?: IImportProductResourceInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.name = _data["name"];
+            this.url = _data["url"];
+        }
+    }
+
+    static fromJS(data: any): ImportProductResourceInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new ImportProductResourceInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        data["url"] = this.url;
+        return data;
+    }
+}
+
+export interface IImportProductResourceInput {
+    name: string | undefined;
+    url: string;
+}
+
+export class ImportProductSubscriptionOptionInput implements IImportProductSubscriptionOptionInput {
+    frequency!: RecurringPaymentFrequency;
+    signupFee!: number;
+    fee!: number;
+    trialDayCount!: number;
+    customPeriodCount!: number | undefined;
+    customPeriodType!: CustomPeriodType | undefined;
+    cycles!: number | undefined;
+    gracePeriodDayCount!: number | undefined;
+
+    constructor(data?: IImportProductSubscriptionOptionInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.frequency = _data["frequency"];
+            this.signupFee = _data["signupFee"];
+            this.fee = _data["fee"];
+            this.trialDayCount = _data["trialDayCount"];
+            this.customPeriodCount = _data["customPeriodCount"];
+            this.customPeriodType = _data["customPeriodType"];
+            this.cycles = _data["cycles"];
+            this.gracePeriodDayCount = _data["gracePeriodDayCount"];
+        }
+    }
+
+    static fromJS(data: any): ImportProductSubscriptionOptionInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new ImportProductSubscriptionOptionInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["frequency"] = this.frequency;
+        data["signupFee"] = this.signupFee;
+        data["fee"] = this.fee;
+        data["trialDayCount"] = this.trialDayCount;
+        data["customPeriodCount"] = this.customPeriodCount;
+        data["customPeriodType"] = this.customPeriodType;
+        data["cycles"] = this.cycles;
+        data["gracePeriodDayCount"] = this.gracePeriodDayCount;
+        return data;
+    }
+}
+
+export interface IImportProductSubscriptionOptionInput {
+    frequency: RecurringPaymentFrequency;
+    signupFee: number;
+    fee: number;
+    trialDayCount: number;
+    customPeriodCount: number | undefined;
+    customPeriodType: CustomPeriodType | undefined;
+    cycles: number | undefined;
+    gracePeriodDayCount: number | undefined;
 }
 
 export class ImportPropertyInput implements IImportPropertyInput {
@@ -84528,6 +85383,7 @@ export class ImportSubscriptionInput implements IImportSubscriptionInput {
     level!: string | undefined;
     startDate!: moment.Moment | undefined;
     endDate!: moment.Moment | undefined;
+    statusId!: string | undefined;
     amount!: number | undefined;
 
     constructor(data?: IImportSubscriptionInput) {
@@ -84549,6 +85405,7 @@ export class ImportSubscriptionInput implements IImportSubscriptionInput {
             this.level = _data["level"];
             this.startDate = _data["startDate"] ? moment(_data["startDate"].toString()) : <any>undefined;
             this.endDate = _data["endDate"] ? moment(_data["endDate"].toString()) : <any>undefined;
+            this.statusId = _data["statusId"];
             this.amount = _data["amount"];
         }
     }
@@ -84570,6 +85427,7 @@ export class ImportSubscriptionInput implements IImportSubscriptionInput {
         data["level"] = this.level;
         data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
         data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
+        data["statusId"] = this.statusId;
         data["amount"] = this.amount;
         return data;
     }
@@ -84584,6 +85442,7 @@ export interface IImportSubscriptionInput {
     level: string | undefined;
     startDate: moment.Moment | undefined;
     endDate: moment.Moment | undefined;
+    statusId: string | undefined;
     amount: number | undefined;
 }
 
@@ -85983,6 +86842,50 @@ export interface IKlaviyoSettingsDto {
     apiKey: string | undefined;
 }
 
+export class LandingPageCheckoutFieldSettingsDto implements ILandingPageCheckoutFieldSettingsDto {
+    fieldName!: string;
+    displayName!: string;
+    isRequired!: boolean;
+
+    constructor(data?: ILandingPageCheckoutFieldSettingsDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.fieldName = _data["fieldName"];
+            this.displayName = _data["displayName"];
+            this.isRequired = _data["isRequired"];
+        }
+    }
+
+    static fromJS(data: any): LandingPageCheckoutFieldSettingsDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new LandingPageCheckoutFieldSettingsDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["fieldName"] = this.fieldName;
+        data["displayName"] = this.displayName;
+        data["isRequired"] = this.isRequired;
+        return data;
+    }
+}
+
+export interface ILandingPageCheckoutFieldSettingsDto {
+    fieldName: string;
+    displayName: string;
+    isRequired: boolean;
+}
+
 export enum LandingPageColorScheme {
     Dark = "Dark",
     Light = "Light",
@@ -86059,6 +86962,7 @@ export class LandingPageSettingsDto implements ILandingPageSettingsDto {
     productIds!: number[] | undefined;
     faq!: LandingPageWordingSettingsDto[] | undefined;
     tabs!: LandingPageWordingSettingsDto[] | undefined;
+    checkoutFields!: LandingPageCheckoutFieldSettingsDto[] | undefined;
 
     constructor(data?: ILandingPageSettingsDto) {
         if (data) {
@@ -86105,6 +87009,11 @@ export class LandingPageSettingsDto implements ILandingPageSettingsDto {
                 this.tabs = [] as any;
                 for (let item of _data["tabs"])
                     this.tabs!.push(LandingPageWordingSettingsDto.fromJS(item));
+            }
+            if (Array.isArray(_data["checkoutFields"])) {
+                this.checkoutFields = [] as any;
+                for (let item of _data["checkoutFields"])
+                    this.checkoutFields!.push(LandingPageCheckoutFieldSettingsDto.fromJS(item));
             }
         }
     }
@@ -86153,6 +87062,11 @@ export class LandingPageSettingsDto implements ILandingPageSettingsDto {
             for (let item of this.tabs)
                 data["tabs"].push(item.toJSON());
         }
+        if (Array.isArray(this.checkoutFields)) {
+            data["checkoutFields"] = [];
+            for (let item of this.checkoutFields)
+                data["checkoutFields"].push(item.toJSON());
+        }
         return data;
     }
 }
@@ -86181,6 +87095,7 @@ export interface ILandingPageSettingsDto {
     productIds: number[] | undefined;
     faq: LandingPageWordingSettingsDto[] | undefined;
     tabs: LandingPageWordingSettingsDto[] | undefined;
+    checkoutFields: LandingPageCheckoutFieldSettingsDto[] | undefined;
 }
 
 export class LandingPageWordingSettingsDto implements ILandingPageWordingSettingsDto {
@@ -87182,7 +88097,10 @@ export interface ILinkedInExternalLoginProviderSettingsDto {
 export class LinkedUserDto implements ILinkedUserDto {
     tenantId!: number | undefined;
     tenancyName!: string | undefined;
+    tenantName!: string | undefined;
     username!: string | undefined;
+    userFullName!: string | undefined;
+    userEmail!: string | undefined;
     id!: number;
 
     constructor(data?: ILinkedUserDto) {
@@ -87198,7 +88116,10 @@ export class LinkedUserDto implements ILinkedUserDto {
         if (_data) {
             this.tenantId = _data["tenantId"];
             this.tenancyName = _data["tenancyName"];
+            this.tenantName = _data["tenantName"];
             this.username = _data["username"];
+            this.userFullName = _data["userFullName"];
+            this.userEmail = _data["userEmail"];
             this.id = _data["id"];
         }
     }
@@ -87214,7 +88135,10 @@ export class LinkedUserDto implements ILinkedUserDto {
         data = typeof data === 'object' ? data : {};
         data["tenantId"] = this.tenantId;
         data["tenancyName"] = this.tenancyName;
+        data["tenantName"] = this.tenantName;
         data["username"] = this.username;
+        data["userFullName"] = this.userFullName;
+        data["userEmail"] = this.userEmail;
         data["id"] = this.id;
         return data;
     }
@@ -87223,7 +88147,10 @@ export class LinkedUserDto implements ILinkedUserDto {
 export interface ILinkedUserDto {
     tenantId: number | undefined;
     tenancyName: string | undefined;
+    tenantName: string | undefined;
     username: string | undefined;
+    userFullName: string | undefined;
+    userEmail: string | undefined;
     id: number;
 }
 
@@ -93759,6 +94686,46 @@ export interface IPaypalCustomerShortInfo {
     lastName: string | undefined;
 }
 
+export class PaypalSettingsInfo implements IPaypalSettingsInfo {
+    isEnabled!: boolean;
+    clientId!: string | undefined;
+
+    constructor(data?: IPaypalSettingsInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.isEnabled = _data["isEnabled"];
+            this.clientId = _data["clientId"];
+        }
+    }
+
+    static fromJS(data: any): PaypalSettingsInfo {
+        data = typeof data === 'object' ? data : {};
+        let result = new PaypalSettingsInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["isEnabled"] = this.isEnabled;
+        data["clientId"] = this.clientId;
+        return data;
+    }
+}
+
+export interface IPaypalSettingsInfo {
+    isEnabled: boolean;
+    clientId: string | undefined;
+}
+
 export class PendingCommissionContactInfo implements IPendingCommissionContactInfo {
     id!: number;
     name!: string | undefined;
@@ -95315,6 +96282,142 @@ export interface IProcessOrderInfo {
     ignoreChecklist: boolean;
 }
 
+export class ProductDonationDto implements IProductDonationDto {
+    goalAmount!: number | undefined;
+    keepActiveIfGoalReached!: boolean;
+    productDonationSuggestedAmounts!: ProductDonationSuggestedAmountDto[] | undefined;
+
+    constructor(data?: IProductDonationDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.goalAmount = _data["goalAmount"];
+            this.keepActiveIfGoalReached = _data["keepActiveIfGoalReached"];
+            if (Array.isArray(_data["productDonationSuggestedAmounts"])) {
+                this.productDonationSuggestedAmounts = [] as any;
+                for (let item of _data["productDonationSuggestedAmounts"])
+                    this.productDonationSuggestedAmounts!.push(ProductDonationSuggestedAmountDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): ProductDonationDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new ProductDonationDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["goalAmount"] = this.goalAmount;
+        data["keepActiveIfGoalReached"] = this.keepActiveIfGoalReached;
+        if (Array.isArray(this.productDonationSuggestedAmounts)) {
+            data["productDonationSuggestedAmounts"] = [];
+            for (let item of this.productDonationSuggestedAmounts)
+                data["productDonationSuggestedAmounts"].push(item.toJSON());
+        }
+        return data;
+    }
+}
+
+export interface IProductDonationDto {
+    goalAmount: number | undefined;
+    keepActiveIfGoalReached: boolean;
+    productDonationSuggestedAmounts: ProductDonationSuggestedAmountDto[] | undefined;
+}
+
+export class ProductDonationSuggestedAmountDto implements IProductDonationSuggestedAmountDto {
+    id!: number | undefined;
+    text!: string;
+    amount!: number;
+
+    constructor(data?: IProductDonationSuggestedAmountDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.text = _data["text"];
+            this.amount = _data["amount"];
+        }
+    }
+
+    static fromJS(data: any): ProductDonationSuggestedAmountDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new ProductDonationSuggestedAmountDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["text"] = this.text;
+        data["amount"] = this.amount;
+        return data;
+    }
+}
+
+export interface IProductDonationSuggestedAmountDto {
+    id: number | undefined;
+    text: string;
+    amount: number;
+}
+
+export class ProductDonationSuggestedAmountInfo implements IProductDonationSuggestedAmountInfo {
+    text!: string | undefined;
+    amount!: number;
+
+    constructor(data?: IProductDonationSuggestedAmountInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.text = _data["text"];
+            this.amount = _data["amount"];
+        }
+    }
+
+    static fromJS(data: any): ProductDonationSuggestedAmountInfo {
+        data = typeof data === 'object' ? data : {};
+        let result = new ProductDonationSuggestedAmountInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["text"] = this.text;
+        data["amount"] = this.amount;
+        return data;
+    }
+}
+
+export interface IProductDonationSuggestedAmountInfo {
+    text: string | undefined;
+    amount: number;
+}
+
 export class ProductDto implements IProductDto {
     id!: number;
     code!: string | undefined;
@@ -95501,7 +96604,10 @@ export class ProductInfo implements IProductInfo {
     descriptionHtml!: string | undefined;
     groupId!: number | undefined;
     type!: ProductType;
-    price!: number;
+    price!: number | undefined;
+    customerChoosesPrice!: boolean;
+    minCustomerPrice!: number | undefined;
+    maxCustomerPrice!: number | undefined;
     currencyId!: string | undefined;
     commissionableAmount!: number | undefined;
     maxCommissionRate!: number | undefined;
@@ -95509,6 +96615,8 @@ export class ProductInfo implements IProductInfo {
     unit!: ProductMeasurementUnit | undefined;
     imageUrl!: string | undefined;
     downgradeProductId!: number | undefined;
+    singlePurchaseAllowed!: boolean;
+    isArchived!: boolean;
     productServices!: ProductServiceInfo[] | undefined;
     productSubscriptionOptions!: ProductSubscriptionOptionInfo[] | undefined;
     productUpgradeAssignments!: ProductUpgradeAssignmentInfo[] | undefined;
@@ -95532,6 +96640,9 @@ export class ProductInfo implements IProductInfo {
             this.groupId = _data["groupId"];
             this.type = _data["type"];
             this.price = _data["price"];
+            this.customerChoosesPrice = _data["customerChoosesPrice"];
+            this.minCustomerPrice = _data["minCustomerPrice"];
+            this.maxCustomerPrice = _data["maxCustomerPrice"];
             this.currencyId = _data["currencyId"];
             this.commissionableAmount = _data["commissionableAmount"];
             this.maxCommissionRate = _data["maxCommissionRate"];
@@ -95539,6 +96650,8 @@ export class ProductInfo implements IProductInfo {
             this.unit = _data["unit"];
             this.imageUrl = _data["imageUrl"];
             this.downgradeProductId = _data["downgradeProductId"];
+            this.singlePurchaseAllowed = _data["singlePurchaseAllowed"];
+            this.isArchived = _data["isArchived"];
             if (Array.isArray(_data["productServices"])) {
                 this.productServices = [] as any;
                 for (let item of _data["productServices"])
@@ -95574,6 +96687,9 @@ export class ProductInfo implements IProductInfo {
         data["groupId"] = this.groupId;
         data["type"] = this.type;
         data["price"] = this.price;
+        data["customerChoosesPrice"] = this.customerChoosesPrice;
+        data["minCustomerPrice"] = this.minCustomerPrice;
+        data["maxCustomerPrice"] = this.maxCustomerPrice;
         data["currencyId"] = this.currencyId;
         data["commissionableAmount"] = this.commissionableAmount;
         data["maxCommissionRate"] = this.maxCommissionRate;
@@ -95581,6 +96697,8 @@ export class ProductInfo implements IProductInfo {
         data["unit"] = this.unit;
         data["imageUrl"] = this.imageUrl;
         data["downgradeProductId"] = this.downgradeProductId;
+        data["singlePurchaseAllowed"] = this.singlePurchaseAllowed;
+        data["isArchived"] = this.isArchived;
         if (Array.isArray(this.productServices)) {
             data["productServices"] = [];
             for (let item of this.productServices)
@@ -95608,7 +96726,10 @@ export interface IProductInfo {
     descriptionHtml: string | undefined;
     groupId: number | undefined;
     type: ProductType;
-    price: number;
+    price: number | undefined;
+    customerChoosesPrice: boolean;
+    minCustomerPrice: number | undefined;
+    maxCustomerPrice: number | undefined;
     currencyId: string | undefined;
     commissionableAmount: number | undefined;
     maxCommissionRate: number | undefined;
@@ -95616,6 +96737,8 @@ export interface IProductInfo {
     unit: ProductMeasurementUnit | undefined;
     imageUrl: string | undefined;
     downgradeProductId: number | undefined;
+    singlePurchaseAllowed: boolean;
+    isArchived: boolean;
     productServices: ProductServiceInfo[] | undefined;
     productSubscriptionOptions: ProductSubscriptionOptionInfo[] | undefined;
     productUpgradeAssignments: ProductUpgradeAssignmentInfo[] | undefined;
@@ -95881,7 +97004,10 @@ export class ProductSubscriptionOptionInfo implements IProductSubscriptionOption
     frequency!: RecurringPaymentFrequency;
     signupFee!: number;
     commissionableSignupFeeAmount!: number | undefined;
-    fee!: number;
+    fee!: number | undefined;
+    customerChoosesPrice!: boolean;
+    minCustomerPrice!: number | undefined;
+    maxCustomerPrice!: number | undefined;
     commissionableFeeAmount!: number | undefined;
     trialDayCount!: number;
     customPeriodCount!: number | undefined;
@@ -95889,6 +97015,7 @@ export class ProductSubscriptionOptionInfo implements IProductSubscriptionOption
     cycles!: number | undefined;
     gracePeriodDayCount!: number | undefined;
     stripeXref!: string | undefined;
+    stripeXrefUrl!: string | undefined;
     paypalXref!: string | undefined;
 
     constructor(data?: IProductSubscriptionOptionInfo) {
@@ -95906,6 +97033,9 @@ export class ProductSubscriptionOptionInfo implements IProductSubscriptionOption
             this.signupFee = _data["signupFee"];
             this.commissionableSignupFeeAmount = _data["commissionableSignupFeeAmount"];
             this.fee = _data["fee"];
+            this.customerChoosesPrice = _data["customerChoosesPrice"];
+            this.minCustomerPrice = _data["minCustomerPrice"];
+            this.maxCustomerPrice = _data["maxCustomerPrice"];
             this.commissionableFeeAmount = _data["commissionableFeeAmount"];
             this.trialDayCount = _data["trialDayCount"];
             this.customPeriodCount = _data["customPeriodCount"];
@@ -95913,6 +97043,7 @@ export class ProductSubscriptionOptionInfo implements IProductSubscriptionOption
             this.cycles = _data["cycles"];
             this.gracePeriodDayCount = _data["gracePeriodDayCount"];
             this.stripeXref = _data["stripeXref"];
+            this.stripeXrefUrl = _data["stripeXrefUrl"];
             this.paypalXref = _data["paypalXref"];
         }
     }
@@ -95930,6 +97061,9 @@ export class ProductSubscriptionOptionInfo implements IProductSubscriptionOption
         data["signupFee"] = this.signupFee;
         data["commissionableSignupFeeAmount"] = this.commissionableSignupFeeAmount;
         data["fee"] = this.fee;
+        data["customerChoosesPrice"] = this.customerChoosesPrice;
+        data["minCustomerPrice"] = this.minCustomerPrice;
+        data["maxCustomerPrice"] = this.maxCustomerPrice;
         data["commissionableFeeAmount"] = this.commissionableFeeAmount;
         data["trialDayCount"] = this.trialDayCount;
         data["customPeriodCount"] = this.customPeriodCount;
@@ -95937,6 +97071,7 @@ export class ProductSubscriptionOptionInfo implements IProductSubscriptionOption
         data["cycles"] = this.cycles;
         data["gracePeriodDayCount"] = this.gracePeriodDayCount;
         data["stripeXref"] = this.stripeXref;
+        data["stripeXrefUrl"] = this.stripeXrefUrl;
         data["paypalXref"] = this.paypalXref;
         return data;
     }
@@ -95946,7 +97081,10 @@ export interface IProductSubscriptionOptionInfo {
     frequency: RecurringPaymentFrequency;
     signupFee: number;
     commissionableSignupFeeAmount: number | undefined;
-    fee: number;
+    fee: number | undefined;
+    customerChoosesPrice: boolean;
+    minCustomerPrice: number | undefined;
+    maxCustomerPrice: number | undefined;
     commissionableFeeAmount: number | undefined;
     trialDayCount: number;
     customPeriodCount: number | undefined;
@@ -95954,6 +97092,7 @@ export interface IProductSubscriptionOptionInfo {
     cycles: number | undefined;
     gracePeriodDayCount: number | undefined;
     stripeXref: string | undefined;
+    stripeXrefUrl: string | undefined;
     paypalXref: string | undefined;
 }
 
@@ -95962,6 +97101,7 @@ export enum ProductType {
     Subscription = "Subscription",
     Digital = "Digital",
     Event = "Event",
+    Donation = "Donation",
 }
 
 export class ProductUpgradeAssignmentInfo implements IProductUpgradeAssignmentInfo {
@@ -97959,6 +99099,7 @@ export class PublicContactInfo implements IPublicContactInfo {
     settings!: PublicContactSettings | undefined;
     faq!: LandingPageWordingSettingsDto[] | undefined;
     tabs!: LandingPageWordingSettingsDto[] | undefined;
+    checkoutFields!: LandingPageCheckoutFieldSettingsDto[] | undefined;
 
     constructor(data?: IPublicContactInfo) {
         if (data) {
@@ -98003,6 +99144,11 @@ export class PublicContactInfo implements IPublicContactInfo {
                 this.tabs = [] as any;
                 for (let item of _data["tabs"])
                     this.tabs!.push(LandingPageWordingSettingsDto.fromJS(item));
+            }
+            if (Array.isArray(_data["checkoutFields"])) {
+                this.checkoutFields = [] as any;
+                for (let item of _data["checkoutFields"])
+                    this.checkoutFields!.push(LandingPageCheckoutFieldSettingsDto.fromJS(item));
             }
         }
     }
@@ -98049,6 +99195,11 @@ export class PublicContactInfo implements IPublicContactInfo {
             for (let item of this.tabs)
                 data["tabs"].push(item.toJSON());
         }
+        if (Array.isArray(this.checkoutFields)) {
+            data["checkoutFields"] = [];
+            for (let item of this.checkoutFields)
+                data["checkoutFields"].push(item.toJSON());
+        }
         return data;
     }
 }
@@ -98071,6 +99222,7 @@ export interface IPublicContactInfo {
     settings: PublicContactSettings | undefined;
     faq: LandingPageWordingSettingsDto[] | undefined;
     tabs: LandingPageWordingSettingsDto[] | undefined;
+    checkoutFields: LandingPageCheckoutFieldSettingsDto[] | undefined;
 }
 
 export class PublicContactProductInfo implements IPublicContactProductInfo {
@@ -98087,6 +99239,7 @@ export class PublicContactProductInfo implements IPublicContactProductInfo {
     publicName!: string | undefined;
     isPublished!: boolean;
     publishDate!: moment.Moment | undefined;
+    publicAllowCoupon!: boolean;
     productSubscriptionOptions!: PublicContactProductOptionInfo[] | undefined;
 
     constructor(data?: IPublicContactProductInfo) {
@@ -98113,6 +99266,7 @@ export class PublicContactProductInfo implements IPublicContactProductInfo {
             this.publicName = _data["publicName"];
             this.isPublished = _data["isPublished"];
             this.publishDate = _data["publishDate"] ? moment(_data["publishDate"].toString()) : <any>undefined;
+            this.publicAllowCoupon = _data["publicAllowCoupon"];
             if (Array.isArray(_data["productSubscriptionOptions"])) {
                 this.productSubscriptionOptions = [] as any;
                 for (let item of _data["productSubscriptionOptions"])
@@ -98143,6 +99297,7 @@ export class PublicContactProductInfo implements IPublicContactProductInfo {
         data["publicName"] = this.publicName;
         data["isPublished"] = this.isPublished;
         data["publishDate"] = this.publishDate ? this.publishDate.toISOString() : <any>undefined;
+        data["publicAllowCoupon"] = this.publicAllowCoupon;
         if (Array.isArray(this.productSubscriptionOptions)) {
             data["productSubscriptionOptions"] = [];
             for (let item of this.productSubscriptionOptions)
@@ -98166,6 +99321,7 @@ export interface IPublicContactProductInfo {
     publicName: string | undefined;
     isPublished: boolean;
     publishDate: moment.Moment | undefined;
+    publicAllowCoupon: boolean;
     productSubscriptionOptions: PublicContactProductOptionInfo[] | undefined;
 }
 
@@ -98327,6 +99483,7 @@ export class PublicContactTenantInfo implements IPublicContactTenantInfo {
     creationTime!: moment.Moment;
     logoId!: string | undefined;
     publicUrl!: string | undefined;
+    customAppDomain!: string | undefined;
     faviconsInfo!: TenantCustomizationInfoDto | undefined;
     hasCustomToS!: boolean;
     verified!: boolean;
@@ -98347,6 +99504,7 @@ export class PublicContactTenantInfo implements IPublicContactTenantInfo {
             this.creationTime = _data["creationTime"] ? moment(_data["creationTime"].toString()) : <any>undefined;
             this.logoId = _data["logoId"];
             this.publicUrl = _data["publicUrl"];
+            this.customAppDomain = _data["customAppDomain"];
             this.faviconsInfo = _data["faviconsInfo"] ? TenantCustomizationInfoDto.fromJS(_data["faviconsInfo"]) : <any>undefined;
             this.hasCustomToS = _data["hasCustomToS"];
             this.verified = _data["verified"];
@@ -98367,6 +99525,7 @@ export class PublicContactTenantInfo implements IPublicContactTenantInfo {
         data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
         data["logoId"] = this.logoId;
         data["publicUrl"] = this.publicUrl;
+        data["customAppDomain"] = this.customAppDomain;
         data["faviconsInfo"] = this.faviconsInfo ? this.faviconsInfo.toJSON() : <any>undefined;
         data["hasCustomToS"] = this.hasCustomToS;
         data["verified"] = this.verified;
@@ -98380,6 +99539,7 @@ export interface IPublicContactTenantInfo {
     creationTime: moment.Moment;
     logoId: string | undefined;
     publicUrl: string | undefined;
+    customAppDomain: string | undefined;
     faviconsInfo: TenantCustomizationInfoDto | undefined;
     hasCustomToS: boolean;
     verified: boolean;
@@ -98433,82 +99593,14 @@ export interface IPublicCouponInfo {
     percentOff: number | undefined;
 }
 
-export class PublicCreateLeadInput implements IPublicCreateLeadInput {
-    firstName!: string | undefined;
-    fn!: string | undefined;
-    first!: string | undefined;
-    fname!: string | undefined;
-    f_name!: string | undefined;
-    first_name!: string | undefined;
-    lastName!: string | undefined;
-    ln!: string | undefined;
-    last!: string | undefined;
-    lname!: string | undefined;
-    l_name!: string | undefined;
-    last_name!: string | undefined;
-    email!: string | undefined;
-    em!: string | undefined;
-    ea!: string | undefined;
-    emailAddress!: string | undefined;
-    email_Address!: string | undefined;
-    phoneNumber!: string | undefined;
-    pn!: string | undefined;
-    phone!: string | undefined;
-    mobilePhone!: string | undefined;
-    cellPhone!: string | undefined;
-    phone_Number!: string | undefined;
-    mobile_Phone!: string | undefined;
-    cell_Phone!: string | undefined;
-    phoneType!: string | undefined;
-    phone_Type!: string | undefined;
-    pt!: string | undefined;
-    businessName!: string | undefined;
-    bn!: string | undefined;
-    business!: string | undefined;
-    business_Name!: string | undefined;
-    company!: string | undefined;
-    companyName!: string | undefined;
-    company_Name!: string | undefined;
-    language!: string | undefined;
-    lg!: string | undefined;
-    lng!: string | undefined;
-    lang!: string | undefined;
-    lingo!: string | undefined;
-    ref!: string | undefined;
-    aff!: string | undefined;
-    via!: string | undefined;
-    a!: string | undefined;
-    refAffiliateCode!: string | undefined;
-    ref_Affiliate_Code!: string | undefined;
-    xref!: string | undefined;
-    сhannel!: string | undefined;
-    campaign!: string | undefined;
-    camp!: string | undefined;
-    sourceCode!: string | undefined;
-    refererUrl!: string | undefined;
-    entryUrl!: string | undefined;
-    userAgent!: string | undefined;
-    clientIp!: string | undefined;
-    siteUrl!: string | undefined;
-    comments!: string | undefined;
-    customField1!: string | undefined;
-    customField2!: string | undefined;
-    customField3!: string | undefined;
-    customField4!: string | undefined;
-    customField5!: string | undefined;
-    utmSource!: string | undefined;
-    utmMedium!: string | undefined;
-    utmCampaign!: string | undefined;
-    utmTerm!: string | undefined;
-    utmContent!: string | undefined;
-    utmKeyword!: string | undefined;
-    utmAdGroup!: string | undefined;
-    utmName!: string | undefined;
-    assignedUser!: string | undefined;
-    contactGroupId!: string | undefined;
-    matchExisting!: boolean;
+export class PublicDonationInfo implements IPublicDonationInfo {
+    goalAmount!: number | undefined;
+    keepActiveIfGoalReached!: boolean;
+    raisedAmount!: number;
+    donationsCount!: number;
+    productDonationSuggestedAmounts!: ProductDonationSuggestedAmountInfo[] | undefined;
 
-    constructor(data?: IPublicCreateLeadInput) {
+    constructor(data?: IPublicDonationInfo) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -98519,247 +99611,52 @@ export class PublicCreateLeadInput implements IPublicCreateLeadInput {
 
     init(_data?: any) {
         if (_data) {
-            this.firstName = _data["firstName"];
-            this.fn = _data["fn"];
-            this.first = _data["first"];
-            this.fname = _data["fname"];
-            this.f_name = _data["f_name"];
-            this.first_name = _data["first_name"];
-            this.lastName = _data["lastName"];
-            this.ln = _data["ln"];
-            this.last = _data["last"];
-            this.lname = _data["lname"];
-            this.l_name = _data["l_name"];
-            this.last_name = _data["last_name"];
-            this.email = _data["email"];
-            this.em = _data["em"];
-            this.ea = _data["ea"];
-            this.emailAddress = _data["emailAddress"];
-            this.email_Address = _data["email_Address"];
-            this.phoneNumber = _data["phoneNumber"];
-            this.pn = _data["pn"];
-            this.phone = _data["phone"];
-            this.mobilePhone = _data["mobilePhone"];
-            this.cellPhone = _data["cellPhone"];
-            this.phone_Number = _data["phone_Number"];
-            this.mobile_Phone = _data["mobile_Phone"];
-            this.cell_Phone = _data["cell_Phone"];
-            this.phoneType = _data["phoneType"];
-            this.phone_Type = _data["phone_Type"];
-            this.pt = _data["pt"];
-            this.businessName = _data["businessName"];
-            this.bn = _data["bn"];
-            this.business = _data["business"];
-            this.business_Name = _data["business_Name"];
-            this.company = _data["company"];
-            this.companyName = _data["companyName"];
-            this.company_Name = _data["company_Name"];
-            this.language = _data["language"];
-            this.lg = _data["lg"];
-            this.lng = _data["lng"];
-            this.lang = _data["lang"];
-            this.lingo = _data["lingo"];
-            this.ref = _data["ref"];
-            this.aff = _data["aff"];
-            this.via = _data["via"];
-            this.a = _data["a"];
-            this.refAffiliateCode = _data["refAffiliateCode"];
-            this.ref_Affiliate_Code = _data["ref_Affiliate_Code"];
-            this.xref = _data["xref"];
-            this.сhannel = _data["сhannel"];
-            this.campaign = _data["campaign"];
-            this.camp = _data["camp"];
-            this.sourceCode = _data["sourceCode"];
-            this.refererUrl = _data["refererUrl"];
-            this.entryUrl = _data["entryUrl"];
-            this.userAgent = _data["userAgent"];
-            this.clientIp = _data["clientIp"];
-            this.siteUrl = _data["siteUrl"];
-            this.comments = _data["comments"];
-            this.customField1 = _data["customField1"];
-            this.customField2 = _data["customField2"];
-            this.customField3 = _data["customField3"];
-            this.customField4 = _data["customField4"];
-            this.customField5 = _data["customField5"];
-            this.utmSource = _data["utmSource"];
-            this.utmMedium = _data["utmMedium"];
-            this.utmCampaign = _data["utmCampaign"];
-            this.utmTerm = _data["utmTerm"];
-            this.utmContent = _data["utmContent"];
-            this.utmKeyword = _data["utmKeyword"];
-            this.utmAdGroup = _data["utmAdGroup"];
-            this.utmName = _data["utmName"];
-            this.assignedUser = _data["assignedUser"];
-            this.contactGroupId = _data["contactGroupId"];
-            this.matchExisting = _data["matchExisting"];
+            this.goalAmount = _data["goalAmount"];
+            this.keepActiveIfGoalReached = _data["keepActiveIfGoalReached"];
+            this.raisedAmount = _data["raisedAmount"];
+            this.donationsCount = _data["donationsCount"];
+            if (Array.isArray(_data["productDonationSuggestedAmounts"])) {
+                this.productDonationSuggestedAmounts = [] as any;
+                for (let item of _data["productDonationSuggestedAmounts"])
+                    this.productDonationSuggestedAmounts!.push(ProductDonationSuggestedAmountInfo.fromJS(item));
+            }
         }
     }
 
-    static fromJS(data: any): PublicCreateLeadInput {
+    static fromJS(data: any): PublicDonationInfo {
         data = typeof data === 'object' ? data : {};
-        let result = new PublicCreateLeadInput();
+        let result = new PublicDonationInfo();
         result.init(data);
         return result;
     }
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["firstName"] = this.firstName;
-        data["fn"] = this.fn;
-        data["first"] = this.first;
-        data["fname"] = this.fname;
-        data["f_name"] = this.f_name;
-        data["first_name"] = this.first_name;
-        data["lastName"] = this.lastName;
-        data["ln"] = this.ln;
-        data["last"] = this.last;
-        data["lname"] = this.lname;
-        data["l_name"] = this.l_name;
-        data["last_name"] = this.last_name;
-        data["email"] = this.email;
-        data["em"] = this.em;
-        data["ea"] = this.ea;
-        data["emailAddress"] = this.emailAddress;
-        data["email_Address"] = this.email_Address;
-        data["phoneNumber"] = this.phoneNumber;
-        data["pn"] = this.pn;
-        data["phone"] = this.phone;
-        data["mobilePhone"] = this.mobilePhone;
-        data["cellPhone"] = this.cellPhone;
-        data["phone_Number"] = this.phone_Number;
-        data["mobile_Phone"] = this.mobile_Phone;
-        data["cell_Phone"] = this.cell_Phone;
-        data["phoneType"] = this.phoneType;
-        data["phone_Type"] = this.phone_Type;
-        data["pt"] = this.pt;
-        data["businessName"] = this.businessName;
-        data["bn"] = this.bn;
-        data["business"] = this.business;
-        data["business_Name"] = this.business_Name;
-        data["company"] = this.company;
-        data["companyName"] = this.companyName;
-        data["company_Name"] = this.company_Name;
-        data["language"] = this.language;
-        data["lg"] = this.lg;
-        data["lng"] = this.lng;
-        data["lang"] = this.lang;
-        data["lingo"] = this.lingo;
-        data["ref"] = this.ref;
-        data["aff"] = this.aff;
-        data["via"] = this.via;
-        data["a"] = this.a;
-        data["refAffiliateCode"] = this.refAffiliateCode;
-        data["ref_Affiliate_Code"] = this.ref_Affiliate_Code;
-        data["xref"] = this.xref;
-        data["сhannel"] = this.сhannel;
-        data["campaign"] = this.campaign;
-        data["camp"] = this.camp;
-        data["sourceCode"] = this.sourceCode;
-        data["refererUrl"] = this.refererUrl;
-        data["entryUrl"] = this.entryUrl;
-        data["userAgent"] = this.userAgent;
-        data["clientIp"] = this.clientIp;
-        data["siteUrl"] = this.siteUrl;
-        data["comments"] = this.comments;
-        data["customField1"] = this.customField1;
-        data["customField2"] = this.customField2;
-        data["customField3"] = this.customField3;
-        data["customField4"] = this.customField4;
-        data["customField5"] = this.customField5;
-        data["utmSource"] = this.utmSource;
-        data["utmMedium"] = this.utmMedium;
-        data["utmCampaign"] = this.utmCampaign;
-        data["utmTerm"] = this.utmTerm;
-        data["utmContent"] = this.utmContent;
-        data["utmKeyword"] = this.utmKeyword;
-        data["utmAdGroup"] = this.utmAdGroup;
-        data["utmName"] = this.utmName;
-        data["assignedUser"] = this.assignedUser;
-        data["contactGroupId"] = this.contactGroupId;
-        data["matchExisting"] = this.matchExisting;
+        data["goalAmount"] = this.goalAmount;
+        data["keepActiveIfGoalReached"] = this.keepActiveIfGoalReached;
+        data["raisedAmount"] = this.raisedAmount;
+        data["donationsCount"] = this.donationsCount;
+        if (Array.isArray(this.productDonationSuggestedAmounts)) {
+            data["productDonationSuggestedAmounts"] = [];
+            for (let item of this.productDonationSuggestedAmounts)
+                data["productDonationSuggestedAmounts"].push(item.toJSON());
+        }
         return data;
     }
 }
 
-export interface IPublicCreateLeadInput {
-    firstName: string | undefined;
-    fn: string | undefined;
-    first: string | undefined;
-    fname: string | undefined;
-    f_name: string | undefined;
-    first_name: string | undefined;
-    lastName: string | undefined;
-    ln: string | undefined;
-    last: string | undefined;
-    lname: string | undefined;
-    l_name: string | undefined;
-    last_name: string | undefined;
-    email: string | undefined;
-    em: string | undefined;
-    ea: string | undefined;
-    emailAddress: string | undefined;
-    email_Address: string | undefined;
-    phoneNumber: string | undefined;
-    pn: string | undefined;
-    phone: string | undefined;
-    mobilePhone: string | undefined;
-    cellPhone: string | undefined;
-    phone_Number: string | undefined;
-    mobile_Phone: string | undefined;
-    cell_Phone: string | undefined;
-    phoneType: string | undefined;
-    phone_Type: string | undefined;
-    pt: string | undefined;
-    businessName: string | undefined;
-    bn: string | undefined;
-    business: string | undefined;
-    business_Name: string | undefined;
-    company: string | undefined;
-    companyName: string | undefined;
-    company_Name: string | undefined;
-    language: string | undefined;
-    lg: string | undefined;
-    lng: string | undefined;
-    lang: string | undefined;
-    lingo: string | undefined;
-    ref: string | undefined;
-    aff: string | undefined;
-    via: string | undefined;
-    a: string | undefined;
-    refAffiliateCode: string | undefined;
-    ref_Affiliate_Code: string | undefined;
-    xref: string | undefined;
-    сhannel: string | undefined;
-    campaign: string | undefined;
-    camp: string | undefined;
-    sourceCode: string | undefined;
-    refererUrl: string | undefined;
-    entryUrl: string | undefined;
-    userAgent: string | undefined;
-    clientIp: string | undefined;
-    siteUrl: string | undefined;
-    comments: string | undefined;
-    customField1: string | undefined;
-    customField2: string | undefined;
-    customField3: string | undefined;
-    customField4: string | undefined;
-    customField5: string | undefined;
-    utmSource: string | undefined;
-    utmMedium: string | undefined;
-    utmCampaign: string | undefined;
-    utmTerm: string | undefined;
-    utmContent: string | undefined;
-    utmKeyword: string | undefined;
-    utmAdGroup: string | undefined;
-    utmName: string | undefined;
-    assignedUser: string | undefined;
-    contactGroupId: string | undefined;
-    matchExisting: boolean;
+export interface IPublicDonationInfo {
+    goalAmount: number | undefined;
+    keepActiveIfGoalReached: boolean;
+    raisedAmount: number;
+    donationsCount: number;
+    productDonationSuggestedAmounts: ProductDonationSuggestedAmountInfo[] | undefined;
 }
 
 export class PublicProductData implements IPublicProductData {
     paypalClientId!: string | undefined;
     stripeConfigured!: boolean;
+    stripePublishableKey!: string | undefined;
     hasTenantService!: boolean;
     tenantHasPrivacyPolicy!: boolean;
     tenantHasTerms!: boolean;
@@ -98777,6 +99674,7 @@ export class PublicProductData implements IPublicProductData {
         if (_data) {
             this.paypalClientId = _data["paypalClientId"];
             this.stripeConfigured = _data["stripeConfigured"];
+            this.stripePublishableKey = _data["stripePublishableKey"];
             this.hasTenantService = _data["hasTenantService"];
             this.tenantHasPrivacyPolicy = _data["tenantHasPrivacyPolicy"];
             this.tenantHasTerms = _data["tenantHasTerms"];
@@ -98794,6 +99692,7 @@ export class PublicProductData implements IPublicProductData {
         data = typeof data === 'object' ? data : {};
         data["paypalClientId"] = this.paypalClientId;
         data["stripeConfigured"] = this.stripeConfigured;
+        data["stripePublishableKey"] = this.stripePublishableKey;
         data["hasTenantService"] = this.hasTenantService;
         data["tenantHasPrivacyPolicy"] = this.tenantHasPrivacyPolicy;
         data["tenantHasTerms"] = this.tenantHasTerms;
@@ -98804,6 +99703,7 @@ export class PublicProductData implements IPublicProductData {
 export interface IPublicProductData {
     paypalClientId: string | undefined;
     stripeConfigured: boolean;
+    stripePublishableKey: string | undefined;
     hasTenantService: boolean;
     tenantHasPrivacyPolicy: boolean;
     tenantHasTerms: boolean;
@@ -98816,13 +99716,18 @@ export class PublicProductInfo implements IPublicProductInfo {
     descriptionHtml!: string | undefined;
     type!: ProductType;
     price!: number | undefined;
+    customerChoosesPrice!: boolean;
+    minCustomerPrice!: number | undefined;
+    maxCustomerPrice!: number | undefined;
     currencyId!: string | undefined;
     unit!: ProductMeasurementUnit | undefined;
     imageUrl!: string | undefined;
     thumbnailUrl!: string | undefined;
     publicAllowCoupon!: boolean;
     productSubscriptionOptions!: PublicProductSubscriptionOptionInfo[] | undefined;
+    productDonation!: PublicDonationInfo | undefined;
     data!: PublicProductData | undefined;
+    recommendedProductsList!: PublicProductRecommendedProduct[] | undefined;
 
     constructor(data?: IPublicProductInfo) {
         if (data) {
@@ -98841,6 +99746,9 @@ export class PublicProductInfo implements IPublicProductInfo {
             this.descriptionHtml = _data["descriptionHtml"];
             this.type = _data["type"];
             this.price = _data["price"];
+            this.customerChoosesPrice = _data["customerChoosesPrice"];
+            this.minCustomerPrice = _data["minCustomerPrice"];
+            this.maxCustomerPrice = _data["maxCustomerPrice"];
             this.currencyId = _data["currencyId"];
             this.unit = _data["unit"];
             this.imageUrl = _data["imageUrl"];
@@ -98851,7 +99759,13 @@ export class PublicProductInfo implements IPublicProductInfo {
                 for (let item of _data["productSubscriptionOptions"])
                     this.productSubscriptionOptions!.push(PublicProductSubscriptionOptionInfo.fromJS(item));
             }
+            this.productDonation = _data["productDonation"] ? PublicDonationInfo.fromJS(_data["productDonation"]) : <any>undefined;
             this.data = _data["data"] ? PublicProductData.fromJS(_data["data"]) : <any>undefined;
+            if (Array.isArray(_data["recommendedProductsList"])) {
+                this.recommendedProductsList = [] as any;
+                for (let item of _data["recommendedProductsList"])
+                    this.recommendedProductsList!.push(PublicProductRecommendedProduct.fromJS(item));
+            }
         }
     }
 
@@ -98870,6 +99784,9 @@ export class PublicProductInfo implements IPublicProductInfo {
         data["descriptionHtml"] = this.descriptionHtml;
         data["type"] = this.type;
         data["price"] = this.price;
+        data["customerChoosesPrice"] = this.customerChoosesPrice;
+        data["minCustomerPrice"] = this.minCustomerPrice;
+        data["maxCustomerPrice"] = this.maxCustomerPrice;
         data["currencyId"] = this.currencyId;
         data["unit"] = this.unit;
         data["imageUrl"] = this.imageUrl;
@@ -98880,7 +99797,13 @@ export class PublicProductInfo implements IPublicProductInfo {
             for (let item of this.productSubscriptionOptions)
                 data["productSubscriptionOptions"].push(item.toJSON());
         }
+        data["productDonation"] = this.productDonation ? this.productDonation.toJSON() : <any>undefined;
         data["data"] = this.data ? this.data.toJSON() : <any>undefined;
+        if (Array.isArray(this.recommendedProductsList)) {
+            data["recommendedProductsList"] = [];
+            for (let item of this.recommendedProductsList)
+                data["recommendedProductsList"].push(item.toJSON());
+        }
         return data;
     }
 }
@@ -98892,19 +99815,147 @@ export interface IPublicProductInfo {
     descriptionHtml: string | undefined;
     type: ProductType;
     price: number | undefined;
+    customerChoosesPrice: boolean;
+    minCustomerPrice: number | undefined;
+    maxCustomerPrice: number | undefined;
     currencyId: string | undefined;
     unit: ProductMeasurementUnit | undefined;
     imageUrl: string | undefined;
     thumbnailUrl: string | undefined;
     publicAllowCoupon: boolean;
     productSubscriptionOptions: PublicProductSubscriptionOptionInfo[] | undefined;
+    productDonation: PublicDonationInfo | undefined;
     data: PublicProductData | undefined;
+    recommendedProductsList: PublicProductRecommendedProduct[] | undefined;
+}
+
+export class PublicProductInput implements IPublicProductInput {
+    productId!: number;
+    optionId!: number | undefined;
+    unit!: ProductMeasurementUnit;
+    price!: number | undefined;
+    quantity!: number;
+
+    constructor(data?: IPublicProductInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.productId = _data["productId"];
+            this.optionId = _data["optionId"];
+            this.unit = _data["unit"];
+            this.price = _data["price"];
+            this.quantity = _data["quantity"];
+        }
+    }
+
+    static fromJS(data: any): PublicProductInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new PublicProductInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["productId"] = this.productId;
+        data["optionId"] = this.optionId;
+        data["unit"] = this.unit;
+        data["price"] = this.price;
+        data["quantity"] = this.quantity;
+        return data;
+    }
+}
+
+export interface IPublicProductInput {
+    productId: number;
+    optionId: number | undefined;
+    unit: ProductMeasurementUnit;
+    price: number | undefined;
+    quantity: number;
+}
+
+export class PublicProductRecommendedProduct implements IPublicProductRecommendedProduct {
+    name!: string | undefined;
+    description!: string | undefined;
+    type!: ProductType;
+    price!: number | undefined;
+    customerChoosesPrice!: boolean;
+    minCustomerPrice!: number | undefined;
+    maxCustomerPrice!: number | undefined;
+    imageUrl!: string | undefined;
+    publicAllowCoupon!: boolean;
+
+    constructor(data?: IPublicProductRecommendedProduct) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.name = _data["name"];
+            this.description = _data["description"];
+            this.type = _data["type"];
+            this.price = _data["price"];
+            this.customerChoosesPrice = _data["customerChoosesPrice"];
+            this.minCustomerPrice = _data["minCustomerPrice"];
+            this.maxCustomerPrice = _data["maxCustomerPrice"];
+            this.imageUrl = _data["imageUrl"];
+            this.publicAllowCoupon = _data["publicAllowCoupon"];
+        }
+    }
+
+    static fromJS(data: any): PublicProductRecommendedProduct {
+        data = typeof data === 'object' ? data : {};
+        let result = new PublicProductRecommendedProduct();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        data["description"] = this.description;
+        data["type"] = this.type;
+        data["price"] = this.price;
+        data["customerChoosesPrice"] = this.customerChoosesPrice;
+        data["minCustomerPrice"] = this.minCustomerPrice;
+        data["maxCustomerPrice"] = this.maxCustomerPrice;
+        data["imageUrl"] = this.imageUrl;
+        data["publicAllowCoupon"] = this.publicAllowCoupon;
+        return data;
+    }
+}
+
+export interface IPublicProductRecommendedProduct {
+    name: string | undefined;
+    description: string | undefined;
+    type: ProductType;
+    price: number | undefined;
+    customerChoosesPrice: boolean;
+    minCustomerPrice: number | undefined;
+    maxCustomerPrice: number | undefined;
+    imageUrl: string | undefined;
+    publicAllowCoupon: boolean;
 }
 
 export class PublicProductSubscriptionOptionInfo implements IPublicProductSubscriptionOptionInfo {
     id!: number;
     signupFee!: number;
-    fee!: number;
+    fee!: number | undefined;
+    customerChoosesPrice!: boolean;
+    minCustomerPrice!: number | undefined;
+    maxCustomerPrice!: number | undefined;
     frequency!: RecurringPaymentFrequency;
     trialDayCount!: number;
     customPeriodCount!: number | undefined;
@@ -98925,6 +99976,9 @@ export class PublicProductSubscriptionOptionInfo implements IPublicProductSubscr
             this.id = _data["id"];
             this.signupFee = _data["signupFee"];
             this.fee = _data["fee"];
+            this.customerChoosesPrice = _data["customerChoosesPrice"];
+            this.minCustomerPrice = _data["minCustomerPrice"];
+            this.maxCustomerPrice = _data["maxCustomerPrice"];
             this.frequency = _data["frequency"];
             this.trialDayCount = _data["trialDayCount"];
             this.customPeriodCount = _data["customPeriodCount"];
@@ -98945,6 +99999,9 @@ export class PublicProductSubscriptionOptionInfo implements IPublicProductSubscr
         data["id"] = this.id;
         data["signupFee"] = this.signupFee;
         data["fee"] = this.fee;
+        data["customerChoosesPrice"] = this.customerChoosesPrice;
+        data["minCustomerPrice"] = this.minCustomerPrice;
+        data["maxCustomerPrice"] = this.maxCustomerPrice;
         data["frequency"] = this.frequency;
         data["trialDayCount"] = this.trialDayCount;
         data["customPeriodCount"] = this.customPeriodCount;
@@ -98957,7 +100014,10 @@ export class PublicProductSubscriptionOptionInfo implements IPublicProductSubscr
 export interface IPublicProductSubscriptionOptionInfo {
     id: number;
     signupFee: number;
-    fee: number;
+    fee: number | undefined;
+    customerChoosesPrice: boolean;
+    minCustomerPrice: number | undefined;
+    maxCustomerPrice: number | undefined;
     frequency: RecurringPaymentFrequency;
     trialDayCount: number;
     customPeriodCount: number | undefined;
@@ -99974,6 +101034,42 @@ export interface IRecommendationDto {
     header: string | undefined;
     text: string | undefined;
     isPositive: boolean;
+}
+
+export class RecommendedProductInfo implements IRecommendedProductInfo {
+    recommendedProductId!: number;
+
+    constructor(data?: IRecommendedProductInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.recommendedProductId = _data["recommendedProductId"];
+        }
+    }
+
+    static fromJS(data: any): RecommendedProductInfo {
+        data = typeof data === 'object' ? data : {};
+        let result = new RecommendedProductInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["recommendedProductId"] = this.recommendedProductId;
+        return data;
+    }
+}
+
+export interface IRecommendedProductInfo {
+    recommendedProductId: number;
 }
 
 export class RecordEarningsInput implements IRecordEarningsInput {
@@ -105288,6 +106384,7 @@ export enum StripeEntityType {
 export class StripeSettings implements IStripeSettings {
     isEnabled!: boolean;
     apiKey!: string | undefined;
+    publishableKey!: string | undefined;
     ignoreExternalWebhooks!: boolean;
     webhookSingingSecret!: string | undefined;
     oAuthClientId!: string | undefined;
@@ -105309,6 +106406,7 @@ export class StripeSettings implements IStripeSettings {
         if (_data) {
             this.isEnabled = _data["isEnabled"];
             this.apiKey = _data["apiKey"];
+            this.publishableKey = _data["publishableKey"];
             this.ignoreExternalWebhooks = _data["ignoreExternalWebhooks"];
             this.webhookSingingSecret = _data["webhookSingingSecret"];
             this.oAuthClientId = _data["oAuthClientId"];
@@ -105330,6 +106428,7 @@ export class StripeSettings implements IStripeSettings {
         data = typeof data === 'object' ? data : {};
         data["isEnabled"] = this.isEnabled;
         data["apiKey"] = this.apiKey;
+        data["publishableKey"] = this.publishableKey;
         data["ignoreExternalWebhooks"] = this.ignoreExternalWebhooks;
         data["webhookSingingSecret"] = this.webhookSingingSecret;
         data["oAuthClientId"] = this.oAuthClientId;
@@ -105344,6 +106443,7 @@ export class StripeSettings implements IStripeSettings {
 export interface IStripeSettings {
     isEnabled: boolean;
     apiKey: string | undefined;
+    publishableKey: string | undefined;
     ignoreExternalWebhooks: boolean;
     webhookSingingSecret: string | undefined;
     oAuthClientId: string | undefined;
@@ -105356,6 +106456,7 @@ export interface IStripeSettings {
 export class StripeSettingsDto implements IStripeSettingsDto {
     isEnabled!: boolean;
     apiKey!: string | undefined;
+    publishableKey!: string | undefined;
     ignoreExternalWebhooks!: boolean;
     webhookSingingSecret!: string | undefined;
     oAuthClientId!: string | undefined;
@@ -105366,6 +106467,7 @@ export class StripeSettingsDto implements IStripeSettingsDto {
     isConnectedAccountSetUpCompleted!: boolean;
     unsupportedPaymentMethods!: InvoicePaymentMethod;
     hasRunningImport!: boolean;
+    connectedAccountInfo!: ConnectedAccountSettingsDto | undefined;
 
     constructor(data?: IStripeSettingsDto) {
         if (data) {
@@ -105380,6 +106482,7 @@ export class StripeSettingsDto implements IStripeSettingsDto {
         if (_data) {
             this.isEnabled = _data["isEnabled"];
             this.apiKey = _data["apiKey"];
+            this.publishableKey = _data["publishableKey"];
             this.ignoreExternalWebhooks = _data["ignoreExternalWebhooks"];
             this.webhookSingingSecret = _data["webhookSingingSecret"];
             this.oAuthClientId = _data["oAuthClientId"];
@@ -105390,6 +106493,7 @@ export class StripeSettingsDto implements IStripeSettingsDto {
             this.isConnectedAccountSetUpCompleted = _data["isConnectedAccountSetUpCompleted"];
             this.unsupportedPaymentMethods = _data["unsupportedPaymentMethods"];
             this.hasRunningImport = _data["hasRunningImport"];
+            this.connectedAccountInfo = _data["connectedAccountInfo"] ? ConnectedAccountSettingsDto.fromJS(_data["connectedAccountInfo"]) : <any>undefined;
         }
     }
 
@@ -105404,6 +106508,7 @@ export class StripeSettingsDto implements IStripeSettingsDto {
         data = typeof data === 'object' ? data : {};
         data["isEnabled"] = this.isEnabled;
         data["apiKey"] = this.apiKey;
+        data["publishableKey"] = this.publishableKey;
         data["ignoreExternalWebhooks"] = this.ignoreExternalWebhooks;
         data["webhookSingingSecret"] = this.webhookSingingSecret;
         data["oAuthClientId"] = this.oAuthClientId;
@@ -105414,6 +106519,7 @@ export class StripeSettingsDto implements IStripeSettingsDto {
         data["isConnectedAccountSetUpCompleted"] = this.isConnectedAccountSetUpCompleted;
         data["unsupportedPaymentMethods"] = this.unsupportedPaymentMethods;
         data["hasRunningImport"] = this.hasRunningImport;
+        data["connectedAccountInfo"] = this.connectedAccountInfo ? this.connectedAccountInfo.toJSON() : <any>undefined;
         return data;
     }
 }
@@ -105421,6 +106527,7 @@ export class StripeSettingsDto implements IStripeSettingsDto {
 export interface IStripeSettingsDto {
     isEnabled: boolean;
     apiKey: string | undefined;
+    publishableKey: string | undefined;
     ignoreExternalWebhooks: boolean;
     webhookSingingSecret: string | undefined;
     oAuthClientId: string | undefined;
@@ -105431,6 +106538,7 @@ export interface IStripeSettingsDto {
     isConnectedAccountSetUpCompleted: boolean;
     unsupportedPaymentMethods: InvoicePaymentMethod;
     hasRunningImport: boolean;
+    connectedAccountInfo: ConnectedAccountSettingsDto | undefined;
 }
 
 export class SubmitAnswerDto implements ISubmitAnswerDto {
@@ -105816,13 +106924,21 @@ export interface ISubmitMemberInfoResultDto {
 export class SubmitProductRequestInput implements ISubmitProductRequestInput {
     tenantId!: number;
     paymentGateway!: string | undefined;
-    productId!: number;
-    optionId!: number | undefined;
-    unit!: ProductMeasurementUnit;
-    quantity!: number;
+    embeddedPayment!: boolean;
+    products!: PublicProductInput[];
     couponCode!: string | undefined;
-    successUrl!: string;
-    cancelUrl!: string;
+    successUrl!: string | undefined;
+    cancelUrl!: string | undefined;
+    returnUrl!: string | undefined;
+    shippingAddress!: AddressInfoDto | undefined;
+    billingAddress!: AddressInfoDto | undefined;
+    dob!: moment.Moment | undefined;
+    companyName!: string | undefined;
+    customField1!: string | undefined;
+    customField2!: string | undefined;
+    customField3!: string | undefined;
+    customField4!: string | undefined;
+    customField5!: string | undefined;
     leadRequestXref!: string | undefined;
     firstName!: string;
     lastName!: string;
@@ -105847,19 +106963,34 @@ export class SubmitProductRequestInput implements ISubmitProductRequestInput {
                     (<any>this)[property] = (<any>data)[property];
             }
         }
+        if (!data) {
+            this.products = [];
+        }
     }
 
     init(_data?: any) {
         if (_data) {
             this.tenantId = _data["tenantId"];
             this.paymentGateway = _data["paymentGateway"];
-            this.productId = _data["productId"];
-            this.optionId = _data["optionId"];
-            this.unit = _data["unit"];
-            this.quantity = _data["quantity"];
+            this.embeddedPayment = _data["embeddedPayment"];
+            if (Array.isArray(_data["products"])) {
+                this.products = [] as any;
+                for (let item of _data["products"])
+                    this.products!.push(PublicProductInput.fromJS(item));
+            }
             this.couponCode = _data["couponCode"];
             this.successUrl = _data["successUrl"];
             this.cancelUrl = _data["cancelUrl"];
+            this.returnUrl = _data["returnUrl"];
+            this.shippingAddress = _data["shippingAddress"] ? AddressInfoDto.fromJS(_data["shippingAddress"]) : <any>undefined;
+            this.billingAddress = _data["billingAddress"] ? AddressInfoDto.fromJS(_data["billingAddress"]) : <any>undefined;
+            this.dob = _data["dob"] ? moment(_data["dob"].toString()) : <any>undefined;
+            this.companyName = _data["companyName"];
+            this.customField1 = _data["customField1"];
+            this.customField2 = _data["customField2"];
+            this.customField3 = _data["customField3"];
+            this.customField4 = _data["customField4"];
+            this.customField5 = _data["customField5"];
             this.leadRequestXref = _data["leadRequestXref"];
             this.firstName = _data["firstName"];
             this.lastName = _data["lastName"];
@@ -105890,13 +107021,25 @@ export class SubmitProductRequestInput implements ISubmitProductRequestInput {
         data = typeof data === 'object' ? data : {};
         data["tenantId"] = this.tenantId;
         data["paymentGateway"] = this.paymentGateway;
-        data["productId"] = this.productId;
-        data["optionId"] = this.optionId;
-        data["unit"] = this.unit;
-        data["quantity"] = this.quantity;
+        data["embeddedPayment"] = this.embeddedPayment;
+        if (Array.isArray(this.products)) {
+            data["products"] = [];
+            for (let item of this.products)
+                data["products"].push(item.toJSON());
+        }
         data["couponCode"] = this.couponCode;
         data["successUrl"] = this.successUrl;
         data["cancelUrl"] = this.cancelUrl;
+        data["returnUrl"] = this.returnUrl;
+        data["shippingAddress"] = this.shippingAddress ? this.shippingAddress.toJSON() : <any>undefined;
+        data["billingAddress"] = this.billingAddress ? this.billingAddress.toJSON() : <any>undefined;
+        data["dob"] = this.dob ? this.dob.toISOString() : <any>undefined;
+        data["companyName"] = this.companyName;
+        data["customField1"] = this.customField1;
+        data["customField2"] = this.customField2;
+        data["customField3"] = this.customField3;
+        data["customField4"] = this.customField4;
+        data["customField5"] = this.customField5;
         data["leadRequestXref"] = this.leadRequestXref;
         data["firstName"] = this.firstName;
         data["lastName"] = this.lastName;
@@ -105920,13 +107063,21 @@ export class SubmitProductRequestInput implements ISubmitProductRequestInput {
 export interface ISubmitProductRequestInput {
     tenantId: number;
     paymentGateway: string | undefined;
-    productId: number;
-    optionId: number | undefined;
-    unit: ProductMeasurementUnit;
-    quantity: number;
+    embeddedPayment: boolean;
+    products: PublicProductInput[];
     couponCode: string | undefined;
-    successUrl: string;
-    cancelUrl: string;
+    successUrl: string | undefined;
+    cancelUrl: string | undefined;
+    returnUrl: string | undefined;
+    shippingAddress: AddressInfoDto | undefined;
+    billingAddress: AddressInfoDto | undefined;
+    dob: moment.Moment | undefined;
+    companyName: string | undefined;
+    customField1: string | undefined;
+    customField2: string | undefined;
+    customField3: string | undefined;
+    customField4: string | undefined;
+    customField5: string | undefined;
     leadRequestXref: string | undefined;
     firstName: string;
     lastName: string;
@@ -106375,6 +107526,7 @@ export class SubmitTenancyRequestInput implements ISubmitTenancyRequestInput {
     stage!: string | undefined;
     tag!: string | undefined;
     utmParameter!: UTMParameterInfo | undefined;
+    leadDate!: moment.Moment | undefined;
     leadRequestXref!: string | undefined;
     firstName!: string;
     lastName!: string;
@@ -106416,6 +107568,7 @@ export class SubmitTenancyRequestInput implements ISubmitTenancyRequestInput {
             this.stage = _data["stage"];
             this.tag = _data["tag"];
             this.utmParameter = _data["utmParameter"] ? UTMParameterInfo.fromJS(_data["utmParameter"]) : <any>undefined;
+            this.leadDate = _data["leadDate"] ? moment(_data["leadDate"].toString()) : <any>undefined;
             this.leadRequestXref = _data["leadRequestXref"];
             this.firstName = _data["firstName"];
             this.lastName = _data["lastName"];
@@ -106457,6 +107610,7 @@ export class SubmitTenancyRequestInput implements ISubmitTenancyRequestInput {
         data["stage"] = this.stage;
         data["tag"] = this.tag;
         data["utmParameter"] = this.utmParameter ? this.utmParameter.toJSON() : <any>undefined;
+        data["leadDate"] = this.leadDate ? this.leadDate.toISOString() : <any>undefined;
         data["leadRequestXref"] = this.leadRequestXref;
         data["firstName"] = this.firstName;
         data["lastName"] = this.lastName;
@@ -106487,6 +107641,7 @@ export interface ISubmitTenancyRequestInput {
     stage: string | undefined;
     tag: string | undefined;
     utmParameter: UTMParameterInfo | undefined;
+    leadDate: moment.Moment | undefined;
     leadRequestXref: string | undefined;
     firstName: string;
     lastName: string;
@@ -108288,7 +109443,7 @@ export class TenantListDto implements ITenantListDto {
     name!: string | undefined;
     hasOwnDatabase!: boolean;
     isActive!: boolean;
-    creationTime!: moment.Moment;
+    registrationDate!: moment.Moment;
     id!: number;
 
     constructor(data?: ITenantListDto) {
@@ -108306,7 +109461,7 @@ export class TenantListDto implements ITenantListDto {
             this.name = _data["name"];
             this.hasOwnDatabase = _data["hasOwnDatabase"];
             this.isActive = _data["isActive"];
-            this.creationTime = _data["creationTime"] ? moment(_data["creationTime"].toString()) : <any>undefined;
+            this.registrationDate = _data["registrationDate"] ? moment(_data["registrationDate"].toString()) : <any>undefined;
             this.id = _data["id"];
         }
     }
@@ -108324,7 +109479,7 @@ export class TenantListDto implements ITenantListDto {
         data["name"] = this.name;
         data["hasOwnDatabase"] = this.hasOwnDatabase;
         data["isActive"] = this.isActive;
-        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["registrationDate"] = this.registrationDate ? this.registrationDate.toISOString() : <any>undefined;
         data["id"] = this.id;
         return data;
     }
@@ -108335,7 +109490,7 @@ export interface ITenantListDto {
     name: string | undefined;
     hasOwnDatabase: boolean;
     isActive: boolean;
-    creationTime: moment.Moment;
+    registrationDate: moment.Moment;
     id: number;
 }
 
@@ -108766,6 +109921,7 @@ export class TenantSslBindingInfo implements ITenantSslBindingInfo {
     sslCertificateExpiration!: moment.Moment | undefined;
     sslCertificateThumbprint!: string | undefined;
     organizationUnitId!: number | undefined;
+    creationTime!: moment.Moment;
 
     constructor(data?: ITenantSslBindingInfo) {
         if (data) {
@@ -108786,6 +109942,7 @@ export class TenantSslBindingInfo implements ITenantSslBindingInfo {
             this.sslCertificateExpiration = _data["sslCertificateExpiration"] ? moment(_data["sslCertificateExpiration"].toString()) : <any>undefined;
             this.sslCertificateThumbprint = _data["sslCertificateThumbprint"];
             this.organizationUnitId = _data["organizationUnitId"];
+            this.creationTime = _data["creationTime"] ? moment(_data["creationTime"].toString()) : <any>undefined;
         }
     }
 
@@ -108806,6 +109963,7 @@ export class TenantSslBindingInfo implements ITenantSslBindingInfo {
         data["sslCertificateExpiration"] = this.sslCertificateExpiration ? this.sslCertificateExpiration.toISOString() : <any>undefined;
         data["sslCertificateThumbprint"] = this.sslCertificateThumbprint;
         data["organizationUnitId"] = this.organizationUnitId;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
         return data;
     }
 }
@@ -108819,6 +109977,7 @@ export interface ITenantSslBindingInfo {
     sslCertificateExpiration: moment.Moment | undefined;
     sslCertificateThumbprint: string | undefined;
     organizationUnitId: number | undefined;
+    creationTime: moment.Moment;
 }
 
 export class TenantSslCertificateInfo implements ITenantSslCertificateInfo {
@@ -112386,6 +113545,7 @@ export class UpdateEmailTemplateRequest implements IUpdateEmailTemplateRequest {
     bcc!: string[] | undefined;
     previewText!: string | undefined;
     body!: string;
+    attachments!: FileInfo[] | undefined;
 
     constructor(data?: IUpdateEmailTemplateRequest) {
         if (data) {
@@ -112414,6 +113574,11 @@ export class UpdateEmailTemplateRequest implements IUpdateEmailTemplateRequest {
             }
             this.previewText = _data["previewText"];
             this.body = _data["body"];
+            if (Array.isArray(_data["attachments"])) {
+                this.attachments = [] as any;
+                for (let item of _data["attachments"])
+                    this.attachments!.push(FileInfo.fromJS(item));
+            }
         }
     }
 
@@ -112442,6 +113607,11 @@ export class UpdateEmailTemplateRequest implements IUpdateEmailTemplateRequest {
         }
         data["previewText"] = this.previewText;
         data["body"] = this.body;
+        if (Array.isArray(this.attachments)) {
+            data["attachments"] = [];
+            for (let item of this.attachments)
+                data["attachments"].push(item.toJSON());
+        }
         return data;
     }
 }
@@ -112455,6 +113625,7 @@ export interface IUpdateEmailTemplateRequest {
     bcc: string[] | undefined;
     previewText: string | undefined;
     body: string;
+    attachments: FileInfo[] | undefined;
 }
 
 export class UpdateForecastInput implements IUpdateForecastInput {
@@ -114163,6 +115334,7 @@ export class UpdateOrderSubscriptionInput implements IUpdateOrderSubscriptionInp
     productCode!: string | undefined;
     paymentPeriodType!: RecurringPaymentFrequency | undefined;
     hasRecurringBilling!: boolean;
+    statusId!: string | undefined;
     skipExisting!: boolean;
 
     constructor(data?: IUpdateOrderSubscriptionInput) {
@@ -114194,6 +115366,7 @@ export class UpdateOrderSubscriptionInput implements IUpdateOrderSubscriptionInp
             this.productCode = _data["productCode"];
             this.paymentPeriodType = _data["paymentPeriodType"];
             this.hasRecurringBilling = _data["hasRecurringBilling"];
+            this.statusId = _data["statusId"];
             this.skipExisting = _data["skipExisting"];
         }
     }
@@ -114225,6 +115398,7 @@ export class UpdateOrderSubscriptionInput implements IUpdateOrderSubscriptionInp
         data["productCode"] = this.productCode;
         data["paymentPeriodType"] = this.paymentPeriodType;
         data["hasRecurringBilling"] = this.hasRecurringBilling;
+        data["statusId"] = this.statusId;
         data["skipExisting"] = this.skipExisting;
         return data;
     }
@@ -114241,6 +115415,7 @@ export interface IUpdateOrderSubscriptionInput {
     productCode: string | undefined;
     paymentPeriodType: RecurringPaymentFrequency | undefined;
     hasRecurringBilling: boolean;
+    statusId: string | undefined;
     skipExisting: boolean;
 }
 
@@ -114293,7 +115468,9 @@ export class UpdateOrderSubscriptionProductInfo implements IUpdateOrderSubscript
     productCode!: string | undefined;
     paymentPeriodType!: RecurringPaymentFrequency | undefined;
     hasRecurringBilling!: boolean;
+    startDate!: moment.Moment | undefined;
     endDate!: moment.Moment | undefined;
+    statusId!: string | undefined;
 
     constructor(data?: IUpdateOrderSubscriptionProductInfo) {
         if (data) {
@@ -114310,7 +115487,9 @@ export class UpdateOrderSubscriptionProductInfo implements IUpdateOrderSubscript
             this.productCode = _data["productCode"];
             this.paymentPeriodType = _data["paymentPeriodType"];
             this.hasRecurringBilling = _data["hasRecurringBilling"];
+            this.startDate = _data["startDate"] ? moment(_data["startDate"].toString()) : <any>undefined;
             this.endDate = _data["endDate"] ? moment(_data["endDate"].toString()) : <any>undefined;
+            this.statusId = _data["statusId"];
         }
     }
 
@@ -114327,7 +115506,9 @@ export class UpdateOrderSubscriptionProductInfo implements IUpdateOrderSubscript
         data["productCode"] = this.productCode;
         data["paymentPeriodType"] = this.paymentPeriodType;
         data["hasRecurringBilling"] = this.hasRecurringBilling;
+        data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
         data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
+        data["statusId"] = this.statusId;
         return data;
     }
 }
@@ -114337,7 +115518,9 @@ export interface IUpdateOrderSubscriptionProductInfo {
     productCode: string | undefined;
     paymentPeriodType: RecurringPaymentFrequency | undefined;
     hasRecurringBilling: boolean;
+    startDate: moment.Moment | undefined;
     endDate: moment.Moment | undefined;
+    statusId: string | undefined;
 }
 
 export class UpdateOrganizationInfoInput implements IUpdateOrganizationInfoInput {
@@ -114910,6 +116093,9 @@ export class UpdateProductInput implements IUpdateProductInput {
     groupName!: string | undefined;
     type!: ProductType;
     price!: number | undefined;
+    customerChoosesPrice!: boolean;
+    minCustomerPrice!: number | undefined;
+    maxCustomerPrice!: number | undefined;
     currencyId!: string;
     commissionableAmount!: number | undefined;
     maxCommissionRate!: number | undefined;
@@ -114923,11 +116109,16 @@ export class UpdateProductInput implements IUpdateProductInput {
     publishDate!: moment.Moment | undefined;
     publicAllowCoupon!: boolean;
     createUser!: boolean;
+    singlePurchaseAllowed!: boolean;
+    paidEmailTemplateId!: number | undefined;
+    redirectUrl!: string | undefined;
     productServices!: ProductServiceInfo[] | undefined;
     productSubscriptionOptions!: ProductSubscriptionOptionInfo[] | undefined;
     productUpgradeAssignments!: ProductUpgradeAssignmentInfo[] | undefined;
+    recommendedProducts!: RecommendedProductInfo[] | undefined;
     productResources!: ProductResourceDto[] | undefined;
     productEvent!: ProductEventDto | undefined;
+    productDonation!: ProductDonationDto | undefined;
 
     constructor(data?: IUpdateProductInput) {
         if (data) {
@@ -114949,6 +116140,9 @@ export class UpdateProductInput implements IUpdateProductInput {
             this.groupName = _data["groupName"];
             this.type = _data["type"];
             this.price = _data["price"];
+            this.customerChoosesPrice = _data["customerChoosesPrice"];
+            this.minCustomerPrice = _data["minCustomerPrice"];
+            this.maxCustomerPrice = _data["maxCustomerPrice"];
             this.currencyId = _data["currencyId"];
             this.commissionableAmount = _data["commissionableAmount"];
             this.maxCommissionRate = _data["maxCommissionRate"];
@@ -114962,6 +116156,9 @@ export class UpdateProductInput implements IUpdateProductInput {
             this.publishDate = _data["publishDate"] ? moment(_data["publishDate"].toString()) : <any>undefined;
             this.publicAllowCoupon = _data["publicAllowCoupon"];
             this.createUser = _data["createUser"];
+            this.singlePurchaseAllowed = _data["singlePurchaseAllowed"];
+            this.paidEmailTemplateId = _data["paidEmailTemplateId"];
+            this.redirectUrl = _data["redirectUrl"];
             if (Array.isArray(_data["productServices"])) {
                 this.productServices = [] as any;
                 for (let item of _data["productServices"])
@@ -114977,12 +116174,18 @@ export class UpdateProductInput implements IUpdateProductInput {
                 for (let item of _data["productUpgradeAssignments"])
                     this.productUpgradeAssignments!.push(ProductUpgradeAssignmentInfo.fromJS(item));
             }
+            if (Array.isArray(_data["recommendedProducts"])) {
+                this.recommendedProducts = [] as any;
+                for (let item of _data["recommendedProducts"])
+                    this.recommendedProducts!.push(RecommendedProductInfo.fromJS(item));
+            }
             if (Array.isArray(_data["productResources"])) {
                 this.productResources = [] as any;
                 for (let item of _data["productResources"])
                     this.productResources!.push(ProductResourceDto.fromJS(item));
             }
             this.productEvent = _data["productEvent"] ? ProductEventDto.fromJS(_data["productEvent"]) : <any>undefined;
+            this.productDonation = _data["productDonation"] ? ProductDonationDto.fromJS(_data["productDonation"]) : <any>undefined;
         }
     }
 
@@ -115004,6 +116207,9 @@ export class UpdateProductInput implements IUpdateProductInput {
         data["groupName"] = this.groupName;
         data["type"] = this.type;
         data["price"] = this.price;
+        data["customerChoosesPrice"] = this.customerChoosesPrice;
+        data["minCustomerPrice"] = this.minCustomerPrice;
+        data["maxCustomerPrice"] = this.maxCustomerPrice;
         data["currencyId"] = this.currencyId;
         data["commissionableAmount"] = this.commissionableAmount;
         data["maxCommissionRate"] = this.maxCommissionRate;
@@ -115017,6 +116223,9 @@ export class UpdateProductInput implements IUpdateProductInput {
         data["publishDate"] = this.publishDate ? this.publishDate.toISOString() : <any>undefined;
         data["publicAllowCoupon"] = this.publicAllowCoupon;
         data["createUser"] = this.createUser;
+        data["singlePurchaseAllowed"] = this.singlePurchaseAllowed;
+        data["paidEmailTemplateId"] = this.paidEmailTemplateId;
+        data["redirectUrl"] = this.redirectUrl;
         if (Array.isArray(this.productServices)) {
             data["productServices"] = [];
             for (let item of this.productServices)
@@ -115032,12 +116241,18 @@ export class UpdateProductInput implements IUpdateProductInput {
             for (let item of this.productUpgradeAssignments)
                 data["productUpgradeAssignments"].push(item.toJSON());
         }
+        if (Array.isArray(this.recommendedProducts)) {
+            data["recommendedProducts"] = [];
+            for (let item of this.recommendedProducts)
+                data["recommendedProducts"].push(item.toJSON());
+        }
         if (Array.isArray(this.productResources)) {
             data["productResources"] = [];
             for (let item of this.productResources)
                 data["productResources"].push(item.toJSON());
         }
         data["productEvent"] = this.productEvent ? this.productEvent.toJSON() : <any>undefined;
+        data["productDonation"] = this.productDonation ? this.productDonation.toJSON() : <any>undefined;
         return data;
     }
 }
@@ -115052,6 +116267,9 @@ export interface IUpdateProductInput {
     groupName: string | undefined;
     type: ProductType;
     price: number | undefined;
+    customerChoosesPrice: boolean;
+    minCustomerPrice: number | undefined;
+    maxCustomerPrice: number | undefined;
     currencyId: string;
     commissionableAmount: number | undefined;
     maxCommissionRate: number | undefined;
@@ -115065,11 +116283,16 @@ export interface IUpdateProductInput {
     publishDate: moment.Moment | undefined;
     publicAllowCoupon: boolean;
     createUser: boolean;
+    singlePurchaseAllowed: boolean;
+    paidEmailTemplateId: number | undefined;
+    redirectUrl: string | undefined;
     productServices: ProductServiceInfo[] | undefined;
     productSubscriptionOptions: ProductSubscriptionOptionInfo[] | undefined;
     productUpgradeAssignments: ProductUpgradeAssignmentInfo[] | undefined;
+    recommendedProducts: RecommendedProductInfo[] | undefined;
     productResources: ProductResourceDto[] | undefined;
     productEvent: ProductEventDto | undefined;
+    productDonation: ProductDonationDto | undefined;
 }
 
 export class UpdateProfilePictureInput implements IUpdateProfilePictureInput {
@@ -116611,6 +117834,7 @@ export class UserLoginInfoDto implements IUserLoginInfoDto {
     bankCode!: string | undefined;
     affiliateCode!: string | undefined;
     affiliateRate!: number | undefined;
+    starName!: string | undefined;
     groups!: UserGroup[] | undefined;
     contactId!: number;
     creationTime!: moment.Moment;
@@ -116636,6 +117860,7 @@ export class UserLoginInfoDto implements IUserLoginInfoDto {
             this.bankCode = _data["bankCode"];
             this.affiliateCode = _data["affiliateCode"];
             this.affiliateRate = _data["affiliateRate"];
+            this.starName = _data["starName"];
             if (Array.isArray(_data["groups"])) {
                 this.groups = [] as any;
                 for (let item of _data["groups"])
@@ -116665,6 +117890,7 @@ export class UserLoginInfoDto implements IUserLoginInfoDto {
         data["bankCode"] = this.bankCode;
         data["affiliateCode"] = this.affiliateCode;
         data["affiliateRate"] = this.affiliateRate;
+        data["starName"] = this.starName;
         if (Array.isArray(this.groups)) {
             data["groups"] = [];
             for (let item of this.groups)
@@ -116687,6 +117913,7 @@ export interface IUserLoginInfoDto {
     bankCode: string | undefined;
     affiliateCode: string | undefined;
     affiliateRate: number | undefined;
+    starName: string | undefined;
     groups: UserGroup[] | undefined;
     contactId: number;
     creationTime: moment.Moment;
