@@ -127,6 +127,12 @@ export class InvoicesComponent extends AppComponentBase implements OnDestroy {
         });
     }
 
+    getStatusDescription(invoiceStatus: InvoiceStatus): string {
+        if (invoiceStatus == InvoiceStatus.PartiallyRefunded)
+            return 'Partial Refund';
+        return startCase(invoiceStatus)
+    }
+
     refresh() {
         this.dataGrid.instance.refresh();
     }

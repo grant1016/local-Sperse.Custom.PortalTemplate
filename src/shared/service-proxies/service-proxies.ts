@@ -70853,6 +70853,7 @@ export class CreateProductInput implements ICreateProductInput {
     name!: string;
     description!: string | undefined;
     descriptionHtml!: string | undefined;
+    barCode!: string | undefined;
     groupId!: number | undefined;
     groupName!: string | undefined;
     type!: ProductType;
@@ -70899,6 +70900,7 @@ export class CreateProductInput implements ICreateProductInput {
             this.name = _data["name"];
             this.description = _data["description"];
             this.descriptionHtml = _data["descriptionHtml"];
+            this.barCode = _data["barCode"];
             this.groupId = _data["groupId"];
             this.groupName = _data["groupName"];
             this.type = _data["type"];
@@ -70965,6 +70967,7 @@ export class CreateProductInput implements ICreateProductInput {
         data["name"] = this.name;
         data["description"] = this.description;
         data["descriptionHtml"] = this.descriptionHtml;
+        data["barCode"] = this.barCode;
         data["groupId"] = this.groupId;
         data["groupName"] = this.groupName;
         data["type"] = this.type;
@@ -71024,6 +71027,7 @@ export interface ICreateProductInput {
     name: string;
     description: string | undefined;
     descriptionHtml: string | undefined;
+    barCode: string | undefined;
     groupId: number | undefined;
     groupName: string | undefined;
     type: ProductType;
@@ -79196,6 +79200,7 @@ export class GetLandingPageSettingsDto implements IGetLandingPageSettingsDto {
     metaDescription!: string | undefined;
     onlineStatus!: LandingPageOnlineStatus;
     memberSince!: moment.Moment | undefined;
+    checkoutTheme!: string | undefined;
     productIds!: number[] | undefined;
     faq!: LandingPageWordingSettingsDto[] | undefined;
     tabs!: LandingPageWordingSettingsDto[] | undefined;
@@ -79239,6 +79244,7 @@ export class GetLandingPageSettingsDto implements IGetLandingPageSettingsDto {
             this.metaDescription = _data["metaDescription"];
             this.onlineStatus = _data["onlineStatus"];
             this.memberSince = _data["memberSince"] ? moment(_data["memberSince"].toString()) : <any>undefined;
+            this.checkoutTheme = _data["checkoutTheme"];
             if (Array.isArray(_data["productIds"])) {
                 this.productIds = [] as any;
                 for (let item of _data["productIds"])
@@ -79298,6 +79304,7 @@ export class GetLandingPageSettingsDto implements IGetLandingPageSettingsDto {
         data["metaDescription"] = this.metaDescription;
         data["onlineStatus"] = this.onlineStatus;
         data["memberSince"] = this.memberSince ? this.memberSince.toISOString() : <any>undefined;
+        data["checkoutTheme"] = this.checkoutTheme;
         if (Array.isArray(this.productIds)) {
             data["productIds"] = [];
             for (let item of this.productIds)
@@ -79346,6 +79353,7 @@ export interface IGetLandingPageSettingsDto {
     metaDescription: string | undefined;
     onlineStatus: LandingPageOnlineStatus;
     memberSince: moment.Moment | undefined;
+    checkoutTheme: string | undefined;
     productIds: number[] | undefined;
     faq: LandingPageWordingSettingsDto[] | undefined;
     tabs: LandingPageWordingSettingsDto[] | undefined;
@@ -80297,6 +80305,7 @@ export class GetProductInfoOutput implements IGetProductInfoOutput {
     downgradeProductId!: number | undefined;
     singlePurchaseAllowed!: boolean;
     isArchived!: boolean;
+    barCode!: string | undefined;
     productServices!: ProductServiceInfo[] | undefined;
     productSubscriptionOptions!: ProductSubscriptionOptionInfo[] | undefined;
     productUpgradeAssignments!: ProductUpgradeAssignmentInfo[] | undefined;
@@ -80356,6 +80365,7 @@ export class GetProductInfoOutput implements IGetProductInfoOutput {
             this.downgradeProductId = _data["downgradeProductId"];
             this.singlePurchaseAllowed = _data["singlePurchaseAllowed"];
             this.isArchived = _data["isArchived"];
+            this.barCode = _data["barCode"];
             if (Array.isArray(_data["productServices"])) {
                 this.productServices = [] as any;
                 for (let item of _data["productServices"])
@@ -80427,6 +80437,7 @@ export class GetProductInfoOutput implements IGetProductInfoOutput {
         data["downgradeProductId"] = this.downgradeProductId;
         data["singlePurchaseAllowed"] = this.singlePurchaseAllowed;
         data["isArchived"] = this.isArchived;
+        data["barCode"] = this.barCode;
         if (Array.isArray(this.productServices)) {
             data["productServices"] = [];
             for (let item of this.productServices)
@@ -80483,6 +80494,7 @@ export interface IGetProductInfoOutput {
     downgradeProductId: number | undefined;
     singlePurchaseAllowed: boolean;
     isArchived: boolean;
+    barCode: string | undefined;
     productServices: ProductServiceInfo[] | undefined;
     productSubscriptionOptions: ProductSubscriptionOptionInfo[] | undefined;
     productUpgradeAssignments: ProductUpgradeAssignmentInfo[] | undefined;
@@ -84373,6 +84385,7 @@ export class ImportInvoiceInput implements IImportInvoiceInput {
     shippingAddress!: ImportInvoiceAddressInput | undefined;
     description!: string | undefined;
     note!: string | undefined;
+    paidOnDate!: moment.Moment | undefined;
     lines!: ImportInvoiceLineInput[];
     transactions!: ImportInvoiceTransactionInput[] | undefined;
     historicalData!: boolean;
@@ -84408,6 +84421,7 @@ export class ImportInvoiceInput implements IImportInvoiceInput {
             this.shippingAddress = _data["shippingAddress"] ? ImportInvoiceAddressInput.fromJS(_data["shippingAddress"]) : <any>undefined;
             this.description = _data["description"];
             this.note = _data["note"];
+            this.paidOnDate = _data["paidOnDate"] ? moment(_data["paidOnDate"].toString()) : <any>undefined;
             if (Array.isArray(_data["lines"])) {
                 this.lines = [] as any;
                 for (let item of _data["lines"])
@@ -84448,6 +84462,7 @@ export class ImportInvoiceInput implements IImportInvoiceInput {
         data["shippingAddress"] = this.shippingAddress ? this.shippingAddress.toJSON() : <any>undefined;
         data["description"] = this.description;
         data["note"] = this.note;
+        data["paidOnDate"] = this.paidOnDate ? this.paidOnDate.toISOString() : <any>undefined;
         if (Array.isArray(this.lines)) {
             data["lines"] = [];
             for (let item of this.lines)
@@ -84481,6 +84496,7 @@ export interface IImportInvoiceInput {
     shippingAddress: ImportInvoiceAddressInput | undefined;
     description: string | undefined;
     note: string | undefined;
+    paidOnDate: moment.Moment | undefined;
     lines: ImportInvoiceLineInput[];
     transactions: ImportInvoiceTransactionInput[] | undefined;
     historicalData: boolean;
@@ -86492,6 +86508,7 @@ export enum InvoiceStatus {
     Canceled = "Canceled",
     PartiallyPaid = "PartiallyPaid",
     Refunded = "Refunded",
+    PartiallyRefunded = "PartiallyRefunded",
 }
 
 export class IsTenantAvailableInput implements IIsTenantAvailableInput {
@@ -86959,6 +86976,7 @@ export class LandingPageSettingsDto implements ILandingPageSettingsDto {
     metaDescription!: string | undefined;
     onlineStatus!: LandingPageOnlineStatus;
     memberSince!: moment.Moment | undefined;
+    checkoutTheme!: string | undefined;
     productIds!: number[] | undefined;
     faq!: LandingPageWordingSettingsDto[] | undefined;
     tabs!: LandingPageWordingSettingsDto[] | undefined;
@@ -86995,6 +87013,7 @@ export class LandingPageSettingsDto implements ILandingPageSettingsDto {
             this.metaDescription = _data["metaDescription"];
             this.onlineStatus = _data["onlineStatus"];
             this.memberSince = _data["memberSince"] ? moment(_data["memberSince"].toString()) : <any>undefined;
+            this.checkoutTheme = _data["checkoutTheme"];
             if (Array.isArray(_data["productIds"])) {
                 this.productIds = [] as any;
                 for (let item of _data["productIds"])
@@ -87047,6 +87066,7 @@ export class LandingPageSettingsDto implements ILandingPageSettingsDto {
         data["metaDescription"] = this.metaDescription;
         data["onlineStatus"] = this.onlineStatus;
         data["memberSince"] = this.memberSince ? this.memberSince.toISOString() : <any>undefined;
+        data["checkoutTheme"] = this.checkoutTheme;
         if (Array.isArray(this.productIds)) {
             data["productIds"] = [];
             for (let item of this.productIds)
@@ -87092,6 +87112,7 @@ export interface ILandingPageSettingsDto {
     metaDescription: string | undefined;
     onlineStatus: LandingPageOnlineStatus;
     memberSince: moment.Moment | undefined;
+    checkoutTheme: string | undefined;
     productIds: number[] | undefined;
     faq: LandingPageWordingSettingsDto[] | undefined;
     tabs: LandingPageWordingSettingsDto[] | undefined;
@@ -96617,6 +96638,7 @@ export class ProductInfo implements IProductInfo {
     downgradeProductId!: number | undefined;
     singlePurchaseAllowed!: boolean;
     isArchived!: boolean;
+    barCode!: string | undefined;
     productServices!: ProductServiceInfo[] | undefined;
     productSubscriptionOptions!: ProductSubscriptionOptionInfo[] | undefined;
     productUpgradeAssignments!: ProductUpgradeAssignmentInfo[] | undefined;
@@ -96652,6 +96674,7 @@ export class ProductInfo implements IProductInfo {
             this.downgradeProductId = _data["downgradeProductId"];
             this.singlePurchaseAllowed = _data["singlePurchaseAllowed"];
             this.isArchived = _data["isArchived"];
+            this.barCode = _data["barCode"];
             if (Array.isArray(_data["productServices"])) {
                 this.productServices = [] as any;
                 for (let item of _data["productServices"])
@@ -96699,6 +96722,7 @@ export class ProductInfo implements IProductInfo {
         data["downgradeProductId"] = this.downgradeProductId;
         data["singlePurchaseAllowed"] = this.singlePurchaseAllowed;
         data["isArchived"] = this.isArchived;
+        data["barCode"] = this.barCode;
         if (Array.isArray(this.productServices)) {
             data["productServices"] = [];
             for (let item of this.productServices)
@@ -96739,6 +96763,7 @@ export interface IProductInfo {
     downgradeProductId: number | undefined;
     singlePurchaseAllowed: boolean;
     isArchived: boolean;
+    barCode: string | undefined;
     productServices: ProductServiceInfo[] | undefined;
     productSubscriptionOptions: ProductSubscriptionOptionInfo[] | undefined;
     productUpgradeAssignments: ProductUpgradeAssignmentInfo[] | undefined;
@@ -99404,6 +99429,7 @@ export class PublicContactSettings implements IPublicContactSettings {
     shareWidgetOpenAIKey!: string | undefined;
     onlineStatus!: LandingPageOnlineStatus;
     memberSince!: moment.Moment | undefined;
+    checkoutTheme!: string | undefined;
 
     constructor(data?: IPublicContactSettings) {
         if (data) {
@@ -99430,6 +99456,7 @@ export class PublicContactSettings implements IPublicContactSettings {
             this.shareWidgetOpenAIKey = _data["shareWidgetOpenAIKey"];
             this.onlineStatus = _data["onlineStatus"];
             this.memberSince = _data["memberSince"] ? moment(_data["memberSince"].toString()) : <any>undefined;
+            this.checkoutTheme = _data["checkoutTheme"];
         }
     }
 
@@ -99456,6 +99483,7 @@ export class PublicContactSettings implements IPublicContactSettings {
         data["shareWidgetOpenAIKey"] = this.shareWidgetOpenAIKey;
         data["onlineStatus"] = this.onlineStatus;
         data["memberSince"] = this.memberSince ? this.memberSince.toISOString() : <any>undefined;
+        data["checkoutTheme"] = this.checkoutTheme;
         return data;
     }
 }
@@ -99475,6 +99503,7 @@ export interface IPublicContactSettings {
     shareWidgetOpenAIKey: string | undefined;
     onlineStatus: LandingPageOnlineStatus;
     memberSince: moment.Moment | undefined;
+    checkoutTheme: string | undefined;
 }
 
 export class PublicContactTenantInfo implements IPublicContactTenantInfo {
@@ -116089,6 +116118,7 @@ export class UpdateProductInput implements IUpdateProductInput {
     name!: string;
     description!: string | undefined;
     descriptionHtml!: string | undefined;
+    barCode!: string | undefined;
     groupId!: number | undefined;
     groupName!: string | undefined;
     type!: ProductType;
@@ -116136,6 +116166,7 @@ export class UpdateProductInput implements IUpdateProductInput {
             this.name = _data["name"];
             this.description = _data["description"];
             this.descriptionHtml = _data["descriptionHtml"];
+            this.barCode = _data["barCode"];
             this.groupId = _data["groupId"];
             this.groupName = _data["groupName"];
             this.type = _data["type"];
@@ -116203,6 +116234,7 @@ export class UpdateProductInput implements IUpdateProductInput {
         data["name"] = this.name;
         data["description"] = this.description;
         data["descriptionHtml"] = this.descriptionHtml;
+        data["barCode"] = this.barCode;
         data["groupId"] = this.groupId;
         data["groupName"] = this.groupName;
         data["type"] = this.type;
@@ -116263,6 +116295,7 @@ export interface IUpdateProductInput {
     name: string;
     description: string | undefined;
     descriptionHtml: string | undefined;
+    barCode: string | undefined;
     groupId: number | undefined;
     groupName: string | undefined;
     type: ProductType;

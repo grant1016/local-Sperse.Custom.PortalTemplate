@@ -28,7 +28,7 @@
                 <span class="invoice-id">{{cellData.value}}</span>
             </div>
             <div *dxTemplate="let cellData of 'statusCell'" class="status-wrapper">
-                <div *ngIf="cellData.value" class="status {{ cellData.value | lowercase }}">{{ startCase(cellData.value) }}</div>
+                <div *ngIf="cellData.value" class="status {{ cellData.value | lowercase }}">{{ getStatusDescription(cellData.value) }}</div>
             </div>
             <div *dxTemplate="let cellData of 'dueDateCell'" class="clipboard-holder">
                 {{ (cellData.value | date: formatting.date) || l('Invoice_DueOnReceipt') }}
