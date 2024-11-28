@@ -33,6 +33,7 @@ import { RootComponent } from './root.components';
 import { RootRoutingModule, AppPreloadingStrategy } from './root-routing.module';
 import { CustomReuseStrategy } from '@shared/common/custom-reuse-strategy/custom-reuse-strategy.service';
 import { FaviconService } from '@shared/common/favicon-service/favicon.service';
+import { FontService } from '@shared/common/font-service/font.service';
 import { BugsnagService } from '@shared/common/bugsnag/bugsnag.service';
 import { FullScreenService } from '@shared/common/fullscreen/fullscreen.service';
 import { TitleService } from '@shared/common/title/title.service';
@@ -215,6 +216,7 @@ function handleLogoutRequest(authService: AppAuthService) {
         TitleService,
         FullScreenService,
         FaviconService,
+        FontService,
         StatesService,
         {
             provide: CacheStorageAbstract,
