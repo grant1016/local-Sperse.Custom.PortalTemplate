@@ -71,10 +71,12 @@ export function appInitializerFactory(
                     (result) => {
                         //set og meta tags
                         sessionCallback && sessionCallback();
-                        updateMetadata(appSessionService.tenant, injector.get(AppUiCustomizationService));
+                        updateMetadata(appSessionService, injector.get(AppUiCustomizationService));
                         bugsnagService.updateBugsnagWithUserInfo(appSessionService);
                         let customizations = appSessionService.tenant && appSessionService.tenant.tenantCustomizations;
-                        if (customizations && customizations.favicons && customizations.favicons.length)
+                        if (customizations && customizations.portalFavicons && customizations.portalFavicons.length)
+                            faviconService.updateFavicons(customizations.portalFavicons, customizations.portalFaviconBaseUrl);
+                        else if (customizations && customizations.favicons && customizations.favicons.length)
                             faviconService.updateFavicons(customizations.favicons, customizations.faviconBaseUrl);
                         else
                             faviconService.updateFavicons(FaviconService.DEFAULT_FAVICONS, AppConsts.appBaseHref);
@@ -110,15 +112,16 @@ function createMetatag(name, content) {
     meta.setAttribute('content', content);
 }
 
-function updateMetadata(tenant, ui) {
+function updateMetadata(sessionService: AppSessionService, ui) {
+    let tenant = sessionService.tenant;
     createMetatag('og:title', document.title);
     createMetatag('og:description', tenant &&
         tenant.customLayoutType && tenant.customLayoutType != 'Default'
         ? '' : 'Business management platform, enhanced with AI');
     createMetatag('og:url', location.origin);
-    createMetatag('og:image', !tenant || !tenant.logoId ?
+    createMetatag('og:image', !sessionService.tenantHasCustomLogo  ?
         window.location.origin + '/assets/common/images/app-logo-on-' + ui.getAsideSkin() + '.png' :
-        AppConsts.remoteServiceBaseUrl + '/api/TenantCustomization/GetLogo?id=' + tenant.logoId);
+        AppConsts.remoteServiceBaseUrl + '/api/TenantCustomization/GetLogo?' + sessionService.getTenantLogoUrlParams());
 }
 
 function getDocumentOrigin() {

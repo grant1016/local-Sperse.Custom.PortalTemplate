@@ -15428,9 +15428,10 @@ export class CouponServiceProxy {
      * @param currencyId (optional) 
      * @param searchPhrase (optional) 
      * @param topCount (optional) 
+     * @param skipCount (optional) 
      * @return Success
      */
-    getCouponsByPhrase(currencyId: string | undefined, searchPhrase: string | undefined, topCount: number | undefined): Observable<CouponDto[]> {
+    getCouponsByPhrase(currencyId: string | undefined, searchPhrase: string | undefined, topCount: number | undefined, skipCount: number | undefined): Observable<CouponDto[]> {
         let url_ = this.baseUrl + "/api/services/CRM/Coupon/GetCouponsByPhrase?";
         if (currencyId === null)
             throw new Error("The parameter 'currencyId' cannot be null.");
@@ -15444,6 +15445,10 @@ export class CouponServiceProxy {
             throw new Error("The parameter 'topCount' cannot be null.");
         else if (topCount !== undefined)
             url_ += "topCount=" + encodeURIComponent("" + topCount) + "&";
+        if (skipCount === null)
+            throw new Error("The parameter 'skipCount' cannot be null.");
+        else if (skipCount !== undefined)
+            url_ += "skipCount=" + encodeURIComponent("" + skipCount) + "&";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -38028,6 +38033,58 @@ export class ProductServiceProxy {
         }
         return _observableOf<void>(null as any);
     }
+
+    /**
+     * @param body (optional) 
+     * @return Success
+     */
+    addInventoryTopup(body: AddInventoryTopupInput | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Product/AddInventoryTopup";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json;odata.metadata=minimal;odata.streaming=true",
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processAddInventoryTopup(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processAddInventoryTopup(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<void>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<void>;
+        }));
+    }
+
+    protected processAddInventoryTopup(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(null as any);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(null as any);
+    }
 }
 
 @Injectable()
@@ -45279,10 +45336,15 @@ export class TenantCustomizationServiceProxy {
     }
 
     /**
+     * @param portalLogo (optional) 
      * @return Success
      */
-    clearLogo(): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/Platform/TenantCustomization/ClearLogo";
+    clearLogo(portalLogo: boolean | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/Platform/TenantCustomization/ClearLogo?";
+        if (portalLogo === null)
+            throw new Error("The parameter 'portalLogo' cannot be null.");
+        else if (portalLogo !== undefined)
+            url_ += "portalLogo=" + encodeURIComponent("" + portalLogo) + "&";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -45472,10 +45534,15 @@ export class TenantCustomizationServiceProxy {
     }
 
     /**
+     * @param portalFavicons (optional) 
      * @return Success
      */
-    clearFavicons(): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/Platform/TenantCustomization/ClearFavicons";
+    clearFavicons(portalFavicons: boolean | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/Platform/TenantCustomization/ClearFavicons?";
+        if (portalFavicons === null)
+            throw new Error("The parameter 'portalFavicons' cannot be null.");
+        else if (portalFavicons !== undefined)
+            url_ += "portalFavicons=" + encodeURIComponent("" + portalFavicons) + "&";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -47372,20 +47439,10 @@ export class TenantPaymentSettingsServiceProxy {
     }
 
     /**
-     * @param includeImportStatus (optional) 
-     * @param includeConnectedAccountInfo (optional) 
      * @return Success
      */
-    getStripeSettings(includeImportStatus: boolean | undefined, includeConnectedAccountInfo: boolean | undefined): Observable<StripeSettingsDto> {
-        let url_ = this.baseUrl + "/api/services/CRM/TenantPaymentSettings/GetStripeSettings?";
-        if (includeImportStatus === null)
-            throw new Error("The parameter 'includeImportStatus' cannot be null.");
-        else if (includeImportStatus !== undefined)
-            url_ += "includeImportStatus=" + encodeURIComponent("" + includeImportStatus) + "&";
-        if (includeConnectedAccountInfo === null)
-            throw new Error("The parameter 'includeConnectedAccountInfo' cannot be null.");
-        else if (includeConnectedAccountInfo !== undefined)
-            url_ += "includeConnectedAccountInfo=" + encodeURIComponent("" + includeConnectedAccountInfo) + "&";
+    getStripeSettings(): Observable<StripeActiveSettingsDto> {
+        let url_ = this.baseUrl + "/api/services/CRM/TenantPaymentSettings/GetStripeSettings";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -47403,14 +47460,14 @@ export class TenantPaymentSettingsServiceProxy {
                 try {
                     return this.processGetStripeSettings(response_ as any);
                 } catch (e) {
-                    return _observableThrow(e) as any as Observable<StripeSettingsDto>;
+                    return _observableThrow(e) as any as Observable<StripeActiveSettingsDto>;
                 }
             } else
-                return _observableThrow(response_) as any as Observable<StripeSettingsDto>;
+                return _observableThrow(response_) as any as Observable<StripeActiveSettingsDto>;
         }));
     }
 
-    protected processGetStripeSettings(response: HttpResponseBase): Observable<StripeSettingsDto> {
+    protected processGetStripeSettings(response: HttpResponseBase): Observable<StripeActiveSettingsDto> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -47421,7 +47478,7 @@ export class TenantPaymentSettingsServiceProxy {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = StripeSettingsDto.fromJS(resultData200);
+            result200 = StripeActiveSettingsDto.fromJS(resultData200);
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -47429,15 +47486,71 @@ export class TenantPaymentSettingsServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<StripeSettingsDto>(null as any);
+        return _observableOf<StripeActiveSettingsDto>(null as any);
     }
 
     /**
+     * @return Success
+     */
+    getAllStripeSettings(): Observable<GetStripeSettingsDto> {
+        let url_ = this.baseUrl + "/api/services/CRM/TenantPaymentSettings/GetAllStripeSettings";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json;odata.metadata=minimal;odata.streaming=true"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetAllStripeSettings(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetAllStripeSettings(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<GetStripeSettingsDto>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<GetStripeSettingsDto>;
+        }));
+    }
+
+    protected processGetAllStripeSettings(response: HttpResponseBase): Observable<GetStripeSettingsDto> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = GetStripeSettingsDto.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<GetStripeSettingsDto>(null as any);
+    }
+
+    /**
+     * @param isEnabled (optional) 
      * @param body (optional) 
      * @return Success
      */
-    updateStripeSettings(body: StripeSettings | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CRM/TenantPaymentSettings/UpdateStripeSettings";
+    updateStripeSettings(isEnabled: boolean | undefined, body: UpdateStripeSettingsDto[] | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/TenantPaymentSettings/UpdateStripeSettings?";
+        if (isEnabled === null)
+            throw new Error("The parameter 'isEnabled' cannot be null.");
+        else if (isEnabled !== undefined)
+            url_ += "isEnabled=" + encodeURIComponent("" + isEnabled) + "&";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(body);
@@ -47485,11 +47598,16 @@ export class TenantPaymentSettingsServiceProxy {
     }
 
     /**
+     * @param settingId (optional) 
      * @param isConnected (optional) 
      * @return Success
      */
-    createStripeWebhook(isConnected: boolean | undefined): Observable<void> {
+    createStripeWebhook(settingId: number | undefined, isConnected: boolean | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CRM/TenantPaymentSettings/CreateStripeWebhook?";
+        if (settingId === null)
+            throw new Error("The parameter 'settingId' cannot be null.");
+        else if (settingId !== undefined)
+            url_ += "settingId=" + encodeURIComponent("" + settingId) + "&";
         if (isConnected === null)
             throw new Error("The parameter 'isConnected' cannot be null.");
         else if (isConnected !== undefined)
@@ -47641,10 +47759,15 @@ export class TenantPaymentSettingsServiceProxy {
     }
 
     /**
+     * @param settingId (optional) 
      * @return Success
      */
-    connectStripeAccount(): Observable<string> {
-        let url_ = this.baseUrl + "/api/services/CRM/TenantPaymentSettings/ConnectStripeAccount";
+    connectStripeAccount(settingId: number | undefined): Observable<string> {
+        let url_ = this.baseUrl + "/api/services/CRM/TenantPaymentSettings/ConnectStripeAccount?";
+        if (settingId === null)
+            throw new Error("The parameter 'settingId' cannot be null.");
+        else if (settingId !== undefined)
+            url_ += "settingId=" + encodeURIComponent("" + settingId) + "&";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -47693,10 +47816,15 @@ export class TenantPaymentSettingsServiceProxy {
     }
 
     /**
+     * @param settingId (optional) 
      * @return Success
      */
-    updateConnectedAccountPaymentMethods(): Observable<InvoicePaymentMethod> {
-        let url_ = this.baseUrl + "/api/services/CRM/TenantPaymentSettings/UpdateConnectedAccountPaymentMethods";
+    updateConnectedAccountPaymentMethods(settingId: number | undefined): Observable<InvoicePaymentMethod> {
+        let url_ = this.baseUrl + "/api/services/CRM/TenantPaymentSettings/UpdateConnectedAccountPaymentMethods?";
+        if (settingId === null)
+            throw new Error("The parameter 'settingId' cannot be null.");
+        else if (settingId !== undefined)
+            url_ += "settingId=" + encodeURIComponent("" + settingId) + "&";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -57737,6 +57865,46 @@ export interface IAddForecastInput {
     description: string | undefined;
 }
 
+export class AddInventoryTopupInput implements IAddInventoryTopupInput {
+    productId!: number;
+    quantity!: number;
+
+    constructor(data?: IAddInventoryTopupInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.productId = _data["productId"];
+            this.quantity = _data["quantity"];
+        }
+    }
+
+    static fromJS(data: any): AddInventoryTopupInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new AddInventoryTopupInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["productId"] = this.productId;
+        data["quantity"] = this.quantity;
+        return data;
+    }
+}
+
+export interface IAddInventoryTopupInput {
+    productId: number;
+    quantity: number;
+}
+
 export class AddMappingDto implements IAddMappingDto {
     oldName!: string;
     newName!: string;
@@ -57862,6 +58030,7 @@ export class AddSslBindingInput implements IAddSslBindingInput {
     domainName!: string | undefined;
     sslCertificateId!: number | undefined;
     organizationUnitId!: number | undefined;
+    hostingProvider!: HostingType | undefined;
 
     constructor(data?: IAddSslBindingInput) {
         if (data) {
@@ -57878,6 +58047,7 @@ export class AddSslBindingInput implements IAddSslBindingInput {
             this.domainName = _data["domainName"];
             this.sslCertificateId = _data["sslCertificateId"];
             this.organizationUnitId = _data["organizationUnitId"];
+            this.hostingProvider = _data["hostingProvider"];
         }
     }
 
@@ -57894,6 +58064,7 @@ export class AddSslBindingInput implements IAddSslBindingInput {
         data["domainName"] = this.domainName;
         data["sslCertificateId"] = this.sslCertificateId;
         data["organizationUnitId"] = this.organizationUnitId;
+        data["hostingProvider"] = this.hostingProvider;
         return data;
     }
 }
@@ -57903,6 +58074,7 @@ export interface IAddSslBindingInput {
     domainName: string | undefined;
     sslCertificateId: number | undefined;
     organizationUnitId: number | undefined;
+    hostingProvider: HostingType | undefined;
 }
 
 export class AddTenantSslCertificateInput implements IAddTenantSslCertificateInput {
@@ -58941,18 +59113,87 @@ export interface IApiKeyInfo {
     paths: string | undefined;
 }
 
-export class AppearanceSettingsEditDto implements IAppearanceSettingsEditDto {
-    navPosition!: NavPosition;
+export class AppearanceBaseSettingsDto implements IAppearanceBaseSettingsDto {
     navBackground!: string | undefined;
     navTextColor!: string | undefined;
+    leftsideMenuColor!: string | undefined;
+    fontName!: string | undefined;
+    tabularFont!: string | undefined;
     buttonColor!: string | undefined;
     buttonTextColor!: string | undefined;
     buttonHighlightedColor!: string | undefined;
-    fontName!: string | undefined;
     borderRadius!: string | undefined;
+
+    constructor(data?: IAppearanceBaseSettingsDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.navBackground = _data["navBackground"];
+            this.navTextColor = _data["navTextColor"];
+            this.leftsideMenuColor = _data["leftsideMenuColor"];
+            this.fontName = _data["fontName"];
+            this.tabularFont = _data["tabularFont"];
+            this.buttonColor = _data["buttonColor"];
+            this.buttonTextColor = _data["buttonTextColor"];
+            this.buttonHighlightedColor = _data["buttonHighlightedColor"];
+            this.borderRadius = _data["borderRadius"];
+        }
+    }
+
+    static fromJS(data: any): AppearanceBaseSettingsDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new AppearanceBaseSettingsDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["navBackground"] = this.navBackground;
+        data["navTextColor"] = this.navTextColor;
+        data["leftsideMenuColor"] = this.leftsideMenuColor;
+        data["fontName"] = this.fontName;
+        data["tabularFont"] = this.tabularFont;
+        data["buttonColor"] = this.buttonColor;
+        data["buttonTextColor"] = this.buttonTextColor;
+        data["buttonHighlightedColor"] = this.buttonHighlightedColor;
+        data["borderRadius"] = this.borderRadius;
+        return data;
+    }
+}
+
+export interface IAppearanceBaseSettingsDto {
+    navBackground: string | undefined;
+    navTextColor: string | undefined;
+    leftsideMenuColor: string | undefined;
+    fontName: string | undefined;
+    tabularFont: string | undefined;
+    buttonColor: string | undefined;
+    buttonTextColor: string | undefined;
+    buttonHighlightedColor: string | undefined;
+    borderRadius: string | undefined;
+}
+
+export class AppearanceSettingsEditDto implements IAppearanceSettingsEditDto {
+    navPosition!: NavPosition;
     welcomePageAppearance!: string | undefined;
-    tabularFont!: string | undefined;
+    portalSettings!: AppearanceBaseSettingsDto | undefined;
+    navBackground!: string | undefined;
+    navTextColor!: string | undefined;
     leftsideMenuColor!: string | undefined;
+    fontName!: string | undefined;
+    tabularFont!: string | undefined;
+    buttonColor!: string | undefined;
+    buttonTextColor!: string | undefined;
+    buttonHighlightedColor!: string | undefined;
+    borderRadius!: string | undefined;
 
     constructor(data?: IAppearanceSettingsEditDto) {
         if (data) {
@@ -58966,16 +59207,17 @@ export class AppearanceSettingsEditDto implements IAppearanceSettingsEditDto {
     init(_data?: any) {
         if (_data) {
             this.navPosition = _data["navPosition"];
+            this.welcomePageAppearance = _data["welcomePageAppearance"];
+            this.portalSettings = _data["portalSettings"] ? AppearanceBaseSettingsDto.fromJS(_data["portalSettings"]) : <any>undefined;
             this.navBackground = _data["navBackground"];
             this.navTextColor = _data["navTextColor"];
+            this.leftsideMenuColor = _data["leftsideMenuColor"];
+            this.fontName = _data["fontName"];
+            this.tabularFont = _data["tabularFont"];
             this.buttonColor = _data["buttonColor"];
             this.buttonTextColor = _data["buttonTextColor"];
             this.buttonHighlightedColor = _data["buttonHighlightedColor"];
-            this.fontName = _data["fontName"];
             this.borderRadius = _data["borderRadius"];
-            this.welcomePageAppearance = _data["welcomePageAppearance"];
-            this.tabularFont = _data["tabularFont"];
-            this.leftsideMenuColor = _data["leftsideMenuColor"];
         }
     }
 
@@ -58989,32 +59231,34 @@ export class AppearanceSettingsEditDto implements IAppearanceSettingsEditDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["navPosition"] = this.navPosition;
+        data["welcomePageAppearance"] = this.welcomePageAppearance;
+        data["portalSettings"] = this.portalSettings ? this.portalSettings.toJSON() : <any>undefined;
         data["navBackground"] = this.navBackground;
         data["navTextColor"] = this.navTextColor;
+        data["leftsideMenuColor"] = this.leftsideMenuColor;
+        data["fontName"] = this.fontName;
+        data["tabularFont"] = this.tabularFont;
         data["buttonColor"] = this.buttonColor;
         data["buttonTextColor"] = this.buttonTextColor;
         data["buttonHighlightedColor"] = this.buttonHighlightedColor;
-        data["fontName"] = this.fontName;
         data["borderRadius"] = this.borderRadius;
-        data["welcomePageAppearance"] = this.welcomePageAppearance;
-        data["tabularFont"] = this.tabularFont;
-        data["leftsideMenuColor"] = this.leftsideMenuColor;
         return data;
     }
 }
 
 export interface IAppearanceSettingsEditDto {
     navPosition: NavPosition;
+    welcomePageAppearance: string | undefined;
+    portalSettings: AppearanceBaseSettingsDto | undefined;
     navBackground: string | undefined;
     navTextColor: string | undefined;
+    leftsideMenuColor: string | undefined;
+    fontName: string | undefined;
+    tabularFont: string | undefined;
     buttonColor: string | undefined;
     buttonTextColor: string | undefined;
     buttonHighlightedColor: string | undefined;
-    fontName: string | undefined;
     borderRadius: string | undefined;
-    welcomePageAppearance: string | undefined;
-    tabularFont: string | undefined;
-    leftsideMenuColor: string | undefined;
 }
 
 export enum Appliances {
@@ -63239,6 +63483,7 @@ export enum ChatSide {
 export class CheckHostNameDnsMappingInput implements ICheckHostNameDnsMappingInput {
     tenantHostType!: TenantHostType;
     hostName!: string | undefined;
+    hostingProvider!: HostingType | undefined;
 
     constructor(data?: ICheckHostNameDnsMappingInput) {
         if (data) {
@@ -63253,6 +63498,7 @@ export class CheckHostNameDnsMappingInput implements ICheckHostNameDnsMappingInp
         if (_data) {
             this.tenantHostType = _data["tenantHostType"];
             this.hostName = _data["hostName"];
+            this.hostingProvider = _data["hostingProvider"];
         }
     }
 
@@ -63267,6 +63513,7 @@ export class CheckHostNameDnsMappingInput implements ICheckHostNameDnsMappingInp
         data = typeof data === 'object' ? data : {};
         data["tenantHostType"] = this.tenantHostType;
         data["hostName"] = this.hostName;
+        data["hostingProvider"] = this.hostingProvider;
         return data;
     }
 }
@@ -63274,10 +63521,12 @@ export class CheckHostNameDnsMappingInput implements ICheckHostNameDnsMappingInp
 export interface ICheckHostNameDnsMappingInput {
     tenantHostType: TenantHostType;
     hostName: string | undefined;
+    hostingProvider: HostingType | undefined;
 }
 
 export class CheckHostNameDnsMappingOutput implements ICheckHostNameDnsMappingOutput {
     hostNameDnsMapped!: boolean;
+    configRecords!: DomainConfigRecord[] | undefined;
 
     constructor(data?: ICheckHostNameDnsMappingOutput) {
         if (data) {
@@ -63291,6 +63540,11 @@ export class CheckHostNameDnsMappingOutput implements ICheckHostNameDnsMappingOu
     init(_data?: any) {
         if (_data) {
             this.hostNameDnsMapped = _data["hostNameDnsMapped"];
+            if (Array.isArray(_data["configRecords"])) {
+                this.configRecords = [] as any;
+                for (let item of _data["configRecords"])
+                    this.configRecords!.push(DomainConfigRecord.fromJS(item));
+            }
         }
     }
 
@@ -63304,12 +63558,18 @@ export class CheckHostNameDnsMappingOutput implements ICheckHostNameDnsMappingOu
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["hostNameDnsMapped"] = this.hostNameDnsMapped;
+        if (Array.isArray(this.configRecords)) {
+            data["configRecords"] = [];
+            for (let item of this.configRecords)
+                data["configRecords"].push(item.toJSON());
+        }
         return data;
     }
 }
 
 export interface ICheckHostNameDnsMappingOutput {
     hostNameDnsMapped: boolean;
+    configRecords: DomainConfigRecord[] | undefined;
 }
 
 export class CheckPaymentInfoOutput implements ICheckPaymentInfoOutput {
@@ -64104,50 +64364,6 @@ export interface IConditionDto {
     descriptionWords: string | undefined;
     attributes: { [key: string]: ConditionAttributeDto; } | undefined;
     transactionTypes: string[] | undefined;
-}
-
-export class ConnectedAccountSettingsDto implements IConnectedAccountSettingsDto {
-    type!: string | undefined;
-    name!: string | undefined;
-    email!: string | undefined;
-
-    constructor(data?: IConnectedAccountSettingsDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.type = _data["type"];
-            this.name = _data["name"];
-            this.email = _data["email"];
-        }
-    }
-
-    static fromJS(data: any): ConnectedAccountSettingsDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new ConnectedAccountSettingsDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["type"] = this.type;
-        data["name"] = this.name;
-        data["email"] = this.email;
-        return data;
-    }
-}
-
-export interface IConnectedAccountSettingsDto {
-    type: string | undefined;
-    name: string | undefined;
-    email: string | undefined;
 }
 
 export enum ConnectionMode {
@@ -65377,7 +65593,7 @@ export class ContactInfoForMerge implements IContactInfoForMerge {
     typeId!: string | undefined;
     parentId!: number | undefined;
     xrefs!: string[] | undefined;
-    stripeCustomerId!: string | undefined;
+    hasStripeCustomerIds!: boolean;
     userId!: number | undefined;
     userEmailAddress!: string | undefined;
     userIsActive!: boolean | undefined;
@@ -65424,7 +65640,7 @@ export class ContactInfoForMerge implements IContactInfoForMerge {
                 for (let item of _data["xrefs"])
                     this.xrefs!.push(item);
             }
-            this.stripeCustomerId = _data["stripeCustomerId"];
+            this.hasStripeCustomerIds = _data["hasStripeCustomerIds"];
             this.userId = _data["userId"];
             this.userEmailAddress = _data["userEmailAddress"];
             this.userIsActive = _data["userIsActive"];
@@ -65487,7 +65703,7 @@ export class ContactInfoForMerge implements IContactInfoForMerge {
             for (let item of this.xrefs)
                 data["xrefs"].push(item);
         }
-        data["stripeCustomerId"] = this.stripeCustomerId;
+        data["hasStripeCustomerIds"] = this.hasStripeCustomerIds;
         data["userId"] = this.userId;
         data["userEmailAddress"] = this.userEmailAddress;
         data["userIsActive"] = this.userIsActive;
@@ -65535,7 +65751,7 @@ export interface IContactInfoForMerge {
     typeId: string | undefined;
     parentId: number | undefined;
     xrefs: string[] | undefined;
-    stripeCustomerId: string | undefined;
+    hasStripeCustomerIds: boolean;
     userId: number | undefined;
     userEmailAddress: string | undefined;
     userIsActive: boolean | undefined;
@@ -70877,6 +71093,7 @@ export class CreateProductInput implements ICreateProductInput {
     singlePurchaseAllowed!: boolean;
     paidEmailTemplateId!: number | undefined;
     redirectUrl!: string | undefined;
+    productInventory!: ProductInventoryInfo | undefined;
     productServices!: ProductServiceInfo[] | undefined;
     productSubscriptionOptions!: ProductSubscriptionOptionInfo[] | undefined;
     productUpgradeAssignments!: ProductUpgradeAssignmentInfo[] | undefined;
@@ -70924,6 +71141,7 @@ export class CreateProductInput implements ICreateProductInput {
             this.singlePurchaseAllowed = _data["singlePurchaseAllowed"];
             this.paidEmailTemplateId = _data["paidEmailTemplateId"];
             this.redirectUrl = _data["redirectUrl"];
+            this.productInventory = _data["productInventory"] ? ProductInventoryInfo.fromJS(_data["productInventory"]) : <any>undefined;
             if (Array.isArray(_data["productServices"])) {
                 this.productServices = [] as any;
                 for (let item of _data["productServices"])
@@ -70991,6 +71209,7 @@ export class CreateProductInput implements ICreateProductInput {
         data["singlePurchaseAllowed"] = this.singlePurchaseAllowed;
         data["paidEmailTemplateId"] = this.paidEmailTemplateId;
         data["redirectUrl"] = this.redirectUrl;
+        data["productInventory"] = this.productInventory ? this.productInventory.toJSON() : <any>undefined;
         if (Array.isArray(this.productServices)) {
             data["productServices"] = [];
             for (let item of this.productServices)
@@ -71051,6 +71270,7 @@ export interface ICreateProductInput {
     singlePurchaseAllowed: boolean;
     paidEmailTemplateId: number | undefined;
     redirectUrl: string | undefined;
+    productInventory: ProductInventoryInfo | undefined;
     productServices: ProductServiceInfo[] | undefined;
     productSubscriptionOptions: ProductSubscriptionOptionInfo[] | undefined;
     productUpgradeAssignments: ProductUpgradeAssignmentInfo[] | undefined;
@@ -72349,6 +72569,7 @@ export interface ICurrentUserProfileEditDto {
 export enum CustomCssType {
     Platform = "Platform",
     Login = "Login",
+    PortalLogin = "PortalLogin",
     Portal = "Portal",
     SignUp = "SignUp",
 }
@@ -80306,6 +80527,7 @@ export class GetProductInfoOutput implements IGetProductInfoOutput {
     singlePurchaseAllowed!: boolean;
     isArchived!: boolean;
     barCode!: string | undefined;
+    productInventory!: ProductInventoryDto | undefined;
     productServices!: ProductServiceInfo[] | undefined;
     productSubscriptionOptions!: ProductSubscriptionOptionInfo[] | undefined;
     productUpgradeAssignments!: ProductUpgradeAssignmentInfo[] | undefined;
@@ -80366,6 +80588,7 @@ export class GetProductInfoOutput implements IGetProductInfoOutput {
             this.singlePurchaseAllowed = _data["singlePurchaseAllowed"];
             this.isArchived = _data["isArchived"];
             this.barCode = _data["barCode"];
+            this.productInventory = _data["productInventory"] ? ProductInventoryDto.fromJS(_data["productInventory"]) : <any>undefined;
             if (Array.isArray(_data["productServices"])) {
                 this.productServices = [] as any;
                 for (let item of _data["productServices"])
@@ -80438,6 +80661,7 @@ export class GetProductInfoOutput implements IGetProductInfoOutput {
         data["singlePurchaseAllowed"] = this.singlePurchaseAllowed;
         data["isArchived"] = this.isArchived;
         data["barCode"] = this.barCode;
+        data["productInventory"] = this.productInventory ? this.productInventory.toJSON() : <any>undefined;
         if (Array.isArray(this.productServices)) {
             data["productServices"] = [];
             for (let item of this.productServices)
@@ -80495,6 +80719,7 @@ export interface IGetProductInfoOutput {
     singlePurchaseAllowed: boolean;
     isArchived: boolean;
     barCode: string | undefined;
+    productInventory: ProductInventoryDto | undefined;
     productServices: ProductServiceInfo[] | undefined;
     productSubscriptionOptions: ProductSubscriptionOptionInfo[] | undefined;
     productUpgradeAssignments: ProductUpgradeAssignmentInfo[] | undefined;
@@ -80589,6 +80814,7 @@ export class GetPublicInvoiceInfoOutput implements IGetPublicInvoiceInfoOutput {
     paymentSettings!: BankTransferSettings | undefined;
     stripePayUrl!: string | undefined;
     isPaymentsEnabled!: boolean;
+    isQuantityAvailable!: boolean;
 
     constructor(data?: IGetPublicInvoiceInfoOutput) {
         if (data) {
@@ -80609,6 +80835,7 @@ export class GetPublicInvoiceInfoOutput implements IGetPublicInvoiceInfoOutput {
             this.paymentSettings = _data["paymentSettings"] ? BankTransferSettings.fromJS(_data["paymentSettings"]) : <any>undefined;
             this.stripePayUrl = _data["stripePayUrl"];
             this.isPaymentsEnabled = _data["isPaymentsEnabled"];
+            this.isQuantityAvailable = _data["isQuantityAvailable"];
         }
     }
 
@@ -80629,6 +80856,7 @@ export class GetPublicInvoiceInfoOutput implements IGetPublicInvoiceInfoOutput {
         data["paymentSettings"] = this.paymentSettings ? this.paymentSettings.toJSON() : <any>undefined;
         data["stripePayUrl"] = this.stripePayUrl;
         data["isPaymentsEnabled"] = this.isPaymentsEnabled;
+        data["isQuantityAvailable"] = this.isQuantityAvailable;
         return data;
     }
 }
@@ -80642,6 +80870,7 @@ export interface IGetPublicInvoiceInfoOutput {
     paymentSettings: BankTransferSettings | undefined;
     stripePayUrl: string | undefined;
     isPaymentsEnabled: boolean;
+    isQuantityAvailable: boolean;
 }
 
 export class GetPublishedNotificationsOutput implements IGetPublishedNotificationsOutput {
@@ -81656,6 +81885,58 @@ export interface IGetStatusOutput {
     hasTransactions: boolean;
     hasAccountsAccess: boolean;
     hasCategorizationSupported: boolean;
+}
+
+export class GetStripeSettingsDto implements IGetStripeSettingsDto {
+    isEnabled!: boolean;
+    isHostAccountEnabled!: boolean;
+    stripeAccountSettings!: StripeSettingsDto[] | undefined;
+
+    constructor(data?: IGetStripeSettingsDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.isEnabled = _data["isEnabled"];
+            this.isHostAccountEnabled = _data["isHostAccountEnabled"];
+            if (Array.isArray(_data["stripeAccountSettings"])) {
+                this.stripeAccountSettings = [] as any;
+                for (let item of _data["stripeAccountSettings"])
+                    this.stripeAccountSettings!.push(StripeSettingsDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): GetStripeSettingsDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new GetStripeSettingsDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["isEnabled"] = this.isEnabled;
+        data["isHostAccountEnabled"] = this.isHostAccountEnabled;
+        if (Array.isArray(this.stripeAccountSettings)) {
+            data["stripeAccountSettings"] = [];
+            for (let item of this.stripeAccountSettings)
+                data["stripeAccountSettings"].push(item.toJSON());
+        }
+        return data;
+    }
+}
+
+export interface IGetStripeSettingsDto {
+    isEnabled: boolean;
+    isHostAccountEnabled: boolean;
+    stripeAccountSettings: StripeSettingsDto[] | undefined;
 }
 
 export class GetSystemTotalsOutput implements IGetSystemTotalsOutput {
@@ -83033,6 +83314,12 @@ export interface IHostUserManagementSettingsEditDto {
     sessionTimeOutSettings: SessionTimeOutSettingsEditDto | undefined;
     userPasswordSettings: UserPasswordSettingsEditDto | undefined;
     customWelcomeEmailTemplates: CustomWelcomeTemplate[] | undefined;
+}
+
+export enum HostingType {
+    Fake = "Fake",
+    Azure = "Azure",
+    Vercel = "Vercel",
 }
 
 export class IAgeSettingsEditDto implements IIAgeSettingsEditDto {
@@ -85355,7 +85642,8 @@ export interface IImportPropertyInput {
 }
 
 export class ImportStripeDataInput implements IImportStripeDataInput {
-    type!: StripeEntityType;
+    settingsId!: number;
+    type!: StripeImportType;
 
     constructor(data?: IImportStripeDataInput) {
         if (data) {
@@ -85368,6 +85656,7 @@ export class ImportStripeDataInput implements IImportStripeDataInput {
 
     init(_data?: any) {
         if (_data) {
+            this.settingsId = _data["settingsId"];
             this.type = _data["type"];
         }
     }
@@ -85381,13 +85670,15 @@ export class ImportStripeDataInput implements IImportStripeDataInput {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["settingsId"] = this.settingsId;
         data["type"] = this.type;
         return data;
     }
 }
 
 export interface IImportStripeDataInput {
-    type: StripeEntityType;
+    settingsId: number;
+    type: StripeImportType;
 }
 
 export class ImportSubscriptionInput implements IImportSubscriptionInput {
@@ -86242,6 +86533,8 @@ export class InvoiceLineInfo implements IInvoiceLineInfo {
     productType!: ProductType | undefined;
     subscriptionXref!: string | undefined;
     subscriptionGateway!: string | undefined;
+    stock!: number | undefined;
+    stripeAccountSettingId!: number | undefined;
 
     constructor(data?: IInvoiceLineInfo) {
         if (data) {
@@ -86269,6 +86562,8 @@ export class InvoiceLineInfo implements IInvoiceLineInfo {
             this.productType = _data["productType"];
             this.subscriptionXref = _data["subscriptionXref"];
             this.subscriptionGateway = _data["subscriptionGateway"];
+            this.stock = _data["stock"];
+            this.stripeAccountSettingId = _data["stripeAccountSettingId"];
         }
     }
 
@@ -86296,6 +86591,8 @@ export class InvoiceLineInfo implements IInvoiceLineInfo {
         data["productType"] = this.productType;
         data["subscriptionXref"] = this.subscriptionXref;
         data["subscriptionGateway"] = this.subscriptionGateway;
+        data["stock"] = this.stock;
+        data["stripeAccountSettingId"] = this.stripeAccountSettingId;
         return data;
     }
 }
@@ -86316,6 +86613,8 @@ export interface IInvoiceLineInfo {
     productType: ProductType | undefined;
     subscriptionXref: string | undefined;
     subscriptionGateway: string | undefined;
+    stock: number | undefined;
+    stripeAccountSettingId: number | undefined;
 }
 
 export enum InvoicePaymentMethod {
@@ -94471,6 +94770,46 @@ export enum PaymentInfoType {
     ACH = "ACH",
     PayPal = "PayPal",
     Stripe = "Stripe",
+    AchCreditTransfer = "AchCreditTransfer",
+    AchDebit = "AchDebit",
+    AcssDebit = "AcssDebit",
+    Affirm = "Affirm",
+    AfterpayClearpay = "AfterpayClearpay",
+    Alipay = "Alipay",
+    AmazonPay = "AmazonPay",
+    AuBecsDebit = "AuBecsDebit",
+    BacsDebit = "BacsDebit",
+    Bancontact = "Bancontact",
+    Blik = "Blik",
+    Boleto = "Boleto",
+    CardPresent = "CardPresent",
+    Cashapp = "Cashapp",
+    CustomerBalance = "CustomerBalance",
+    Eps = "Eps",
+    Fpx = "Fpx",
+    Giropay = "Giropay",
+    Grabpay = "Grabpay",
+    Ideal = "Ideal",
+    InteracPresent = "InteracPresent",
+    Klarna = "Klarna",
+    Konbini = "Konbini",
+    Link = "Link",
+    Mobilepay = "Mobilepay",
+    Multibanco = "Multibanco",
+    Oxxo = "Oxxo",
+    P24 = "P24",
+    Paynow = "Paynow",
+    Pix = "Pix",
+    Promptpay = "Promptpay",
+    RevolutPay = "RevolutPay",
+    SepaDebit = "SepaDebit",
+    Sofort = "Sofort",
+    StripeAccount = "StripeAccount",
+    Swish = "Swish",
+    Twint = "Twint",
+    Wechat = "Wechat",
+    WechatPay = "WechatPay",
+    Zip = "Zip",
 }
 
 export enum PaymentMethod {
@@ -96639,6 +96978,7 @@ export class ProductInfo implements IProductInfo {
     singlePurchaseAllowed!: boolean;
     isArchived!: boolean;
     barCode!: string | undefined;
+    productInventory!: ProductInventoryDto | undefined;
     productServices!: ProductServiceInfo[] | undefined;
     productSubscriptionOptions!: ProductSubscriptionOptionInfo[] | undefined;
     productUpgradeAssignments!: ProductUpgradeAssignmentInfo[] | undefined;
@@ -96675,6 +97015,7 @@ export class ProductInfo implements IProductInfo {
             this.singlePurchaseAllowed = _data["singlePurchaseAllowed"];
             this.isArchived = _data["isArchived"];
             this.barCode = _data["barCode"];
+            this.productInventory = _data["productInventory"] ? ProductInventoryDto.fromJS(_data["productInventory"]) : <any>undefined;
             if (Array.isArray(_data["productServices"])) {
                 this.productServices = [] as any;
                 for (let item of _data["productServices"])
@@ -96723,6 +97064,7 @@ export class ProductInfo implements IProductInfo {
         data["singlePurchaseAllowed"] = this.singlePurchaseAllowed;
         data["isArchived"] = this.isArchived;
         data["barCode"] = this.barCode;
+        data["productInventory"] = this.productInventory ? this.productInventory.toJSON() : <any>undefined;
         if (Array.isArray(this.productServices)) {
             data["productServices"] = [];
             for (let item of this.productServices)
@@ -96764,9 +97106,98 @@ export interface IProductInfo {
     singlePurchaseAllowed: boolean;
     isArchived: boolean;
     barCode: string | undefined;
+    productInventory: ProductInventoryDto | undefined;
     productServices: ProductServiceInfo[] | undefined;
     productSubscriptionOptions: ProductSubscriptionOptionInfo[] | undefined;
     productUpgradeAssignments: ProductUpgradeAssignmentInfo[] | undefined;
+}
+
+export class ProductInventoryDto implements IProductInventoryDto {
+    isActive!: boolean;
+    canSellOutOfStock!: boolean;
+    currentQuantity!: number;
+
+    constructor(data?: IProductInventoryDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.isActive = _data["isActive"];
+            this.canSellOutOfStock = _data["canSellOutOfStock"];
+            this.currentQuantity = _data["currentQuantity"];
+        }
+    }
+
+    static fromJS(data: any): ProductInventoryDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new ProductInventoryDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["isActive"] = this.isActive;
+        data["canSellOutOfStock"] = this.canSellOutOfStock;
+        data["currentQuantity"] = this.currentQuantity;
+        return data;
+    }
+}
+
+export interface IProductInventoryDto {
+    isActive: boolean;
+    canSellOutOfStock: boolean;
+    currentQuantity: number;
+}
+
+export class ProductInventoryInfo implements IProductInventoryInfo {
+    isActive!: boolean;
+    canSellOutOfStock!: boolean;
+    initialQuantity!: number | undefined;
+
+    constructor(data?: IProductInventoryInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.isActive = _data["isActive"];
+            this.canSellOutOfStock = _data["canSellOutOfStock"];
+            this.initialQuantity = _data["initialQuantity"];
+        }
+    }
+
+    static fromJS(data: any): ProductInventoryInfo {
+        data = typeof data === 'object' ? data : {};
+        let result = new ProductInventoryInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["isActive"] = this.isActive;
+        data["canSellOutOfStock"] = this.canSellOutOfStock;
+        data["initialQuantity"] = this.initialQuantity;
+        return data;
+    }
+}
+
+export interface IProductInventoryInfo {
+    isActive: boolean;
+    canSellOutOfStock: boolean;
+    initialQuantity: number | undefined;
 }
 
 export enum ProductMeasurementUnit {
@@ -96834,6 +97265,7 @@ export class ProductPaymentOptionsInfo implements IProductPaymentOptionsInfo {
     code!: string | undefined;
     name!: string | undefined;
     description!: string | undefined;
+    stock!: number | undefined;
     type!: ProductType;
     paymentOptions!: ProductPaymentOptionInfo[] | undefined;
 
@@ -96852,6 +97284,7 @@ export class ProductPaymentOptionsInfo implements IProductPaymentOptionsInfo {
             this.code = _data["code"];
             this.name = _data["name"];
             this.description = _data["description"];
+            this.stock = _data["stock"];
             this.type = _data["type"];
             if (Array.isArray(_data["paymentOptions"])) {
                 this.paymentOptions = [] as any;
@@ -96874,6 +97307,7 @@ export class ProductPaymentOptionsInfo implements IProductPaymentOptionsInfo {
         data["code"] = this.code;
         data["name"] = this.name;
         data["description"] = this.description;
+        data["stock"] = this.stock;
         data["type"] = this.type;
         if (Array.isArray(this.paymentOptions)) {
             data["paymentOptions"] = [];
@@ -96889,6 +97323,7 @@ export interface IProductPaymentOptionsInfo {
     code: string | undefined;
     name: string | undefined;
     description: string | undefined;
+    stock: number | undefined;
     type: ProductType;
     paymentOptions: ProductPaymentOptionInfo[] | undefined;
 }
@@ -99750,6 +100185,7 @@ export class PublicProductInfo implements IPublicProductInfo {
     maxCustomerPrice!: number | undefined;
     currencyId!: string | undefined;
     unit!: ProductMeasurementUnit | undefined;
+    stock!: number | undefined;
     imageUrl!: string | undefined;
     thumbnailUrl!: string | undefined;
     publicAllowCoupon!: boolean;
@@ -99780,6 +100216,7 @@ export class PublicProductInfo implements IPublicProductInfo {
             this.maxCustomerPrice = _data["maxCustomerPrice"];
             this.currencyId = _data["currencyId"];
             this.unit = _data["unit"];
+            this.stock = _data["stock"];
             this.imageUrl = _data["imageUrl"];
             this.thumbnailUrl = _data["thumbnailUrl"];
             this.publicAllowCoupon = _data["publicAllowCoupon"];
@@ -99818,6 +100255,7 @@ export class PublicProductInfo implements IPublicProductInfo {
         data["maxCustomerPrice"] = this.maxCustomerPrice;
         data["currencyId"] = this.currencyId;
         data["unit"] = this.unit;
+        data["stock"] = this.stock;
         data["imageUrl"] = this.imageUrl;
         data["thumbnailUrl"] = this.thumbnailUrl;
         data["publicAllowCoupon"] = this.publicAllowCoupon;
@@ -99849,6 +100287,7 @@ export interface IPublicProductInfo {
     maxCustomerPrice: number | undefined;
     currencyId: string | undefined;
     unit: ProductMeasurementUnit | undefined;
+    stock: number | undefined;
     imageUrl: string | undefined;
     thumbnailUrl: string | undefined;
     publicAllowCoupon: boolean;
@@ -106366,6 +106805,114 @@ export interface IStringOutput {
     output: string | undefined;
 }
 
+export class StripeActiveSettingsDto implements IStripeActiveSettingsDto {
+    isEnabled!: boolean;
+    isHostAccountEnabled!: boolean;
+    id!: number;
+    isActive!: boolean;
+    displayName!: string | undefined;
+    apiKey!: string | undefined;
+    publishableKey!: string | undefined;
+    ignoreExternalWebhooks!: boolean;
+    webhookSingingSecret!: string | undefined;
+    oAuthClientId!: string | undefined;
+    connectWebhookSingingSecret!: string | undefined;
+    ignoreExternalConnectedAccounts!: boolean;
+    connectedAccountId!: string | undefined;
+    isConnectedAccountSetUpCompleted!: boolean;
+    connectedAccountType!: string | undefined;
+    connectedAccountName!: string | undefined;
+    connectedAccountEmail!: string | undefined;
+    unsupportedPaymentMethods!: InvoicePaymentMethod;
+    hasRunningImport!: boolean;
+
+    constructor(data?: IStripeActiveSettingsDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.isEnabled = _data["isEnabled"];
+            this.isHostAccountEnabled = _data["isHostAccountEnabled"];
+            this.id = _data["id"];
+            this.isActive = _data["isActive"];
+            this.displayName = _data["displayName"];
+            this.apiKey = _data["apiKey"];
+            this.publishableKey = _data["publishableKey"];
+            this.ignoreExternalWebhooks = _data["ignoreExternalWebhooks"];
+            this.webhookSingingSecret = _data["webhookSingingSecret"];
+            this.oAuthClientId = _data["oAuthClientId"];
+            this.connectWebhookSingingSecret = _data["connectWebhookSingingSecret"];
+            this.ignoreExternalConnectedAccounts = _data["ignoreExternalConnectedAccounts"];
+            this.connectedAccountId = _data["connectedAccountId"];
+            this.isConnectedAccountSetUpCompleted = _data["isConnectedAccountSetUpCompleted"];
+            this.connectedAccountType = _data["connectedAccountType"];
+            this.connectedAccountName = _data["connectedAccountName"];
+            this.connectedAccountEmail = _data["connectedAccountEmail"];
+            this.unsupportedPaymentMethods = _data["unsupportedPaymentMethods"];
+            this.hasRunningImport = _data["hasRunningImport"];
+        }
+    }
+
+    static fromJS(data: any): StripeActiveSettingsDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new StripeActiveSettingsDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["isEnabled"] = this.isEnabled;
+        data["isHostAccountEnabled"] = this.isHostAccountEnabled;
+        data["id"] = this.id;
+        data["isActive"] = this.isActive;
+        data["displayName"] = this.displayName;
+        data["apiKey"] = this.apiKey;
+        data["publishableKey"] = this.publishableKey;
+        data["ignoreExternalWebhooks"] = this.ignoreExternalWebhooks;
+        data["webhookSingingSecret"] = this.webhookSingingSecret;
+        data["oAuthClientId"] = this.oAuthClientId;
+        data["connectWebhookSingingSecret"] = this.connectWebhookSingingSecret;
+        data["ignoreExternalConnectedAccounts"] = this.ignoreExternalConnectedAccounts;
+        data["connectedAccountId"] = this.connectedAccountId;
+        data["isConnectedAccountSetUpCompleted"] = this.isConnectedAccountSetUpCompleted;
+        data["connectedAccountType"] = this.connectedAccountType;
+        data["connectedAccountName"] = this.connectedAccountName;
+        data["connectedAccountEmail"] = this.connectedAccountEmail;
+        data["unsupportedPaymentMethods"] = this.unsupportedPaymentMethods;
+        data["hasRunningImport"] = this.hasRunningImport;
+        return data;
+    }
+}
+
+export interface IStripeActiveSettingsDto {
+    isEnabled: boolean;
+    isHostAccountEnabled: boolean;
+    id: number;
+    isActive: boolean;
+    displayName: string | undefined;
+    apiKey: string | undefined;
+    publishableKey: string | undefined;
+    ignoreExternalWebhooks: boolean;
+    webhookSingingSecret: string | undefined;
+    oAuthClientId: string | undefined;
+    connectWebhookSingingSecret: string | undefined;
+    ignoreExternalConnectedAccounts: boolean;
+    connectedAccountId: string | undefined;
+    isConnectedAccountSetUpCompleted: boolean;
+    connectedAccountType: string | undefined;
+    connectedAccountName: string | undefined;
+    connectedAccountEmail: string | undefined;
+    unsupportedPaymentMethods: InvoicePaymentMethod;
+    hasRunningImport: boolean;
+}
+
 export class StripeConnectedAccountInput implements IStripeConnectedAccountInput {
     connectedAccountId!: string;
 
@@ -106402,7 +106949,7 @@ export interface IStripeConnectedAccountInput {
     connectedAccountId: string;
 }
 
-export enum StripeEntityType {
+export enum StripeImportType {
     Product = 1,
     Coupon = 2,
     Customer = 4,
@@ -106410,80 +106957,10 @@ export enum StripeEntityType {
     Subscription = 16,
 }
 
-export class StripeSettings implements IStripeSettings {
-    isEnabled!: boolean;
-    apiKey!: string | undefined;
-    publishableKey!: string | undefined;
-    ignoreExternalWebhooks!: boolean;
-    webhookSingingSecret!: string | undefined;
-    oAuthClientId!: string | undefined;
-    connectWebhookSingingSecret!: string | undefined;
-    ignoreExternalConnectedAccounts!: boolean;
-    connectedAccountId!: string | undefined;
-    isConnectedAccountSetUpCompleted!: boolean;
-
-    constructor(data?: IStripeSettings) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.isEnabled = _data["isEnabled"];
-            this.apiKey = _data["apiKey"];
-            this.publishableKey = _data["publishableKey"];
-            this.ignoreExternalWebhooks = _data["ignoreExternalWebhooks"];
-            this.webhookSingingSecret = _data["webhookSingingSecret"];
-            this.oAuthClientId = _data["oAuthClientId"];
-            this.connectWebhookSingingSecret = _data["connectWebhookSingingSecret"];
-            this.ignoreExternalConnectedAccounts = _data["ignoreExternalConnectedAccounts"];
-            this.connectedAccountId = _data["connectedAccountId"];
-            this.isConnectedAccountSetUpCompleted = _data["isConnectedAccountSetUpCompleted"];
-        }
-    }
-
-    static fromJS(data: any): StripeSettings {
-        data = typeof data === 'object' ? data : {};
-        let result = new StripeSettings();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["isEnabled"] = this.isEnabled;
-        data["apiKey"] = this.apiKey;
-        data["publishableKey"] = this.publishableKey;
-        data["ignoreExternalWebhooks"] = this.ignoreExternalWebhooks;
-        data["webhookSingingSecret"] = this.webhookSingingSecret;
-        data["oAuthClientId"] = this.oAuthClientId;
-        data["connectWebhookSingingSecret"] = this.connectWebhookSingingSecret;
-        data["ignoreExternalConnectedAccounts"] = this.ignoreExternalConnectedAccounts;
-        data["connectedAccountId"] = this.connectedAccountId;
-        data["isConnectedAccountSetUpCompleted"] = this.isConnectedAccountSetUpCompleted;
-        return data;
-    }
-}
-
-export interface IStripeSettings {
-    isEnabled: boolean;
-    apiKey: string | undefined;
-    publishableKey: string | undefined;
-    ignoreExternalWebhooks: boolean;
-    webhookSingingSecret: string | undefined;
-    oAuthClientId: string | undefined;
-    connectWebhookSingingSecret: string | undefined;
-    ignoreExternalConnectedAccounts: boolean;
-    connectedAccountId: string | undefined;
-    isConnectedAccountSetUpCompleted: boolean;
-}
-
 export class StripeSettingsDto implements IStripeSettingsDto {
-    isEnabled!: boolean;
+    id!: number;
+    isActive!: boolean;
+    displayName!: string | undefined;
     apiKey!: string | undefined;
     publishableKey!: string | undefined;
     ignoreExternalWebhooks!: boolean;
@@ -106491,12 +106968,13 @@ export class StripeSettingsDto implements IStripeSettingsDto {
     oAuthClientId!: string | undefined;
     connectWebhookSingingSecret!: string | undefined;
     ignoreExternalConnectedAccounts!: boolean;
-    isHostAccountEnabled!: boolean;
     connectedAccountId!: string | undefined;
     isConnectedAccountSetUpCompleted!: boolean;
+    connectedAccountType!: string | undefined;
+    connectedAccountName!: string | undefined;
+    connectedAccountEmail!: string | undefined;
     unsupportedPaymentMethods!: InvoicePaymentMethod;
     hasRunningImport!: boolean;
-    connectedAccountInfo!: ConnectedAccountSettingsDto | undefined;
 
     constructor(data?: IStripeSettingsDto) {
         if (data) {
@@ -106509,7 +106987,9 @@ export class StripeSettingsDto implements IStripeSettingsDto {
 
     init(_data?: any) {
         if (_data) {
-            this.isEnabled = _data["isEnabled"];
+            this.id = _data["id"];
+            this.isActive = _data["isActive"];
+            this.displayName = _data["displayName"];
             this.apiKey = _data["apiKey"];
             this.publishableKey = _data["publishableKey"];
             this.ignoreExternalWebhooks = _data["ignoreExternalWebhooks"];
@@ -106517,12 +106997,13 @@ export class StripeSettingsDto implements IStripeSettingsDto {
             this.oAuthClientId = _data["oAuthClientId"];
             this.connectWebhookSingingSecret = _data["connectWebhookSingingSecret"];
             this.ignoreExternalConnectedAccounts = _data["ignoreExternalConnectedAccounts"];
-            this.isHostAccountEnabled = _data["isHostAccountEnabled"];
             this.connectedAccountId = _data["connectedAccountId"];
             this.isConnectedAccountSetUpCompleted = _data["isConnectedAccountSetUpCompleted"];
+            this.connectedAccountType = _data["connectedAccountType"];
+            this.connectedAccountName = _data["connectedAccountName"];
+            this.connectedAccountEmail = _data["connectedAccountEmail"];
             this.unsupportedPaymentMethods = _data["unsupportedPaymentMethods"];
             this.hasRunningImport = _data["hasRunningImport"];
-            this.connectedAccountInfo = _data["connectedAccountInfo"] ? ConnectedAccountSettingsDto.fromJS(_data["connectedAccountInfo"]) : <any>undefined;
         }
     }
 
@@ -106535,7 +107016,9 @@ export class StripeSettingsDto implements IStripeSettingsDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["isEnabled"] = this.isEnabled;
+        data["id"] = this.id;
+        data["isActive"] = this.isActive;
+        data["displayName"] = this.displayName;
         data["apiKey"] = this.apiKey;
         data["publishableKey"] = this.publishableKey;
         data["ignoreExternalWebhooks"] = this.ignoreExternalWebhooks;
@@ -106543,18 +107026,21 @@ export class StripeSettingsDto implements IStripeSettingsDto {
         data["oAuthClientId"] = this.oAuthClientId;
         data["connectWebhookSingingSecret"] = this.connectWebhookSingingSecret;
         data["ignoreExternalConnectedAccounts"] = this.ignoreExternalConnectedAccounts;
-        data["isHostAccountEnabled"] = this.isHostAccountEnabled;
         data["connectedAccountId"] = this.connectedAccountId;
         data["isConnectedAccountSetUpCompleted"] = this.isConnectedAccountSetUpCompleted;
+        data["connectedAccountType"] = this.connectedAccountType;
+        data["connectedAccountName"] = this.connectedAccountName;
+        data["connectedAccountEmail"] = this.connectedAccountEmail;
         data["unsupportedPaymentMethods"] = this.unsupportedPaymentMethods;
         data["hasRunningImport"] = this.hasRunningImport;
-        data["connectedAccountInfo"] = this.connectedAccountInfo ? this.connectedAccountInfo.toJSON() : <any>undefined;
         return data;
     }
 }
 
 export interface IStripeSettingsDto {
-    isEnabled: boolean;
+    id: number;
+    isActive: boolean;
+    displayName: string | undefined;
     apiKey: string | undefined;
     publishableKey: string | undefined;
     ignoreExternalWebhooks: boolean;
@@ -106562,12 +107048,13 @@ export interface IStripeSettingsDto {
     oAuthClientId: string | undefined;
     connectWebhookSingingSecret: string | undefined;
     ignoreExternalConnectedAccounts: boolean;
-    isHostAccountEnabled: boolean;
     connectedAccountId: string | undefined;
     isConnectedAccountSetUpCompleted: boolean;
+    connectedAccountType: string | undefined;
+    connectedAccountName: string | undefined;
+    connectedAccountEmail: string | undefined;
     unsupportedPaymentMethods: InvoicePaymentMethod;
     hasRunningImport: boolean;
-    connectedAccountInfo: ConnectedAccountSettingsDto | undefined;
 }
 
 export class SubmitAnswerDto implements ISubmitAnswerDto {
@@ -109093,6 +109580,8 @@ export class TenantCustomizationInfoDto implements ITenantCustomizationInfoDto {
     siteTitle!: string | undefined;
     faviconBaseUrl!: string | undefined;
     favicons!: FaviconDto[] | undefined;
+    portalFaviconBaseUrl!: string | undefined;
+    portalFavicons!: FaviconDto[] | undefined;
 
     constructor(data?: ITenantCustomizationInfoDto) {
         if (data) {
@@ -109111,6 +109600,12 @@ export class TenantCustomizationInfoDto implements ITenantCustomizationInfoDto {
                 this.favicons = [] as any;
                 for (let item of _data["favicons"])
                     this.favicons!.push(FaviconDto.fromJS(item));
+            }
+            this.portalFaviconBaseUrl = _data["portalFaviconBaseUrl"];
+            if (Array.isArray(_data["portalFavicons"])) {
+                this.portalFavicons = [] as any;
+                for (let item of _data["portalFavicons"])
+                    this.portalFavicons!.push(FaviconDto.fromJS(item));
             }
         }
     }
@@ -109131,6 +109626,12 @@ export class TenantCustomizationInfoDto implements ITenantCustomizationInfoDto {
             for (let item of this.favicons)
                 data["favicons"].push(item.toJSON());
         }
+        data["portalFaviconBaseUrl"] = this.portalFaviconBaseUrl;
+        if (Array.isArray(this.portalFavicons)) {
+            data["portalFavicons"] = [];
+            for (let item of this.portalFavicons)
+                data["portalFavicons"].push(item.toJSON());
+        }
         return data;
     }
 }
@@ -109139,6 +109640,8 @@ export interface ITenantCustomizationInfoDto {
     siteTitle: string | undefined;
     faviconBaseUrl: string | undefined;
     favicons: FaviconDto[] | undefined;
+    portalFaviconBaseUrl: string | undefined;
+    portalFavicons: FaviconDto[] | undefined;
 }
 
 export class TenantEditDto implements ITenantEditDto {
@@ -109529,9 +110032,12 @@ export class TenantLoginInfoDto implements ITenantLoginInfoDto {
     isWhiteLabel!: boolean;
     logoId!: string | undefined;
     logoFileType!: string | undefined;
+    portalLogoId!: string | undefined;
+    portalLogoFileType!: string | undefined;
     customCssId!: string | undefined;
     loginCustomCssId!: string | undefined;
     signUpCustomCssId!: string | undefined;
+    portalLoginCustomCssId!: string | undefined;
     portalCustomCssId!: string | undefined;
     customToSDocumentId!: string | undefined;
     customPrivacyPolicyDocumentId!: string | undefined;
@@ -109559,9 +110065,12 @@ export class TenantLoginInfoDto implements ITenantLoginInfoDto {
             this.isWhiteLabel = _data["isWhiteLabel"];
             this.logoId = _data["logoId"];
             this.logoFileType = _data["logoFileType"];
+            this.portalLogoId = _data["portalLogoId"];
+            this.portalLogoFileType = _data["portalLogoFileType"];
             this.customCssId = _data["customCssId"];
             this.loginCustomCssId = _data["loginCustomCssId"];
             this.signUpCustomCssId = _data["signUpCustomCssId"];
+            this.portalLoginCustomCssId = _data["portalLoginCustomCssId"];
             this.portalCustomCssId = _data["portalCustomCssId"];
             this.customToSDocumentId = _data["customToSDocumentId"];
             this.customPrivacyPolicyDocumentId = _data["customPrivacyPolicyDocumentId"];
@@ -109593,9 +110102,12 @@ export class TenantLoginInfoDto implements ITenantLoginInfoDto {
         data["isWhiteLabel"] = this.isWhiteLabel;
         data["logoId"] = this.logoId;
         data["logoFileType"] = this.logoFileType;
+        data["portalLogoId"] = this.portalLogoId;
+        data["portalLogoFileType"] = this.portalLogoFileType;
         data["customCssId"] = this.customCssId;
         data["loginCustomCssId"] = this.loginCustomCssId;
         data["signUpCustomCssId"] = this.signUpCustomCssId;
+        data["portalLoginCustomCssId"] = this.portalLoginCustomCssId;
         data["portalCustomCssId"] = this.portalCustomCssId;
         data["customToSDocumentId"] = this.customToSDocumentId;
         data["customPrivacyPolicyDocumentId"] = this.customPrivacyPolicyDocumentId;
@@ -109620,9 +110132,12 @@ export interface ITenantLoginInfoDto {
     isWhiteLabel: boolean;
     logoId: string | undefined;
     logoFileType: string | undefined;
+    portalLogoId: string | undefined;
+    portalLogoFileType: string | undefined;
     customCssId: string | undefined;
     loginCustomCssId: string | undefined;
     signUpCustomCssId: string | undefined;
+    portalLoginCustomCssId: string | undefined;
     portalCustomCssId: string | undefined;
     customToSDocumentId: string | undefined;
     customPrivacyPolicyDocumentId: string | undefined;
@@ -109950,6 +110465,8 @@ export class TenantSslBindingInfo implements ITenantSslBindingInfo {
     sslCertificateExpiration!: moment.Moment | undefined;
     sslCertificateThumbprint!: string | undefined;
     organizationUnitId!: number | undefined;
+    hostingProvider!: HostingType | undefined;
+    isValid!: boolean;
     creationTime!: moment.Moment;
 
     constructor(data?: ITenantSslBindingInfo) {
@@ -109971,6 +110488,8 @@ export class TenantSslBindingInfo implements ITenantSslBindingInfo {
             this.sslCertificateExpiration = _data["sslCertificateExpiration"] ? moment(_data["sslCertificateExpiration"].toString()) : <any>undefined;
             this.sslCertificateThumbprint = _data["sslCertificateThumbprint"];
             this.organizationUnitId = _data["organizationUnitId"];
+            this.hostingProvider = _data["hostingProvider"];
+            this.isValid = _data["isValid"];
             this.creationTime = _data["creationTime"] ? moment(_data["creationTime"].toString()) : <any>undefined;
         }
     }
@@ -109992,6 +110511,8 @@ export class TenantSslBindingInfo implements ITenantSslBindingInfo {
         data["sslCertificateExpiration"] = this.sslCertificateExpiration ? this.sslCertificateExpiration.toISOString() : <any>undefined;
         data["sslCertificateThumbprint"] = this.sslCertificateThumbprint;
         data["organizationUnitId"] = this.organizationUnitId;
+        data["hostingProvider"] = this.hostingProvider;
+        data["isValid"] = this.isValid;
         data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
         return data;
     }
@@ -110006,6 +110527,8 @@ export interface ITenantSslBindingInfo {
     sslCertificateExpiration: moment.Moment | undefined;
     sslCertificateThumbprint: string | undefined;
     organizationUnitId: number | undefined;
+    hostingProvider: HostingType | undefined;
+    isValid: boolean;
     creationTime: moment.Moment;
 }
 
@@ -116142,6 +116665,7 @@ export class UpdateProductInput implements IUpdateProductInput {
     singlePurchaseAllowed!: boolean;
     paidEmailTemplateId!: number | undefined;
     redirectUrl!: string | undefined;
+    productInventory!: ProductInventoryInfo | undefined;
     productServices!: ProductServiceInfo[] | undefined;
     productSubscriptionOptions!: ProductSubscriptionOptionInfo[] | undefined;
     productUpgradeAssignments!: ProductUpgradeAssignmentInfo[] | undefined;
@@ -116190,6 +116714,7 @@ export class UpdateProductInput implements IUpdateProductInput {
             this.singlePurchaseAllowed = _data["singlePurchaseAllowed"];
             this.paidEmailTemplateId = _data["paidEmailTemplateId"];
             this.redirectUrl = _data["redirectUrl"];
+            this.productInventory = _data["productInventory"] ? ProductInventoryInfo.fromJS(_data["productInventory"]) : <any>undefined;
             if (Array.isArray(_data["productServices"])) {
                 this.productServices = [] as any;
                 for (let item of _data["productServices"])
@@ -116258,6 +116783,7 @@ export class UpdateProductInput implements IUpdateProductInput {
         data["singlePurchaseAllowed"] = this.singlePurchaseAllowed;
         data["paidEmailTemplateId"] = this.paidEmailTemplateId;
         data["redirectUrl"] = this.redirectUrl;
+        data["productInventory"] = this.productInventory ? this.productInventory.toJSON() : <any>undefined;
         if (Array.isArray(this.productServices)) {
             data["productServices"] = [];
             for (let item of this.productServices)
@@ -116319,6 +116845,7 @@ export interface IUpdateProductInput {
     singlePurchaseAllowed: boolean;
     paidEmailTemplateId: number | undefined;
     redirectUrl: string | undefined;
+    productInventory: ProductInventoryInfo | undefined;
     productServices: ProductServiceInfo[] | undefined;
     productSubscriptionOptions: ProductSubscriptionOptionInfo[] | undefined;
     productUpgradeAssignments: ProductUpgradeAssignmentInfo[] | undefined;
@@ -116622,6 +117149,70 @@ export class UpdateStageChecklistPointSortOrderInput implements IUpdateStageChec
 export interface IUpdateStageChecklistPointSortOrderInput {
     id: number;
     sortOrder: number;
+}
+
+export class UpdateStripeSettingsDto implements IUpdateStripeSettingsDto {
+    id!: number | undefined;
+    displayName!: string;
+    isActive!: boolean;
+    apiKey!: string | undefined;
+    publishableKey!: string | undefined;
+    ignoreExternalWebhooks!: boolean;
+    oAuthClientId!: string | undefined;
+    ignoreExternalConnectedAccounts!: boolean;
+
+    constructor(data?: IUpdateStripeSettingsDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.displayName = _data["displayName"];
+            this.isActive = _data["isActive"];
+            this.apiKey = _data["apiKey"];
+            this.publishableKey = _data["publishableKey"];
+            this.ignoreExternalWebhooks = _data["ignoreExternalWebhooks"];
+            this.oAuthClientId = _data["oAuthClientId"];
+            this.ignoreExternalConnectedAccounts = _data["ignoreExternalConnectedAccounts"];
+        }
+    }
+
+    static fromJS(data: any): UpdateStripeSettingsDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateStripeSettingsDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["displayName"] = this.displayName;
+        data["isActive"] = this.isActive;
+        data["apiKey"] = this.apiKey;
+        data["publishableKey"] = this.publishableKey;
+        data["ignoreExternalWebhooks"] = this.ignoreExternalWebhooks;
+        data["oAuthClientId"] = this.oAuthClientId;
+        data["ignoreExternalConnectedAccounts"] = this.ignoreExternalConnectedAccounts;
+        return data;
+    }
+}
+
+export interface IUpdateStripeSettingsDto {
+    id: number | undefined;
+    displayName: string;
+    isActive: boolean;
+    apiKey: string | undefined;
+    publishableKey: string | undefined;
+    ignoreExternalWebhooks: boolean;
+    oAuthClientId: string | undefined;
+    ignoreExternalConnectedAccounts: boolean;
 }
 
 export class UpdateTenantFeaturesInput implements IUpdateTenantFeaturesInput {
@@ -117058,7 +117649,7 @@ export interface IUpdateUserPermissionsInput {
 
 export class UpdateUserPhoneDto implements IUpdateUserPhoneDto {
     id!: number;
-    phoneNumber!: string;
+    phoneNumber!: string | undefined;
 
     constructor(data?: IUpdateUserPhoneDto) {
         if (data) {
@@ -117093,7 +117684,7 @@ export class UpdateUserPhoneDto implements IUpdateUserPhoneDto {
 
 export interface IUpdateUserPhoneDto {
     id: number;
-    phoneNumber: string;
+    phoneNumber: string | undefined;
 }
 
 export class UpdateUserPictureInput implements IUpdateUserPictureInput {

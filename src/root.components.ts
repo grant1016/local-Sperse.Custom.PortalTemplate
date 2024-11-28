@@ -11,7 +11,7 @@ import * as _ from 'underscore';
 import { AppConsts } from '@shared/AppConsts';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { AppUiCustomizationService } from '@shared/common/ui/app-ui-customization.service';
-import { LayoutType, CustomCssType } from '@shared/service-proxies/service-proxies';
+import { LayoutType, CustomCssType, TenantLoginInfoDto } from '@shared/service-proxies/service-proxies';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { DomHelper } from '@shared/helpers/DomHelper';
 
@@ -48,9 +48,9 @@ export class RootComponent implements OnInit, AfterViewInit {
             DomHelper.addScriptLink(AppConsts.googleMapsApiUrl.replace('{KEY}', abp.setting.values['Integrations:Google:MapsJavascriptApiKey']));
 
         //tenant specific custom css
-        let tenant = this.SS.tenant;
+        let tenant: TenantLoginInfoDto = this.SS.tenant;
         if (tenant) {
-            let customCss = abp.session.userId ? tenant.portalCustomCssId : tenant.loginCustomCssId;
+            let customCss = abp.session.userId ? tenant.portalCustomCssId : tenant.portalLoginCustomCssId;
             if (customCss)
                 DomHelper.addStyleSheet(`${CustomCssType.Portal}CustomCss`, AppConsts.remoteServiceBaseUrl + 
                     '/api/TenantCustomization/GetCustomCss/' + customCss + '/' + tenant.id);

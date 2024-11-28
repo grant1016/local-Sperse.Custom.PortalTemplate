@@ -5,11 +5,11 @@
                 <div class="col-sm-12 col-xs-12 text-center form-wrapper">
                     <div class="logo">
                         <a [href]="originUrl">
-                           <img *ngIf="!appSession.tenant || !appSession.tenant.logoId"
+                           <img *ngIf="!appSession.tenantHasCustomLogo"
                                 src="./assets/common/images/app-logo-on-dark.png"
                                 alt="logo" width="auto" height="54"/>
-                           <img *ngIf="appSession.tenant && appSession.tenant.logoId"
-                                [src]="remoteServiceBaseUrl + '/api/TenantCustomization/GetLogo?logoId=' + appSession.tenant.logoId"
+                           <img *ngIf="appSession.tenantHasCustomLogo"
+                                [src]="remoteServiceBaseUrl + '/api/TenantCustomization/GetLogo?' + appSession.getTenantLogoUrlParams()"
                                 alt="logo"
                                 width="auto" height="54"/>
                         </a>
