@@ -10,6 +10,8 @@ import { first, map } from 'rxjs/operators';
 import { AccountSelectorService } from './account-selector.service';
 import { OrganizationUnitShortDto } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { AppSessionService } from '@root/shared/common/session/app-session.service';
+import { LayoutService } from '../layout.service';
 
 @Component({
     selector: 'app-account-selector',
@@ -33,8 +35,19 @@ export class AccountSelectorComponent {
 
     constructor(
         public ls: AppLocalizationService,
-        public accountSelectorService: AccountSelectorService
+        public accountSelectorService: AccountSelectorService,
+        private appSessionService: AppSessionService,
+        private layoutService: LayoutService
     ) {}
+
+    getInputColor() {
+        if (this.appSessionService.tenant && this.appSessionService.tenant.portalCustomCssId)
+            return {};
+        let color = this.layoutService.getLayoutColor('navTextColor');
+        if (!color)
+            return {};
+        return { style: `color: ${color}`};
+    }
 
     valueChanged(event) {
         this.accountSelectorService.selectedOrgUnitIds.next(
