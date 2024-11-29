@@ -1,7 +1,7 @@
 <dx-scroll-view showScrollbar="onHover" height="calc(100vh - 75px)">
     <user-photo [profilePictureUrl]="profilePictureUrl$ | async"></user-photo>
     <div class="field name">
-        <h1>{{appSession.user.name}} {{appSession.user.surname}}</h1>
+        <h1>{{appSession.getUserNameOrEmail()}}</h1>
         <h3>{{appSession.userCompany$ | async}}</h3>
     </div>
     <div class="field affiliate">
@@ -43,7 +43,7 @@
                         {{ ls.l('MySettings') }}
                     </a>
                 </li>
-                <li>
+                <li [class.disabled]="!helpLink">
                     <div class="img"><img src="assets/common/icons/information.svg" [alt]="ls.l('Help')"></div>        
                     <a [href]="helpLink" target="_blank">
                         {{ ls.l('Help') }}

@@ -29,7 +29,7 @@ import { NotifyService } from 'abp-ng2-module';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class UserMenuComponent {
-    helpLink = location.protocol + '//' + abp.setting.values['Integrations:Zendesk:AccountUrl'];
+    helpLink = abp.setting.values['Integrations:Zendesk:AccountUrl'] ? location.protocol + '//' + abp.setting.values['Integrations:Zendesk:AccountUrl'] : null;
     affiliateCode$: Observable<string> = this.profileService.accessCode$;
     affiliateValidationRules = [
         {
@@ -78,6 +78,13 @@ export class UserMenuComponent {
     private checkMenuItemPermission(item): boolean {
         return (!item.feature || this.appService.isFeatureEnable(item.feature)) && 
             (!item.permission || this.permissionService.isGranted(item.permission));
+    }
+    
+    getUserName() {
+        if (this.appSession.user.name == 'Unknown' && this.appSession.user.surname == 'Unknown')
+            return this.appSession.user.emailAddress;
+
+        return this.appSession.user.name + ' ' + this.appSession.user.surname;
     }
 
     updateAffiliateCode(value): void {

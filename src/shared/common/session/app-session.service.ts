@@ -113,6 +113,13 @@ export class AppSessionService {
         return info;
     }
 
+    getUserNameOrEmail() {
+        if (this._user.name == 'Unknown' && this._user.surname == 'Unknown')
+            return this._user.emailAddress;
+
+        return this._user.name + ' ' + this._user.surname;
+    }
+
     getTenantLogoUrlParams(): string {
         if (!this.tenantHasCustomLogo)
             return '';

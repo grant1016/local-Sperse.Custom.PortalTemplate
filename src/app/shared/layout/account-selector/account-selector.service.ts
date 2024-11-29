@@ -36,7 +36,7 @@ export class AccountSelectorService {
                 } else {
                     this.selectedAccount = new OrganizationUnitShortDto({
                         id: this.userInfo.contactId,
-                        displayName: this.userInfo.fullName,
+                        displayName: this.appSessionService.getUserNameOrEmail(),
                         parentId: null
                     });
                     this.selectedOrgUnitIds.next([]);
