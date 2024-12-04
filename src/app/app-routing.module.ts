@@ -29,8 +29,7 @@ import { AppComponent } from './app.component';
                     },
                     {
                         path: 'home',
-                        component: DashboardComponent,
-                        data: {feature: AppFeatures.PortalDashboard}    
+                        component: DashboardComponent
                     },
                     {
                         path: 'leads',
