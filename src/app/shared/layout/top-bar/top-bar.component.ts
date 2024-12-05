@@ -20,6 +20,7 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 import { ConfigInterface } from '@app/shared/common/config.interface';
 import { ConfigNavigation } from '@app/shared/common/config-navigation.interface';
+import { LayoutService } from '../layout.service';
 
 @Component({
     templateUrl: './top-bar.component.html',
@@ -45,13 +46,14 @@ export class TopBarComponent implements OnDestroy {
     };
 
     constructor(
-        private appSessionService: AppSessionService,
+        public appSessionService: AppSessionService,
         private appService: AppService,
         private permissionChecker: AppPermissionService,
         private lifecycleService: LifecycleSubjectsService,
         private router: Router,
         private route: ActivatedRoute,
         public ls: AppLocalizationService,
+        public layoutService: LayoutService,
         @Inject(DOCUMENT) private document: any
     ) {
         this.router.events.pipe(

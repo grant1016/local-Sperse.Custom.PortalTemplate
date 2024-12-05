@@ -1,5 +1,6 @@
 /** Core imports */
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, AfterViewInit, OnDestroy } from '@angular/core';
+import { formatPercent } from '@angular/common';
 
 /** Third party imports */
 import { of } from 'rxjs';
@@ -88,12 +89,14 @@ export class DashboardOverviewComponent implements AfterViewInit, OnDestroy {
         this.refresh();
     }
 
-    getAffiliateRate(): number {
-        return (this.userCommissionRates.affiliateRate || this.userCommissionRates.defaultAffiliateRate) * 100;
+    getAffiliateRate(): string {
+        let value = this.userCommissionRates.affiliateRate || this.userCommissionRates.defaultAffiliateRate;
+        return value ? formatPercent(value, 'en-US', '1.0-2') : null;
     }
 
-    getAffiliateRateTier2(): number {
-        return (this.userCommissionRates.affiliateRateTier2 || this.userCommissionRates.defaultAffiliateRateTier2) * 100;
+    getAffiliateRateTier2(): string {
+        let value = this.userCommissionRates.affiliateRateTier2 || this.userCommissionRates.defaultAffiliateRateTier2;
+        return value ? formatPercent(value, 'en-US', '1.0-2') : null;
     }
 
     ngAfterViewInit() {

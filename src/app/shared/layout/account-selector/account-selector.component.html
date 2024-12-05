@@ -21,7 +21,8 @@
             </dx-list>
         </div>
         <div *dxTemplate="let data of 'field'">
-            <dx-text-box [value]="getSelectedName()"
+            <dx-text-box [inputAttr]="getInputColor()"
+                         [value]="getSelectedName()"
                          [hint]="getSelectedName()"
                          [readOnly]="true"
                          [width]="dropDownWidth">

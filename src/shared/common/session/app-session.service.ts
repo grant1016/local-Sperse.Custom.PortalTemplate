@@ -85,6 +85,10 @@ export class AppSessionService {
         return this.tenant && this.tenant.customLayoutType ? this.tenant.customLayoutType : LayoutType.Default;
     }
 
+    get tenantHasCustomLogo(): boolean {
+        return this._tenant ? !!this._tenant.portalLogoId || !!this._tenant.logoId : false;
+    }
+
     getShownLoginName(): string {
         const userName = this._user.userName;
         if (!this.abpMultiTenancyService.isEnabled) {
@@ -107,6 +111,22 @@ export class AppSessionService {
         }
 
         return info;
+    }
+
+    getUserNameOrEmail() {
+        if (this._user.name == 'Unknown' && this._user.surname == 'Unknown')
+            return this._user.emailAddress;
+
+        return this._user.name + ' ' + this._user.surname;
+    }
+
+    getTenantLogoUrlParams(): string {
+        if (!this.tenantHasCustomLogo)
+            return '';
+
+        if (this._tenant.portalLogoId)
+            return `portalLogo=true&logoId=${this._tenant.portalLogoId}`;
+        return `logoId=${this._tenant.logoId}`;
     }
 
     init(): Promise<boolean> {

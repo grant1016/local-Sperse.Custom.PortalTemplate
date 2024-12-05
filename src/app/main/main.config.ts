@@ -25,6 +25,11 @@ export class MainConfig implements ConfigInterface {
             feature: AppFeatures.PortalLeads
         },
         {
+            icon: 'dollar',
+            text: 'MySubscriptions',
+            route: 'subscriptions'
+        },
+        {
             icon: 'invoices',
             text: 'MyInvoices',
             route: '/app/invoices',

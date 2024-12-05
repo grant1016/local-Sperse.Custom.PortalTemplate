@@ -5,6 +5,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/
 import { MatDialog } from '@angular/material/dialog';
 import { Observable, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
+import { NotifyService, SettingService } from 'abp-ng2-module';
 
 /** Application imports  */
 import { PaymentWizardComponent } from '@app/shared/common/payment-wizard/payment-wizard.component';
@@ -19,7 +20,8 @@ import { AppService } from '@app/app.service';
 import { LayoutService } from '@app/shared/layout/layout.service';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { ClipboardService } from '@node_modules/ngx-clipboard';
-import { NotifyService } from 'abp-ng2-module';
+import { ConfigNavigation } from '@app/shared/common/config-navigation.interface';
+import { PortalMenuItemConfig } from './dto/portal-menu-item';
 
 @Component({
     selector: 'user-menu',
@@ -29,7 +31,7 @@ import { NotifyService } from 'abp-ng2-module';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class UserMenuComponent {
-    helpLink = location.protocol + '//' + abp.setting.values['Integrations:Zendesk:AccountUrl'];
+    helpLink = abp.setting.values['Integrations:Zendesk:AccountUrl'] ? location.protocol + '//' + abp.setting.values['Integrations:Zendesk:AccountUrl'] : null;
     affiliateCode$: Observable<string> = this.profileService.accessCode$;
     affiliateValidationRules = [
         {
@@ -54,6 +56,7 @@ export class UserMenuComponent {
         private profileService: ProfileService,
         private clipboardService: ClipboardService,
         private notifyService: NotifyService,
+        private setting: SettingService,
         public authService: AppAuthService,
         public ls: AppLocalizationService,
         public appService: AppService,
@@ -61,16 +64,7 @@ export class UserMenuComponent {
     ) {
         this.appService.subscribeModuleChange(config => {
             if (config) {
-                this.navigationItems = config.navigation.map(item => {
-                    item.text = this.ls.l(item.text);
-                    if (this.checkMenuItemPermission(item))
-                        return item;
-                }).filter(Boolean);
-                this.navigationItems.splice(2, 0, {
-                    icon: 'dollar',
-                    text: 'My Subscriptions',
-                    route: 'subscriptions'
-                });
+                this.navigationItems = this.prepareMenuNavigationSettings(config.navigation);
             }
         });
     }
@@ -78,6 +72,37 @@ export class UserMenuComponent {
     private checkMenuItemPermission(item): boolean {
         return (!item.feature || this.appService.isFeatureEnable(item.feature)) && 
             (!item.permission || this.permissionService.isGranted(item.permission));
+    }
+
+    private prepareMenuNavigationSettings(configs: ConfigNavigation[]): ConfigNavigation[] {
+        let resultNavigation: ConfigNavigation[] = configs;
+        let cutomizationJson = this.setting.get('App.Appearance.Portal.MenuCustomization');
+
+        if (cutomizationJson) {
+            resultNavigation = [];
+            let cutomization: PortalMenuItemConfig[] = JSON.parse(cutomizationJson);
+            cutomization.forEach(item => {
+                if (item.hide)
+                    return;
+    
+                let configItem = configs.find(v => v.text == item.code);
+                if (configItem) {
+                    configItem.text = item.customTitle || this.ls.l(configItem.text);
+                    resultNavigation.push(configItem);
+                }
+            });
+        } else {
+            resultNavigation.forEach(item => item.text = this.ls.l(item.text));
+        }
+
+        return resultNavigation.filter((item) => this.checkMenuItemPermission(item));
+    }
+    
+    getUserName() {
+        if (this.appSession.user.name == 'Unknown' && this.appSession.user.surname == 'Unknown')
+            return this.appSession.user.emailAddress;
+
+        return this.appSession.user.name + ' ' + this.appSession.user.surname;
     }
 
     updateAffiliateCode(value): void {
