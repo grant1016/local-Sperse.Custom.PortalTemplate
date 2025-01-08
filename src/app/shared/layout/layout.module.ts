@@ -7,6 +7,7 @@ import { FormsModule } from '@angular/forms';
 /** Third party modules */
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatTabsModule } from '@angular/material/tabs';
+import { MatDialogModule } from '@angular/material/dialog';
 import { DxMenuModule } from 'devextreme-angular/ui/menu';
 import { DxTooltipModule } from 'devextreme-angular/ui/tooltip';
 import { DxButtonModule } from 'devextreme-angular/ui/button';
@@ -14,6 +15,8 @@ import { DxDropDownBoxModule } from 'devextreme-angular/ui/drop-down-box';
 import { DxListModule } from 'devextreme-angular/ui/list';
 import { DxScrollViewModule } from 'devextreme-angular/ui/scroll-view';
 import { DxNavBarModule } from 'devextreme-angular/ui/nav-bar';
+import { DxNumberBoxModule } from 'devextreme-angular/ui/number-box';
+import { DxValidatorModule } from 'devextreme-angular/ui/validator';
 import { ModalModule, TabsModule, TooltipModule, PopoverModule } from 'ngx-bootstrap';
 import { FileUploadModule as PrimeNgFileUploadModule } from 'primeng/fileupload';
 import { TableModule } from 'primeng/table';
@@ -30,6 +33,7 @@ import { UtilsModule } from '@shared/utils/utils.module';
 import { LayoutService } from '@app/shared/layout/layout.service';
 import { UserManagementModule } from '@shared/common/layout/user-management-list/user-management.module';
 import { UserMenuComponent } from './user-menu/user-menu.component';
+import { CreditsTopupDialogComponent } from './user-menu/credits-topup-dialog/credits-topup-dialog.component';
 import { UserPhotoModule } from '@app/shared/common/user-photo/user-photo.module';
 import { InplaceEditModule } from '@app/shared/common/inplace-edit/inplace-edit.module';
 import { AccountSelectorModule } from './account-selector/account-selector.module';
@@ -46,6 +50,7 @@ let COMPONENTS = [
     TopBarComponent,
     SideBarComponent,
     UserMenuComponent,
+    CreditsTopupDialogComponent,
     ContactInfoPanelComponent
 ];
 
@@ -69,11 +74,14 @@ let COMPONENTS = [
         DxButtonModule,
         DxNavBarModule,
         DxDropDownBoxModule,
+        DxNumberBoxModule,
+        DxValidatorModule,
 
         InplaceEditModule,
         UserPhotoModule,
         MatTabsModule,
         MatExpansionModule,
+        MatDialogModule,
         PrimeNgFileUploadModule,
         ProgressBarModule,
         TableModule,

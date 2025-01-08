@@ -1,0 +1,27 @@
+<mat-dialog-content>
+    <h3>{{ ls.l('Purchase') }} {{ ls.l('ContactCredits') }}</h3>
+    <div class="field">{{ ls.l('Quantity to Purchase') }}</div>
+    <dx-number-box [(value)]="quantity"
+                   format="#"
+                   min="0"
+                   [placeholder]="ls.l('Quantity')"
+                   [disabled]="!!paymentLink">
+        <dx-validator>
+            <dxi-validation-rule type="required"></dxi-validation-rule>
+        </dx-validator>
+    </dx-number-box>
+    <div class="field">
+        <div>{{ ls.l('UserMenu.TopUpRate') }}:</div>
+        <div>{{data.rate | currency:currency:'symbol':'1.2-2'}}</div>
+    </div>
+    <div class="field">
+        <b>{{ ls.l('Total') }}:</b>
+        <b>{{(quantity * data.rate) | currency:currency:'symbol':'1.2-2'}}</b>
+    </div>
+    <button class="save btn btn-primary" (click)="save()">{{ ls.l('Purchase') }} {{ ls.l('ContactCredits') }}</button>
+    <ng-container *ngIf="paymentLink">
+        <div class="field">
+            <a [href]="paymentLink" target="_blank" (click)="closeDialog()">{{ ls.l('UserMenu.TopUpLinkMessage') }}</a>
+        </div>
+    </ng-container>
+</mat-dialog-content>

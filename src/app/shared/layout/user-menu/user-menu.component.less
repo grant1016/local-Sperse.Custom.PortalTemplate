@@ -38,10 +38,9 @@
                 text-align: center;
                 color: #788084;
             }
-        }        
-        &.affiliate {
-            margin-top: 40px;
-            text-align: center;
+        }
+        &.dashed-border {
+            margin-top: 15px;
             border-radius: 6px;
             border: dashed 1px #bab4a8;
             padding: 0 10px;
@@ -58,6 +57,9 @@
                 color: #0a0850;
                 margin: auto;
             }
+        }
+        &.affiliate {
+            text-align: center;
 
             ::ng-deep inplace-edit {
                 max-width: 80%;
@@ -87,11 +89,21 @@
                 }
             }
         }
+        &.credits-balance {
+            line-height: 35px;
+            display: flex;
+            justify-content: space-around;
+
+            .topup {
+                cursor: pointer;
+                color: #f26725;
+            }
+        }
     }
 
     ul.navigation {
         padding-left: 0;
-        margin: 30px 20px;
+        margin: 20px 20px;
 
         li {
             display: flex;
@@ -146,6 +158,6 @@
         display: flex;
         flex-direction: column;
         justify-content: space-between;
-        height: calc(100vh - 320px);
+        height: calc(100vh - 325px);
     }
 }

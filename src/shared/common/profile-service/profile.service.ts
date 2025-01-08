@@ -12,7 +12,9 @@ import {
     GetMemberInfoOutput,
     SubscriptionShortInfoOutput,
     LayoutType, MemberSettingsServiceProxy,
-    MemberSubscriptionServiceProxy, UpdateUserAffiliateCodeDto
+    MemberSubscriptionServiceProxy, UpdateUserAffiliateCodeDto,
+    MemberCreditServiceProxy,
+    ContactBalanceBaseDto
 } from '@shared/service-proxies/service-proxies';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -24,6 +26,8 @@ export class ProfileService {
     private accessCode: BehaviorSubject<string> = new BehaviorSubject<string>(
         this.appSession.user ? this.appSession.user.affiliateCode : null
     );
+    accessCode$: Observable<string> = this.accessCode.asObservable();
+    
     private loadMemberInfo: Subject<null> = new Subject<null>();
     memberInfo$: Observable<GetMemberInfoOutput> =
         this.loadMemberInfo.pipe(
@@ -36,7 +40,11 @@ export class ProfileService {
             refCount()
         );
 
-    accessCode$: Observable<string> = this.accessCode.asObservable();
+    memberCredits$: Observable<ContactBalanceBaseDto> = this.memberCreditService.getBalance().pipe(
+        publishReplay(),
+        refCount()
+    );
+
     defaultPhotos = {
         [LayoutType.Default]: AppConsts.imageUrls.noPhoto
     };
@@ -58,6 +66,7 @@ export class ProfileService {
         private appSession: AppSessionService,
         private subscriptionProxy: MemberSubscriptionServiceProxy,
         private memberSettingsService: MemberSettingsServiceProxy,
+        private memberCreditService: MemberCreditServiceProxy,
         private ls: AppLocalizationService
     ) {
         const eventMethod = window.addEventListener ? 'addEventListener' : 'attachEvent';

@@ -4,7 +4,6 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/
 /** Third party imports  */
 import { MatDialog } from '@angular/material/dialog';
 import { Observable, of } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
 import { NotifyService, SettingService } from 'abp-ng2-module';
 
 /** Application imports  */
@@ -14,14 +13,14 @@ import { AppAuthService } from 'shared/common/auth/app-auth.service';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { AppConsts } from '@shared/AppConsts';
-import { ContactServiceProxy, GetSourceContactInfoOutput } from '@shared/service-proxies/service-proxies';
+import { ContactBalanceBaseDto, ContactServiceProxy } from '@shared/service-proxies/service-proxies';
 import { ProfileService } from '@shared/common/profile-service/profile.service';
 import { AppService } from '@app/app.service';
-import { LayoutService } from '@app/shared/layout/layout.service';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { ClipboardService } from '@node_modules/ngx-clipboard';
 import { ConfigNavigation } from '@app/shared/common/config-navigation.interface';
 import { PortalMenuItemConfig } from './dto/portal-menu-item';
+import { CreditsTopupDialogComponent } from './credits-topup-dialog/credits-topup-dialog.component';
 
 @Component({
     selector: 'user-menu',
@@ -45,8 +44,10 @@ export class UserMenuComponent {
             message: this.ls.l('MaxLengthIs', AppConsts.maxAffiliateCodeLength)
         }
     ];
+
     profilePictureUrl$: Observable<string> = this.profileService.profilePictureUrl$;
     navigationItems;
+    memberCredits: ContactBalanceBaseDto;
 
     constructor(
         private dialog: MatDialog,
@@ -66,6 +67,10 @@ export class UserMenuComponent {
             if (config) {
                 this.navigationItems = this.prepareMenuNavigationSettings(config.navigation);
             }
+        });
+        this.profileService.memberCredits$.subscribe(res => {
+            this.memberCredits = res;
+            this.changeDetectorRef.detectChanges();
         });
     }
 
@@ -151,6 +156,16 @@ export class UserMenuComponent {
             data: {
                 showSubscriptions: true,
                 module: this.appService.getModuleSubscription().module
+            }
+        }).afterClosed().subscribe(() => { });
+        event.stopPropagation();
+    }
+
+    openCreditsTopUpDialog(event) {
+        this.dialog.open(CreditsTopupDialogComponent, {
+            width: '500px',
+            data: {
+                rate: this.memberCredits.rate
             }
         }).afterClosed().subscribe(() => { });
         event.stopPropagation();
