@@ -4,7 +4,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/
 /** Third party imports  */
 import { MatDialog } from '@angular/material/dialog';
 import { Observable, of } from 'rxjs';
-import { NotifyService, SettingService } from 'abp-ng2-module';
+import { FeatureCheckerService, NotifyService, SettingService } from 'abp-ng2-module';
 
 /** Application imports  */
 import { PaymentWizardComponent } from '@app/shared/common/payment-wizard/payment-wizard.component';
@@ -21,6 +21,7 @@ import { ClipboardService } from '@node_modules/ngx-clipboard';
 import { ConfigNavigation } from '@app/shared/common/config-navigation.interface';
 import { PortalMenuItemConfig } from './dto/portal-menu-item';
 import { CreditsTopupDialogComponent } from './credits-topup-dialog/credits-topup-dialog.component';
+import { AppFeatures } from '@root/shared/AppFeatures';
 
 @Component({
     selector: 'user-menu',
@@ -47,6 +48,7 @@ export class UserMenuComponent {
 
     profilePictureUrl$: Observable<string> = this.profileService.profilePictureUrl$;
     navigationItems;
+    hasCreditsFeature: boolean = this.feature.isEnabled(AppFeatures.CRMContactCredits);
     memberCredits: ContactBalanceBaseDto;
 
     constructor(
@@ -58,6 +60,7 @@ export class UserMenuComponent {
         private clipboardService: ClipboardService,
         private notifyService: NotifyService,
         private setting: SettingService,
+        private feature: FeatureCheckerService,
         public authService: AppAuthService,
         public ls: AppLocalizationService,
         public appService: AppService,
@@ -68,10 +71,12 @@ export class UserMenuComponent {
                 this.navigationItems = this.prepareMenuNavigationSettings(config.navigation);
             }
         });
-        this.profileService.memberCredits$.subscribe(res => {
-            this.memberCredits = res;
-            this.changeDetectorRef.detectChanges();
-        });
+        if (this.hasCreditsFeature) {
+            this.profileService.memberCredits$.subscribe(res => {
+                this.memberCredits = res;
+                this.changeDetectorRef.detectChanges();
+            });
+        }
     }
 
     private checkMenuItemPermission(item): boolean {

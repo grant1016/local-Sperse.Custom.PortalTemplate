@@ -15956,6 +15956,68 @@ export class CreditBalanceServiceProxy {
     }
 
     /**
+     * @return Success
+     */
+    getContactBalanceHistory(contactId: number): Observable<CreditBalanceHistoryInfo[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/CreditBalance/GetContactBalanceHistory?";
+        if (contactId === undefined || contactId === null)
+            throw new Error("The parameter 'contactId' must be defined and cannot be null.");
+        else
+            url_ += "contactId=" + encodeURIComponent("" + contactId) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json;odata.metadata=minimal;odata.streaming=true"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetContactBalanceHistory(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetContactBalanceHistory(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<CreditBalanceHistoryInfo[]>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<CreditBalanceHistoryInfo[]>;
+        }));
+    }
+
+    protected processGetContactBalanceHistory(response: HttpResponseBase): Observable<CreditBalanceHistoryInfo[]> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(CreditBalanceHistoryInfo.fromJS(item));
+            }
+            else {
+                result200 = <any>null;
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<CreditBalanceHistoryInfo[]>(null as any);
+    }
+
+    /**
      * @param maxResultCount (optional) 
      * @param skipCount (optional) 
      * @return Success
@@ -72808,6 +72870,66 @@ export interface ICreditBalanceHistoryDto {
     used: number;
     remaining: number;
     description: string | undefined;
+}
+
+export class CreditBalanceHistoryInfo implements ICreditBalanceHistoryInfo {
+    amount!: number;
+    remaining!: number;
+    description!: string | undefined;
+    dateTime!: moment.Moment;
+    userId!: number | undefined;
+    userName!: string | undefined;
+    userPhotoPublicId!: string | undefined;
+
+    constructor(data?: ICreditBalanceHistoryInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.amount = _data["amount"];
+            this.remaining = _data["remaining"];
+            this.description = _data["description"];
+            this.dateTime = _data["dateTime"] ? moment(_data["dateTime"].toString()) : <any>undefined;
+            this.userId = _data["userId"];
+            this.userName = _data["userName"];
+            this.userPhotoPublicId = _data["userPhotoPublicId"];
+        }
+    }
+
+    static fromJS(data: any): CreditBalanceHistoryInfo {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreditBalanceHistoryInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["amount"] = this.amount;
+        data["remaining"] = this.remaining;
+        data["description"] = this.description;
+        data["dateTime"] = this.dateTime ? this.dateTime.toISOString() : <any>undefined;
+        data["userId"] = this.userId;
+        data["userName"] = this.userName;
+        data["userPhotoPublicId"] = this.userPhotoPublicId;
+        return data;
+    }
+}
+
+export interface ICreditBalanceHistoryInfo {
+    amount: number;
+    remaining: number;
+    description: string | undefined;
+    dateTime: moment.Moment;
+    userId: number | undefined;
+    userName: string | undefined;
+    userPhotoPublicId: string | undefined;
 }
 
 export class CreditBureauReportDto implements ICreditBureauReportDto {
