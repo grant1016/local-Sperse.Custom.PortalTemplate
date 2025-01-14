@@ -22,10 +22,35 @@
         justify-content: space-between;
         margin: 10px 0;
     }
-    .save {
+
+    .buttons {
         margin-top: 15px;
-        width: 100%;
-        background-color: #f26725;
-        border-color: #f26725;
+        display: flex;
+        gap: 15px;
+        
+        .button {
+            width: 100%;
+        }
+
+        .stripe-button {
+            background-color: #635fcc;
+            border-color: #635fcc;
+            height: 45px;
+
+            &:focus {
+                box-shadow: 0 0 0 .2rem rgba(99, 95, 204,.5);
+            }
+
+            img {
+                height: 20px;
+            }
+        }
+
+        .no-payment-systems {
+            width: 100%;
+            text-align: center;
+            color: #f26725;
+            font-size: 20px;
+        }
     }
 }

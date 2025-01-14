@@ -170,7 +170,8 @@ export class UserMenuComponent {
         this.dialog.open(CreditsTopupDialogComponent, {
             width: '500px',
             data: {
-                rate: this.memberCredits.rate
+                rate: this.memberCredits.rate,
+                currencyId: this.memberCredits.currencyId
             }
         }).afterClosed().subscribe(() => { });
         event.stopPropagation();

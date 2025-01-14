@@ -2,7 +2,7 @@
 import { Injectable } from '@angular/core';
 
 /** Third party imports */
-import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { BehaviorSubject, Observable, Subject, forkJoin } from 'rxjs';
 import { map, publishReplay, refCount, switchMap } from 'rxjs/operators';
 import * as moment from 'moment-timezone';
 
@@ -14,7 +14,9 @@ import {
     LayoutType, MemberSettingsServiceProxy,
     MemberSubscriptionServiceProxy, UpdateUserAffiliateCodeDto,
     MemberCreditServiceProxy,
-    ContactBalanceBaseDto
+    ContactBalanceBaseDto,
+    PaymentServiceProxy,
+    PaypalSettingsInfo
 } from '@shared/service-proxies/service-proxies';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -44,6 +46,18 @@ export class ProfileService {
         publishReplay(),
         refCount()
     );
+    availablePaymentMethods$: Observable<{ isStripeEnabled: boolean, paypalInfo: PaypalSettingsInfo  }> = forkJoin(
+        [this.paymentsService.isStripeEnabled(), this.paymentsService.isPaypalEnabled()]
+    ).pipe(
+        map(([isStripeEnabled, paypalInfo]) => {
+            return {
+                isStripeEnabled: isStripeEnabled,
+                paypalInfo: paypalInfo
+            }
+        }),
+        publishReplay(),
+        refCount()
+    );
 
     defaultPhotos = {
         [LayoutType.Default]: AppConsts.imageUrls.noPhoto
@@ -67,6 +81,7 @@ export class ProfileService {
         private subscriptionProxy: MemberSubscriptionServiceProxy,
         private memberSettingsService: MemberSettingsServiceProxy,
         private memberCreditService: MemberCreditServiceProxy,
+        private paymentsService: PaymentServiceProxy,
         private ls: AppLocalizationService
     ) {
         const eventMethod = window.addEventListener ? 'addEventListener' : 'attachEvent';

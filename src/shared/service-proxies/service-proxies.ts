@@ -65559,6 +65559,7 @@ export class ContactBalanceBaseDto implements IContactBalanceBaseDto {
     balance!: number;
     tier!: string | undefined;
     rate!: number | undefined;
+    currencyId!: string | undefined;
     lastUpdated!: moment.Moment | undefined;
 
     constructor(data?: IContactBalanceBaseDto) {
@@ -65576,6 +65577,7 @@ export class ContactBalanceBaseDto implements IContactBalanceBaseDto {
             this.balance = _data["balance"];
             this.tier = _data["tier"];
             this.rate = _data["rate"];
+            this.currencyId = _data["currencyId"];
             this.lastUpdated = _data["lastUpdated"] ? moment(_data["lastUpdated"].toString()) : <any>undefined;
         }
     }
@@ -65593,6 +65595,7 @@ export class ContactBalanceBaseDto implements IContactBalanceBaseDto {
         data["balance"] = this.balance;
         data["tier"] = this.tier;
         data["rate"] = this.rate;
+        data["currencyId"] = this.currencyId;
         data["lastUpdated"] = this.lastUpdated ? this.lastUpdated.toISOString() : <any>undefined;
         return data;
     }
@@ -65603,6 +65606,7 @@ export interface IContactBalanceBaseDto {
     balance: number;
     tier: string | undefined;
     rate: number | undefined;
+    currencyId: string | undefined;
     lastUpdated: moment.Moment | undefined;
 }
 
@@ -65612,6 +65616,7 @@ export class ContactBalanceDto implements IContactBalanceDto {
     balance!: number;
     tier!: string | undefined;
     rate!: number | undefined;
+    currencyId!: string | undefined;
     lastUpdated!: moment.Moment | undefined;
 
     constructor(data?: IContactBalanceDto) {
@@ -65630,6 +65635,7 @@ export class ContactBalanceDto implements IContactBalanceDto {
             this.balance = _data["balance"];
             this.tier = _data["tier"];
             this.rate = _data["rate"];
+            this.currencyId = _data["currencyId"];
             this.lastUpdated = _data["lastUpdated"] ? moment(_data["lastUpdated"].toString()) : <any>undefined;
         }
     }
@@ -65648,6 +65654,7 @@ export class ContactBalanceDto implements IContactBalanceDto {
         data["balance"] = this.balance;
         data["tier"] = this.tier;
         data["rate"] = this.rate;
+        data["currencyId"] = this.currencyId;
         data["lastUpdated"] = this.lastUpdated ? this.lastUpdated.toISOString() : <any>undefined;
         return data;
     }
@@ -65659,6 +65666,7 @@ export interface IContactBalanceDto {
     balance: number;
     tier: string | undefined;
     rate: number | undefined;
+    currencyId: string | undefined;
     lastUpdated: moment.Moment | undefined;
 }
 
@@ -66478,6 +66486,7 @@ export class ContactInfoForMerge implements IContactInfoForMerge {
     bankCode!: string | undefined;
     bankCodeDate!: moment.Moment;
     orderCount!: number;
+    creditsBalancePlan!: string | undefined;
 
     constructor(data?: IContactInfoForMerge) {
         if (data) {
@@ -66541,6 +66550,7 @@ export class ContactInfoForMerge implements IContactInfoForMerge {
             this.bankCode = _data["bankCode"];
             this.bankCodeDate = _data["bankCodeDate"] ? moment(_data["bankCodeDate"].toString()) : <any>undefined;
             this.orderCount = _data["orderCount"];
+            this.creditsBalancePlan = _data["creditsBalancePlan"];
         }
     }
 
@@ -66604,6 +66614,7 @@ export class ContactInfoForMerge implements IContactInfoForMerge {
         data["bankCode"] = this.bankCode;
         data["bankCodeDate"] = this.bankCodeDate ? this.bankCodeDate.toISOString() : <any>undefined;
         data["orderCount"] = this.orderCount;
+        data["creditsBalancePlan"] = this.creditsBalancePlan;
         return data;
     }
 }
@@ -66636,6 +66647,7 @@ export interface IContactInfoForMerge {
     bankCode: string | undefined;
     bankCodeDate: moment.Moment;
     orderCount: number;
+    creditsBalancePlan: string | undefined;
 }
 
 export class ContactLastModificationInfoDto implements IContactLastModificationInfoDto {
@@ -97591,6 +97603,7 @@ export enum PreferredProperties {
     ContactDate = 2,
     BANKCode = 4,
     StripeCustomerId = 8,
+    CreditsBalancePlan = 16,
 }
 
 export class PricingTableFeatureDefinition implements IPricingTableFeatureDefinition {

@@ -37,6 +37,7 @@ import { CreditsTopupDialogComponent } from './user-menu/credits-topup-dialog/cr
 import { UserPhotoModule } from '@app/shared/common/user-photo/user-photo.module';
 import { InplaceEditModule } from '@app/shared/common/inplace-edit/inplace-edit.module';
 import { AccountSelectorModule } from './account-selector/account-selector.module';
+import { PaypalModule } from '@root/shared/common/paypal/paypal.module';
 
 /** @todo Used for chart bar and dropdown. Reimplement in future */
 import 'assets/metronic/src/js/framework/base/util.js';
@@ -87,7 +88,8 @@ let COMPONENTS = [
         TableModule,
         PaginatorModule,
         UserManagementModule,
-        AccountSelectorModule
+        AccountSelectorModule,
+        PaypalModule
     ],
     declarations: COMPONENTS,
     exports: COMPONENTS,
