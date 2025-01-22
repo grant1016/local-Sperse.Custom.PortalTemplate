@@ -15890,6 +15890,308 @@ export class CouponServiceProxy {
 }
 
 @Injectable()
+export class CreditBalanceServiceProxy {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : "";
+    }
+
+    /**
+     * @return Success
+     */
+    getContactBalance(contactId: number): Observable<ContactBalanceBaseDto> {
+        let url_ = this.baseUrl + "/api/services/CRM/CreditBalance/GetContactBalance?";
+        if (contactId === undefined || contactId === null)
+            throw new Error("The parameter 'contactId' must be defined and cannot be null.");
+        else
+            url_ += "contactId=" + encodeURIComponent("" + contactId) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json;odata.metadata=minimal;odata.streaming=true"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetContactBalance(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetContactBalance(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<ContactBalanceBaseDto>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<ContactBalanceBaseDto>;
+        }));
+    }
+
+    protected processGetContactBalance(response: HttpResponseBase): Observable<ContactBalanceBaseDto> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = ContactBalanceBaseDto.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<ContactBalanceBaseDto>(null as any);
+    }
+
+    /**
+     * @return Success
+     */
+    getContactBalanceHistory(contactId: number): Observable<CreditBalanceHistoryInfo[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/CreditBalance/GetContactBalanceHistory?";
+        if (contactId === undefined || contactId === null)
+            throw new Error("The parameter 'contactId' must be defined and cannot be null.");
+        else
+            url_ += "contactId=" + encodeURIComponent("" + contactId) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json;odata.metadata=minimal;odata.streaming=true"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetContactBalanceHistory(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetContactBalanceHistory(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<CreditBalanceHistoryInfo[]>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<CreditBalanceHistoryInfo[]>;
+        }));
+    }
+
+    protected processGetContactBalanceHistory(response: HttpResponseBase): Observable<CreditBalanceHistoryInfo[]> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(CreditBalanceHistoryInfo.fromJS(item));
+            }
+            else {
+                result200 = <any>null;
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<CreditBalanceHistoryInfo[]>(null as any);
+    }
+
+    /**
+     * @param maxResultCount (optional) 
+     * @param skipCount (optional) 
+     * @return Success
+     */
+    getBalances(maxResultCount: number | undefined, skipCount: number | undefined): Observable<PagedResultDtoOfContactBalanceDto> {
+        let url_ = this.baseUrl + "/api/services/CRM/CreditBalance/GetBalances?";
+        if (maxResultCount === null)
+            throw new Error("The parameter 'maxResultCount' cannot be null.");
+        else if (maxResultCount !== undefined)
+            url_ += "MaxResultCount=" + encodeURIComponent("" + maxResultCount) + "&";
+        if (skipCount === null)
+            throw new Error("The parameter 'skipCount' cannot be null.");
+        else if (skipCount !== undefined)
+            url_ += "SkipCount=" + encodeURIComponent("" + skipCount) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json;odata.metadata=minimal;odata.streaming=true"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetBalances(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetBalances(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<PagedResultDtoOfContactBalanceDto>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<PagedResultDtoOfContactBalanceDto>;
+        }));
+    }
+
+    protected processGetBalances(response: HttpResponseBase): Observable<PagedResultDtoOfContactBalanceDto> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = PagedResultDtoOfContactBalanceDto.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<PagedResultDtoOfContactBalanceDto>(null as any);
+    }
+
+    /**
+     * @param body (optional) 
+     * @return Success
+     */
+    topUp(body: ChangeCreditInput | undefined): Observable<ChangeCreditOutput> {
+        let url_ = this.baseUrl + "/api/services/CRM/CreditBalance/TopUp";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json;odata.metadata=minimal;odata.streaming=true",
+                "Accept": "application/json;odata.metadata=minimal;odata.streaming=true"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processTopUp(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processTopUp(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<ChangeCreditOutput>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<ChangeCreditOutput>;
+        }));
+    }
+
+    protected processTopUp(response: HttpResponseBase): Observable<ChangeCreditOutput> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = ChangeCreditOutput.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<ChangeCreditOutput>(null as any);
+    }
+
+    /**
+     * @param body (optional) 
+     * @return Success
+     */
+    deduct(body: ChangeCreditInput | undefined): Observable<ChangeCreditOutput> {
+        let url_ = this.baseUrl + "/api/services/CRM/CreditBalance/Deduct";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json;odata.metadata=minimal;odata.streaming=true",
+                "Accept": "application/json;odata.metadata=minimal;odata.streaming=true"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processDeduct(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processDeduct(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<ChangeCreditOutput>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<ChangeCreditOutput>;
+        }));
+    }
+
+    protected processDeduct(response: HttpResponseBase): Observable<ChangeCreditOutput> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = ChangeCreditOutput.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<ChangeCreditOutput>(null as any);
+    }
+}
+
+@Injectable()
 export class CreditReportServiceProxy {
     private http: HttpClient;
     private baseUrl: string;
@@ -23946,6 +24248,57 @@ export class HostSettingsServiceProxy {
     /**
      * @return Success
      */
+    getTrackingToolsSettings(): Observable<TrackingToolsSettingsDto> {
+        let url_ = this.baseUrl + "/api/services/Platform/HostSettings/GetTrackingToolsSettings";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json;odata.metadata=minimal;odata.streaming=true"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetTrackingToolsSettings(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetTrackingToolsSettings(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<TrackingToolsSettingsDto>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<TrackingToolsSettingsDto>;
+        }));
+    }
+
+    protected processGetTrackingToolsSettings(response: HttpResponseBase): Observable<TrackingToolsSettingsDto> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = TrackingToolsSettingsDto.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<TrackingToolsSettingsDto>(null as any);
+    }
+
+    /**
+     * @return Success
+     */
     getSecuritySettings(): Observable<SecuritySettingsEditDto> {
         let url_ = this.baseUrl + "/api/services/Platform/HostSettings/GetSecuritySettings";
         url_ = url_.replace(/[?&]$/, "");
@@ -24491,6 +24844,58 @@ export class HostSettingsServiceProxy {
     }
 
     protected processUpdateAppearanceSettings(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(null as any);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(null as any);
+    }
+
+    /**
+     * @param body (optional) 
+     * @return Success
+     */
+    updateTrackingToolsSettings(body: TrackingToolsSettingsDto | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/Platform/HostSettings/UpdateTrackingToolsSettings";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json;odata.metadata=minimal;odata.streaming=true",
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdateTrackingToolsSettings(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUpdateTrackingToolsSettings(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<void>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<void>;
+        }));
+    }
+
+    protected processUpdateTrackingToolsSettings(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -29883,6 +30288,183 @@ export class MemberServiceProxy {
             }));
         }
         return _observableOf<void>(null as any);
+    }
+}
+
+@Injectable()
+export class MemberCreditServiceProxy {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : "";
+    }
+
+    /**
+     * @return Success
+     */
+    getBalance(): Observable<ContactBalanceBaseDto> {
+        let url_ = this.baseUrl + "/api/services/CRM/MemberCredit/GetBalance";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json;odata.metadata=minimal;odata.streaming=true"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetBalance(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetBalance(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<ContactBalanceBaseDto>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<ContactBalanceBaseDto>;
+        }));
+    }
+
+    protected processGetBalance(response: HttpResponseBase): Observable<ContactBalanceBaseDto> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = ContactBalanceBaseDto.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<ContactBalanceBaseDto>(null as any);
+    }
+
+    /**
+     * @return Success
+     */
+    getBalanceHistory(): Observable<CreditBalanceHistoryDto[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/MemberCredit/GetBalanceHistory";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json;odata.metadata=minimal;odata.streaming=true"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetBalanceHistory(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetBalanceHistory(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<CreditBalanceHistoryDto[]>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<CreditBalanceHistoryDto[]>;
+        }));
+    }
+
+    protected processGetBalanceHistory(response: HttpResponseBase): Observable<CreditBalanceHistoryDto[]> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(CreditBalanceHistoryDto.fromJS(item));
+            }
+            else {
+                result200 = <any>null;
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<CreditBalanceHistoryDto[]>(null as any);
+    }
+
+    /**
+     * @param body (optional) 
+     * @return Success
+     */
+    prepareTopUpPaymentData(body: PaymentDataInput | undefined): Observable<PaymentDataOutput> {
+        let url_ = this.baseUrl + "/api/services/CRM/MemberCredit/PrepareTopUpPaymentData";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json;odata.metadata=minimal;odata.streaming=true",
+                "Accept": "application/json;odata.metadata=minimal;odata.streaming=true"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processPrepareTopUpPaymentData(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processPrepareTopUpPaymentData(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<PaymentDataOutput>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<PaymentDataOutput>;
+        }));
+    }
+
+    protected processPrepareTopUpPaymentData(response: HttpResponseBase): Observable<PaymentDataOutput> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = PaymentDataOutput.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<PaymentDataOutput>(null as any);
     }
 }
 
@@ -47988,6 +48570,58 @@ export class TenantPaymentSettingsServiceProxy {
     }
 
     /**
+     * @param settingId (optional) 
+     * @return Success
+     */
+    deleteStripeAccount(settingId: number | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/TenantPaymentSettings/DeleteStripeAccount?";
+        if (settingId === null)
+            throw new Error("The parameter 'settingId' cannot be null.");
+        else if (settingId !== undefined)
+            url_ += "settingId=" + encodeURIComponent("" + settingId) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+            })
+        };
+
+        return this.http.request("delete", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processDeleteStripeAccount(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processDeleteStripeAccount(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<void>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<void>;
+        }));
+    }
+
+    protected processDeleteStripeAccount(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(null as any);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(null as any);
+    }
+
+    /**
      * @param includeAdvisorDetails (optional) 
      * @return Success
      */
@@ -49756,6 +50390,57 @@ export class TenantSettingsServiceProxy {
     /**
      * @return Success
      */
+    getTrackingToolsSettings(): Observable<TrackingToolsSettingsDto> {
+        let url_ = this.baseUrl + "/api/services/Platform/TenantSettings/GetTrackingToolsSettings";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json;odata.metadata=minimal;odata.streaming=true"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetTrackingToolsSettings(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetTrackingToolsSettings(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<TrackingToolsSettingsDto>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<TrackingToolsSettingsDto>;
+        }));
+    }
+
+    protected processGetTrackingToolsSettings(response: HttpResponseBase): Observable<TrackingToolsSettingsDto> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = TrackingToolsSettingsDto.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<TrackingToolsSettingsDto>(null as any);
+    }
+
+    /**
+     * @return Success
+     */
     getSecuritySettings(): Observable<SecuritySettingsEditDto> {
         let url_ = this.baseUrl + "/api/services/Platform/TenantSettings/GetSecuritySettings";
         url_ = url_.replace(/[?&]$/, "");
@@ -50301,6 +50986,58 @@ export class TenantSettingsServiceProxy {
     }
 
     protected processUpdateAppearanceSettings(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(null as any);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(null as any);
+    }
+
+    /**
+     * @param body (optional) 
+     * @return Success
+     */
+    updateTrackingToolsSettings(body: TrackingToolsSettingsDto | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/Platform/TenantSettings/UpdateTrackingToolsSettings";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json;odata.metadata=minimal;odata.streaming=true",
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdateTrackingToolsSettings(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUpdateTrackingToolsSettings(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<void>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<void>;
+        }));
+    }
+
+    protected processUpdateTrackingToolsSettings(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -59113,78 +59850,10 @@ export interface IApiKeyInfo {
     paths: string | undefined;
 }
 
-export class AppearanceBaseSettingsDto implements IAppearanceBaseSettingsDto {
-    navBackground!: string | undefined;
-    navTextColor!: string | undefined;
-    leftsideMenuColor!: string | undefined;
-    fontName!: string | undefined;
-    tabularFont!: string | undefined;
-    buttonColor!: string | undefined;
-    buttonTextColor!: string | undefined;
-    buttonHighlightedColor!: string | undefined;
-    borderRadius!: string | undefined;
-
-    constructor(data?: IAppearanceBaseSettingsDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.navBackground = _data["navBackground"];
-            this.navTextColor = _data["navTextColor"];
-            this.leftsideMenuColor = _data["leftsideMenuColor"];
-            this.fontName = _data["fontName"];
-            this.tabularFont = _data["tabularFont"];
-            this.buttonColor = _data["buttonColor"];
-            this.buttonTextColor = _data["buttonTextColor"];
-            this.buttonHighlightedColor = _data["buttonHighlightedColor"];
-            this.borderRadius = _data["borderRadius"];
-        }
-    }
-
-    static fromJS(data: any): AppearanceBaseSettingsDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new AppearanceBaseSettingsDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["navBackground"] = this.navBackground;
-        data["navTextColor"] = this.navTextColor;
-        data["leftsideMenuColor"] = this.leftsideMenuColor;
-        data["fontName"] = this.fontName;
-        data["tabularFont"] = this.tabularFont;
-        data["buttonColor"] = this.buttonColor;
-        data["buttonTextColor"] = this.buttonTextColor;
-        data["buttonHighlightedColor"] = this.buttonHighlightedColor;
-        data["borderRadius"] = this.borderRadius;
-        return data;
-    }
-}
-
-export interface IAppearanceBaseSettingsDto {
-    navBackground: string | undefined;
-    navTextColor: string | undefined;
-    leftsideMenuColor: string | undefined;
-    fontName: string | undefined;
-    tabularFont: string | undefined;
-    buttonColor: string | undefined;
-    buttonTextColor: string | undefined;
-    buttonHighlightedColor: string | undefined;
-    borderRadius: string | undefined;
-}
-
 export class AppearanceSettingsEditDto implements IAppearanceSettingsEditDto {
     navPosition!: NavPosition;
     welcomePageAppearance!: string | undefined;
-    portalSettings!: AppearanceBaseSettingsDto | undefined;
+    portalSettings!: PortalAppearanceSettingsEditDto | undefined;
     navBackground!: string | undefined;
     navTextColor!: string | undefined;
     leftsideMenuColor!: string | undefined;
@@ -59208,7 +59877,7 @@ export class AppearanceSettingsEditDto implements IAppearanceSettingsEditDto {
         if (_data) {
             this.navPosition = _data["navPosition"];
             this.welcomePageAppearance = _data["welcomePageAppearance"];
-            this.portalSettings = _data["portalSettings"] ? AppearanceBaseSettingsDto.fromJS(_data["portalSettings"]) : <any>undefined;
+            this.portalSettings = _data["portalSettings"] ? PortalAppearanceSettingsEditDto.fromJS(_data["portalSettings"]) : <any>undefined;
             this.navBackground = _data["navBackground"];
             this.navTextColor = _data["navTextColor"];
             this.leftsideMenuColor = _data["leftsideMenuColor"];
@@ -59249,7 +59918,7 @@ export class AppearanceSettingsEditDto implements IAppearanceSettingsEditDto {
 export interface IAppearanceSettingsEditDto {
     navPosition: NavPosition;
     welcomePageAppearance: string | undefined;
-    portalSettings: AppearanceBaseSettingsDto | undefined;
+    portalSettings: PortalAppearanceSettingsEditDto | undefined;
     navBackground: string | undefined;
     navTextColor: string | undefined;
     leftsideMenuColor: string | undefined;
@@ -63261,6 +63930,86 @@ export interface IChangeCategoryForRulesInput {
     reclassifyTransactions: boolean;
 }
 
+export class ChangeCreditInput implements IChangeCreditInput {
+    contactId!: number;
+    amount!: number;
+    description!: string | undefined;
+
+    constructor(data?: IChangeCreditInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.contactId = _data["contactId"];
+            this.amount = _data["amount"];
+            this.description = _data["description"];
+        }
+    }
+
+    static fromJS(data: any): ChangeCreditInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new ChangeCreditInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["contactId"] = this.contactId;
+        data["amount"] = this.amount;
+        data["description"] = this.description;
+        return data;
+    }
+}
+
+export interface IChangeCreditInput {
+    contactId: number;
+    amount: number;
+    description: string | undefined;
+}
+
+export class ChangeCreditOutput implements IChangeCreditOutput {
+    newBalance!: number;
+
+    constructor(data?: IChangeCreditOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.newBalance = _data["newBalance"];
+        }
+    }
+
+    static fromJS(data: any): ChangeCreditOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new ChangeCreditOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["newBalance"] = this.newBalance;
+        return data;
+    }
+}
+
+export interface IChangeCreditOutput {
+    newBalance: number;
+}
+
 export class ChangePasswordInput implements IChangePasswordInput {
     currentPassword!: string;
     newPassword!: string;
@@ -64805,6 +65554,122 @@ export interface IContactAgentInput {
     callCenter: string | undefined;
 }
 
+export class ContactBalanceBaseDto implements IContactBalanceBaseDto {
+    contactId!: number;
+    balance!: number;
+    tier!: string | undefined;
+    rate!: number | undefined;
+    currencyId!: string | undefined;
+    lastUpdated!: moment.Moment | undefined;
+
+    constructor(data?: IContactBalanceBaseDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.contactId = _data["contactId"];
+            this.balance = _data["balance"];
+            this.tier = _data["tier"];
+            this.rate = _data["rate"];
+            this.currencyId = _data["currencyId"];
+            this.lastUpdated = _data["lastUpdated"] ? moment(_data["lastUpdated"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): ContactBalanceBaseDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new ContactBalanceBaseDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["contactId"] = this.contactId;
+        data["balance"] = this.balance;
+        data["tier"] = this.tier;
+        data["rate"] = this.rate;
+        data["currencyId"] = this.currencyId;
+        data["lastUpdated"] = this.lastUpdated ? this.lastUpdated.toISOString() : <any>undefined;
+        return data;
+    }
+}
+
+export interface IContactBalanceBaseDto {
+    contactId: number;
+    balance: number;
+    tier: string | undefined;
+    rate: number | undefined;
+    currencyId: string | undefined;
+    lastUpdated: moment.Moment | undefined;
+}
+
+export class ContactBalanceDto implements IContactBalanceDto {
+    fullName!: string | undefined;
+    contactId!: number;
+    balance!: number;
+    tier!: string | undefined;
+    rate!: number | undefined;
+    currencyId!: string | undefined;
+    lastUpdated!: moment.Moment | undefined;
+
+    constructor(data?: IContactBalanceDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.fullName = _data["fullName"];
+            this.contactId = _data["contactId"];
+            this.balance = _data["balance"];
+            this.tier = _data["tier"];
+            this.rate = _data["rate"];
+            this.currencyId = _data["currencyId"];
+            this.lastUpdated = _data["lastUpdated"] ? moment(_data["lastUpdated"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): ContactBalanceDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new ContactBalanceDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["fullName"] = this.fullName;
+        data["contactId"] = this.contactId;
+        data["balance"] = this.balance;
+        data["tier"] = this.tier;
+        data["rate"] = this.rate;
+        data["currencyId"] = this.currencyId;
+        data["lastUpdated"] = this.lastUpdated ? this.lastUpdated.toISOString() : <any>undefined;
+        return data;
+    }
+}
+
+export interface IContactBalanceDto {
+    fullName: string | undefined;
+    contactId: number;
+    balance: number;
+    tier: string | undefined;
+    rate: number | undefined;
+    currencyId: string | undefined;
+    lastUpdated: moment.Moment | undefined;
+}
+
 export class ContactDataDto implements IContactDataDto {
     id!: number;
     typeId!: string | undefined;
@@ -65429,6 +66294,8 @@ export class ContactInfoDto implements IContactInfoDto {
     subContactsCount!: number;
     communicationPreferencePublicId!: string;
     isSubscribedToEmails!: boolean;
+    creditsBalance!: number | undefined;
+    creditsTier!: string | undefined;
 
     constructor(data?: IContactInfoDto) {
         if (data) {
@@ -65488,6 +66355,8 @@ export class ContactInfoDto implements IContactInfoDto {
             this.subContactsCount = _data["subContactsCount"];
             this.communicationPreferencePublicId = _data["communicationPreferencePublicId"];
             this.isSubscribedToEmails = _data["isSubscribedToEmails"];
+            this.creditsBalance = _data["creditsBalance"];
+            this.creditsTier = _data["creditsTier"];
         }
     }
 
@@ -65547,6 +66416,8 @@ export class ContactInfoDto implements IContactInfoDto {
         data["subContactsCount"] = this.subContactsCount;
         data["communicationPreferencePublicId"] = this.communicationPreferencePublicId;
         data["isSubscribedToEmails"] = this.isSubscribedToEmails;
+        data["creditsBalance"] = this.creditsBalance;
+        data["creditsTier"] = this.creditsTier;
         return data;
     }
 }
@@ -65583,6 +66454,8 @@ export interface IContactInfoDto {
     subContactsCount: number;
     communicationPreferencePublicId: string;
     isSubscribedToEmails: boolean;
+    creditsBalance: number | undefined;
+    creditsTier: string | undefined;
 }
 
 export class ContactInfoForMerge implements IContactInfoForMerge {
@@ -65613,6 +66486,7 @@ export class ContactInfoForMerge implements IContactInfoForMerge {
     bankCode!: string | undefined;
     bankCodeDate!: moment.Moment;
     orderCount!: number;
+    creditsBalancePlan!: string | undefined;
 
     constructor(data?: IContactInfoForMerge) {
         if (data) {
@@ -65676,6 +66550,7 @@ export class ContactInfoForMerge implements IContactInfoForMerge {
             this.bankCode = _data["bankCode"];
             this.bankCodeDate = _data["bankCodeDate"] ? moment(_data["bankCodeDate"].toString()) : <any>undefined;
             this.orderCount = _data["orderCount"];
+            this.creditsBalancePlan = _data["creditsBalancePlan"];
         }
     }
 
@@ -65739,6 +66614,7 @@ export class ContactInfoForMerge implements IContactInfoForMerge {
         data["bankCode"] = this.bankCode;
         data["bankCodeDate"] = this.bankCodeDate ? this.bankCodeDate.toISOString() : <any>undefined;
         data["orderCount"] = this.orderCount;
+        data["creditsBalancePlan"] = this.creditsBalancePlan;
         return data;
     }
 }
@@ -65771,6 +66647,7 @@ export interface IContactInfoForMerge {
     bankCode: string | undefined;
     bankCodeDate: moment.Moment;
     orderCount: number;
+    creditsBalancePlan: string | undefined;
 }
 
 export class ContactLastModificationInfoDto implements IContactLastModificationInfoDto {
@@ -71085,6 +71962,7 @@ export class CreateProductInput implements ICreateProductInput {
     stripeXref!: string | undefined;
     paypalXref!: string | undefined;
     downgradeProductId!: number | undefined;
+    creditsTopUpProductId!: number | undefined;
     isPublished!: boolean;
     publicName!: string | undefined;
     publishDate!: moment.Moment | undefined;
@@ -71133,6 +72011,7 @@ export class CreateProductInput implements ICreateProductInput {
             this.stripeXref = _data["stripeXref"];
             this.paypalXref = _data["paypalXref"];
             this.downgradeProductId = _data["downgradeProductId"];
+            this.creditsTopUpProductId = _data["creditsTopUpProductId"];
             this.isPublished = _data["isPublished"];
             this.publicName = _data["publicName"];
             this.publishDate = _data["publishDate"] ? moment(_data["publishDate"].toString()) : <any>undefined;
@@ -71201,6 +72080,7 @@ export class CreateProductInput implements ICreateProductInput {
         data["stripeXref"] = this.stripeXref;
         data["paypalXref"] = this.paypalXref;
         data["downgradeProductId"] = this.downgradeProductId;
+        data["creditsTopUpProductId"] = this.creditsTopUpProductId;
         data["isPublished"] = this.isPublished;
         data["publicName"] = this.publicName;
         data["publishDate"] = this.publishDate ? this.publishDate.toISOString() : <any>undefined;
@@ -71262,6 +72142,7 @@ export interface ICreateProductInput {
     stripeXref: string | undefined;
     paypalXref: string | undefined;
     downgradeProductId: number | undefined;
+    creditsTopUpProductId: number | undefined;
     isPublished: boolean;
     publicName: string | undefined;
     publishDate: moment.Moment | undefined;
@@ -71953,6 +72834,114 @@ export class CreateUserForContactOutput implements ICreateUserForContactOutput {
 export interface ICreateUserForContactOutput {
     userId: number;
     autoLoginLink: string | undefined;
+}
+
+export class CreditBalanceHistoryDto implements ICreditBalanceHistoryDto {
+    date!: moment.Moment;
+    used!: number;
+    remaining!: number;
+    description!: string | undefined;
+
+    constructor(data?: ICreditBalanceHistoryDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.date = _data["date"] ? moment(_data["date"].toString()) : <any>undefined;
+            this.used = _data["used"];
+            this.remaining = _data["remaining"];
+            this.description = _data["description"];
+        }
+    }
+
+    static fromJS(data: any): CreditBalanceHistoryDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreditBalanceHistoryDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["date"] = this.date ? this.date.toISOString() : <any>undefined;
+        data["used"] = this.used;
+        data["remaining"] = this.remaining;
+        data["description"] = this.description;
+        return data;
+    }
+}
+
+export interface ICreditBalanceHistoryDto {
+    date: moment.Moment;
+    used: number;
+    remaining: number;
+    description: string | undefined;
+}
+
+export class CreditBalanceHistoryInfo implements ICreditBalanceHistoryInfo {
+    amount!: number;
+    remaining!: number;
+    description!: string | undefined;
+    dateTime!: moment.Moment;
+    userId!: number | undefined;
+    userName!: string | undefined;
+    userPhotoPublicId!: string | undefined;
+
+    constructor(data?: ICreditBalanceHistoryInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.amount = _data["amount"];
+            this.remaining = _data["remaining"];
+            this.description = _data["description"];
+            this.dateTime = _data["dateTime"] ? moment(_data["dateTime"].toString()) : <any>undefined;
+            this.userId = _data["userId"];
+            this.userName = _data["userName"];
+            this.userPhotoPublicId = _data["userPhotoPublicId"];
+        }
+    }
+
+    static fromJS(data: any): CreditBalanceHistoryInfo {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreditBalanceHistoryInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["amount"] = this.amount;
+        data["remaining"] = this.remaining;
+        data["description"] = this.description;
+        data["dateTime"] = this.dateTime ? this.dateTime.toISOString() : <any>undefined;
+        data["userId"] = this.userId;
+        data["userName"] = this.userName;
+        data["userPhotoPublicId"] = this.userPhotoPublicId;
+        return data;
+    }
+}
+
+export interface ICreditBalanceHistoryInfo {
+    amount: number;
+    remaining: number;
+    description: string | undefined;
+    dateTime: moment.Moment;
+    userId: number | undefined;
+    userName: string | undefined;
+    userPhotoPublicId: string | undefined;
 }
 
 export class CreditBureauReportDto implements ICreditBureauReportDto {
@@ -80492,6 +81481,7 @@ export interface IGetPlatformAppUrlOutput {
 export class GetProductInfoOutput implements IGetProductInfoOutput {
     hasExternalReference!: boolean;
     hasIncompletedInvoices!: boolean;
+    creditsTopUpProductId!: number | undefined;
     isPublished!: boolean;
     publicName!: string | undefined;
     publishDate!: moment.Moment | undefined;
@@ -80545,6 +81535,7 @@ export class GetProductInfoOutput implements IGetProductInfoOutput {
         if (_data) {
             this.hasExternalReference = _data["hasExternalReference"];
             this.hasIncompletedInvoices = _data["hasIncompletedInvoices"];
+            this.creditsTopUpProductId = _data["creditsTopUpProductId"];
             this.isPublished = _data["isPublished"];
             this.publicName = _data["publicName"];
             this.publishDate = _data["publishDate"] ? moment(_data["publishDate"].toString()) : <any>undefined;
@@ -80618,6 +81609,7 @@ export class GetProductInfoOutput implements IGetProductInfoOutput {
         data = typeof data === 'object' ? data : {};
         data["hasExternalReference"] = this.hasExternalReference;
         data["hasIncompletedInvoices"] = this.hasIncompletedInvoices;
+        data["creditsTopUpProductId"] = this.creditsTopUpProductId;
         data["isPublished"] = this.isPublished;
         data["publicName"] = this.publicName;
         data["publishDate"] = this.publishDate ? this.publishDate.toISOString() : <any>undefined;
@@ -80684,6 +81676,7 @@ export class GetProductInfoOutput implements IGetProductInfoOutput {
 export interface IGetProductInfoOutput {
     hasExternalReference: boolean;
     hasIncompletedInvoices: boolean;
+    creditsTopUpProductId: number | undefined;
     isPublished: boolean;
     publicName: string | undefined;
     publishDate: moment.Moment | undefined;
@@ -93858,6 +94851,54 @@ export interface IPagedResultDtoOfAuditLogListDto {
     items: AuditLogListDto[] | undefined;
 }
 
+export class PagedResultDtoOfContactBalanceDto implements IPagedResultDtoOfContactBalanceDto {
+    totalCount!: number;
+    items!: ContactBalanceDto[] | undefined;
+
+    constructor(data?: IPagedResultDtoOfContactBalanceDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.totalCount = _data["totalCount"];
+            if (Array.isArray(_data["items"])) {
+                this.items = [] as any;
+                for (let item of _data["items"])
+                    this.items!.push(ContactBalanceDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): PagedResultDtoOfContactBalanceDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new PagedResultDtoOfContactBalanceDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["totalCount"] = this.totalCount;
+        if (Array.isArray(this.items)) {
+            data["items"] = [];
+            for (let item of this.items)
+                data["items"].push(item.toJSON());
+        }
+        return data;
+    }
+}
+
+export interface IPagedResultDtoOfContactBalanceDto {
+    totalCount: number;
+    items: ContactBalanceDto[] | undefined;
+}
+
 export class PagedResultDtoOfEntityChangeListDto implements IPagedResultDtoOfEntityChangeListDto {
     totalCount!: number;
     items!: EntityChangeListDto[] | undefined;
@@ -94763,6 +95804,94 @@ export class PaymentAuthorizeResponseDto implements IPaymentAuthorizeResponseDto
 export interface IPaymentAuthorizeResponseDto {
     success: boolean;
     errors: string[] | undefined;
+}
+
+export class PaymentDataInput implements IPaymentDataInput {
+    quantity!: number;
+    paymentGateway!: string;
+    successUrl!: string | undefined;
+    cancelUrl!: string | undefined;
+
+    constructor(data?: IPaymentDataInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.quantity = _data["quantity"];
+            this.paymentGateway = _data["paymentGateway"];
+            this.successUrl = _data["successUrl"];
+            this.cancelUrl = _data["cancelUrl"];
+        }
+    }
+
+    static fromJS(data: any): PaymentDataInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new PaymentDataInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["quantity"] = this.quantity;
+        data["paymentGateway"] = this.paymentGateway;
+        data["successUrl"] = this.successUrl;
+        data["cancelUrl"] = this.cancelUrl;
+        return data;
+    }
+}
+
+export interface IPaymentDataInput {
+    quantity: number;
+    paymentGateway: string;
+    successUrl: string | undefined;
+    cancelUrl: string | undefined;
+}
+
+export class PaymentDataOutput implements IPaymentDataOutput {
+    paymentData!: string | undefined;
+    initialInvoicePublicId!: string;
+
+    constructor(data?: IPaymentDataOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.paymentData = _data["paymentData"];
+            this.initialInvoicePublicId = _data["initialInvoicePublicId"];
+        }
+    }
+
+    static fromJS(data: any): PaymentDataOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new PaymentDataOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["paymentData"] = this.paymentData;
+        data["initialInvoicePublicId"] = this.initialInvoicePublicId;
+        return data;
+    }
+}
+
+export interface IPaymentDataOutput {
+    paymentData: string | undefined;
+    initialInvoicePublicId: string;
 }
 
 export enum PaymentInfoType {
@@ -96397,11 +97526,84 @@ export enum PlatformDayOfWeek {
     Saturday = 64,
 }
 
+export class PortalAppearanceSettingsEditDto implements IPortalAppearanceSettingsEditDto {
+    menuCustomization!: string | undefined;
+    navBackground!: string | undefined;
+    navTextColor!: string | undefined;
+    leftsideMenuColor!: string | undefined;
+    fontName!: string | undefined;
+    tabularFont!: string | undefined;
+    buttonColor!: string | undefined;
+    buttonTextColor!: string | undefined;
+    buttonHighlightedColor!: string | undefined;
+    borderRadius!: string | undefined;
+
+    constructor(data?: IPortalAppearanceSettingsEditDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.menuCustomization = _data["menuCustomization"];
+            this.navBackground = _data["navBackground"];
+            this.navTextColor = _data["navTextColor"];
+            this.leftsideMenuColor = _data["leftsideMenuColor"];
+            this.fontName = _data["fontName"];
+            this.tabularFont = _data["tabularFont"];
+            this.buttonColor = _data["buttonColor"];
+            this.buttonTextColor = _data["buttonTextColor"];
+            this.buttonHighlightedColor = _data["buttonHighlightedColor"];
+            this.borderRadius = _data["borderRadius"];
+        }
+    }
+
+    static fromJS(data: any): PortalAppearanceSettingsEditDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new PortalAppearanceSettingsEditDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["menuCustomization"] = this.menuCustomization;
+        data["navBackground"] = this.navBackground;
+        data["navTextColor"] = this.navTextColor;
+        data["leftsideMenuColor"] = this.leftsideMenuColor;
+        data["fontName"] = this.fontName;
+        data["tabularFont"] = this.tabularFont;
+        data["buttonColor"] = this.buttonColor;
+        data["buttonTextColor"] = this.buttonTextColor;
+        data["buttonHighlightedColor"] = this.buttonHighlightedColor;
+        data["borderRadius"] = this.borderRadius;
+        return data;
+    }
+}
+
+export interface IPortalAppearanceSettingsEditDto {
+    menuCustomization: string | undefined;
+    navBackground: string | undefined;
+    navTextColor: string | undefined;
+    leftsideMenuColor: string | undefined;
+    fontName: string | undefined;
+    tabularFont: string | undefined;
+    buttonColor: string | undefined;
+    buttonTextColor: string | undefined;
+    buttonHighlightedColor: string | undefined;
+    borderRadius: string | undefined;
+}
+
 export enum PreferredProperties {
     FullName = 1,
     ContactDate = 2,
     BANKCode = 4,
     StripeCustomerId = 8,
+    CreditsBalancePlan = 16,
 }
 
 export class PricingTableFeatureDefinition implements IPricingTableFeatureDefinition {
@@ -99560,6 +100762,7 @@ export class PublicContactInfo implements IPublicContactInfo {
     faq!: LandingPageWordingSettingsDto[] | undefined;
     tabs!: LandingPageWordingSettingsDto[] | undefined;
     checkoutFields!: LandingPageCheckoutFieldSettingsDto[] | undefined;
+    trackingTools!: TrackingToolsSettingsDto | undefined;
 
     constructor(data?: IPublicContactInfo) {
         if (data) {
@@ -99610,6 +100813,7 @@ export class PublicContactInfo implements IPublicContactInfo {
                 for (let item of _data["checkoutFields"])
                     this.checkoutFields!.push(LandingPageCheckoutFieldSettingsDto.fromJS(item));
             }
+            this.trackingTools = _data["trackingTools"] ? TrackingToolsSettingsDto.fromJS(_data["trackingTools"]) : <any>undefined;
         }
     }
 
@@ -99660,6 +100864,7 @@ export class PublicContactInfo implements IPublicContactInfo {
             for (let item of this.checkoutFields)
                 data["checkoutFields"].push(item.toJSON());
         }
+        data["trackingTools"] = this.trackingTools ? this.trackingTools.toJSON() : <any>undefined;
         return data;
     }
 }
@@ -99683,6 +100888,7 @@ export interface IPublicContactInfo {
     faq: LandingPageWordingSettingsDto[] | undefined;
     tabs: LandingPageWordingSettingsDto[] | undefined;
     checkoutFields: LandingPageCheckoutFieldSettingsDto[] | undefined;
+    trackingTools: TrackingToolsSettingsDto | undefined;
 }
 
 export class PublicContactProductInfo implements IPublicContactProductInfo {
@@ -100124,6 +101330,7 @@ export class PublicProductData implements IPublicProductData {
     hasTenantService!: boolean;
     tenantHasPrivacyPolicy!: boolean;
     tenantHasTerms!: boolean;
+    trackingTools!: TrackingToolsSettingsDto | undefined;
 
     constructor(data?: IPublicProductData) {
         if (data) {
@@ -100142,6 +101349,7 @@ export class PublicProductData implements IPublicProductData {
             this.hasTenantService = _data["hasTenantService"];
             this.tenantHasPrivacyPolicy = _data["tenantHasPrivacyPolicy"];
             this.tenantHasTerms = _data["tenantHasTerms"];
+            this.trackingTools = _data["trackingTools"] ? TrackingToolsSettingsDto.fromJS(_data["trackingTools"]) : <any>undefined;
         }
     }
 
@@ -100160,6 +101368,7 @@ export class PublicProductData implements IPublicProductData {
         data["hasTenantService"] = this.hasTenantService;
         data["tenantHasPrivacyPolicy"] = this.tenantHasPrivacyPolicy;
         data["tenantHasTerms"] = this.tenantHasTerms;
+        data["trackingTools"] = this.trackingTools ? this.trackingTools.toJSON() : <any>undefined;
         return data;
     }
 }
@@ -100171,6 +101380,7 @@ export interface IPublicProductData {
     hasTenantService: boolean;
     tenantHasPrivacyPolicy: boolean;
     tenantHasTerms: boolean;
+    trackingTools: TrackingToolsSettingsDto | undefined;
 }
 
 export class PublicProductInfo implements IPublicProductInfo {
@@ -111241,6 +112451,86 @@ export interface ITrackingInformation {
     clickId: string | undefined;
 }
 
+export class TrackingToolsSettingsDto implements ITrackingToolsSettingsDto {
+    googleAnalytics!: string | undefined;
+    googleTagManager!: string | undefined;
+    metaPixelId!: string | undefined;
+    tikTokPixelId!: string | undefined;
+    linkedInPartnerId!: string | undefined;
+    twitterPixelId!: string | undefined;
+    hubSpotTrackingCode!: string | undefined;
+    mixpanelProjectToken!: string | undefined;
+    amplitudeAPIKey!: string | undefined;
+    pinterestPixelId!: string | undefined;
+    redditPixelId!: string | undefined;
+    hyrosPixelId!: string | undefined;
+
+    constructor(data?: ITrackingToolsSettingsDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.googleAnalytics = _data["googleAnalytics"];
+            this.googleTagManager = _data["googleTagManager"];
+            this.metaPixelId = _data["metaPixelId"];
+            this.tikTokPixelId = _data["tikTokPixelId"];
+            this.linkedInPartnerId = _data["linkedInPartnerId"];
+            this.twitterPixelId = _data["twitterPixelId"];
+            this.hubSpotTrackingCode = _data["hubSpotTrackingCode"];
+            this.mixpanelProjectToken = _data["mixpanelProjectToken"];
+            this.amplitudeAPIKey = _data["amplitudeAPIKey"];
+            this.pinterestPixelId = _data["pinterestPixelId"];
+            this.redditPixelId = _data["redditPixelId"];
+            this.hyrosPixelId = _data["hyrosPixelId"];
+        }
+    }
+
+    static fromJS(data: any): TrackingToolsSettingsDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new TrackingToolsSettingsDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["googleAnalytics"] = this.googleAnalytics;
+        data["googleTagManager"] = this.googleTagManager;
+        data["metaPixelId"] = this.metaPixelId;
+        data["tikTokPixelId"] = this.tikTokPixelId;
+        data["linkedInPartnerId"] = this.linkedInPartnerId;
+        data["twitterPixelId"] = this.twitterPixelId;
+        data["hubSpotTrackingCode"] = this.hubSpotTrackingCode;
+        data["mixpanelProjectToken"] = this.mixpanelProjectToken;
+        data["amplitudeAPIKey"] = this.amplitudeAPIKey;
+        data["pinterestPixelId"] = this.pinterestPixelId;
+        data["redditPixelId"] = this.redditPixelId;
+        data["hyrosPixelId"] = this.hyrosPixelId;
+        return data;
+    }
+}
+
+export interface ITrackingToolsSettingsDto {
+    googleAnalytics: string | undefined;
+    googleTagManager: string | undefined;
+    metaPixelId: string | undefined;
+    tikTokPixelId: string | undefined;
+    linkedInPartnerId: string | undefined;
+    twitterPixelId: string | undefined;
+    hubSpotTrackingCode: string | undefined;
+    mixpanelProjectToken: string | undefined;
+    amplitudeAPIKey: string | undefined;
+    pinterestPixelId: string | undefined;
+    redditPixelId: string | undefined;
+    hyrosPixelId: string | undefined;
+}
+
 export class TransactionAttributeDto implements ITransactionAttributeDto {
     readonly typeId!: string | undefined;
     readonly value!: string | undefined;
@@ -116657,6 +117947,7 @@ export class UpdateProductInput implements IUpdateProductInput {
     stripeXref!: string | undefined;
     paypalXref!: string | undefined;
     downgradeProductId!: number | undefined;
+    creditsTopUpProductId!: number | undefined;
     isPublished!: boolean;
     publicName!: string | undefined;
     publishDate!: moment.Moment | undefined;
@@ -116706,6 +117997,7 @@ export class UpdateProductInput implements IUpdateProductInput {
             this.stripeXref = _data["stripeXref"];
             this.paypalXref = _data["paypalXref"];
             this.downgradeProductId = _data["downgradeProductId"];
+            this.creditsTopUpProductId = _data["creditsTopUpProductId"];
             this.isPublished = _data["isPublished"];
             this.publicName = _data["publicName"];
             this.publishDate = _data["publishDate"] ? moment(_data["publishDate"].toString()) : <any>undefined;
@@ -116775,6 +118067,7 @@ export class UpdateProductInput implements IUpdateProductInput {
         data["stripeXref"] = this.stripeXref;
         data["paypalXref"] = this.paypalXref;
         data["downgradeProductId"] = this.downgradeProductId;
+        data["creditsTopUpProductId"] = this.creditsTopUpProductId;
         data["isPublished"] = this.isPublished;
         data["publicName"] = this.publicName;
         data["publishDate"] = this.publishDate ? this.publishDate.toISOString() : <any>undefined;
@@ -116837,6 +118130,7 @@ export interface IUpdateProductInput {
     stripeXref: string | undefined;
     paypalXref: string | undefined;
     downgradeProductId: number | undefined;
+    creditsTopUpProductId: number | undefined;
     isPublished: boolean;
     publicName: string | undefined;
     publishDate: moment.Moment | undefined;

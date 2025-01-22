@@ -40,6 +40,7 @@ import * as ApiServiceProxies from './service-proxies';
         ApiServiceProxies.PersonContactServiceProxy,
         ApiServiceProxies.MemberSubscriptionServiceProxy,
         ApiServiceProxies.MemberSettingsServiceProxy,
+        ApiServiceProxies.MemberCreditServiceProxy,
         ApiServiceProxies.CommonUserInfoServiceProxy,
         ApiServiceProxies.AffiliatePayoutSettingServiceProxy,
         ApiServiceProxies.UserPaymentServiceProxy,

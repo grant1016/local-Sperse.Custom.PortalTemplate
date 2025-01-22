@@ -97,6 +97,12 @@
             "StripeAccountIsNotConnected": "Stripe account is not connected",
             "StripeAccountIsConnected": "Stripe account is connected",
             "ConnectWith": "Connect with"
+        },
+        "UserMenu": {
+            "AvailableBalance": "Available Balance",
+            "TopUp": "Top Up",
+            "TopUpRate": "Rate",
+            "TopUpLinkMessage": "Click here if the payment page didn't open."
         }
     }
 }

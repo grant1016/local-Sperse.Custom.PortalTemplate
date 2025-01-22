@@ -4,7 +4,7 @@
         <h1>{{appSession.getUserNameOrEmail()}}</h1>
         <h3>{{appSession.userCompany$ | async}}</h3>
     </div>
-    <div class="field affiliate">
+    <div class="field affiliate dashed-border">
         <label>{{ ls.l('AffiliateInfo') }}:&nbsp;</label>
         <inplace-edit #affiliateCode
             [ngClass]="{'edit-mode': affiliateCode.isEditModeEnabled}"
@@ -19,6 +19,10 @@
             (valueChanged)="updateAffiliateCode($event)"
             (itemDeleted)="updateAffiliateCode('')">
         </inplace-edit>
+    </div>
+    <div *ngIf="hasCreditsFeature" class="field credits-balance dashed-border">
+        <div><label>{{ ls.l('UserMenu.AvailableBalance') }}</label>: <b>{{ memberCredits?.balance || 0 }}</b></div>
+        <div *ngIf="memberCredits?.rate" class="topup" (click)="openCreditsTopUpDialog($event)">{{ ls.l('UserMenu.TopUp') }} <i class="fa fa-angle-double-up"></i></div>
     </div>
     <div class="navigation-links">
         <ul class="navigation">

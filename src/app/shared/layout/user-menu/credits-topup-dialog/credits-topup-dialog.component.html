@@ -1,0 +1,34 @@
+<mat-dialog-content>
+    <h3>{{ ls.l('Purchase') }} {{ ls.l('ContactCredits') }}</h3>
+    <div class="field">{{ ls.l('Quantity to Purchase') }}</div>
+    <dx-number-box [(value)]="quantity"
+                   format="#"
+                   min="0"
+                   [placeholder]="ls.l('Quantity')">
+        <dx-validator>
+            <dxi-validation-rule type="required"></dxi-validation-rule>
+        </dx-validator>
+    </dx-number-box>
+    <div class="field">
+        <div>{{ ls.l('UserMenu.TopUpRate') }}:</div>
+        <div>{{data.rate | currency:currency:'symbol':'1.2-2'}}</div>
+    </div>
+    <div class="field">
+        <b>{{ ls.l('Total') }}:</b>
+        <b>{{(quantity * data.rate) | currency:currencyId:'symbol':'1.2-2'}}</b>
+    </div>
+    <div *ngIf="availablePaymentsInfo" class="buttons">
+        <ng-container *ngIf="availablePaymentsInfo.isStripeEnabled || availablePaymentsInfo.paypalInfo.isEnabled; else noPaymentMethods">
+            <button *ngIf="availablePaymentsInfo.isStripeEnabled" [disabled]="!quantity" class="button btn btn-primary stripe-button" (click)="submitStripeRequest()">
+                Pay with <img src="assets/common/images/stripe.svg"/>
+            </button>
+            <pay-pal *ngIf="availablePaymentsInfo.paypalInfo.isEnabled" [disabled]="!quantity" class="button" [height]="45" (onApprove)="onPayPalApprove()">
+            </pay-pal>
+        </ng-container>
+        <ng-template #noPaymentMethods>
+            <div class="no-payment-systems">
+                Payment systems are not configured
+            </div>
+        </ng-template>
+    </div>
+</mat-dialog-content>
