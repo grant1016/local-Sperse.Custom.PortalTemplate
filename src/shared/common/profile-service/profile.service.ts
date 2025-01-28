@@ -16,7 +16,8 @@ import {
     MemberCreditServiceProxy,
     ContactBalanceBaseDto,
     PaymentServiceProxy,
-    PaypalSettingsInfo
+    PaypalSettingsInfo,
+    StripeSettingsInfo
 } from '@shared/service-proxies/service-proxies';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -46,12 +47,12 @@ export class ProfileService {
         publishReplay(),
         refCount()
     );
-    availablePaymentMethods$: Observable<{ isStripeEnabled: boolean, paypalInfo: PaypalSettingsInfo  }> = forkJoin(
+    availablePaymentMethods$: Observable<{ stripeInfo: StripeSettingsInfo, paypalInfo: PaypalSettingsInfo  }> = forkJoin(
         [this.paymentsService.isStripeEnabled(), this.paymentsService.isPaypalEnabled()]
     ).pipe(
-        map(([isStripeEnabled, paypalInfo]) => {
+        map(([stripeInfo, paypalInfo]) => {
             return {
-                isStripeEnabled: isStripeEnabled,
+                stripeInfo: stripeInfo,
                 paypalInfo: paypalInfo
             }
         }),

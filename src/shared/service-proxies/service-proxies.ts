@@ -36347,7 +36347,7 @@ export class PaymentServiceProxy {
     /**
      * @return Success
      */
-    isStripeEnabled(): Observable<boolean> {
+    isStripeEnabled(): Observable<StripeSettingsInfo> {
         let url_ = this.baseUrl + "/api/services/CRM/Payment/IsStripeEnabled";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -36366,14 +36366,14 @@ export class PaymentServiceProxy {
                 try {
                     return this.processIsStripeEnabled(response_ as any);
                 } catch (e) {
-                    return _observableThrow(e) as any as Observable<boolean>;
+                    return _observableThrow(e) as any as Observable<StripeSettingsInfo>;
                 }
             } else
-                return _observableThrow(response_) as any as Observable<boolean>;
+                return _observableThrow(response_) as any as Observable<StripeSettingsInfo>;
         }));
     }
 
-    protected processIsStripeEnabled(response: HttpResponseBase): Observable<boolean> {
+    protected processIsStripeEnabled(response: HttpResponseBase): Observable<StripeSettingsInfo> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -36384,8 +36384,7 @@ export class PaymentServiceProxy {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                result200 = resultData200 !== undefined ? resultData200 : <any>null;
-    
+            result200 = StripeSettingsInfo.fromJS(resultData200);
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -36393,7 +36392,7 @@ export class PaymentServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<boolean>(null as any);
+        return _observableOf<StripeSettingsInfo>(null as any);
     }
 
     /**
@@ -38666,6 +38665,135 @@ export class ProductServiceProxy {
             }));
         }
         return _observableOf<void>(null as any);
+    }
+
+    /**
+     * @param searchPhrase (optional) 
+     * @param topCount (optional) 
+     * @param skipCount (optional) 
+     * @return Success
+     */
+    getStripeProductTaxCodes(searchPhrase: string | undefined, topCount: number | undefined, skipCount: number | undefined): Observable<StripeTaxProcuctCodeBase[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/Product/GetStripeProductTaxCodes?";
+        if (searchPhrase === null)
+            throw new Error("The parameter 'searchPhrase' cannot be null.");
+        else if (searchPhrase !== undefined)
+            url_ += "searchPhrase=" + encodeURIComponent("" + searchPhrase) + "&";
+        if (topCount === null)
+            throw new Error("The parameter 'topCount' cannot be null.");
+        else if (topCount !== undefined)
+            url_ += "topCount=" + encodeURIComponent("" + topCount) + "&";
+        if (skipCount === null)
+            throw new Error("The parameter 'skipCount' cannot be null.");
+        else if (skipCount !== undefined)
+            url_ += "skipCount=" + encodeURIComponent("" + skipCount) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json;odata.metadata=minimal;odata.streaming=true"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetStripeProductTaxCodes(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetStripeProductTaxCodes(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<StripeTaxProcuctCodeBase[]>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<StripeTaxProcuctCodeBase[]>;
+        }));
+    }
+
+    protected processGetStripeProductTaxCodes(response: HttpResponseBase): Observable<StripeTaxProcuctCodeBase[]> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(StripeTaxProcuctCodeBase.fromJS(item));
+            }
+            else {
+                result200 = <any>null;
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<StripeTaxProcuctCodeBase[]>(null as any);
+    }
+
+    /**
+     * @param id (optional) 
+     * @return Success
+     */
+    getStripeProductTaxCode(id: string | undefined): Observable<StripeTaxProcuctCodeBase> {
+        let url_ = this.baseUrl + "/api/services/CRM/Product/GetStripeProductTaxCode?";
+        if (id === null)
+            throw new Error("The parameter 'id' cannot be null.");
+        else if (id !== undefined)
+            url_ += "id=" + encodeURIComponent("" + id) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json;odata.metadata=minimal;odata.streaming=true"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetStripeProductTaxCode(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetStripeProductTaxCode(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<StripeTaxProcuctCodeBase>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<StripeTaxProcuctCodeBase>;
+        }));
+    }
+
+    protected processGetStripeProductTaxCode(response: HttpResponseBase): Observable<StripeTaxProcuctCodeBase> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = StripeTaxProcuctCodeBase.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<StripeTaxProcuctCodeBase>(null as any);
     }
 }
 
@@ -41938,6 +42066,62 @@ export class PublicProductServiceProxy {
             }));
         }
         return _observableOf<SubmitProductRequestOutput>(null as any);
+    }
+
+    /**
+     * @param body (optional) 
+     * @return Success
+     */
+    getTaxCalculation(body: GetTaxCalculationInput | undefined): Observable<TaxCalculationResultDto> {
+        let url_ = this.baseUrl + "/api/services/CRM/PublicProduct/GetTaxCalculation";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json;odata.metadata=minimal;odata.streaming=true",
+                "Accept": "application/json;odata.metadata=minimal;odata.streaming=true"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetTaxCalculation(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetTaxCalculation(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<TaxCalculationResultDto>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<TaxCalculationResultDto>;
+        }));
+    }
+
+    protected processGetTaxCalculation(response: HttpResponseBase): Observable<TaxCalculationResultDto> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = TaxCalculationResultDto.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<TaxCalculationResultDto>(null as any);
     }
 }
 
@@ -48177,6 +48361,126 @@ export class TenantPaymentSettingsServiceProxy {
             }));
         }
         return _observableOf<void>(null as any);
+    }
+
+    /**
+     * @param stripeSettingsId (optional) 
+     * @param isEnabled (optional) 
+     * @return Success
+     */
+    changeIsStripeTaxationEnabledSettings(stripeSettingsId: number | undefined, isEnabled: boolean | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/TenantPaymentSettings/ChangeIsStripeTaxationEnabledSettings?";
+        if (stripeSettingsId === null)
+            throw new Error("The parameter 'stripeSettingsId' cannot be null.");
+        else if (stripeSettingsId !== undefined)
+            url_ += "stripeSettingsId=" + encodeURIComponent("" + stripeSettingsId) + "&";
+        if (isEnabled === null)
+            throw new Error("The parameter 'isEnabled' cannot be null.");
+        else if (isEnabled !== undefined)
+            url_ += "isEnabled=" + encodeURIComponent("" + isEnabled) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processChangeIsStripeTaxationEnabledSettings(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processChangeIsStripeTaxationEnabledSettings(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<void>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<void>;
+        }));
+    }
+
+    protected processChangeIsStripeTaxationEnabledSettings(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(null as any);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(null as any);
+    }
+
+    /**
+     * @param stripeSettingsId (optional) 
+     * @return Success
+     */
+    getStripeTaxRegistrations(stripeSettingsId: number | undefined): Observable<StripeTaxRegistration[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/TenantPaymentSettings/GetStripeTaxRegistrations?";
+        if (stripeSettingsId === null)
+            throw new Error("The parameter 'stripeSettingsId' cannot be null.");
+        else if (stripeSettingsId !== undefined)
+            url_ += "stripeSettingsId=" + encodeURIComponent("" + stripeSettingsId) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json;odata.metadata=minimal;odata.streaming=true"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetStripeTaxRegistrations(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetStripeTaxRegistrations(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<StripeTaxRegistration[]>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<StripeTaxRegistration[]>;
+        }));
+    }
+
+    protected processGetStripeTaxRegistrations(response: HttpResponseBase): Observable<StripeTaxRegistration[]> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(StripeTaxRegistration.fromJS(item));
+            }
+            else {
+                result200 = <any>null;
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<StripeTaxRegistration[]>(null as any);
     }
 
     /**
@@ -69808,6 +70112,7 @@ export class CreateInvoiceInput implements ICreateInvoiceInput {
     discountTotal!: number | undefined;
     shippingTotal!: number | undefined;
     taxTotal!: number | undefined;
+    isAutoCalculatedTax!: boolean;
     billingAddress!: InvoiceAddressInput | undefined;
     shippingAddress!: InvoiceAddressInput | undefined;
     description!: string | undefined;
@@ -69843,6 +70148,7 @@ export class CreateInvoiceInput implements ICreateInvoiceInput {
             this.discountTotal = _data["discountTotal"];
             this.shippingTotal = _data["shippingTotal"];
             this.taxTotal = _data["taxTotal"];
+            this.isAutoCalculatedTax = _data["isAutoCalculatedTax"];
             this.billingAddress = _data["billingAddress"] ? InvoiceAddressInput.fromJS(_data["billingAddress"]) : <any>undefined;
             this.shippingAddress = _data["shippingAddress"] ? InvoiceAddressInput.fromJS(_data["shippingAddress"]) : <any>undefined;
             this.description = _data["description"];
@@ -69882,6 +70188,7 @@ export class CreateInvoiceInput implements ICreateInvoiceInput {
         data["discountTotal"] = this.discountTotal;
         data["shippingTotal"] = this.shippingTotal;
         data["taxTotal"] = this.taxTotal;
+        data["isAutoCalculatedTax"] = this.isAutoCalculatedTax;
         data["billingAddress"] = this.billingAddress ? this.billingAddress.toJSON() : <any>undefined;
         data["shippingAddress"] = this.shippingAddress ? this.shippingAddress.toJSON() : <any>undefined;
         data["description"] = this.description;
@@ -69914,6 +70221,7 @@ export interface ICreateInvoiceInput {
     discountTotal: number | undefined;
     shippingTotal: number | undefined;
     taxTotal: number | undefined;
+    isAutoCalculatedTax: boolean;
     billingAddress: InvoiceAddressInput | undefined;
     shippingAddress: InvoiceAddressInput | undefined;
     description: string | undefined;
@@ -71947,6 +72255,8 @@ export class CreateProductInput implements ICreateProductInput {
     description!: string | undefined;
     descriptionHtml!: string | undefined;
     barCode!: string | undefined;
+    isStripeTaxationEnabled!: boolean;
+    stripeTaxProcuctCode!: string | undefined;
     groupId!: number | undefined;
     groupName!: string | undefined;
     type!: ProductType;
@@ -71959,6 +72269,7 @@ export class CreateProductInput implements ICreateProductInput {
     maxCommissionRate!: number | undefined;
     maxCommissionRateTier2!: number | undefined;
     unit!: ProductMeasurementUnit | undefined;
+    credits!: number | undefined;
     stripeXref!: string | undefined;
     paypalXref!: string | undefined;
     downgradeProductId!: number | undefined;
@@ -71996,6 +72307,8 @@ export class CreateProductInput implements ICreateProductInput {
             this.description = _data["description"];
             this.descriptionHtml = _data["descriptionHtml"];
             this.barCode = _data["barCode"];
+            this.isStripeTaxationEnabled = _data["isStripeTaxationEnabled"];
+            this.stripeTaxProcuctCode = _data["stripeTaxProcuctCode"];
             this.groupId = _data["groupId"];
             this.groupName = _data["groupName"];
             this.type = _data["type"];
@@ -72008,6 +72321,7 @@ export class CreateProductInput implements ICreateProductInput {
             this.maxCommissionRate = _data["maxCommissionRate"];
             this.maxCommissionRateTier2 = _data["maxCommissionRateTier2"];
             this.unit = _data["unit"];
+            this.credits = _data["credits"];
             this.stripeXref = _data["stripeXref"];
             this.paypalXref = _data["paypalXref"];
             this.downgradeProductId = _data["downgradeProductId"];
@@ -72065,6 +72379,8 @@ export class CreateProductInput implements ICreateProductInput {
         data["description"] = this.description;
         data["descriptionHtml"] = this.descriptionHtml;
         data["barCode"] = this.barCode;
+        data["isStripeTaxationEnabled"] = this.isStripeTaxationEnabled;
+        data["stripeTaxProcuctCode"] = this.stripeTaxProcuctCode;
         data["groupId"] = this.groupId;
         data["groupName"] = this.groupName;
         data["type"] = this.type;
@@ -72077,6 +72393,7 @@ export class CreateProductInput implements ICreateProductInput {
         data["maxCommissionRate"] = this.maxCommissionRate;
         data["maxCommissionRateTier2"] = this.maxCommissionRateTier2;
         data["unit"] = this.unit;
+        data["credits"] = this.credits;
         data["stripeXref"] = this.stripeXref;
         data["paypalXref"] = this.paypalXref;
         data["downgradeProductId"] = this.downgradeProductId;
@@ -72127,6 +72444,8 @@ export interface ICreateProductInput {
     description: string | undefined;
     descriptionHtml: string | undefined;
     barCode: string | undefined;
+    isStripeTaxationEnabled: boolean;
+    stripeTaxProcuctCode: string | undefined;
     groupId: number | undefined;
     groupName: string | undefined;
     type: ProductType;
@@ -72139,6 +72458,7 @@ export interface ICreateProductInput {
     maxCommissionRate: number | undefined;
     maxCommissionRateTier2: number | undefined;
     unit: ProductMeasurementUnit | undefined;
+    credits: number | undefined;
     stripeXref: string | undefined;
     paypalXref: string | undefined;
     downgradeProductId: number | undefined;
@@ -81481,6 +81801,7 @@ export interface IGetPlatformAppUrlOutput {
 export class GetProductInfoOutput implements IGetProductInfoOutput {
     hasExternalReference!: boolean;
     hasIncompletedInvoices!: boolean;
+    credits!: number | undefined;
     creditsTopUpProductId!: number | undefined;
     isPublished!: boolean;
     publicName!: string | undefined;
@@ -81491,6 +81812,7 @@ export class GetProductInfoOutput implements IGetProductInfoOutput {
     redirectUrl!: string | undefined;
     stripeXref!: string | undefined;
     stripeXrefUrl!: string | undefined;
+    stripeAccountIsTaxationEnabled!: boolean;
     paypalXref!: string | undefined;
     productEvent!: ProductEventDto | undefined;
     productDonation!: ProductDonationDto | undefined;
@@ -81517,6 +81839,8 @@ export class GetProductInfoOutput implements IGetProductInfoOutput {
     singlePurchaseAllowed!: boolean;
     isArchived!: boolean;
     barCode!: string | undefined;
+    isStripeTaxationEnabled!: boolean;
+    stripeTaxProcuctCode!: string | undefined;
     productInventory!: ProductInventoryDto | undefined;
     productServices!: ProductServiceInfo[] | undefined;
     productSubscriptionOptions!: ProductSubscriptionOptionInfo[] | undefined;
@@ -81535,6 +81859,7 @@ export class GetProductInfoOutput implements IGetProductInfoOutput {
         if (_data) {
             this.hasExternalReference = _data["hasExternalReference"];
             this.hasIncompletedInvoices = _data["hasIncompletedInvoices"];
+            this.credits = _data["credits"];
             this.creditsTopUpProductId = _data["creditsTopUpProductId"];
             this.isPublished = _data["isPublished"];
             this.publicName = _data["publicName"];
@@ -81545,6 +81870,7 @@ export class GetProductInfoOutput implements IGetProductInfoOutput {
             this.redirectUrl = _data["redirectUrl"];
             this.stripeXref = _data["stripeXref"];
             this.stripeXrefUrl = _data["stripeXrefUrl"];
+            this.stripeAccountIsTaxationEnabled = _data["stripeAccountIsTaxationEnabled"];
             this.paypalXref = _data["paypalXref"];
             this.productEvent = _data["productEvent"] ? ProductEventDto.fromJS(_data["productEvent"]) : <any>undefined;
             this.productDonation = _data["productDonation"] ? ProductDonationDto.fromJS(_data["productDonation"]) : <any>undefined;
@@ -81579,6 +81905,8 @@ export class GetProductInfoOutput implements IGetProductInfoOutput {
             this.singlePurchaseAllowed = _data["singlePurchaseAllowed"];
             this.isArchived = _data["isArchived"];
             this.barCode = _data["barCode"];
+            this.isStripeTaxationEnabled = _data["isStripeTaxationEnabled"];
+            this.stripeTaxProcuctCode = _data["stripeTaxProcuctCode"];
             this.productInventory = _data["productInventory"] ? ProductInventoryDto.fromJS(_data["productInventory"]) : <any>undefined;
             if (Array.isArray(_data["productServices"])) {
                 this.productServices = [] as any;
@@ -81609,6 +81937,7 @@ export class GetProductInfoOutput implements IGetProductInfoOutput {
         data = typeof data === 'object' ? data : {};
         data["hasExternalReference"] = this.hasExternalReference;
         data["hasIncompletedInvoices"] = this.hasIncompletedInvoices;
+        data["credits"] = this.credits;
         data["creditsTopUpProductId"] = this.creditsTopUpProductId;
         data["isPublished"] = this.isPublished;
         data["publicName"] = this.publicName;
@@ -81619,6 +81948,7 @@ export class GetProductInfoOutput implements IGetProductInfoOutput {
         data["redirectUrl"] = this.redirectUrl;
         data["stripeXref"] = this.stripeXref;
         data["stripeXrefUrl"] = this.stripeXrefUrl;
+        data["stripeAccountIsTaxationEnabled"] = this.stripeAccountIsTaxationEnabled;
         data["paypalXref"] = this.paypalXref;
         data["productEvent"] = this.productEvent ? this.productEvent.toJSON() : <any>undefined;
         data["productDonation"] = this.productDonation ? this.productDonation.toJSON() : <any>undefined;
@@ -81653,6 +81983,8 @@ export class GetProductInfoOutput implements IGetProductInfoOutput {
         data["singlePurchaseAllowed"] = this.singlePurchaseAllowed;
         data["isArchived"] = this.isArchived;
         data["barCode"] = this.barCode;
+        data["isStripeTaxationEnabled"] = this.isStripeTaxationEnabled;
+        data["stripeTaxProcuctCode"] = this.stripeTaxProcuctCode;
         data["productInventory"] = this.productInventory ? this.productInventory.toJSON() : <any>undefined;
         if (Array.isArray(this.productServices)) {
             data["productServices"] = [];
@@ -81676,6 +82008,7 @@ export class GetProductInfoOutput implements IGetProductInfoOutput {
 export interface IGetProductInfoOutput {
     hasExternalReference: boolean;
     hasIncompletedInvoices: boolean;
+    credits: number | undefined;
     creditsTopUpProductId: number | undefined;
     isPublished: boolean;
     publicName: string | undefined;
@@ -81686,6 +82019,7 @@ export interface IGetProductInfoOutput {
     redirectUrl: string | undefined;
     stripeXref: string | undefined;
     stripeXrefUrl: string | undefined;
+    stripeAccountIsTaxationEnabled: boolean;
     paypalXref: string | undefined;
     productEvent: ProductEventDto | undefined;
     productDonation: ProductDonationDto | undefined;
@@ -81712,6 +82046,8 @@ export interface IGetProductInfoOutput {
     singlePurchaseAllowed: boolean;
     isArchived: boolean;
     barCode: string | undefined;
+    isStripeTaxationEnabled: boolean;
+    stripeTaxProcuctCode: string | undefined;
     productInventory: ProductInventoryDto | undefined;
     productServices: ProductServiceInfo[] | undefined;
     productSubscriptionOptions: ProductSubscriptionOptionInfo[] | undefined;
@@ -82986,6 +83322,81 @@ export interface IGetSystemTotalsOutput {
     systemTotals: { [key: string]: number; } | undefined;
     lastCrackedCode: string | undefined;
     generationTime: moment.Moment;
+}
+
+export class GetTaxCalculationInput implements IGetTaxCalculationInput {
+    tenantId!: number;
+    paymentGateway!: string | undefined;
+    stateId!: string | undefined;
+    zip!: string | undefined;
+    countryId!: string | undefined;
+    currency!: string;
+    shippingCost!: number | undefined;
+    products!: ProductTaxInput[];
+
+    constructor(data?: IGetTaxCalculationInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+        if (!data) {
+            this.products = [];
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.tenantId = _data["tenantId"];
+            this.paymentGateway = _data["paymentGateway"];
+            this.stateId = _data["stateId"];
+            this.zip = _data["zip"];
+            this.countryId = _data["countryId"];
+            this.currency = _data["currency"];
+            this.shippingCost = _data["shippingCost"];
+            if (Array.isArray(_data["products"])) {
+                this.products = [] as any;
+                for (let item of _data["products"])
+                    this.products!.push(ProductTaxInput.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): GetTaxCalculationInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new GetTaxCalculationInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["tenantId"] = this.tenantId;
+        data["paymentGateway"] = this.paymentGateway;
+        data["stateId"] = this.stateId;
+        data["zip"] = this.zip;
+        data["countryId"] = this.countryId;
+        data["currency"] = this.currency;
+        data["shippingCost"] = this.shippingCost;
+        if (Array.isArray(this.products)) {
+            data["products"] = [];
+            for (let item of this.products)
+                data["products"].push(item.toJSON());
+        }
+        return data;
+    }
+}
+
+export interface IGetTaxCalculationInput {
+    tenantId: number;
+    paymentGateway: string | undefined;
+    stateId: string | undefined;
+    zip: string | undefined;
+    countryId: string | undefined;
+    currency: string;
+    shippingCost: number | undefined;
+    products: ProductTaxInput[];
 }
 
 export class GetTemplateReponse implements IGetTemplateReponse {
@@ -84556,6 +84967,8 @@ export class ImpersonatedAuthenticateResultModel implements IImpersonatedAuthent
     accessToken!: string | undefined;
     encryptedAccessToken!: string | undefined;
     expireInSeconds!: number;
+    refreshToken!: string | undefined;
+    refreshTokenExpireInSeconds!: number;
     shouldResetPassword!: boolean;
     passwordResetCode!: string | undefined;
     shouldVerifyEmail!: boolean;
@@ -84576,6 +84989,8 @@ export class ImpersonatedAuthenticateResultModel implements IImpersonatedAuthent
             this.accessToken = _data["accessToken"];
             this.encryptedAccessToken = _data["encryptedAccessToken"];
             this.expireInSeconds = _data["expireInSeconds"];
+            this.refreshToken = _data["refreshToken"];
+            this.refreshTokenExpireInSeconds = _data["refreshTokenExpireInSeconds"];
             this.shouldResetPassword = _data["shouldResetPassword"];
             this.passwordResetCode = _data["passwordResetCode"];
             this.shouldVerifyEmail = _data["shouldVerifyEmail"];
@@ -84596,6 +85011,8 @@ export class ImpersonatedAuthenticateResultModel implements IImpersonatedAuthent
         data["accessToken"] = this.accessToken;
         data["encryptedAccessToken"] = this.encryptedAccessToken;
         data["expireInSeconds"] = this.expireInSeconds;
+        data["refreshToken"] = this.refreshToken;
+        data["refreshTokenExpireInSeconds"] = this.refreshTokenExpireInSeconds;
         data["shouldResetPassword"] = this.shouldResetPassword;
         data["passwordResetCode"] = this.passwordResetCode;
         data["shouldVerifyEmail"] = this.shouldVerifyEmail;
@@ -84609,6 +85026,8 @@ export interface IImpersonatedAuthenticateResultModel {
     accessToken: string | undefined;
     encryptedAccessToken: string | undefined;
     expireInSeconds: number;
+    refreshToken: string | undefined;
+    refreshTokenExpireInSeconds: number;
     shouldResetPassword: boolean;
     passwordResetCode: string | undefined;
     shouldVerifyEmail: boolean;
@@ -87213,6 +87632,7 @@ export class InvoiceData implements IInvoiceData {
     discountTotal!: number;
     shippingTotal!: number;
     taxTotal!: number;
+    isAutoCalculatedTax!: boolean;
     dueDate!: moment.Moment | undefined;
     subscriptionStartOn!: moment.Moment | undefined;
     description!: string | undefined;
@@ -87244,6 +87664,7 @@ export class InvoiceData implements IInvoiceData {
             this.discountTotal = _data["discountTotal"];
             this.shippingTotal = _data["shippingTotal"];
             this.taxTotal = _data["taxTotal"];
+            this.isAutoCalculatedTax = _data["isAutoCalculatedTax"];
             this.dueDate = _data["dueDate"] ? moment(_data["dueDate"].toString()) : <any>undefined;
             this.subscriptionStartOn = _data["subscriptionStartOn"] ? moment(_data["subscriptionStartOn"].toString()) : <any>undefined;
             this.description = _data["description"];
@@ -87279,6 +87700,7 @@ export class InvoiceData implements IInvoiceData {
         data["discountTotal"] = this.discountTotal;
         data["shippingTotal"] = this.shippingTotal;
         data["taxTotal"] = this.taxTotal;
+        data["isAutoCalculatedTax"] = this.isAutoCalculatedTax;
         data["dueDate"] = this.dueDate ? this.dueDate.toISOString() : <any>undefined;
         data["subscriptionStartOn"] = this.subscriptionStartOn ? this.subscriptionStartOn.toISOString() : <any>undefined;
         data["description"] = this.description;
@@ -87307,6 +87729,7 @@ export interface IInvoiceData {
     discountTotal: number;
     shippingTotal: number;
     taxTotal: number;
+    isAutoCalculatedTax: boolean;
     dueDate: moment.Moment | undefined;
     subscriptionStartOn: moment.Moment | undefined;
     description: string | undefined;
@@ -87401,6 +87824,7 @@ export class InvoiceInfo implements IInvoiceInfo {
     discountTotal!: number | undefined;
     shippingTotal!: number | undefined;
     taxTotal!: number | undefined;
+    isAutoCalculatedTax!: boolean;
     billingAddress!: InvoiceAddressInfo | undefined;
     shippingAddress!: InvoiceAddressInfo | undefined;
     description!: string | undefined;
@@ -87434,6 +87858,7 @@ export class InvoiceInfo implements IInvoiceInfo {
             this.discountTotal = _data["discountTotal"];
             this.shippingTotal = _data["shippingTotal"];
             this.taxTotal = _data["taxTotal"];
+            this.isAutoCalculatedTax = _data["isAutoCalculatedTax"];
             this.billingAddress = _data["billingAddress"] ? InvoiceAddressInfo.fromJS(_data["billingAddress"]) : <any>undefined;
             this.shippingAddress = _data["shippingAddress"] ? InvoiceAddressInfo.fromJS(_data["shippingAddress"]) : <any>undefined;
             this.description = _data["description"];
@@ -87471,6 +87896,7 @@ export class InvoiceInfo implements IInvoiceInfo {
         data["discountTotal"] = this.discountTotal;
         data["shippingTotal"] = this.shippingTotal;
         data["taxTotal"] = this.taxTotal;
+        data["isAutoCalculatedTax"] = this.isAutoCalculatedTax;
         data["billingAddress"] = this.billingAddress ? this.billingAddress.toJSON() : <any>undefined;
         data["shippingAddress"] = this.shippingAddress ? this.shippingAddress.toJSON() : <any>undefined;
         data["description"] = this.description;
@@ -87501,6 +87927,7 @@ export interface IInvoiceInfo {
     discountTotal: number | undefined;
     shippingTotal: number | undefined;
     taxTotal: number | undefined;
+    isAutoCalculatedTax: boolean;
     billingAddress: InvoiceAddressInfo | undefined;
     shippingAddress: InvoiceAddressInfo | undefined;
     description: string | undefined;
@@ -87528,6 +87955,8 @@ export class InvoiceLineInfo implements IInvoiceLineInfo {
     subscriptionGateway!: string | undefined;
     stock!: number | undefined;
     stripeAccountSettingId!: number | undefined;
+    isStripeTaxationEnabled!: boolean;
+    stripeTaxProcuctCode!: string | undefined;
 
     constructor(data?: IInvoiceLineInfo) {
         if (data) {
@@ -87557,6 +87986,8 @@ export class InvoiceLineInfo implements IInvoiceLineInfo {
             this.subscriptionGateway = _data["subscriptionGateway"];
             this.stock = _data["stock"];
             this.stripeAccountSettingId = _data["stripeAccountSettingId"];
+            this.isStripeTaxationEnabled = _data["isStripeTaxationEnabled"];
+            this.stripeTaxProcuctCode = _data["stripeTaxProcuctCode"];
         }
     }
 
@@ -87586,6 +88017,8 @@ export class InvoiceLineInfo implements IInvoiceLineInfo {
         data["subscriptionGateway"] = this.subscriptionGateway;
         data["stock"] = this.stock;
         data["stripeAccountSettingId"] = this.stripeAccountSettingId;
+        data["isStripeTaxationEnabled"] = this.isStripeTaxationEnabled;
+        data["stripeTaxProcuctCode"] = this.stripeTaxProcuctCode;
         return data;
     }
 }
@@ -87608,6 +88041,8 @@ export interface IInvoiceLineInfo {
     subscriptionGateway: string | undefined;
     stock: number | undefined;
     stripeAccountSettingId: number | undefined;
+    isStripeTaxationEnabled: boolean;
+    stripeTaxProcuctCode: string | undefined;
 }
 
 export enum InvoicePaymentMethod {
@@ -87714,6 +88149,7 @@ export class InvoiceSettingsDto implements IInvoiceSettingsDto {
     attachPDF!: boolean;
     defaultNote!: string | undefined;
     showShippingAddress!: boolean;
+    attachXMLToPdf!: boolean;
     defaultAdvisorContactId!: number | undefined;
     dueGracePeriod!: number;
     disableProlongingSubscriptionByQuantity!: boolean;
@@ -87740,6 +88176,7 @@ export class InvoiceSettingsDto implements IInvoiceSettingsDto {
             this.attachPDF = _data["attachPDF"];
             this.defaultNote = _data["defaultNote"];
             this.showShippingAddress = _data["showShippingAddress"];
+            this.attachXMLToPdf = _data["attachXMLToPdf"];
             this.defaultAdvisorContactId = _data["defaultAdvisorContactId"];
             this.dueGracePeriod = _data["dueGracePeriod"];
             this.disableProlongingSubscriptionByQuantity = _data["disableProlongingSubscriptionByQuantity"];
@@ -87766,6 +88203,7 @@ export class InvoiceSettingsDto implements IInvoiceSettingsDto {
         data["attachPDF"] = this.attachPDF;
         data["defaultNote"] = this.defaultNote;
         data["showShippingAddress"] = this.showShippingAddress;
+        data["attachXMLToPdf"] = this.attachXMLToPdf;
         data["defaultAdvisorContactId"] = this.defaultAdvisorContactId;
         data["dueGracePeriod"] = this.dueGracePeriod;
         data["disableProlongingSubscriptionByQuantity"] = this.disableProlongingSubscriptionByQuantity;
@@ -87785,6 +88223,7 @@ export interface IInvoiceSettingsDto {
     attachPDF: boolean;
     defaultNote: string | undefined;
     showShippingAddress: boolean;
+    attachXMLToPdf: boolean;
     defaultAdvisorContactId: number | undefined;
     dueGracePeriod: number;
     disableProlongingSubscriptionByQuantity: boolean;
@@ -98180,6 +98619,8 @@ export class ProductInfo implements IProductInfo {
     singlePurchaseAllowed!: boolean;
     isArchived!: boolean;
     barCode!: string | undefined;
+    isStripeTaxationEnabled!: boolean;
+    stripeTaxProcuctCode!: string | undefined;
     productInventory!: ProductInventoryDto | undefined;
     productServices!: ProductServiceInfo[] | undefined;
     productSubscriptionOptions!: ProductSubscriptionOptionInfo[] | undefined;
@@ -98217,6 +98658,8 @@ export class ProductInfo implements IProductInfo {
             this.singlePurchaseAllowed = _data["singlePurchaseAllowed"];
             this.isArchived = _data["isArchived"];
             this.barCode = _data["barCode"];
+            this.isStripeTaxationEnabled = _data["isStripeTaxationEnabled"];
+            this.stripeTaxProcuctCode = _data["stripeTaxProcuctCode"];
             this.productInventory = _data["productInventory"] ? ProductInventoryDto.fromJS(_data["productInventory"]) : <any>undefined;
             if (Array.isArray(_data["productServices"])) {
                 this.productServices = [] as any;
@@ -98266,6 +98709,8 @@ export class ProductInfo implements IProductInfo {
         data["singlePurchaseAllowed"] = this.singlePurchaseAllowed;
         data["isArchived"] = this.isArchived;
         data["barCode"] = this.barCode;
+        data["isStripeTaxationEnabled"] = this.isStripeTaxationEnabled;
+        data["stripeTaxProcuctCode"] = this.stripeTaxProcuctCode;
         data["productInventory"] = this.productInventory ? this.productInventory.toJSON() : <any>undefined;
         if (Array.isArray(this.productServices)) {
             data["productServices"] = [];
@@ -98308,6 +98753,8 @@ export interface IProductInfo {
     singlePurchaseAllowed: boolean;
     isArchived: boolean;
     barCode: string | undefined;
+    isStripeTaxationEnabled: boolean;
+    stripeTaxProcuctCode: string | undefined;
     productInventory: ProductInventoryDto | undefined;
     productServices: ProductServiceInfo[] | undefined;
     productSubscriptionOptions: ProductSubscriptionOptionInfo[] | undefined;
@@ -98469,6 +98916,8 @@ export class ProductPaymentOptionsInfo implements IProductPaymentOptionsInfo {
     description!: string | undefined;
     stock!: number | undefined;
     type!: ProductType;
+    isStripeTaxationEnabled!: boolean;
+    stripeTaxProcuctCode!: string | undefined;
     paymentOptions!: ProductPaymentOptionInfo[] | undefined;
 
     constructor(data?: IProductPaymentOptionsInfo) {
@@ -98488,6 +98937,8 @@ export class ProductPaymentOptionsInfo implements IProductPaymentOptionsInfo {
             this.description = _data["description"];
             this.stock = _data["stock"];
             this.type = _data["type"];
+            this.isStripeTaxationEnabled = _data["isStripeTaxationEnabled"];
+            this.stripeTaxProcuctCode = _data["stripeTaxProcuctCode"];
             if (Array.isArray(_data["paymentOptions"])) {
                 this.paymentOptions = [] as any;
                 for (let item of _data["paymentOptions"])
@@ -98511,6 +98962,8 @@ export class ProductPaymentOptionsInfo implements IProductPaymentOptionsInfo {
         data["description"] = this.description;
         data["stock"] = this.stock;
         data["type"] = this.type;
+        data["isStripeTaxationEnabled"] = this.isStripeTaxationEnabled;
+        data["stripeTaxProcuctCode"] = this.stripeTaxProcuctCode;
         if (Array.isArray(this.paymentOptions)) {
             data["paymentOptions"] = [];
             for (let item of this.paymentOptions)
@@ -98527,6 +98980,8 @@ export interface IProductPaymentOptionsInfo {
     description: string | undefined;
     stock: number | undefined;
     type: ProductType;
+    isStripeTaxationEnabled: boolean;
+    stripeTaxProcuctCode: string | undefined;
     paymentOptions: ProductPaymentOptionInfo[] | undefined;
 }
 
@@ -98666,11 +99121,13 @@ export class ProductSubscriptionOptionInfo implements IProductSubscriptionOption
     frequency!: RecurringPaymentFrequency;
     signupFee!: number;
     commissionableSignupFeeAmount!: number | undefined;
+    signUpCredits!: number | undefined;
     fee!: number | undefined;
     customerChoosesPrice!: boolean;
     minCustomerPrice!: number | undefined;
     maxCustomerPrice!: number | undefined;
     commissionableFeeAmount!: number | undefined;
+    credits!: number | undefined;
     trialDayCount!: number;
     customPeriodCount!: number | undefined;
     customPeriodType!: CustomPeriodType | undefined;
@@ -98694,11 +99151,13 @@ export class ProductSubscriptionOptionInfo implements IProductSubscriptionOption
             this.frequency = _data["frequency"];
             this.signupFee = _data["signupFee"];
             this.commissionableSignupFeeAmount = _data["commissionableSignupFeeAmount"];
+            this.signUpCredits = _data["signUpCredits"];
             this.fee = _data["fee"];
             this.customerChoosesPrice = _data["customerChoosesPrice"];
             this.minCustomerPrice = _data["minCustomerPrice"];
             this.maxCustomerPrice = _data["maxCustomerPrice"];
             this.commissionableFeeAmount = _data["commissionableFeeAmount"];
+            this.credits = _data["credits"];
             this.trialDayCount = _data["trialDayCount"];
             this.customPeriodCount = _data["customPeriodCount"];
             this.customPeriodType = _data["customPeriodType"];
@@ -98722,11 +99181,13 @@ export class ProductSubscriptionOptionInfo implements IProductSubscriptionOption
         data["frequency"] = this.frequency;
         data["signupFee"] = this.signupFee;
         data["commissionableSignupFeeAmount"] = this.commissionableSignupFeeAmount;
+        data["signUpCredits"] = this.signUpCredits;
         data["fee"] = this.fee;
         data["customerChoosesPrice"] = this.customerChoosesPrice;
         data["minCustomerPrice"] = this.minCustomerPrice;
         data["maxCustomerPrice"] = this.maxCustomerPrice;
         data["commissionableFeeAmount"] = this.commissionableFeeAmount;
+        data["credits"] = this.credits;
         data["trialDayCount"] = this.trialDayCount;
         data["customPeriodCount"] = this.customPeriodCount;
         data["customPeriodType"] = this.customPeriodType;
@@ -98743,11 +99204,13 @@ export interface IProductSubscriptionOptionInfo {
     frequency: RecurringPaymentFrequency;
     signupFee: number;
     commissionableSignupFeeAmount: number | undefined;
+    signUpCredits: number | undefined;
     fee: number | undefined;
     customerChoosesPrice: boolean;
     minCustomerPrice: number | undefined;
     maxCustomerPrice: number | undefined;
     commissionableFeeAmount: number | undefined;
+    credits: number | undefined;
     trialDayCount: number;
     customPeriodCount: number | undefined;
     customPeriodType: CustomPeriodType | undefined;
@@ -98756,6 +99219,54 @@ export interface IProductSubscriptionOptionInfo {
     stripeXref: string | undefined;
     stripeXrefUrl: string | undefined;
     paypalXref: string | undefined;
+}
+
+export class ProductTaxInput implements IProductTaxInput {
+    productId!: number;
+    price!: number;
+    quantity!: number;
+    stripeTaxProcuctCode!: string | undefined;
+
+    constructor(data?: IProductTaxInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.productId = _data["productId"];
+            this.price = _data["price"];
+            this.quantity = _data["quantity"];
+            this.stripeTaxProcuctCode = _data["stripeTaxProcuctCode"];
+        }
+    }
+
+    static fromJS(data: any): ProductTaxInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new ProductTaxInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["productId"] = this.productId;
+        data["price"] = this.price;
+        data["quantity"] = this.quantity;
+        data["stripeTaxProcuctCode"] = this.stripeTaxProcuctCode;
+        return data;
+    }
+}
+
+export interface IProductTaxInput {
+    productId: number;
+    price: number;
+    quantity: number;
+    stripeTaxProcuctCode: string | undefined;
 }
 
 export enum ProductType {
@@ -101327,6 +101838,7 @@ export class PublicProductData implements IPublicProductData {
     paypalClientId!: string | undefined;
     stripeConfigured!: boolean;
     stripePublishableKey!: string | undefined;
+    isStripeTaxationEnabled!: boolean;
     hasTenantService!: boolean;
     tenantHasPrivacyPolicy!: boolean;
     tenantHasTerms!: boolean;
@@ -101346,6 +101858,7 @@ export class PublicProductData implements IPublicProductData {
             this.paypalClientId = _data["paypalClientId"];
             this.stripeConfigured = _data["stripeConfigured"];
             this.stripePublishableKey = _data["stripePublishableKey"];
+            this.isStripeTaxationEnabled = _data["isStripeTaxationEnabled"];
             this.hasTenantService = _data["hasTenantService"];
             this.tenantHasPrivacyPolicy = _data["tenantHasPrivacyPolicy"];
             this.tenantHasTerms = _data["tenantHasTerms"];
@@ -101365,6 +101878,7 @@ export class PublicProductData implements IPublicProductData {
         data["paypalClientId"] = this.paypalClientId;
         data["stripeConfigured"] = this.stripeConfigured;
         data["stripePublishableKey"] = this.stripePublishableKey;
+        data["isStripeTaxationEnabled"] = this.isStripeTaxationEnabled;
         data["hasTenantService"] = this.hasTenantService;
         data["tenantHasPrivacyPolicy"] = this.tenantHasPrivacyPolicy;
         data["tenantHasTerms"] = this.tenantHasTerms;
@@ -101377,6 +101891,7 @@ export interface IPublicProductData {
     paypalClientId: string | undefined;
     stripeConfigured: boolean;
     stripePublishableKey: string | undefined;
+    isStripeTaxationEnabled: boolean;
     hasTenantService: boolean;
     tenantHasPrivacyPolicy: boolean;
     tenantHasTerms: boolean;
@@ -101399,6 +101914,7 @@ export class PublicProductInfo implements IPublicProductInfo {
     imageUrl!: string | undefined;
     thumbnailUrl!: string | undefined;
     publicAllowCoupon!: boolean;
+    stripeTaxProcuctCode!: string | undefined;
     productSubscriptionOptions!: PublicProductSubscriptionOptionInfo[] | undefined;
     productDonation!: PublicDonationInfo | undefined;
     data!: PublicProductData | undefined;
@@ -101430,6 +101946,7 @@ export class PublicProductInfo implements IPublicProductInfo {
             this.imageUrl = _data["imageUrl"];
             this.thumbnailUrl = _data["thumbnailUrl"];
             this.publicAllowCoupon = _data["publicAllowCoupon"];
+            this.stripeTaxProcuctCode = _data["stripeTaxProcuctCode"];
             if (Array.isArray(_data["productSubscriptionOptions"])) {
                 this.productSubscriptionOptions = [] as any;
                 for (let item of _data["productSubscriptionOptions"])
@@ -101469,6 +101986,7 @@ export class PublicProductInfo implements IPublicProductInfo {
         data["imageUrl"] = this.imageUrl;
         data["thumbnailUrl"] = this.thumbnailUrl;
         data["publicAllowCoupon"] = this.publicAllowCoupon;
+        data["stripeTaxProcuctCode"] = this.stripeTaxProcuctCode;
         if (Array.isArray(this.productSubscriptionOptions)) {
             data["productSubscriptionOptions"] = [];
             for (let item of this.productSubscriptionOptions)
@@ -101501,6 +102019,7 @@ export interface IPublicProductInfo {
     imageUrl: string | undefined;
     thumbnailUrl: string | undefined;
     publicAllowCoupon: boolean;
+    stripeTaxProcuctCode: string | undefined;
     productSubscriptionOptions: PublicProductSubscriptionOptionInfo[] | undefined;
     productDonation: PublicDonationInfo | undefined;
     data: PublicProductData | undefined;
@@ -101508,9 +102027,9 @@ export interface IPublicProductInfo {
 }
 
 export class PublicProductInput implements IPublicProductInput {
-    productId!: number;
     optionId!: number | undefined;
     unit!: ProductMeasurementUnit;
+    productId!: number;
     price!: number | undefined;
     quantity!: number;
 
@@ -101525,9 +102044,9 @@ export class PublicProductInput implements IPublicProductInput {
 
     init(_data?: any) {
         if (_data) {
-            this.productId = _data["productId"];
             this.optionId = _data["optionId"];
             this.unit = _data["unit"];
+            this.productId = _data["productId"];
             this.price = _data["price"];
             this.quantity = _data["quantity"];
         }
@@ -101542,9 +102061,9 @@ export class PublicProductInput implements IPublicProductInput {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["productId"] = this.productId;
         data["optionId"] = this.optionId;
         data["unit"] = this.unit;
+        data["productId"] = this.productId;
         data["price"] = this.price;
         data["quantity"] = this.quantity;
         return data;
@@ -101552,9 +102071,9 @@ export class PublicProductInput implements IPublicProductInput {
 }
 
 export interface IPublicProductInput {
-    productId: number;
     optionId: number | undefined;
     unit: ProductMeasurementUnit;
+    productId: number;
     price: number | undefined;
     quantity: number;
 }
@@ -108035,6 +108554,7 @@ export class StripeActiveSettingsDto implements IStripeActiveSettingsDto {
     connectedAccountEmail!: string | undefined;
     unsupportedPaymentMethods!: InvoicePaymentMethod;
     hasRunningImport!: boolean;
+    isTaxationEnabled!: boolean;
 
     constructor(data?: IStripeActiveSettingsDto) {
         if (data) {
@@ -108066,6 +108586,7 @@ export class StripeActiveSettingsDto implements IStripeActiveSettingsDto {
             this.connectedAccountEmail = _data["connectedAccountEmail"];
             this.unsupportedPaymentMethods = _data["unsupportedPaymentMethods"];
             this.hasRunningImport = _data["hasRunningImport"];
+            this.isTaxationEnabled = _data["isTaxationEnabled"];
         }
     }
 
@@ -108097,6 +108618,7 @@ export class StripeActiveSettingsDto implements IStripeActiveSettingsDto {
         data["connectedAccountEmail"] = this.connectedAccountEmail;
         data["unsupportedPaymentMethods"] = this.unsupportedPaymentMethods;
         data["hasRunningImport"] = this.hasRunningImport;
+        data["isTaxationEnabled"] = this.isTaxationEnabled;
         return data;
     }
 }
@@ -108121,6 +108643,7 @@ export interface IStripeActiveSettingsDto {
     connectedAccountEmail: string | undefined;
     unsupportedPaymentMethods: InvoicePaymentMethod;
     hasRunningImport: boolean;
+    isTaxationEnabled: boolean;
 }
 
 export class StripeConnectedAccountInput implements IStripeConnectedAccountInput {
@@ -108185,6 +108708,7 @@ export class StripeSettingsDto implements IStripeSettingsDto {
     connectedAccountEmail!: string | undefined;
     unsupportedPaymentMethods!: InvoicePaymentMethod;
     hasRunningImport!: boolean;
+    isTaxationEnabled!: boolean;
 
     constructor(data?: IStripeSettingsDto) {
         if (data) {
@@ -108214,6 +108738,7 @@ export class StripeSettingsDto implements IStripeSettingsDto {
             this.connectedAccountEmail = _data["connectedAccountEmail"];
             this.unsupportedPaymentMethods = _data["unsupportedPaymentMethods"];
             this.hasRunningImport = _data["hasRunningImport"];
+            this.isTaxationEnabled = _data["isTaxationEnabled"];
         }
     }
 
@@ -108243,6 +108768,7 @@ export class StripeSettingsDto implements IStripeSettingsDto {
         data["connectedAccountEmail"] = this.connectedAccountEmail;
         data["unsupportedPaymentMethods"] = this.unsupportedPaymentMethods;
         data["hasRunningImport"] = this.hasRunningImport;
+        data["isTaxationEnabled"] = this.isTaxationEnabled;
         return data;
     }
 }
@@ -108265,6 +108791,139 @@ export interface IStripeSettingsDto {
     connectedAccountEmail: string | undefined;
     unsupportedPaymentMethods: InvoicePaymentMethod;
     hasRunningImport: boolean;
+    isTaxationEnabled: boolean;
+}
+
+export class StripeSettingsInfo implements IStripeSettingsInfo {
+    isEnabled!: boolean;
+    isTaxationEnabled!: boolean;
+
+    constructor(data?: IStripeSettingsInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.isEnabled = _data["isEnabled"];
+            this.isTaxationEnabled = _data["isTaxationEnabled"];
+        }
+    }
+
+    static fromJS(data: any): StripeSettingsInfo {
+        data = typeof data === 'object' ? data : {};
+        let result = new StripeSettingsInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["isEnabled"] = this.isEnabled;
+        data["isTaxationEnabled"] = this.isTaxationEnabled;
+        return data;
+    }
+}
+
+export interface IStripeSettingsInfo {
+    isEnabled: boolean;
+    isTaxationEnabled: boolean;
+}
+
+export class StripeTaxProcuctCodeBase implements IStripeTaxProcuctCodeBase {
+    id!: string | undefined;
+    type!: string | undefined;
+    name!: string | undefined;
+
+    constructor(data?: IStripeTaxProcuctCodeBase) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.type = _data["type"];
+            this.name = _data["name"];
+        }
+    }
+
+    static fromJS(data: any): StripeTaxProcuctCodeBase {
+        data = typeof data === 'object' ? data : {};
+        let result = new StripeTaxProcuctCodeBase();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["type"] = this.type;
+        data["name"] = this.name;
+        return data;
+    }
+}
+
+export interface IStripeTaxProcuctCodeBase {
+    id: string | undefined;
+    type: string | undefined;
+    name: string | undefined;
+}
+
+export class StripeTaxRegistration implements IStripeTaxRegistration {
+    country!: string | undefined;
+    state!: string | undefined;
+    type!: string | undefined;
+    status!: string | undefined;
+
+    constructor(data?: IStripeTaxRegistration) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.country = _data["country"];
+            this.state = _data["state"];
+            this.type = _data["type"];
+            this.status = _data["status"];
+        }
+    }
+
+    static fromJS(data: any): StripeTaxRegistration {
+        data = typeof data === 'object' ? data : {};
+        let result = new StripeTaxRegistration();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["country"] = this.country;
+        data["state"] = this.state;
+        data["type"] = this.type;
+        data["status"] = this.status;
+        return data;
+    }
+}
+
+export interface IStripeTaxRegistration {
+    country: string | undefined;
+    state: string | undefined;
+    type: string | undefined;
+    status: string | undefined;
 }
 
 export class SubmitAnswerDto implements ISubmitAnswerDto {
@@ -110742,6 +111401,54 @@ export interface ITargetContactMergeOptions {
     addressIdsToRemove: number[] | undefined;
     affiliateCodeIdsToIgnore: number[] | undefined;
     xrefsToIgnore: string[] | undefined;
+}
+
+export class TaxCalculationResultDto implements ITaxCalculationResultDto {
+    currency!: string | undefined;
+    amountTotal!: number;
+    taxAmountExclusive!: number;
+    taxAmountInclusive!: number;
+
+    constructor(data?: ITaxCalculationResultDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.currency = _data["currency"];
+            this.amountTotal = _data["amountTotal"];
+            this.taxAmountExclusive = _data["taxAmountExclusive"];
+            this.taxAmountInclusive = _data["taxAmountInclusive"];
+        }
+    }
+
+    static fromJS(data: any): TaxCalculationResultDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new TaxCalculationResultDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["currency"] = this.currency;
+        data["amountTotal"] = this.amountTotal;
+        data["taxAmountExclusive"] = this.taxAmountExclusive;
+        data["taxAmountInclusive"] = this.taxAmountInclusive;
+        return data;
+    }
+}
+
+export interface ITaxCalculationResultDto {
+    currency: string | undefined;
+    amountTotal: number;
+    taxAmountExclusive: number;
+    taxAmountInclusive: number;
 }
 
 export class TenantAppHostOutput implements ITenantAppHostOutput {
@@ -115861,6 +116568,7 @@ export class UpdateInvoiceInput implements IUpdateInvoiceInput {
     discountTotal!: number | undefined;
     shippingTotal!: number | undefined;
     taxTotal!: number | undefined;
+    isAutoCalculatedTax!: boolean;
     billingAddress!: InvoiceAddressInput | undefined;
     shippingAddress!: InvoiceAddressInput | undefined;
     description!: string | undefined;
@@ -115892,6 +116600,7 @@ export class UpdateInvoiceInput implements IUpdateInvoiceInput {
             this.discountTotal = _data["discountTotal"];
             this.shippingTotal = _data["shippingTotal"];
             this.taxTotal = _data["taxTotal"];
+            this.isAutoCalculatedTax = _data["isAutoCalculatedTax"];
             this.billingAddress = _data["billingAddress"] ? InvoiceAddressInput.fromJS(_data["billingAddress"]) : <any>undefined;
             this.shippingAddress = _data["shippingAddress"] ? InvoiceAddressInput.fromJS(_data["shippingAddress"]) : <any>undefined;
             this.description = _data["description"];
@@ -115927,6 +116636,7 @@ export class UpdateInvoiceInput implements IUpdateInvoiceInput {
         data["discountTotal"] = this.discountTotal;
         data["shippingTotal"] = this.shippingTotal;
         data["taxTotal"] = this.taxTotal;
+        data["isAutoCalculatedTax"] = this.isAutoCalculatedTax;
         data["billingAddress"] = this.billingAddress ? this.billingAddress.toJSON() : <any>undefined;
         data["shippingAddress"] = this.shippingAddress ? this.shippingAddress.toJSON() : <any>undefined;
         data["description"] = this.description;
@@ -115955,6 +116665,7 @@ export interface IUpdateInvoiceInput {
     discountTotal: number | undefined;
     shippingTotal: number | undefined;
     taxTotal: number | undefined;
+    isAutoCalculatedTax: boolean;
     billingAddress: InvoiceAddressInput | undefined;
     shippingAddress: InvoiceAddressInput | undefined;
     description: string | undefined;
@@ -116040,6 +116751,7 @@ export class UpdateInvoiceSettingsDto implements IUpdateInvoiceSettingsDto {
     attachPDF!: boolean;
     defaultNote!: string | undefined;
     showShippingAddress!: boolean;
+    attachXMLToPdf!: boolean;
     defaultAdvisorContactId!: number | undefined;
     dueGracePeriod!: number;
     disableProlongingSubscriptionByQuantity!: boolean;
@@ -116063,6 +116775,7 @@ export class UpdateInvoiceSettingsDto implements IUpdateInvoiceSettingsDto {
             this.attachPDF = _data["attachPDF"];
             this.defaultNote = _data["defaultNote"];
             this.showShippingAddress = _data["showShippingAddress"];
+            this.attachXMLToPdf = _data["attachXMLToPdf"];
             this.defaultAdvisorContactId = _data["defaultAdvisorContactId"];
             this.dueGracePeriod = _data["dueGracePeriod"];
             this.disableProlongingSubscriptionByQuantity = _data["disableProlongingSubscriptionByQuantity"];
@@ -116086,6 +116799,7 @@ export class UpdateInvoiceSettingsDto implements IUpdateInvoiceSettingsDto {
         data["attachPDF"] = this.attachPDF;
         data["defaultNote"] = this.defaultNote;
         data["showShippingAddress"] = this.showShippingAddress;
+        data["attachXMLToPdf"] = this.attachXMLToPdf;
         data["defaultAdvisorContactId"] = this.defaultAdvisorContactId;
         data["dueGracePeriod"] = this.dueGracePeriod;
         data["disableProlongingSubscriptionByQuantity"] = this.disableProlongingSubscriptionByQuantity;
@@ -116102,6 +116816,7 @@ export interface IUpdateInvoiceSettingsDto {
     attachPDF: boolean;
     defaultNote: string | undefined;
     showShippingAddress: boolean;
+    attachXMLToPdf: boolean;
     defaultAdvisorContactId: number | undefined;
     dueGracePeriod: number;
     disableProlongingSubscriptionByQuantity: boolean;
@@ -117932,6 +118647,8 @@ export class UpdateProductInput implements IUpdateProductInput {
     description!: string | undefined;
     descriptionHtml!: string | undefined;
     barCode!: string | undefined;
+    isStripeTaxationEnabled!: boolean;
+    stripeTaxProcuctCode!: string | undefined;
     groupId!: number | undefined;
     groupName!: string | undefined;
     type!: ProductType;
@@ -117944,6 +118661,7 @@ export class UpdateProductInput implements IUpdateProductInput {
     maxCommissionRate!: number | undefined;
     maxCommissionRateTier2!: number | undefined;
     unit!: ProductMeasurementUnit | undefined;
+    credits!: number | undefined;
     stripeXref!: string | undefined;
     paypalXref!: string | undefined;
     downgradeProductId!: number | undefined;
@@ -117982,6 +118700,8 @@ export class UpdateProductInput implements IUpdateProductInput {
             this.description = _data["description"];
             this.descriptionHtml = _data["descriptionHtml"];
             this.barCode = _data["barCode"];
+            this.isStripeTaxationEnabled = _data["isStripeTaxationEnabled"];
+            this.stripeTaxProcuctCode = _data["stripeTaxProcuctCode"];
             this.groupId = _data["groupId"];
             this.groupName = _data["groupName"];
             this.type = _data["type"];
@@ -117994,6 +118714,7 @@ export class UpdateProductInput implements IUpdateProductInput {
             this.maxCommissionRate = _data["maxCommissionRate"];
             this.maxCommissionRateTier2 = _data["maxCommissionRateTier2"];
             this.unit = _data["unit"];
+            this.credits = _data["credits"];
             this.stripeXref = _data["stripeXref"];
             this.paypalXref = _data["paypalXref"];
             this.downgradeProductId = _data["downgradeProductId"];
@@ -118052,6 +118773,8 @@ export class UpdateProductInput implements IUpdateProductInput {
         data["description"] = this.description;
         data["descriptionHtml"] = this.descriptionHtml;
         data["barCode"] = this.barCode;
+        data["isStripeTaxationEnabled"] = this.isStripeTaxationEnabled;
+        data["stripeTaxProcuctCode"] = this.stripeTaxProcuctCode;
         data["groupId"] = this.groupId;
         data["groupName"] = this.groupName;
         data["type"] = this.type;
@@ -118064,6 +118787,7 @@ export class UpdateProductInput implements IUpdateProductInput {
         data["maxCommissionRate"] = this.maxCommissionRate;
         data["maxCommissionRateTier2"] = this.maxCommissionRateTier2;
         data["unit"] = this.unit;
+        data["credits"] = this.credits;
         data["stripeXref"] = this.stripeXref;
         data["paypalXref"] = this.paypalXref;
         data["downgradeProductId"] = this.downgradeProductId;
@@ -118115,6 +118839,8 @@ export interface IUpdateProductInput {
     description: string | undefined;
     descriptionHtml: string | undefined;
     barCode: string | undefined;
+    isStripeTaxationEnabled: boolean;
+    stripeTaxProcuctCode: string | undefined;
     groupId: number | undefined;
     groupName: string | undefined;
     type: ProductType;
@@ -118127,6 +118853,7 @@ export interface IUpdateProductInput {
     maxCommissionRate: number | undefined;
     maxCommissionRateTier2: number | undefined;
     unit: ProductMeasurementUnit | undefined;
+    credits: number | undefined;
     stripeXref: string | undefined;
     paypalXref: string | undefined;
     downgradeProductId: number | undefined;

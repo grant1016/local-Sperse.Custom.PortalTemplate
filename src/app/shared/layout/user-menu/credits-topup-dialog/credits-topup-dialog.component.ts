@@ -9,7 +9,7 @@ import { finalize, map, tap } from 'rxjs/operators';
 
 /** Application imports */
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { MemberCreditServiceProxy, PaymentDataInput, PaypalSettingsInfo } from '@shared/service-proxies/service-proxies';
+import { MemberCreditServiceProxy, PaymentDataInput, PaypalSettingsInfo, StripeSettingsInfo } from '@shared/service-proxies/service-proxies';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { AppSessionService } from '@root/shared/common/session/app-session.service';
 import { AppConsts } from '@root/shared/AppConsts';
@@ -33,7 +33,7 @@ export class CreditsTopupDialogComponent implements OnInit {
     quantity: number = 1;
     currencyId = this.data.currencyId;
 
-    availablePaymentsInfo: { isStripeEnabled: boolean, paypalInfo: PaypalSettingsInfo };
+    availablePaymentsInfo: { stripeInfo: StripeSettingsInfo, paypalInfo: PaypalSettingsInfo };
     initialInvoiceXref: string;
 
     constructor(
