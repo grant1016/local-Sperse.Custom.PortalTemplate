@@ -23946,6 +23946,57 @@ export class HostSettingsServiceProxy {
     /**
      * @return Success
      */
+    getTrackingToolsSettings(): Observable<TrackingToolsSettingsDto> {
+        let url_ = this.baseUrl + "/api/services/Platform/HostSettings/GetTrackingToolsSettings";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json;odata.metadata=minimal;odata.streaming=true"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetTrackingToolsSettings(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetTrackingToolsSettings(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<TrackingToolsSettingsDto>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<TrackingToolsSettingsDto>;
+        }));
+    }
+
+    protected processGetTrackingToolsSettings(response: HttpResponseBase): Observable<TrackingToolsSettingsDto> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = TrackingToolsSettingsDto.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<TrackingToolsSettingsDto>(null as any);
+    }
+
+    /**
+     * @return Success
+     */
     getSecuritySettings(): Observable<SecuritySettingsEditDto> {
         let url_ = this.baseUrl + "/api/services/Platform/HostSettings/GetSecuritySettings";
         url_ = url_.replace(/[?&]$/, "");
@@ -24491,6 +24542,58 @@ export class HostSettingsServiceProxy {
     }
 
     protected processUpdateAppearanceSettings(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(null as any);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(null as any);
+    }
+
+    /**
+     * @param body (optional) 
+     * @return Success
+     */
+    updateTrackingToolsSettings(body: TrackingToolsSettingsDto | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/Platform/HostSettings/UpdateTrackingToolsSettings";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json;odata.metadata=minimal;odata.streaming=true",
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdateTrackingToolsSettings(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUpdateTrackingToolsSettings(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<void>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<void>;
+        }));
+    }
+
+    protected processUpdateTrackingToolsSettings(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -45336,11 +45439,16 @@ export class TenantCustomizationServiceProxy {
     }
 
     /**
+     * @param organizationUnitId (optional) 
      * @param portalLogo (optional) 
      * @return Success
      */
-    clearLogo(portalLogo: boolean | undefined): Observable<void> {
+    clearLogo(organizationUnitId: number | undefined, portalLogo: boolean | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/services/Platform/TenantCustomization/ClearLogo?";
+        if (organizationUnitId === null)
+            throw new Error("The parameter 'organizationUnitId' cannot be null.");
+        else if (organizationUnitId !== undefined)
+            url_ += "organizationUnitId=" + encodeURIComponent("" + organizationUnitId) + "&";
         if (portalLogo === null)
             throw new Error("The parameter 'portalLogo' cannot be null.");
         else if (portalLogo !== undefined)
@@ -45388,11 +45496,16 @@ export class TenantCustomizationServiceProxy {
     }
 
     /**
+     * @param organizationUnitId (optional) 
      * @param body (optional) 
      * @return Success
      */
-    clearCustomCss(body: CustomCssType | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/Platform/TenantCustomization/ClearCustomCss";
+    clearCustomCss(organizationUnitId: number | undefined, body: CustomCssType | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/Platform/TenantCustomization/ClearCustomCss?";
+        if (organizationUnitId === null)
+            throw new Error("The parameter 'organizationUnitId' cannot be null.");
+        else if (organizationUnitId !== undefined)
+            url_ += "organizationUnitId=" + encodeURIComponent("" + organizationUnitId) + "&";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(body);
@@ -45535,14 +45648,19 @@ export class TenantCustomizationServiceProxy {
 
     /**
      * @param portalFavicons (optional) 
+     * @param organizationUnitId (optional) 
      * @return Success
      */
-    clearFavicons(portalFavicons: boolean | undefined): Observable<void> {
+    clearFavicons(portalFavicons: boolean | undefined, organizationUnitId: number | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/services/Platform/TenantCustomization/ClearFavicons?";
         if (portalFavicons === null)
             throw new Error("The parameter 'portalFavicons' cannot be null.");
         else if (portalFavicons !== undefined)
             url_ += "portalFavicons=" + encodeURIComponent("" + portalFavicons) + "&";
+        if (organizationUnitId === null)
+            throw new Error("The parameter 'organizationUnitId' cannot be null.");
+        else if (organizationUnitId !== undefined)
+            url_ += "organizationUnitId=" + encodeURIComponent("" + organizationUnitId) + "&";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -47988,6 +48106,58 @@ export class TenantPaymentSettingsServiceProxy {
     }
 
     /**
+     * @param settingId (optional) 
+     * @return Success
+     */
+    deleteStripeAccount(settingId: number | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/TenantPaymentSettings/DeleteStripeAccount?";
+        if (settingId === null)
+            throw new Error("The parameter 'settingId' cannot be null.");
+        else if (settingId !== undefined)
+            url_ += "settingId=" + encodeURIComponent("" + settingId) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+            })
+        };
+
+        return this.http.request("delete", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processDeleteStripeAccount(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processDeleteStripeAccount(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<void>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<void>;
+        }));
+    }
+
+    protected processDeleteStripeAccount(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(null as any);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(null as any);
+    }
+
+    /**
      * @param includeAdvisorDetails (optional) 
      * @return Success
      */
@@ -48365,10 +48535,15 @@ export class TenantSettingsServiceProxy {
     }
 
     /**
+     * @param organizationUnitId (optional) 
      * @return Success
      */
-    getAppearanceSettings(): Observable<AppearanceSettingsEditDto> {
-        let url_ = this.baseUrl + "/api/services/Platform/TenantSettings/GetAppearanceSettings";
+    getAppearanceSettings(organizationUnitId: number | undefined): Observable<AppearanceSettingsEditDto> {
+        let url_ = this.baseUrl + "/api/services/Platform/TenantSettings/GetAppearanceSettings?";
+        if (organizationUnitId === null)
+            throw new Error("The parameter 'organizationUnitId' cannot be null.");
+        else if (organizationUnitId !== undefined)
+            url_ += "organizationUnitId=" + encodeURIComponent("" + organizationUnitId) + "&";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -49756,6 +49931,57 @@ export class TenantSettingsServiceProxy {
     /**
      * @return Success
      */
+    getTrackingToolsSettings(): Observable<TrackingToolsSettingsDto> {
+        let url_ = this.baseUrl + "/api/services/Platform/TenantSettings/GetTrackingToolsSettings";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json;odata.metadata=minimal;odata.streaming=true"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetTrackingToolsSettings(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetTrackingToolsSettings(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<TrackingToolsSettingsDto>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<TrackingToolsSettingsDto>;
+        }));
+    }
+
+    protected processGetTrackingToolsSettings(response: HttpResponseBase): Observable<TrackingToolsSettingsDto> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = TrackingToolsSettingsDto.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<TrackingToolsSettingsDto>(null as any);
+    }
+
+    /**
+     * @return Success
+     */
     getSecuritySettings(): Observable<SecuritySettingsEditDto> {
         let url_ = this.baseUrl + "/api/services/Platform/TenantSettings/GetSecuritySettings";
         url_ = url_.replace(/[?&]$/, "");
@@ -50301,6 +50527,58 @@ export class TenantSettingsServiceProxy {
     }
 
     protected processUpdateAppearanceSettings(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(null as any);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(null as any);
+    }
+
+    /**
+     * @param body (optional) 
+     * @return Success
+     */
+    updateTrackingToolsSettings(body: TrackingToolsSettingsDto | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/Platform/TenantSettings/UpdateTrackingToolsSettings";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json;odata.metadata=minimal;odata.streaming=true",
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdateTrackingToolsSettings(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUpdateTrackingToolsSettings(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<void>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<void>;
+        }));
+    }
+
+    protected processUpdateTrackingToolsSettings(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -59113,18 +59391,20 @@ export interface IApiKeyInfo {
     paths: string | undefined;
 }
 
-export class AppearanceBaseSettingsDto implements IAppearanceBaseSettingsDto {
-    navBackground!: string | undefined;
-    navTextColor!: string | undefined;
-    leftsideMenuColor!: string | undefined;
-    fontName!: string | undefined;
-    tabularFont!: string | undefined;
-    buttonColor!: string | undefined;
-    buttonTextColor!: string | undefined;
-    buttonHighlightedColor!: string | undefined;
-    borderRadius!: string | undefined;
+export class AppearanceFilesSettings implements IAppearanceFilesSettings {
+    customCssId!: string | undefined;
+    loginCustomCssId!: string | undefined;
+    signUpCustomCssId!: string | undefined;
+    portalLoginCustomCssId!: string | undefined;
+    portalCustomCssId!: string | undefined;
+    lightLogoId!: string | undefined;
+    lightLogoFileType!: string | undefined;
+    portalLogoId!: string | undefined;
+    portalLogoFileType!: string | undefined;
+    hasFavicons!: boolean;
+    hasPortalFavicons!: boolean;
 
-    constructor(data?: IAppearanceBaseSettingsDto) {
+    constructor(data?: IAppearanceFilesSettings) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -59135,56 +59415,62 @@ export class AppearanceBaseSettingsDto implements IAppearanceBaseSettingsDto {
 
     init(_data?: any) {
         if (_data) {
-            this.navBackground = _data["navBackground"];
-            this.navTextColor = _data["navTextColor"];
-            this.leftsideMenuColor = _data["leftsideMenuColor"];
-            this.fontName = _data["fontName"];
-            this.tabularFont = _data["tabularFont"];
-            this.buttonColor = _data["buttonColor"];
-            this.buttonTextColor = _data["buttonTextColor"];
-            this.buttonHighlightedColor = _data["buttonHighlightedColor"];
-            this.borderRadius = _data["borderRadius"];
+            this.customCssId = _data["customCssId"];
+            this.loginCustomCssId = _data["loginCustomCssId"];
+            this.signUpCustomCssId = _data["signUpCustomCssId"];
+            this.portalLoginCustomCssId = _data["portalLoginCustomCssId"];
+            this.portalCustomCssId = _data["portalCustomCssId"];
+            this.lightLogoId = _data["lightLogoId"];
+            this.lightLogoFileType = _data["lightLogoFileType"];
+            this.portalLogoId = _data["portalLogoId"];
+            this.portalLogoFileType = _data["portalLogoFileType"];
+            this.hasFavicons = _data["hasFavicons"];
+            this.hasPortalFavicons = _data["hasPortalFavicons"];
         }
     }
 
-    static fromJS(data: any): AppearanceBaseSettingsDto {
+    static fromJS(data: any): AppearanceFilesSettings {
         data = typeof data === 'object' ? data : {};
-        let result = new AppearanceBaseSettingsDto();
+        let result = new AppearanceFilesSettings();
         result.init(data);
         return result;
     }
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["navBackground"] = this.navBackground;
-        data["navTextColor"] = this.navTextColor;
-        data["leftsideMenuColor"] = this.leftsideMenuColor;
-        data["fontName"] = this.fontName;
-        data["tabularFont"] = this.tabularFont;
-        data["buttonColor"] = this.buttonColor;
-        data["buttonTextColor"] = this.buttonTextColor;
-        data["buttonHighlightedColor"] = this.buttonHighlightedColor;
-        data["borderRadius"] = this.borderRadius;
+        data["customCssId"] = this.customCssId;
+        data["loginCustomCssId"] = this.loginCustomCssId;
+        data["signUpCustomCssId"] = this.signUpCustomCssId;
+        data["portalLoginCustomCssId"] = this.portalLoginCustomCssId;
+        data["portalCustomCssId"] = this.portalCustomCssId;
+        data["lightLogoId"] = this.lightLogoId;
+        data["lightLogoFileType"] = this.lightLogoFileType;
+        data["portalLogoId"] = this.portalLogoId;
+        data["portalLogoFileType"] = this.portalLogoFileType;
+        data["hasFavicons"] = this.hasFavicons;
+        data["hasPortalFavicons"] = this.hasPortalFavicons;
         return data;
     }
 }
 
-export interface IAppearanceBaseSettingsDto {
-    navBackground: string | undefined;
-    navTextColor: string | undefined;
-    leftsideMenuColor: string | undefined;
-    fontName: string | undefined;
-    tabularFont: string | undefined;
-    buttonColor: string | undefined;
-    buttonTextColor: string | undefined;
-    buttonHighlightedColor: string | undefined;
-    borderRadius: string | undefined;
+export interface IAppearanceFilesSettings {
+    customCssId: string | undefined;
+    loginCustomCssId: string | undefined;
+    signUpCustomCssId: string | undefined;
+    portalLoginCustomCssId: string | undefined;
+    portalCustomCssId: string | undefined;
+    lightLogoId: string | undefined;
+    lightLogoFileType: string | undefined;
+    portalLogoId: string | undefined;
+    portalLogoFileType: string | undefined;
+    hasFavicons: boolean;
+    hasPortalFavicons: boolean;
 }
 
-export class AppearanceSettingsEditDto implements IAppearanceSettingsEditDto {
+export class AppearanceSettingsDto implements IAppearanceSettingsDto {
     navPosition!: NavPosition;
     welcomePageAppearance!: string | undefined;
-    portalSettings!: AppearanceBaseSettingsDto | undefined;
+    portalSettings!: PortalAppearanceSettingsDto | undefined;
     navBackground!: string | undefined;
     navTextColor!: string | undefined;
     leftsideMenuColor!: string | undefined;
@@ -59195,7 +59481,7 @@ export class AppearanceSettingsEditDto implements IAppearanceSettingsEditDto {
     buttonHighlightedColor!: string | undefined;
     borderRadius!: string | undefined;
 
-    constructor(data?: IAppearanceSettingsEditDto) {
+    constructor(data?: IAppearanceSettingsDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -59208,7 +59494,7 @@ export class AppearanceSettingsEditDto implements IAppearanceSettingsEditDto {
         if (_data) {
             this.navPosition = _data["navPosition"];
             this.welcomePageAppearance = _data["welcomePageAppearance"];
-            this.portalSettings = _data["portalSettings"] ? AppearanceBaseSettingsDto.fromJS(_data["portalSettings"]) : <any>undefined;
+            this.portalSettings = _data["portalSettings"] ? PortalAppearanceSettingsDto.fromJS(_data["portalSettings"]) : <any>undefined;
             this.navBackground = _data["navBackground"];
             this.navTextColor = _data["navTextColor"];
             this.leftsideMenuColor = _data["leftsideMenuColor"];
@@ -59221,9 +59507,9 @@ export class AppearanceSettingsEditDto implements IAppearanceSettingsEditDto {
         }
     }
 
-    static fromJS(data: any): AppearanceSettingsEditDto {
+    static fromJS(data: any): AppearanceSettingsDto {
         data = typeof data === 'object' ? data : {};
-        let result = new AppearanceSettingsEditDto();
+        let result = new AppearanceSettingsDto();
         result.init(data);
         return result;
     }
@@ -59246,10 +59532,10 @@ export class AppearanceSettingsEditDto implements IAppearanceSettingsEditDto {
     }
 }
 
-export interface IAppearanceSettingsEditDto {
+export interface IAppearanceSettingsDto {
     navPosition: NavPosition;
     welcomePageAppearance: string | undefined;
-    portalSettings: AppearanceBaseSettingsDto | undefined;
+    portalSettings: PortalAppearanceSettingsDto | undefined;
     navBackground: string | undefined;
     navTextColor: string | undefined;
     leftsideMenuColor: string | undefined;
@@ -59259,6 +59545,50 @@ export interface IAppearanceSettingsEditDto {
     buttonTextColor: string | undefined;
     buttonHighlightedColor: string | undefined;
     borderRadius: string | undefined;
+}
+
+export class AppearanceSettingsEditDto implements IAppearanceSettingsEditDto {
+    organizationUnitId!: number | undefined;
+    filesSettings!: AppearanceFilesSettings | undefined;
+    appearanceSettings!: AppearanceSettingsDto | undefined;
+
+    constructor(data?: IAppearanceSettingsEditDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.organizationUnitId = _data["organizationUnitId"];
+            this.filesSettings = _data["filesSettings"] ? AppearanceFilesSettings.fromJS(_data["filesSettings"]) : <any>undefined;
+            this.appearanceSettings = _data["appearanceSettings"] ? AppearanceSettingsDto.fromJS(_data["appearanceSettings"]) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): AppearanceSettingsEditDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new AppearanceSettingsEditDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["organizationUnitId"] = this.organizationUnitId;
+        data["filesSettings"] = this.filesSettings ? this.filesSettings.toJSON() : <any>undefined;
+        data["appearanceSettings"] = this.appearanceSettings ? this.appearanceSettings.toJSON() : <any>undefined;
+        return data;
+    }
+}
+
+export interface IAppearanceSettingsEditDto {
+    organizationUnitId: number | undefined;
+    filesSettings: AppearanceFilesSettings | undefined;
+    appearanceSettings: AppearanceSettingsDto | undefined;
 }
 
 export enum Appliances {
@@ -78153,6 +78483,7 @@ export class GetCurrentLoginInformationsOutput implements IGetCurrentLoginInform
     user!: UserLoginInfoDto | undefined;
     impersonatorUser!: UserLoginInfoDto | undefined;
     tenant!: TenantLoginInfoDto | undefined;
+    host!: TenantLoginInfoDto | undefined;
     impersonatorTenant!: TenantLoginInfoDto | undefined;
     application!: ApplicationInfoDto | undefined;
     theme!: UiCustomizationSettingsDto | undefined;
@@ -78171,6 +78502,7 @@ export class GetCurrentLoginInformationsOutput implements IGetCurrentLoginInform
             this.user = _data["user"] ? UserLoginInfoDto.fromJS(_data["user"]) : <any>undefined;
             this.impersonatorUser = _data["impersonatorUser"] ? UserLoginInfoDto.fromJS(_data["impersonatorUser"]) : <any>undefined;
             this.tenant = _data["tenant"] ? TenantLoginInfoDto.fromJS(_data["tenant"]) : <any>undefined;
+            this.host = _data["host"] ? TenantLoginInfoDto.fromJS(_data["host"]) : <any>undefined;
             this.impersonatorTenant = _data["impersonatorTenant"] ? TenantLoginInfoDto.fromJS(_data["impersonatorTenant"]) : <any>undefined;
             this.application = _data["application"] ? ApplicationInfoDto.fromJS(_data["application"]) : <any>undefined;
             this.theme = _data["theme"] ? UiCustomizationSettingsDto.fromJS(_data["theme"]) : <any>undefined;
@@ -78189,6 +78521,7 @@ export class GetCurrentLoginInformationsOutput implements IGetCurrentLoginInform
         data["user"] = this.user ? this.user.toJSON() : <any>undefined;
         data["impersonatorUser"] = this.impersonatorUser ? this.impersonatorUser.toJSON() : <any>undefined;
         data["tenant"] = this.tenant ? this.tenant.toJSON() : <any>undefined;
+        data["host"] = this.host ? this.host.toJSON() : <any>undefined;
         data["impersonatorTenant"] = this.impersonatorTenant ? this.impersonatorTenant.toJSON() : <any>undefined;
         data["application"] = this.application ? this.application.toJSON() : <any>undefined;
         data["theme"] = this.theme ? this.theme.toJSON() : <any>undefined;
@@ -78200,6 +78533,7 @@ export interface IGetCurrentLoginInformationsOutput {
     user: UserLoginInfoDto | undefined;
     impersonatorUser: UserLoginInfoDto | undefined;
     tenant: TenantLoginInfoDto | undefined;
+    host: TenantLoginInfoDto | undefined;
     impersonatorTenant: TenantLoginInfoDto | undefined;
     application: ApplicationInfoDto | undefined;
     theme: UiCustomizationSettingsDto | undefined;
@@ -91560,8 +91894,8 @@ export interface INameValueOfString {
 }
 
 export enum NavPosition {
-    Horizontal = "Horizontal",
     Vertical = "Vertical",
+    Horizontal = "Horizontal",
 }
 
 export class NoteInfoDto implements INoteInfoDto {
@@ -96397,6 +96731,78 @@ export enum PlatformDayOfWeek {
     Saturday = 64,
 }
 
+export class PortalAppearanceSettingsDto implements IPortalAppearanceSettingsDto {
+    menuCustomization!: string | undefined;
+    navBackground!: string | undefined;
+    navTextColor!: string | undefined;
+    leftsideMenuColor!: string | undefined;
+    fontName!: string | undefined;
+    tabularFont!: string | undefined;
+    buttonColor!: string | undefined;
+    buttonTextColor!: string | undefined;
+    buttonHighlightedColor!: string | undefined;
+    borderRadius!: string | undefined;
+
+    constructor(data?: IPortalAppearanceSettingsDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.menuCustomization = _data["menuCustomization"];
+            this.navBackground = _data["navBackground"];
+            this.navTextColor = _data["navTextColor"];
+            this.leftsideMenuColor = _data["leftsideMenuColor"];
+            this.fontName = _data["fontName"];
+            this.tabularFont = _data["tabularFont"];
+            this.buttonColor = _data["buttonColor"];
+            this.buttonTextColor = _data["buttonTextColor"];
+            this.buttonHighlightedColor = _data["buttonHighlightedColor"];
+            this.borderRadius = _data["borderRadius"];
+        }
+    }
+
+    static fromJS(data: any): PortalAppearanceSettingsDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new PortalAppearanceSettingsDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["menuCustomization"] = this.menuCustomization;
+        data["navBackground"] = this.navBackground;
+        data["navTextColor"] = this.navTextColor;
+        data["leftsideMenuColor"] = this.leftsideMenuColor;
+        data["fontName"] = this.fontName;
+        data["tabularFont"] = this.tabularFont;
+        data["buttonColor"] = this.buttonColor;
+        data["buttonTextColor"] = this.buttonTextColor;
+        data["buttonHighlightedColor"] = this.buttonHighlightedColor;
+        data["borderRadius"] = this.borderRadius;
+        return data;
+    }
+}
+
+export interface IPortalAppearanceSettingsDto {
+    menuCustomization: string | undefined;
+    navBackground: string | undefined;
+    navTextColor: string | undefined;
+    leftsideMenuColor: string | undefined;
+    fontName: string | undefined;
+    tabularFont: string | undefined;
+    buttonColor: string | undefined;
+    buttonTextColor: string | undefined;
+    buttonHighlightedColor: string | undefined;
+    borderRadius: string | undefined;
+}
+
 export enum PreferredProperties {
     FullName = 1,
     ContactDate = 2,
@@ -99560,6 +99966,7 @@ export class PublicContactInfo implements IPublicContactInfo {
     faq!: LandingPageWordingSettingsDto[] | undefined;
     tabs!: LandingPageWordingSettingsDto[] | undefined;
     checkoutFields!: LandingPageCheckoutFieldSettingsDto[] | undefined;
+    trackingTools!: TrackingToolsSettingsDto | undefined;
 
     constructor(data?: IPublicContactInfo) {
         if (data) {
@@ -99610,6 +100017,7 @@ export class PublicContactInfo implements IPublicContactInfo {
                 for (let item of _data["checkoutFields"])
                     this.checkoutFields!.push(LandingPageCheckoutFieldSettingsDto.fromJS(item));
             }
+            this.trackingTools = _data["trackingTools"] ? TrackingToolsSettingsDto.fromJS(_data["trackingTools"]) : <any>undefined;
         }
     }
 
@@ -99660,6 +100068,7 @@ export class PublicContactInfo implements IPublicContactInfo {
             for (let item of this.checkoutFields)
                 data["checkoutFields"].push(item.toJSON());
         }
+        data["trackingTools"] = this.trackingTools ? this.trackingTools.toJSON() : <any>undefined;
         return data;
     }
 }
@@ -99683,6 +100092,7 @@ export interface IPublicContactInfo {
     faq: LandingPageWordingSettingsDto[] | undefined;
     tabs: LandingPageWordingSettingsDto[] | undefined;
     checkoutFields: LandingPageCheckoutFieldSettingsDto[] | undefined;
+    trackingTools: TrackingToolsSettingsDto | undefined;
 }
 
 export class PublicContactProductInfo implements IPublicContactProductInfo {
@@ -100124,6 +100534,7 @@ export class PublicProductData implements IPublicProductData {
     hasTenantService!: boolean;
     tenantHasPrivacyPolicy!: boolean;
     tenantHasTerms!: boolean;
+    trackingTools!: TrackingToolsSettingsDto | undefined;
 
     constructor(data?: IPublicProductData) {
         if (data) {
@@ -100142,6 +100553,7 @@ export class PublicProductData implements IPublicProductData {
             this.hasTenantService = _data["hasTenantService"];
             this.tenantHasPrivacyPolicy = _data["tenantHasPrivacyPolicy"];
             this.tenantHasTerms = _data["tenantHasTerms"];
+            this.trackingTools = _data["trackingTools"] ? TrackingToolsSettingsDto.fromJS(_data["trackingTools"]) : <any>undefined;
         }
     }
 
@@ -100160,6 +100572,7 @@ export class PublicProductData implements IPublicProductData {
         data["hasTenantService"] = this.hasTenantService;
         data["tenantHasPrivacyPolicy"] = this.tenantHasPrivacyPolicy;
         data["tenantHasTerms"] = this.tenantHasTerms;
+        data["trackingTools"] = this.trackingTools ? this.trackingTools.toJSON() : <any>undefined;
         return data;
     }
 }
@@ -100171,6 +100584,7 @@ export interface IPublicProductData {
     hasTenantService: boolean;
     tenantHasPrivacyPolicy: boolean;
     tenantHasTerms: boolean;
+    trackingTools: TrackingToolsSettingsDto | undefined;
 }
 
 export class PublicProductInfo implements IPublicProductInfo {
@@ -110027,8 +110441,10 @@ export interface ITenantListDto {
 }
 
 export class TenantLoginInfoDto implements ITenantLoginInfoDto {
+    id!: number | undefined;
     tenancyName!: string | undefined;
     name!: string | undefined;
+    orgUnitId!: number | undefined;
     isWhiteLabel!: boolean;
     logoId!: string | undefined;
     logoFileType!: string | undefined;
@@ -110047,7 +110463,6 @@ export class TenantLoginInfoDto implements ITenantLoginInfoDto {
     creationTimeString!: string | undefined;
     tenantCustomizations!: TenantCustomizationInfoDto | undefined;
     landingPageDomains!: string[] | undefined;
-    id!: number;
 
     constructor(data?: ITenantLoginInfoDto) {
         if (data) {
@@ -110060,8 +110475,10 @@ export class TenantLoginInfoDto implements ITenantLoginInfoDto {
 
     init(_data?: any) {
         if (_data) {
+            this.id = _data["id"];
             this.tenancyName = _data["tenancyName"];
             this.name = _data["name"];
+            this.orgUnitId = _data["orgUnitId"];
             this.isWhiteLabel = _data["isWhiteLabel"];
             this.logoId = _data["logoId"];
             this.logoFileType = _data["logoFileType"];
@@ -110084,7 +110501,6 @@ export class TenantLoginInfoDto implements ITenantLoginInfoDto {
                 for (let item of _data["landingPageDomains"])
                     this.landingPageDomains!.push(item);
             }
-            this.id = _data["id"];
         }
     }
 
@@ -110097,8 +110513,10 @@ export class TenantLoginInfoDto implements ITenantLoginInfoDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
         data["tenancyName"] = this.tenancyName;
         data["name"] = this.name;
+        data["orgUnitId"] = this.orgUnitId;
         data["isWhiteLabel"] = this.isWhiteLabel;
         data["logoId"] = this.logoId;
         data["logoFileType"] = this.logoFileType;
@@ -110121,14 +110539,15 @@ export class TenantLoginInfoDto implements ITenantLoginInfoDto {
             for (let item of this.landingPageDomains)
                 data["landingPageDomains"].push(item);
         }
-        data["id"] = this.id;
         return data;
     }
 }
 
 export interface ITenantLoginInfoDto {
+    id: number | undefined;
     tenancyName: string | undefined;
     name: string | undefined;
+    orgUnitId: number | undefined;
     isWhiteLabel: boolean;
     logoId: string | undefined;
     logoFileType: string | undefined;
@@ -110147,7 +110566,6 @@ export interface ITenantLoginInfoDto {
     creationTimeString: string | undefined;
     tenantCustomizations: TenantCustomizationInfoDto | undefined;
     landingPageDomains: string[] | undefined;
-    id: number;
 }
 
 export class TenantManagementSettingsEditDto implements ITenantManagementSettingsEditDto {
@@ -111239,6 +111657,86 @@ export interface ITrackingInformation {
     siteId: string | undefined;
     siteUrl: string | undefined;
     clickId: string | undefined;
+}
+
+export class TrackingToolsSettingsDto implements ITrackingToolsSettingsDto {
+    googleAnalytics!: string | undefined;
+    googleTagManager!: string | undefined;
+    metaPixelId!: string | undefined;
+    tikTokPixelId!: string | undefined;
+    linkedInPartnerId!: string | undefined;
+    twitterPixelId!: string | undefined;
+    hubSpotTrackingCode!: string | undefined;
+    mixpanelProjectToken!: string | undefined;
+    amplitudeAPIKey!: string | undefined;
+    pinterestPixelId!: string | undefined;
+    redditPixelId!: string | undefined;
+    hyrosPixelId!: string | undefined;
+
+    constructor(data?: ITrackingToolsSettingsDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.googleAnalytics = _data["googleAnalytics"];
+            this.googleTagManager = _data["googleTagManager"];
+            this.metaPixelId = _data["metaPixelId"];
+            this.tikTokPixelId = _data["tikTokPixelId"];
+            this.linkedInPartnerId = _data["linkedInPartnerId"];
+            this.twitterPixelId = _data["twitterPixelId"];
+            this.hubSpotTrackingCode = _data["hubSpotTrackingCode"];
+            this.mixpanelProjectToken = _data["mixpanelProjectToken"];
+            this.amplitudeAPIKey = _data["amplitudeAPIKey"];
+            this.pinterestPixelId = _data["pinterestPixelId"];
+            this.redditPixelId = _data["redditPixelId"];
+            this.hyrosPixelId = _data["hyrosPixelId"];
+        }
+    }
+
+    static fromJS(data: any): TrackingToolsSettingsDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new TrackingToolsSettingsDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["googleAnalytics"] = this.googleAnalytics;
+        data["googleTagManager"] = this.googleTagManager;
+        data["metaPixelId"] = this.metaPixelId;
+        data["tikTokPixelId"] = this.tikTokPixelId;
+        data["linkedInPartnerId"] = this.linkedInPartnerId;
+        data["twitterPixelId"] = this.twitterPixelId;
+        data["hubSpotTrackingCode"] = this.hubSpotTrackingCode;
+        data["mixpanelProjectToken"] = this.mixpanelProjectToken;
+        data["amplitudeAPIKey"] = this.amplitudeAPIKey;
+        data["pinterestPixelId"] = this.pinterestPixelId;
+        data["redditPixelId"] = this.redditPixelId;
+        data["hyrosPixelId"] = this.hyrosPixelId;
+        return data;
+    }
+}
+
+export interface ITrackingToolsSettingsDto {
+    googleAnalytics: string | undefined;
+    googleTagManager: string | undefined;
+    metaPixelId: string | undefined;
+    tikTokPixelId: string | undefined;
+    linkedInPartnerId: string | undefined;
+    twitterPixelId: string | undefined;
+    hubSpotTrackingCode: string | undefined;
+    mixpanelProjectToken: string | undefined;
+    amplitudeAPIKey: string | undefined;
+    pinterestPixelId: string | undefined;
+    redditPixelId: string | undefined;
+    hyrosPixelId: string | undefined;
 }
 
 export class TransactionAttributeDto implements ITransactionAttributeDto {
