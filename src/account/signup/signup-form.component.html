@@ -90,9 +90,9 @@
                                     </dx-validator>
                                 </dx-check-box>
                             </div>
-                            <p class="agreement">
-                                Yes, I agree to the <a (click)="openConditionsDialog(conditions.Terms)">Terms of Use</a> and <a
-                                (click)="openConditionsDialog(conditions.Policies)">Privacy Policy</a>.
+                            <p *ngIf="conditionsModalService.hasTermsOrPolicy()" class="agreement">
+                                Yes, I agree to the <a *ngIf="conditionsModalService.isDocumentAvailable(conditions.Terms)"  (click)="openConditionsDialog(conditions.Terms)">Terms of Use</a> and <a
+                                *ngIf="conditionsModalService.isDocumentAvailable(conditions.Policies)" (click)="openConditionsDialog(conditions.Policies)">Privacy Policy</a>.
                             </p>
                         </div>
                         <div class="dx-field actions-field align-items-center">

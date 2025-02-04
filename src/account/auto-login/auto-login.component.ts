@@ -10,7 +10,7 @@ import { finalize, first } from 'rxjs/operators';
 import { AppConsts } from '@shared/AppConsts';
 import { ConditionsType } from '@shared/AppEnums';
 import { LoginService } from '../login/login.service';
-import { ConditionsModalComponent } from '@shared/common/conditions-modal/conditions-modal.component';
+import { ConditionsModalService } from '@shared/common/conditions-modal/conditions-modal.service';
 import { accountModuleAnimation } from '@shared/animations/routerTransition';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -46,6 +46,7 @@ export class AutoLoginComponent {
         injector: Injector,
         public dialog: MatDialog,
         public ls: AppLocalizationService,
+        public conditionsModalService: ConditionsModalService,
         private activatedRoute: ActivatedRoute,
         private accountProxy: AccountServiceProxy,
         private authProxy: TokenAuthServiceProxy,
@@ -88,6 +89,9 @@ export class AutoLoginComponent {
     }
 
     openConditionsDialog(type: ConditionsType) {
-        this.dialog.open(ConditionsModalComponent, { panelClass: ['slider', 'footer-slider'], data: { type: type }});
+        this.conditionsModalService.openModal({
+            panelClass: ['slider', 'footer-slider'],
+            data: { type: type }
+        });
     }
 }

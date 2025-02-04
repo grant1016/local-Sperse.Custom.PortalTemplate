@@ -11,6 +11,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { CacheHelper } from '@shared/common/cache-helper/cache-helper';
 import { CalendarComponent } from './widgets/calendar/calendar.component';
 import { ConditionsModalComponent } from '@shared/common/conditions-modal/conditions-modal.component';
+import { ConditionsModalService } from '@shared/common/conditions-modal/conditions-modal.service';
 import { ZipCodeFormatterPipe } from '@shared/common/pipes/zip-code-formatter/zip-code-formatter.pipe';
 import { CustomNumberPipe } from './pipes/custom-number/custom-number.pipe';
 import { AddressFormatPipe } from './pipes/address-format.pipe';
@@ -69,7 +70,8 @@ import { DateTimePipe } from '@shared/common/pipes/datetime/datetime.pipe';
     providers: [
         AppUrlService,
         PrimengTableHelper,
-        CacheHelper
+        CacheHelper,
+        ConditionsModalService
     ]
 })
 export class CommonModule {}

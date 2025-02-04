@@ -24,7 +24,7 @@ import { ExternalLoginProvider, LoginService } from './login.service';
 import { SettingService } from 'abp-ng2-module';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { ConditionsModalComponent } from '@shared/common/conditions-modal/conditions-modal.component';
+import { ConditionsModalService } from '@shared/common/conditions-modal/conditions-modal.service';
 import { environment } from '@root/environments/environment';
 
 export class AdLoginHostDirective {
@@ -59,7 +59,8 @@ export class LoginComponent implements OnInit {
         private appSession: AppSessionService,
         private activatedRoute: ActivatedRoute,
         public loginService: LoginService,
-        public ls: AppLocalizationService
+        public ls: AppLocalizationService,
+        public conditionsModalService: ConditionsModalService
     ) {
         this.activatedRoute.queryParamMap.pipe(
             first()
@@ -88,7 +89,10 @@ export class LoginComponent implements OnInit {
     }
 
     openConditionsDialog(type: ConditionsType) {
-        this.dialog.open(ConditionsModalComponent, { panelClass: ['slider', 'footer-slider'], data: { type: type }});
+        this.conditionsModalService.openModal({
+            panelClass: ['slider', 'footer-slider'],
+            data: { type: type }
+        });
     }
 
     login(): void {

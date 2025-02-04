@@ -13,10 +13,10 @@ import { MaskPipe } from 'ngx-mask';
 import { AppConsts } from '@shared/AppConsts';
 import { ApplicationServiceProxy, SignUpMemberRequest } from '@shared/service-proxies/service-proxies';
 import { LoginService, ExternalLoginProvider } from '@root/account/login/login.service';
-import { ConditionsModalComponent } from '@shared/common/conditions-modal/conditions-modal.component';
 import { DxCheckBoxComponent } from 'devextreme-angular/ui/check-box';
 import { ConditionsType } from '@shared/AppEnums';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
+import { ConditionsModalService } from '@shared/common/conditions-modal/conditions-modal.service';
 
 @Component({
     selector: 'signup-form',
@@ -46,8 +46,10 @@ export class SignupFormComponent implements OnInit, OnDestroy {
     isAgreedToReceiveCalls = false;
     registerData: SignUpMemberRequest = new SignUpMemberRequest();
     isRoutProcessed = false;
+
     constructor(
         public loginService: LoginService,
+        public conditionsModalService: ConditionsModalService,
         private dialog: MatDialog,
         private router: Router,
         private lifecycleService: LifecycleSubjectsService,
@@ -112,8 +114,8 @@ export class SignupFormComponent implements OnInit, OnDestroy {
     }
 
 
-    openConditionsDialog(type: any) {
-        this.dialog.open(ConditionsModalComponent, { panelClass: ['slider', 'footer-slider'], data: { type: type } });
+    openConditionsDialog(type: ConditionsType) {
+        window.open(this.conditionsModalService.getHtmlUrl(type), '_blank');
     }
 
     externalLogin(provider: ExternalLoginProvider) {
