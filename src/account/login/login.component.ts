@@ -24,8 +24,9 @@ import { ExternalLoginProvider, LoginService } from './login.service';
 import { SettingService } from 'abp-ng2-module';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { ConditionsModalComponent } from '@shared/common/conditions-modal/conditions-modal.component';
+import { ConditionsModalService } from '@shared/common/conditions-modal/conditions-modal.service';
 import { environment } from '@root/environments/environment';
+import { TitleService } from '@root/shared/common/title/title.service';
 
 export class AdLoginHostDirective {
     constructor(public viewContainerRef: ViewContainerRef) { }
@@ -45,7 +46,7 @@ export class LoginComponent implements OnInit {
     isSignUpEnabled = this.appSession.tenant && 
         abp.setting.get('App.UserManagement.IsSignUpPageEnabled') == 'true';
     currentYear: number = moment().year();
-    tenantName = AppConsts.defaultTenantName;
+    tenantName = this.appSession.tenantName || AppConsts.defaultTenantName;
     conditions = ConditionsType;
     showExternalLogin = false;
     loginInProgress = false;
@@ -58,8 +59,10 @@ export class LoginComponent implements OnInit {
         private setting: SettingService,
         private appSession: AppSessionService,
         private activatedRoute: ActivatedRoute,
+        private titleService: TitleService,
         public loginService: LoginService,
-        public ls: AppLocalizationService
+        public ls: AppLocalizationService,
+        public conditionsModalService: ConditionsModalService
     ) {
         this.activatedRoute.queryParamMap.pipe(
             first()
@@ -71,9 +74,8 @@ export class LoginComponent implements OnInit {
     }
 
     ngOnInit(): void {
+        this.titleService.setTitle('Login');
         let tenant = this.appSession.tenant;
-        if (tenant)
-            this.tenantName = tenant.name || tenant.tenancyName;
         this.showExternalLogin = environment.releaseStage == 'staging' || (tenant && !environment.production);
         if (this.sessionService.userId > 0 && UrlHelper.getReturnUrl() && UrlHelper.getSingleSignIn()) {
             this.sessionAppService.updateUserSignInToken()
@@ -88,7 +90,10 @@ export class LoginComponent implements OnInit {
     }
 
     openConditionsDialog(type: ConditionsType) {
-        this.dialog.open(ConditionsModalComponent, { panelClass: ['slider', 'footer-slider'], data: { type: type }});
+        this.conditionsModalService.openModal({
+            panelClass: ['slider', 'footer-slider'],
+            data: { type: type }
+        });
     }
 
     login(): void {

@@ -1,9 +1,9 @@
-<div class="page-header navbar navbar-fixed-top md-shadow-zero-light" [ngStyle]="{background: appSession.tenant && appSession.tenant.portalCustomCssId ? undefined : layoutService.getLayoutColor('navBackground')}">
+<div class="page-header navbar navbar-fixed-top md-shadow-zero-light" [ngStyle]="{background: appSession.appearanceConfig && appSession.appearanceConfig.portalCustomCssId ? undefined : layoutService.getLayoutColor('navBackground')}">
     <div class="page-header-inner">
         <div class="page-logo" *ngIf="layoutService.showPageLogo">
             <a [href]="origin">
-                <img *ngIf="!appSession.tenantHasCustomLogo" src="./assets/common/images/sperse-logo.png" alt="logo" class="logo-layout"/>
-                <img *ngIf="appSession.tenantHasCustomLogo"
+                <img *ngIf="!appSession.hasCustomLogo" src="./assets/common/images/sperse-logo.png" alt="logo" class="logo-layout"/>
+                <img *ngIf="appSession.hasCustomLogo"
                      [src]="remoteServiceBaseUrl + '/api/TenantCustomization/GetLogo?' + appSession.getTenantLogoUrlParams()"
                      alt="logo"
                      class="logo-layout"/>

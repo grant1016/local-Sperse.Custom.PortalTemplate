@@ -74,7 +74,7 @@ export function appInitializerFactory(
                         sessionCallback && sessionCallback();
                         updateMetadata(appSessionService, injector.get(AppUiCustomizationService));
                         bugsnagService.updateBugsnagWithUserInfo(appSessionService);
-                        let customizations = appSessionService.tenant && appSessionService.tenant.tenantCustomizations;
+                        let customizations = appSessionService.appearanceConfig && appSessionService.appearanceConfig.tenantCustomizations;
                         if (customizations && customizations.portalFavicons && customizations.portalFavicons.length)
                             faviconService.updateFavicons(customizations.portalFavicons, customizations.portalFaviconBaseUrl);
                         else if (customizations && customizations.favicons && customizations.favicons.length)
@@ -120,7 +120,7 @@ function updateMetadata(sessionService: AppSessionService, ui) {
         tenant.customLayoutType && tenant.customLayoutType != 'Default'
         ? '' : 'Business management platform, enhanced with AI');
     createMetatag('og:url', location.origin);
-    createMetatag('og:image', !sessionService.tenantHasCustomLogo  ?
+    createMetatag('og:image', !sessionService.hasCustomLogo  ?
         window.location.origin + '/assets/common/images/app-logo-on-' + ui.getAsideSkin() + '.png' :
         AppConsts.remoteServiceBaseUrl + '/api/TenantCustomization/GetLogo?' + sessionService.getTenantLogoUrlParams());
 }

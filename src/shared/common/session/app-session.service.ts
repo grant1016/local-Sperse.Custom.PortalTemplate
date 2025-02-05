@@ -31,6 +31,7 @@ export interface ILoginInfo {
 @Injectable()
 export class AppSessionService {
     private _user: UserLoginInfoDto;
+    private _host: TenantLoginInfoDto;
     private _tenant: TenantLoginInfoDto;
     private _application: ApplicationInfoDto;
     private countries: any;
@@ -65,12 +66,16 @@ export class AppSessionService {
         return this.user ? this.user.id : null;
     }
 
+    get appearanceConfig(): TenantLoginInfoDto {
+        return this._host || this._tenant;
+    }
+
     get tenant(): TenantLoginInfoDto {
         return this._tenant;
     }
 
     get tenantName(): string {
-        return this._tenant ? this.tenant.name : '';
+        return this.appearanceConfig ? this.appearanceConfig.name : '';
     }
 
     get tenancyName(): string {
@@ -85,8 +90,8 @@ export class AppSessionService {
         return this.tenant && this.tenant.customLayoutType ? this.tenant.customLayoutType : LayoutType.Default;
     }
 
-    get tenantHasCustomLogo(): boolean {
-        return this._tenant ? !!this._tenant.portalLogoId || !!this._tenant.logoId : false;
+    get hasCustomLogo(): boolean {
+        return this.appearanceConfig ? !!this.appearanceConfig.portalLogoId || !!this.appearanceConfig.logoId : false;
     }
 
     getShownLoginName(): string {
@@ -121,12 +126,12 @@ export class AppSessionService {
     }
 
     getTenantLogoUrlParams(): string {
-        if (!this.tenantHasCustomLogo)
+        if (!this.hasCustomLogo)
             return '';
 
-        if (this._tenant.portalLogoId)
-            return `portalLogo=true&logoId=${this._tenant.portalLogoId}`;
-        return `logoId=${this._tenant.logoId}`;
+        if (this.appearanceConfig.portalLogoId)
+            return `portalLogo=true&logoId=${this.appearanceConfig.portalLogoId}`;
+        return `logoId=${this.appearanceConfig.logoId}`;
     }
 
     init(): Promise<boolean> {
@@ -134,6 +139,7 @@ export class AppSessionService {
             let updateLoginInfo = (result) => {
                 this._application = result.application;
                 this._user = result.user;
+                this._host = result.host;
                 this._tenant = result.tenant;
                 resolve(true);
             };

@@ -34,7 +34,7 @@ export class AppComponent extends AppComponentBase implements OnInit, OnDestroy 
     ) {
         super(injector);
         this.rootComponent = this.getRootComponent();
-        this.titleService.setTitle('');
+        this.titleService.setTitle('Portal');
     }
 
     closeUserMenuPopup(event) {

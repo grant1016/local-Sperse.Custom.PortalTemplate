@@ -41,7 +41,7 @@ export class AccountSelectorComponent {
     ) {}
 
     getInputColor() {
-        if (this.appSessionService.tenant && this.appSessionService.tenant.portalCustomCssId)
+        if (this.appSessionService.appearanceConfig && this.appSessionService.appearanceConfig.portalCustomCssId)
             return {};
         let color = this.layoutService.getLayoutColor('navTextColor');
         if (!color)

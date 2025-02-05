@@ -77,21 +77,21 @@ export class RootComponent implements OnInit, AfterViewInit {
         }
 
         //tenant specific custom css
-        let tenant: TenantLoginInfoDto = this.SS.tenant;
-        if (tenant) {
-            let customCss = abp.session.userId ? tenant.portalCustomCssId : tenant.portalLoginCustomCssId;
+        let config: TenantLoginInfoDto = this.SS.appearanceConfig;
+        if (config) {
+            let customCss = abp.session.userId ? config.portalCustomCssId : config.portalLoginCustomCssId;
             if (customCss)
                 DomHelper.addStyleSheet(`${CustomCssType.Portal}CustomCss`, AppConsts.remoteServiceBaseUrl + 
-                    '/api/TenantCustomization/GetCustomCss/' + customCss + '/' + tenant.id);
+                    '/api/TenantCustomization/GetCustomCss/' + customCss + '/' + (config.id || ''));
 
-            if (tenant.customLayoutType && tenant.customLayoutType !== LayoutType.Default) {
-                let layoutName = kebabCase(tenant.customLayoutType);
+            if (config.customLayoutType && config.customLayoutType !== LayoutType.Default) {
+                let layoutName = kebabCase(config.customLayoutType);
                 this.document.body.classList.add(layoutName);
-                DomHelper.addStyleSheet(tenant.customLayoutType + 'Styles', AppConsts.appBaseHref +
+                DomHelper.addStyleSheet(config.customLayoutType + 'Styles', AppConsts.appBaseHref +
                     'assets/common/styles/custom/' + layoutName + '/style.css');
             }
 
-            this.checkSetGoogleAnalyticsCode(tenant);
+            this.checkSetGoogleAnalyticsCode(config);
         }
     }
 
