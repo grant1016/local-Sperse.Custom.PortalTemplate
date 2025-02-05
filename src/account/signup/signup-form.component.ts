@@ -17,6 +17,7 @@ import { DxCheckBoxComponent } from 'devextreme-angular/ui/check-box';
 import { ConditionsType } from '@shared/AppEnums';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 import { ConditionsModalService } from '@shared/common/conditions-modal/conditions-modal.service';
+import { TitleService } from '@root/shared/common/title/title.service';
 
 @Component({
     selector: 'signup-form',
@@ -53,12 +54,14 @@ export class SignupFormComponent implements OnInit, OnDestroy {
         private dialog: MatDialog,
         private router: Router,
         private lifecycleService: LifecycleSubjectsService,
-        private maskPipe: MaskPipe
+        private maskPipe: MaskPipe,
+        private titleService: TitleService
     ) {
         this.registerData.isUSCitizen = true;
     }
 
     ngOnInit() {
+        this.titleService.setTitle('SignUp');
         this.router.events
             .pipe(
                 takeUntil(this.lifecycleService.destroy$),

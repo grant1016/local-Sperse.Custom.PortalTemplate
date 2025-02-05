@@ -23,6 +23,7 @@ import {
     AuthenticateByCodeModel,
     AuthenticateResultModel
 } from '@shared/service-proxies/service-proxies';
+import { TitleService } from '@root/shared/common/title/title.service';
 
 @Component({
     templateUrl: 'auto-login.component.html',
@@ -34,9 +35,7 @@ import {
 export class AutoLoginComponent {
     conditions = ConditionsType;
     detectedTenancies: TenantModel[] = [];
-    tenantName = this.appSession.tenant
-        ? this.appSession.tenant.name
-        : AppConsts.defaultTenantName;
+    tenantName = this.appSession.tenantName || AppConsts.defaultTenantName;
     isLoggedIn: boolean = false;
     isExtLogin: boolean = false; 
     isLinkSent: boolean = false;
@@ -51,7 +50,8 @@ export class AutoLoginComponent {
         private accountProxy: AccountServiceProxy,
         private authProxy: TokenAuthServiceProxy,
         private appSession: AppSessionService,
-        private loginService: LoginService
+        private loginService: LoginService,
+        private titleService: TitleService
     ) {
         this.activatedRoute.queryParams.pipe(first())
             .subscribe((params: Params) => {
@@ -60,6 +60,7 @@ export class AutoLoginComponent {
                     setTimeout(() => this.sendloginLink());
                 }
             });
+        this.titleService.setTitle('Login');
     }
 
     sendloginLink(tenantId?: number): void {
