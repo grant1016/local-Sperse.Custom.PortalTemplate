@@ -1,6 +1,6 @@
 <mat-dialog-content>
     <h3>{{ ls.l('Purchase') }} {{ ls.l('ContactCredits') }}</h3>
-    <div class="field">{{ ls.l('Quantity to Purchase') }}</div>
+    <div class="field"><ng-container *ngIf="data.creditsRate > 1">Packages </ng-container>{{ ls.l('Quantity') }}</div>
     <dx-number-box [(value)]="quantity"
                    format="#"
                    min="0"
@@ -10,11 +10,15 @@
         </dx-validator>
     </dx-number-box>
     <div class="field">
-        <div>{{ ls.l('UserMenu.TopUpRate') }}:</div>
+        <div>{{ ls.l('UserMenu.TopUpRate') }} <span *ngIf="data.creditsRate > 1" class="small "> (per {{data.creditsRate}})</span>:</div>
         <div>{{data.rate | currency:currency:'symbol':'1.2-2'}}</div>
     </div>
+    <div *ngIf="data.creditsRate > 1" class="field">
+        <b>{{ ls.l('Total') }} {{ ls.l('ContactCredits') }}:</b>
+        <b>{{(quantity * data.creditsRate) | number }}</b>
+    </div>
     <div class="field">
-        <b>{{ ls.l('Total') }}:</b>
+        <b>{{ ls.l('TotalAmount') }}:</b>
         <b>{{(quantity * data.rate) | currency:currencyId:'symbol':'1.2-2'}}</b>
     </div>
     <div *ngIf="availablePaymentsInfo" class="buttons">

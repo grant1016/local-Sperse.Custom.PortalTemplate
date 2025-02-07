@@ -30305,7 +30305,7 @@ export class MemberCreditServiceProxy {
     /**
      * @return Success
      */
-    getBalance(): Observable<ContactBalanceBaseDto> {
+    getBalance(): Observable<MemberCreditBalanceDto> {
         let url_ = this.baseUrl + "/api/services/CRM/MemberCredit/GetBalance";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -30324,14 +30324,14 @@ export class MemberCreditServiceProxy {
                 try {
                     return this.processGetBalance(response_ as any);
                 } catch (e) {
-                    return _observableThrow(e) as any as Observable<ContactBalanceBaseDto>;
+                    return _observableThrow(e) as any as Observable<MemberCreditBalanceDto>;
                 }
             } else
-                return _observableThrow(response_) as any as Observable<ContactBalanceBaseDto>;
+                return _observableThrow(response_) as any as Observable<MemberCreditBalanceDto>;
         }));
     }
 
-    protected processGetBalance(response: HttpResponseBase): Observable<ContactBalanceBaseDto> {
+    protected processGetBalance(response: HttpResponseBase): Observable<MemberCreditBalanceDto> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -30342,7 +30342,7 @@ export class MemberCreditServiceProxy {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = ContactBalanceBaseDto.fromJS(resultData200);
+            result200 = MemberCreditBalanceDto.fromJS(resultData200);
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -30350,7 +30350,7 @@ export class MemberCreditServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<ContactBalanceBaseDto>(null as any);
+        return _observableOf<MemberCreditBalanceDto>(null as any);
     }
 
     /**
@@ -37817,9 +37817,10 @@ export class ProductServiceProxy {
      * @param type (optional) 
      * @param currencyId (optional) 
      * @param onlyTenant (optional) 
+     * @param hasCredits (optional) 
      * @return Success
      */
-    getProducts(type: ProductType | undefined, currencyId: string | undefined, onlyTenant: boolean | undefined): Observable<ProductDto[]> {
+    getProducts(type: ProductType | undefined, currencyId: string | undefined, onlyTenant: boolean | undefined, hasCredits: boolean | undefined): Observable<ProductDto[]> {
         let url_ = this.baseUrl + "/api/services/CRM/Product/GetProducts?";
         if (type === null)
             throw new Error("The parameter 'type' cannot be null.");
@@ -37833,6 +37834,10 @@ export class ProductServiceProxy {
             throw new Error("The parameter 'onlyTenant' cannot be null.");
         else if (onlyTenant !== undefined)
             url_ += "onlyTenant=" + encodeURIComponent("" + onlyTenant) + "&";
+        if (hasCredits === null)
+            throw new Error("The parameter 'hasCredits' cannot be null.");
+        else if (hasCredits !== undefined)
+            url_ += "hasCredits=" + encodeURIComponent("" + hasCredits) + "&";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -48953,8 +48958,8 @@ export class TenantPaymentSettingsServiceProxy {
     /**
      * @return Success
      */
-    getCreditSettingsings(): Observable<CreditSettings> {
-        let url_ = this.baseUrl + "/api/services/CRM/TenantPaymentSettings/GetCreditSettingsings";
+    getCreditSettings(): Observable<CreditSettings> {
+        let url_ = this.baseUrl + "/api/services/CRM/TenantPaymentSettings/GetCreditSettings";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -48966,11 +48971,11 @@ export class TenantPaymentSettingsServiceProxy {
         };
 
         return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetCreditSettingsings(response_);
+            return this.processGetCreditSettings(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processGetCreditSettingsings(response_ as any);
+                    return this.processGetCreditSettings(response_ as any);
                 } catch (e) {
                     return _observableThrow(e) as any as Observable<CreditSettings>;
                 }
@@ -48979,7 +48984,7 @@ export class TenantPaymentSettingsServiceProxy {
         }));
     }
 
-    protected processGetCreditSettingsings(response: HttpResponseBase): Observable<CreditSettings> {
+    protected processGetCreditSettings(response: HttpResponseBase): Observable<CreditSettings> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -65810,6 +65815,7 @@ export class ContactBalanceBaseDto implements IContactBalanceBaseDto {
     balance!: number;
     tier!: string | undefined;
     rate!: number | undefined;
+    creditsRate!: number | undefined;
     currencyId!: string | undefined;
     lastUpdated!: moment.Moment | undefined;
 
@@ -65828,6 +65834,7 @@ export class ContactBalanceBaseDto implements IContactBalanceBaseDto {
             this.balance = _data["balance"];
             this.tier = _data["tier"];
             this.rate = _data["rate"];
+            this.creditsRate = _data["creditsRate"];
             this.currencyId = _data["currencyId"];
             this.lastUpdated = _data["lastUpdated"] ? moment(_data["lastUpdated"].toString()) : <any>undefined;
         }
@@ -65846,6 +65853,7 @@ export class ContactBalanceBaseDto implements IContactBalanceBaseDto {
         data["balance"] = this.balance;
         data["tier"] = this.tier;
         data["rate"] = this.rate;
+        data["creditsRate"] = this.creditsRate;
         data["currencyId"] = this.currencyId;
         data["lastUpdated"] = this.lastUpdated ? this.lastUpdated.toISOString() : <any>undefined;
         return data;
@@ -65857,6 +65865,7 @@ export interface IContactBalanceBaseDto {
     balance: number;
     tier: string | undefined;
     rate: number | undefined;
+    creditsRate: number | undefined;
     currencyId: string | undefined;
     lastUpdated: moment.Moment | undefined;
 }
@@ -65867,6 +65876,7 @@ export class ContactBalanceDto implements IContactBalanceDto {
     balance!: number;
     tier!: string | undefined;
     rate!: number | undefined;
+    creditsRate!: number | undefined;
     currencyId!: string | undefined;
     lastUpdated!: moment.Moment | undefined;
 
@@ -65886,6 +65896,7 @@ export class ContactBalanceDto implements IContactBalanceDto {
             this.balance = _data["balance"];
             this.tier = _data["tier"];
             this.rate = _data["rate"];
+            this.creditsRate = _data["creditsRate"];
             this.currencyId = _data["currencyId"];
             this.lastUpdated = _data["lastUpdated"] ? moment(_data["lastUpdated"].toString()) : <any>undefined;
         }
@@ -65905,6 +65916,7 @@ export class ContactBalanceDto implements IContactBalanceDto {
         data["balance"] = this.balance;
         data["tier"] = this.tier;
         data["rate"] = this.rate;
+        data["creditsRate"] = this.creditsRate;
         data["currencyId"] = this.currencyId;
         data["lastUpdated"] = this.lastUpdated ? this.lastUpdated.toISOString() : <any>undefined;
         return data;
@@ -65917,6 +65929,7 @@ export interface IContactBalanceDto {
     balance: number;
     tier: string | undefined;
     rate: number | undefined;
+    creditsRate: number | undefined;
     currencyId: string | undefined;
     lastUpdated: moment.Moment | undefined;
 }
@@ -91483,6 +91496,82 @@ export interface IMemberAddressDto {
     countryId: string | undefined;
 }
 
+export class MemberCreditBalanceDto implements IMemberCreditBalanceDto {
+    defaultTopUpProductId!: number | undefined;
+    defaultTopUpProductRate!: number | undefined;
+    defaultTopUpProductCreditsRate!: number | undefined;
+    defaultTopUpProductCurrencyId!: string | undefined;
+    contactId!: number;
+    balance!: number;
+    tier!: string | undefined;
+    rate!: number | undefined;
+    creditsRate!: number | undefined;
+    currencyId!: string | undefined;
+    lastUpdated!: moment.Moment | undefined;
+
+    constructor(data?: IMemberCreditBalanceDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.defaultTopUpProductId = _data["defaultTopUpProductId"];
+            this.defaultTopUpProductRate = _data["defaultTopUpProductRate"];
+            this.defaultTopUpProductCreditsRate = _data["defaultTopUpProductCreditsRate"];
+            this.defaultTopUpProductCurrencyId = _data["defaultTopUpProductCurrencyId"];
+            this.contactId = _data["contactId"];
+            this.balance = _data["balance"];
+            this.tier = _data["tier"];
+            this.rate = _data["rate"];
+            this.creditsRate = _data["creditsRate"];
+            this.currencyId = _data["currencyId"];
+            this.lastUpdated = _data["lastUpdated"] ? moment(_data["lastUpdated"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): MemberCreditBalanceDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new MemberCreditBalanceDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["defaultTopUpProductId"] = this.defaultTopUpProductId;
+        data["defaultTopUpProductRate"] = this.defaultTopUpProductRate;
+        data["defaultTopUpProductCreditsRate"] = this.defaultTopUpProductCreditsRate;
+        data["defaultTopUpProductCurrencyId"] = this.defaultTopUpProductCurrencyId;
+        data["contactId"] = this.contactId;
+        data["balance"] = this.balance;
+        data["tier"] = this.tier;
+        data["rate"] = this.rate;
+        data["creditsRate"] = this.creditsRate;
+        data["currencyId"] = this.currencyId;
+        data["lastUpdated"] = this.lastUpdated ? this.lastUpdated.toISOString() : <any>undefined;
+        return data;
+    }
+}
+
+export interface IMemberCreditBalanceDto {
+    defaultTopUpProductId: number | undefined;
+    defaultTopUpProductRate: number | undefined;
+    defaultTopUpProductCreditsRate: number | undefined;
+    defaultTopUpProductCurrencyId: string | undefined;
+    contactId: number;
+    balance: number;
+    tier: string | undefined;
+    rate: number | undefined;
+    creditsRate: number | undefined;
+    currencyId: string | undefined;
+    lastUpdated: moment.Moment | undefined;
+}
+
 export class MemberInfoDto implements IMemberInfoDto {
     registrationId!: string;
     name!: string;
@@ -96138,6 +96227,7 @@ export interface IPaymentAuthorizeResponseDto {
 }
 
 export class PaymentDataInput implements IPaymentDataInput {
+    productId!: number | undefined;
     quantity!: number;
     paymentGateway!: string;
     successUrl!: string | undefined;
@@ -96154,6 +96244,7 @@ export class PaymentDataInput implements IPaymentDataInput {
 
     init(_data?: any) {
         if (_data) {
+            this.productId = _data["productId"];
             this.quantity = _data["quantity"];
             this.paymentGateway = _data["paymentGateway"];
             this.successUrl = _data["successUrl"];
@@ -96170,6 +96261,7 @@ export class PaymentDataInput implements IPaymentDataInput {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["productId"] = this.productId;
         data["quantity"] = this.quantity;
         data["paymentGateway"] = this.paymentGateway;
         data["successUrl"] = this.successUrl;
@@ -96179,6 +96271,7 @@ export class PaymentDataInput implements IPaymentDataInput {
 }
 
 export interface IPaymentDataInput {
+    productId: number | undefined;
     quantity: number;
     paymentGateway: string;
     successUrl: string | undefined;

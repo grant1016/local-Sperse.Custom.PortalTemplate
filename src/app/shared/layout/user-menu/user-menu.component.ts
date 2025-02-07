@@ -13,7 +13,7 @@ import { AppAuthService } from 'shared/common/auth/app-auth.service';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { AppConsts } from '@shared/AppConsts';
-import { ContactBalanceBaseDto, ContactServiceProxy } from '@shared/service-proxies/service-proxies';
+import { ContactServiceProxy, MemberCreditBalanceDto } from '@shared/service-proxies/service-proxies';
 import { ProfileService } from '@shared/common/profile-service/profile.service';
 import { AppService } from '@app/app.service';
 import { AppSessionService } from '@shared/common/session/app-session.service';
@@ -49,7 +49,7 @@ export class UserMenuComponent {
     profilePictureUrl$: Observable<string> = this.profileService.profilePictureUrl$;
     navigationItems;
     hasCreditsFeature: boolean = this.feature.isEnabled(AppFeatures.CRMContactCredits);
-    memberCredits: ContactBalanceBaseDto;
+    memberCredits: MemberCreditBalanceDto;
 
     constructor(
         private dialog: MatDialog,
@@ -167,12 +167,21 @@ export class UserMenuComponent {
     }
 
     openCreditsTopUpDialog(event) {
+        let data = this.memberCredits.rate ? {
+            rate: this.memberCredits.rate,
+            creditsRate: this.memberCredits.creditsRate,
+            currencyId: this.memberCredits.currencyId,
+            productId: undefined
+        } : {
+            productId: this.memberCredits.defaultTopUpProductId,
+            rate: this.memberCredits.defaultTopUpProductRate,
+            creditsRate: this.memberCredits.defaultTopUpProductCreditsRate,
+            currencyId: this.memberCredits.defaultTopUpProductCurrencyId
+        };
+
         this.dialog.open(CreditsTopupDialogComponent, {
             width: '500px',
-            data: {
-                rate: this.memberCredits.rate,
-                currencyId: this.memberCredits.currencyId
-            }
+            data: data
         }).afterClosed().subscribe(() => { });
         event.stopPropagation();
     }

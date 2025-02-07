@@ -45,7 +45,7 @@ export class CreditsTopupDialogComponent implements OnInit {
         private profileService: ProfileService,
         private changeDetector: ChangeDetectorRef,
         public ls: AppLocalizationService,
-        @Inject(MAT_DIALOG_DATA) public data: { rate: number, currencyId: string }
+        @Inject(MAT_DIALOG_DATA) public data: { rate: number,  creditsRate?: number, currencyId: string, productId?: number }
     ) {}
 
     ngOnInit() {
@@ -84,6 +84,7 @@ export class CreditsTopupDialogComponent implements OnInit {
             return of();
 
         return this.memberCreditService.prepareTopUpPaymentData(new PaymentDataInput({
+            productId: this.data.productId,
             quantity: this.quantity,
             paymentGateway: paymentGateway,
             successUrl: `${AppConsts.remoteServiceBaseUrl}/receipt/${this.appSession.tenantId || 0}/{initialInvoiceXref}?usePortal=1`,

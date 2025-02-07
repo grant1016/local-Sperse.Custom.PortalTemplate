@@ -22,7 +22,7 @@
     </div>
     <div *ngIf="hasCreditsFeature" class="field credits-balance dashed-border">
         <div><label>{{ ls.l('UserMenu.AvailableBalance') }}</label>: <b>{{ memberCredits?.balance || 0 }}</b></div>
-        <div *ngIf="memberCredits?.rate" class="topup" (click)="openCreditsTopUpDialog($event)">{{ ls.l('UserMenu.TopUp') }} <i class="fa fa-angle-double-up"></i></div>
+        <div *ngIf="memberCredits?.rate || memberCredits?.defaultTopUpProductRate" class="topup" (click)="openCreditsTopUpDialog($event)">{{ ls.l('UserMenu.TopUp') }} <i class="fa fa-angle-double-up"></i></div>
     </div>
     <div class="navigation-links">
         <ul class="navigation">
