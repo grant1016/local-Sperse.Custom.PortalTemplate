@@ -174,6 +174,7 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
                     type: RequestPaymentType.PayPal,
                     paymentPeriodType: this.plan.paymentPeriodType,
                     productId: this.plan.productId,
+                    priceOptionId: this.plan.priceOptionId,
                     quantity: this.quantity,
                     couponId: this.couponInfo ? this.couponInfo.id : undefined
                 }))
@@ -337,6 +338,7 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
         return this.userSubscriptionServiceProxy.requestPayment(new RequestPaymentInput({
             type: type,
             productId: this.plan.productId,
+            priceOptionId: this.plan.priceOptionId,
             paymentPeriodType: this.plan.paymentPeriodType,
             quantity: 1,
             couponId: this.couponInfo ? this.couponInfo.id : undefined
@@ -485,6 +487,7 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
         this.userSubscriptionServiceProxy.requestPayment(new RequestPaymentInput({
             type: RequestPaymentType.Free,
             productId: this.plan.productId,
+            priceOptionId: this.plan.priceOptionId,
             paymentPeriodType: this.plan.paymentPeriodType,
             quantity: 1,
             couponId: this.couponInfo ? this.couponInfo.id : undefined
