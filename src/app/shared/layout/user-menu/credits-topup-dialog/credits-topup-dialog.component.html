@@ -22,8 +22,8 @@
         <b>{{(quantity * data.rate) | currency:currencyId:'symbol':'1.2-2'}}</b>
     </div>
     <div *ngIf="availablePaymentsInfo" class="buttons">
-        <ng-container *ngIf="availablePaymentsInfo.isStripeEnabled || availablePaymentsInfo.paypalInfo.isEnabled; else noPaymentMethods">
-            <button *ngIf="availablePaymentsInfo.isStripeEnabled" [disabled]="!quantity" class="button btn btn-primary stripe-button" (click)="submitStripeRequest()">
+        <ng-container *ngIf="availablePaymentsInfo.stripeInfo.isEnabled || availablePaymentsInfo.paypalInfo.isEnabled; else noPaymentMethods">
+            <button *ngIf="availablePaymentsInfo.stripeInfo.isEnabled" [disabled]="!quantity" class="button btn btn-primary stripe-button" (click)="submitStripeRequest()">
                 Pay with <img src="assets/common/images/stripe.svg"/>
             </button>
             <pay-pal *ngIf="availablePaymentsInfo.paypalInfo.isEnabled" [disabled]="!quantity" class="button" [height]="45" (onApprove)="onPayPalApprove()">
