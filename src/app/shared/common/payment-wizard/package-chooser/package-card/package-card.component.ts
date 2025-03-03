@@ -8,7 +8,7 @@ import {
 } from '@angular/core';
 import { DecimalPipe, getCurrencySymbol } from '@angular/common';
 import { BillingPeriod } from '@app/shared/common/payment-wizard/models/billing-period.enum';
-import { CustomPeriodType, PackageEditionConfigDto, ProductInfo, ProductSubscriptionOptionInfo, RecurringPaymentFrequency } from '@shared/service-proxies/service-proxies';
+import { CustomPeriodType, PackageEditionConfigDto, ProductInfo, PriceOptionInfo, RecurringPaymentFrequency } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { ModuleType } from '@shared/service-proxies/service-proxies';
 import { AppConsts } from '@shared/AppConsts';
@@ -32,7 +32,7 @@ export class PackageCardComponent implements OnChanges {
 
         if (this.productInfo) {
             let period = PaymentService.getRecurringPaymentFrequency(value);
-            let hasPeriodConfig = !!this.productInfo.productSubscriptionOptions.find(x => x.frequency == period);
+            let hasPeriodConfig = !!this.productInfo.priceOptions.find(x => x.frequency == period);
             this.display = hasPeriodConfig ? 'block' : 'none';
             this.isActive = hasPeriodConfig;
         }
@@ -168,9 +168,9 @@ export class PackageCardComponent implements OnChanges {
         }
     }
 
-    getFrequencyInfo(): ProductSubscriptionOptionInfo {
+    getFrequencyInfo(): PriceOptionInfo {
         let recurringFrequency = PaymentService.getRecurringPaymentFrequency(this.billingPeriod);
-        return this.productInfo.productSubscriptionOptions.find(x => x.frequency == recurringFrequency);
+        return this.productInfo.priceOptions.find(x => x.frequency == recurringFrequency);
     }
     // get editionPricePerMonth(): number {
     //     return this.billingPeriod === BillingPeriod.Monthly ?
