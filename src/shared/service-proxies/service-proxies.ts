@@ -16189,6 +16189,132 @@ export class CreditBalanceServiceProxy {
         }
         return _observableOf<ChangeCreditOutput>(null as any);
     }
+
+    /**
+     * @param body (optional) 
+     * @return Success
+     */
+    bulkTopUp(body: ChangeCreditInput[] | undefined): Observable<BulkChangeCreditOutput[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/CreditBalance/BulkTopUp";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json;odata.metadata=minimal;odata.streaming=true",
+                "Accept": "application/json;odata.metadata=minimal;odata.streaming=true"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processBulkTopUp(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processBulkTopUp(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<BulkChangeCreditOutput[]>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<BulkChangeCreditOutput[]>;
+        }));
+    }
+
+    protected processBulkTopUp(response: HttpResponseBase): Observable<BulkChangeCreditOutput[]> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(BulkChangeCreditOutput.fromJS(item));
+            }
+            else {
+                result200 = <any>null;
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<BulkChangeCreditOutput[]>(null as any);
+    }
+
+    /**
+     * @param body (optional) 
+     * @return Success
+     */
+    bulkDeduct(body: ChangeCreditInput[] | undefined): Observable<BulkChangeCreditOutput[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/CreditBalance/BulkDeduct";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json;odata.metadata=minimal;odata.streaming=true",
+                "Accept": "application/json;odata.metadata=minimal;odata.streaming=true"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processBulkDeduct(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processBulkDeduct(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<BulkChangeCreditOutput[]>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<BulkChangeCreditOutput[]>;
+        }));
+    }
+
+    protected processBulkDeduct(response: HttpResponseBase): Observable<BulkChangeCreditOutput[]> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(BulkChangeCreditOutput.fromJS(item));
+            }
+            else {
+                result200 = <any>null;
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<BulkChangeCreditOutput[]>(null as any);
+    }
 }
 
 @Injectable()
@@ -49995,6 +50121,58 @@ export class TenantSettingsServiceProxy {
      * @param body (optional) 
      * @return Success
      */
+    renameTenant(body: RenameTenantDto | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/Platform/TenantSettings/RenameTenant";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json;odata.metadata=minimal;odata.streaming=true",
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processRenameTenant(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processRenameTenant(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<void>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<void>;
+        }));
+    }
+
+    protected processRenameTenant(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(null as any);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(null as any);
+    }
+
+    /**
+     * @param body (optional) 
+     * @return Success
+     */
     updateAllSettings(body: TenantSettingsEditDto | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/services/Platform/TenantSettings/UpdateAllSettings";
         url_ = url_.replace(/[?&]$/, "");
@@ -52223,6 +52401,7 @@ export class TenantSubscriptionServiceProxy {
     /**
      * @param body (optional) 
      * @return Success
+     * @deprecated
      */
     addPaymentInfo(body: PaymentRequestInfoDto | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/services/Platform/TenantSubscription/AddPaymentInfo";
@@ -52275,6 +52454,7 @@ export class TenantSubscriptionServiceProxy {
     /**
      * @param body (optional) 
      * @return Success
+     * @deprecated
      */
     setupSubscription(body: SetupSubscriptionInfoDto | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/services/Platform/TenantSubscription/SetupSubscription";
@@ -52327,6 +52507,7 @@ export class TenantSubscriptionServiceProxy {
     /**
      * @param body (optional) 
      * @return Success
+     * @deprecated
      */
     requestPayment(body: RequestPaymentDto | undefined): Observable<RequestPaymentResult> {
         let url_ = this.baseUrl + "/api/services/Platform/TenantSubscription/RequestPayment";
@@ -52383,6 +52564,7 @@ export class TenantSubscriptionServiceProxy {
     /**
      * @param body (optional) 
      * @return Success
+     * @deprecated
      */
     completeSubscriptionPayment(body: PaymentRequestInfoDto | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/services/Platform/TenantSubscription/CompleteSubscriptionPayment";
@@ -52435,6 +52617,7 @@ export class TenantSubscriptionServiceProxy {
     /**
      * @param body (optional) 
      * @return Success
+     * @deprecated
      */
     rejectPendingPayment(body: ModuleType | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/services/Platform/TenantSubscription/RejectPendingPayment";
@@ -59844,6 +60027,12 @@ export interface IAffiliateLinkInfo {
     imageUrl: string | undefined;
 }
 
+export enum AffiliateNameGenerationMode {
+    Lead = 1,
+    Client = 2,
+    User = 4,
+}
+
 export class AffiliatePayoutSettingInfo implements IAffiliatePayoutSettingInfo {
     type!: PaymentSettingType;
     isDefault!: boolean;
@@ -60502,6 +60691,7 @@ export enum Appliances {
 export class ApplicableCheckLine implements IApplicableCheckLine {
     quantity!: number;
     productId!: number | undefined;
+    priceOptionId!: number | undefined;
     unitId!: ProductMeasurementUnit;
 
     constructor(data?: IApplicableCheckLine) {
@@ -60517,6 +60707,7 @@ export class ApplicableCheckLine implements IApplicableCheckLine {
         if (_data) {
             this.quantity = _data["quantity"];
             this.productId = _data["productId"];
+            this.priceOptionId = _data["priceOptionId"];
             this.unitId = _data["unitId"];
         }
     }
@@ -60532,6 +60723,7 @@ export class ApplicableCheckLine implements IApplicableCheckLine {
         data = typeof data === 'object' ? data : {};
         data["quantity"] = this.quantity;
         data["productId"] = this.productId;
+        data["priceOptionId"] = this.priceOptionId;
         data["unitId"] = this.unitId;
         return data;
     }
@@ -60540,6 +60732,7 @@ export class ApplicableCheckLine implements IApplicableCheckLine {
 export interface IApplicableCheckLine {
     quantity: number;
     productId: number | undefined;
+    priceOptionId: number | undefined;
     unitId: ProductMeasurementUnit;
 }
 
@@ -62811,6 +63004,58 @@ export interface IBugsnagSettingsDto {
     uiApiKey: string | undefined;
 }
 
+export class BulkChangeCreditOutput implements IBulkChangeCreditOutput {
+    contactId!: number | undefined;
+    userId!: number | undefined;
+    contactXref!: string | undefined;
+    errorMessage!: string | undefined;
+    newBalance!: number | undefined;
+
+    constructor(data?: IBulkChangeCreditOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.contactId = _data["contactId"];
+            this.userId = _data["userId"];
+            this.contactXref = _data["contactXref"];
+            this.errorMessage = _data["errorMessage"];
+            this.newBalance = _data["newBalance"];
+        }
+    }
+
+    static fromJS(data: any): BulkChangeCreditOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new BulkChangeCreditOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["contactId"] = this.contactId;
+        data["userId"] = this.userId;
+        data["contactXref"] = this.contactXref;
+        data["errorMessage"] = this.errorMessage;
+        data["newBalance"] = this.newBalance;
+        return data;
+    }
+}
+
+export interface IBulkChangeCreditOutput {
+    contactId: number | undefined;
+    userId: number | undefined;
+    contactXref: string | undefined;
+    errorMessage: string | undefined;
+    newBalance: number | undefined;
+}
+
 export class BulkSendEmailInput implements IBulkSendEmailInput {
     contactIds!: number[] | undefined;
     emailSettingsSource!: EmailSettingsSource;
@@ -64491,7 +64736,9 @@ export interface IChangeCategoryForRulesInput {
 }
 
 export class ChangeCreditInput implements IChangeCreditInput {
-    contactId!: number;
+    contactId!: number | undefined;
+    userId!: number | undefined;
+    contactXref!: string | undefined;
     amount!: number;
     description!: string | undefined;
 
@@ -64507,6 +64754,8 @@ export class ChangeCreditInput implements IChangeCreditInput {
     init(_data?: any) {
         if (_data) {
             this.contactId = _data["contactId"];
+            this.userId = _data["userId"];
+            this.contactXref = _data["contactXref"];
             this.amount = _data["amount"];
             this.description = _data["description"];
         }
@@ -64522,6 +64771,8 @@ export class ChangeCreditInput implements IChangeCreditInput {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["contactId"] = this.contactId;
+        data["userId"] = this.userId;
+        data["contactXref"] = this.contactXref;
         data["amount"] = this.amount;
         data["description"] = this.description;
         return data;
@@ -64529,13 +64780,15 @@ export class ChangeCreditInput implements IChangeCreditInput {
 }
 
 export interface IChangeCreditInput {
-    contactId: number;
+    contactId: number | undefined;
+    userId: number | undefined;
+    contactXref: string | undefined;
     amount: number;
     description: string | undefined;
 }
 
 export class ChangeCreditOutput implements IChangeCreditOutput {
-    newBalance!: number;
+    newBalance!: number | undefined;
 
     constructor(data?: IChangeCreditOutput) {
         if (data) {
@@ -64567,7 +64820,7 @@ export class ChangeCreditOutput implements IChangeCreditOutput {
 }
 
 export interface IChangeCreditOutput {
-    newBalance: number;
+    newBalance: number | undefined;
 }
 
 export class ChangePasswordInput implements IChangePasswordInput {
@@ -65263,6 +65516,7 @@ export class CommissionSettings implements ICommissionSettings {
     defaultAffiliateRateTier2!: number | undefined;
     tier2CommissionSource!: Tier2CommissionSource;
     commissionAffiliateAssignmentMode!: CommissionAffiliateAssignmentMode;
+    affiliateNameGenerationMode!: AffiliateNameGenerationMode;
 
     constructor(data?: ICommissionSettings) {
         if (data) {
@@ -65279,6 +65533,7 @@ export class CommissionSettings implements ICommissionSettings {
             this.defaultAffiliateRateTier2 = _data["defaultAffiliateRateTier2"];
             this.tier2CommissionSource = _data["tier2CommissionSource"];
             this.commissionAffiliateAssignmentMode = _data["commissionAffiliateAssignmentMode"];
+            this.affiliateNameGenerationMode = _data["affiliateNameGenerationMode"];
         }
     }
 
@@ -65295,6 +65550,7 @@ export class CommissionSettings implements ICommissionSettings {
         data["defaultAffiliateRateTier2"] = this.defaultAffiliateRateTier2;
         data["tier2CommissionSource"] = this.tier2CommissionSource;
         data["commissionAffiliateAssignmentMode"] = this.commissionAffiliateAssignmentMode;
+        data["affiliateNameGenerationMode"] = this.affiliateNameGenerationMode;
         return data;
     }
 }
@@ -65304,6 +65560,7 @@ export interface ICommissionSettings {
     defaultAffiliateRateTier2: number | undefined;
     tier2CommissionSource: Tier2CommissionSource;
     commissionAffiliateAssignmentMode: CommissionAffiliateAssignmentMode;
+    affiliateNameGenerationMode: AffiliateNameGenerationMode;
 }
 
 export enum CommissionTier {
@@ -70501,6 +70758,7 @@ export class CreateInvoiceLineInput implements ICreateInvoiceLineInput {
     total!: number;
     commissionableAmount!: number | undefined;
     unitId!: ProductMeasurementUnit;
+    priceOptionId!: number | undefined;
     productCode!: string | undefined;
     description!: string | undefined;
     sortOrder!: number;
@@ -70521,6 +70779,7 @@ export class CreateInvoiceLineInput implements ICreateInvoiceLineInput {
             this.total = _data["total"];
             this.commissionableAmount = _data["commissionableAmount"];
             this.unitId = _data["unitId"];
+            this.priceOptionId = _data["priceOptionId"];
             this.productCode = _data["productCode"];
             this.description = _data["description"];
             this.sortOrder = _data["sortOrder"];
@@ -70541,6 +70800,7 @@ export class CreateInvoiceLineInput implements ICreateInvoiceLineInput {
         data["total"] = this.total;
         data["commissionableAmount"] = this.commissionableAmount;
         data["unitId"] = this.unitId;
+        data["priceOptionId"] = this.priceOptionId;
         data["productCode"] = this.productCode;
         data["description"] = this.description;
         data["sortOrder"] = this.sortOrder;
@@ -70554,6 +70814,7 @@ export interface ICreateInvoiceLineInput {
     total: number;
     commissionableAmount: number | undefined;
     unitId: ProductMeasurementUnit;
+    priceOptionId: number | undefined;
     productCode: string | undefined;
     description: string | undefined;
     sortOrder: number;
@@ -73878,6 +74139,7 @@ export enum CreditScoreRating {
 export class CreditSettings implements ICreditSettings {
     enableTopUpBySubscription!: boolean;
     defaultTopUpProductId!: number | undefined;
+    allowNegativeBalance!: boolean;
 
     constructor(data?: ICreditSettings) {
         if (data) {
@@ -73892,6 +74154,7 @@ export class CreditSettings implements ICreditSettings {
         if (_data) {
             this.enableTopUpBySubscription = _data["enableTopUpBySubscription"];
             this.defaultTopUpProductId = _data["defaultTopUpProductId"];
+            this.allowNegativeBalance = _data["allowNegativeBalance"];
         }
     }
 
@@ -73906,6 +74169,7 @@ export class CreditSettings implements ICreditSettings {
         data = typeof data === 'object' ? data : {};
         data["enableTopUpBySubscription"] = this.enableTopUpBySubscription;
         data["defaultTopUpProductId"] = this.defaultTopUpProductId;
+        data["allowNegativeBalance"] = this.allowNegativeBalance;
         return data;
     }
 }
@@ -73913,6 +74177,7 @@ export class CreditSettings implements ICreditSettings {
 export interface ICreditSettings {
     enableTopUpBySubscription: boolean;
     defaultTopUpProductId: number | undefined;
+    allowNegativeBalance: boolean;
 }
 
 export class CreditSummaryDto implements ICreditSummaryDto {
@@ -88266,6 +88531,7 @@ export class InvoiceLineInfo implements IInvoiceLineInfo {
     quantity!: number;
     rate!: number;
     unitId!: ProductMeasurementUnit;
+    priceOptionId!: number | undefined;
     unitName!: string | undefined;
     total!: number;
     commissionableAmount!: number | undefined;
@@ -88297,6 +88563,7 @@ export class InvoiceLineInfo implements IInvoiceLineInfo {
             this.quantity = _data["quantity"];
             this.rate = _data["rate"];
             this.unitId = _data["unitId"];
+            this.priceOptionId = _data["priceOptionId"];
             this.unitName = _data["unitName"];
             this.total = _data["total"];
             this.commissionableAmount = _data["commissionableAmount"];
@@ -88328,6 +88595,7 @@ export class InvoiceLineInfo implements IInvoiceLineInfo {
         data["quantity"] = this.quantity;
         data["rate"] = this.rate;
         data["unitId"] = this.unitId;
+        data["priceOptionId"] = this.priceOptionId;
         data["unitName"] = this.unitName;
         data["total"] = this.total;
         data["commissionableAmount"] = this.commissionableAmount;
@@ -88352,6 +88620,7 @@ export interface IInvoiceLineInfo {
     quantity: number;
     rate: number;
     unitId: ProductMeasurementUnit;
+    priceOptionId: number | undefined;
     unitName: string | undefined;
     total: number;
     commissionableAmount: number | undefined;
@@ -96782,6 +97051,7 @@ export enum PaymentInfoType {
     Wechat = "Wechat",
     WechatPay = "WechatPay",
     Zip = "Zip",
+    Crypto = "Crypto",
 }
 
 export enum PaymentMethod {
@@ -98830,7 +99100,7 @@ export class ProductDto implements IProductDto {
     type!: ProductType;
     group!: string | undefined;
     isPublished!: boolean;
-    paymentPeriodTypes!: RecurringPaymentFrequency[] | undefined;
+    priceOptions!: ProductPriceOptionDto[] | undefined;
 
     constructor(data?: IProductDto) {
         if (data) {
@@ -98849,10 +99119,10 @@ export class ProductDto implements IProductDto {
             this.type = _data["type"];
             this.group = _data["group"];
             this.isPublished = _data["isPublished"];
-            if (Array.isArray(_data["paymentPeriodTypes"])) {
-                this.paymentPeriodTypes = [] as any;
-                for (let item of _data["paymentPeriodTypes"])
-                    this.paymentPeriodTypes!.push(item);
+            if (Array.isArray(_data["priceOptions"])) {
+                this.priceOptions = [] as any;
+                for (let item of _data["priceOptions"])
+                    this.priceOptions!.push(ProductPriceOptionDto.fromJS(item));
             }
         }
     }
@@ -98872,10 +99142,10 @@ export class ProductDto implements IProductDto {
         data["type"] = this.type;
         data["group"] = this.group;
         data["isPublished"] = this.isPublished;
-        if (Array.isArray(this.paymentPeriodTypes)) {
-            data["paymentPeriodTypes"] = [];
-            for (let item of this.paymentPeriodTypes)
-                data["paymentPeriodTypes"].push(item);
+        if (Array.isArray(this.priceOptions)) {
+            data["priceOptions"] = [];
+            for (let item of this.priceOptions)
+                data["priceOptions"].push(item.toJSON());
         }
         return data;
     }
@@ -98888,7 +99158,7 @@ export interface IProductDto {
     type: ProductType;
     group: string | undefined;
     isPublished: boolean;
-    paymentPeriodTypes: RecurringPaymentFrequency[] | undefined;
+    priceOptions: ProductPriceOptionDto[] | undefined;
 }
 
 export class ProductEventDto implements IProductEventDto {
@@ -99270,6 +99540,7 @@ export enum ProductMeasurementUnit {
 }
 
 export class ProductPaymentOptionInfo implements IProductPaymentOptionInfo {
+    id!: number | undefined;
     unitId!: ProductMeasurementUnit;
     unitName!: string | undefined;
     price!: number;
@@ -99285,6 +99556,7 @@ export class ProductPaymentOptionInfo implements IProductPaymentOptionInfo {
 
     init(_data?: any) {
         if (_data) {
+            this.id = _data["id"];
             this.unitId = _data["unitId"];
             this.unitName = _data["unitName"];
             this.price = _data["price"];
@@ -99300,6 +99572,7 @@ export class ProductPaymentOptionInfo implements IProductPaymentOptionInfo {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
         data["unitId"] = this.unitId;
         data["unitName"] = this.unitName;
         data["price"] = this.price;
@@ -99308,6 +99581,7 @@ export class ProductPaymentOptionInfo implements IProductPaymentOptionInfo {
 }
 
 export interface IProductPaymentOptionInfo {
+    id: number | undefined;
     unitId: ProductMeasurementUnit;
     unitName: string | undefined;
     price: number;
@@ -99387,6 +99661,46 @@ export interface IProductPaymentOptionsInfo {
     isStripeTaxationEnabled: boolean;
     stripeTaxProcuctCode: string | undefined;
     paymentOptions: ProductPaymentOptionInfo[] | undefined;
+}
+
+export class ProductPriceOptionDto implements IProductPriceOptionDto {
+    id!: number;
+    frequency!: RecurringPaymentFrequency;
+
+    constructor(data?: IProductPriceOptionDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.frequency = _data["frequency"];
+        }
+    }
+
+    static fromJS(data: any): ProductPriceOptionDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new ProductPriceOptionDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["frequency"] = this.frequency;
+        return data;
+    }
+}
+
+export interface IProductPriceOptionDto {
+    id: number;
+    frequency: RecurringPaymentFrequency;
 }
 
 export class ProductResourceDto implements IProductResourceDto {
@@ -99522,6 +99836,7 @@ export interface IProductShortInfo {
 }
 
 export class ProductSubscriptionOptionInfo implements IProductSubscriptionOptionInfo {
+    id!: number | undefined;
     frequency!: RecurringPaymentFrequency;
     signupFee!: number;
     commissionableSignupFeeAmount!: number | undefined;
@@ -99552,6 +99867,7 @@ export class ProductSubscriptionOptionInfo implements IProductSubscriptionOption
 
     init(_data?: any) {
         if (_data) {
+            this.id = _data["id"];
             this.frequency = _data["frequency"];
             this.signupFee = _data["signupFee"];
             this.commissionableSignupFeeAmount = _data["commissionableSignupFeeAmount"];
@@ -99582,6 +99898,7 @@ export class ProductSubscriptionOptionInfo implements IProductSubscriptionOption
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
         data["frequency"] = this.frequency;
         data["signupFee"] = this.signupFee;
         data["commissionableSignupFeeAmount"] = this.commissionableSignupFeeAmount;
@@ -99605,6 +99922,7 @@ export class ProductSubscriptionOptionInfo implements IProductSubscriptionOption
 }
 
 export interface IProductSubscriptionOptionInfo {
+    id: number | undefined;
     frequency: RecurringPaymentFrequency;
     signupFee: number;
     commissionableSignupFeeAmount: number | undefined;
@@ -104581,6 +104899,42 @@ export interface IRenameSyncAccountInput {
     newName: string;
 }
 
+export class RenameTenantDto implements IRenameTenantDto {
+    name!: string;
+
+    constructor(data?: IRenameTenantDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.name = _data["name"];
+        }
+    }
+
+    static fromJS(data: any): RenameTenantDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new RenameTenantDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        return data;
+    }
+}
+
+export interface IRenameTenantDto {
+    name: string;
+}
+
 export class ReportSectionDto implements IReportSectionDto {
     group!: SectionGroup;
     name!: string | undefined;
@@ -104860,6 +105214,7 @@ export interface IRequestPaymentDto {
 export class RequestPaymentInput implements IRequestPaymentInput {
     type!: RequestPaymentType;
     productId!: number;
+    priceOptionId!: number | undefined;
     paymentPeriodType!: PaymentPeriodType;
     quantity!: number;
     couponId!: number | undefined;
@@ -104877,6 +105232,7 @@ export class RequestPaymentInput implements IRequestPaymentInput {
         if (_data) {
             this.type = _data["type"];
             this.productId = _data["productId"];
+            this.priceOptionId = _data["priceOptionId"];
             this.paymentPeriodType = _data["paymentPeriodType"];
             this.quantity = _data["quantity"];
             this.couponId = _data["couponId"];
@@ -104894,6 +105250,7 @@ export class RequestPaymentInput implements IRequestPaymentInput {
         data = typeof data === 'object' ? data : {};
         data["type"] = this.type;
         data["productId"] = this.productId;
+        data["priceOptionId"] = this.priceOptionId;
         data["paymentPeriodType"] = this.paymentPeriodType;
         data["quantity"] = this.quantity;
         data["couponId"] = this.couponId;
@@ -104904,6 +105261,7 @@ export class RequestPaymentInput implements IRequestPaymentInput {
 export interface IRequestPaymentInput {
     type: RequestPaymentType;
     productId: number;
+    priceOptionId: number | undefined;
     paymentPeriodType: PaymentPeriodType;
     quantity: number;
     couponId: number | undefined;
@@ -112366,7 +112724,6 @@ export class TenantLoginInfoDto implements ITenantLoginInfoDto {
     customPrivacyPolicyDocumentId!: string | undefined;
     customLayoutType!: LayoutType | undefined;
     creationTime!: moment.Moment;
-    paymentPeriodType!: PaymentPeriodType;
     creationTimeString!: string | undefined;
     tenantCustomizations!: TenantCustomizationInfoDto | undefined;
     landingPageDomains!: string[] | undefined;
@@ -112400,7 +112757,6 @@ export class TenantLoginInfoDto implements ITenantLoginInfoDto {
             this.customPrivacyPolicyDocumentId = _data["customPrivacyPolicyDocumentId"];
             this.customLayoutType = _data["customLayoutType"];
             this.creationTime = _data["creationTime"] ? moment(_data["creationTime"].toString()) : <any>undefined;
-            this.paymentPeriodType = _data["paymentPeriodType"];
             this.creationTimeString = _data["creationTimeString"];
             this.tenantCustomizations = _data["tenantCustomizations"] ? TenantCustomizationInfoDto.fromJS(_data["tenantCustomizations"]) : <any>undefined;
             if (Array.isArray(_data["landingPageDomains"])) {
@@ -112438,7 +112794,6 @@ export class TenantLoginInfoDto implements ITenantLoginInfoDto {
         data["customPrivacyPolicyDocumentId"] = this.customPrivacyPolicyDocumentId;
         data["customLayoutType"] = this.customLayoutType;
         data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
-        data["paymentPeriodType"] = this.paymentPeriodType;
         data["creationTimeString"] = this.creationTimeString;
         data["tenantCustomizations"] = this.tenantCustomizations ? this.tenantCustomizations.toJSON() : <any>undefined;
         if (Array.isArray(this.landingPageDomains)) {
@@ -112469,7 +112824,6 @@ export interface ITenantLoginInfoDto {
     customPrivacyPolicyDocumentId: string | undefined;
     customLayoutType: LayoutType | undefined;
     creationTime: moment.Moment;
-    paymentPeriodType: PaymentPeriodType;
     creationTimeString: string | undefined;
     tenantCustomizations: TenantCustomizationInfoDto | undefined;
     landingPageDomains: string[] | undefined;
@@ -112673,6 +113027,7 @@ export interface ITenantOtherSettingsEditDto {
 
 export class TenantProductInfo implements ITenantProductInfo {
     productId!: number;
+    priceOptionId!: number | undefined;
     paymentPeriodType!: PaymentPeriodType;
     quantity!: number;
 
@@ -112688,6 +113043,7 @@ export class TenantProductInfo implements ITenantProductInfo {
     init(_data?: any) {
         if (_data) {
             this.productId = _data["productId"];
+            this.priceOptionId = _data["priceOptionId"];
             this.paymentPeriodType = _data["paymentPeriodType"];
             this.quantity = _data["quantity"];
         }
@@ -112703,6 +113059,7 @@ export class TenantProductInfo implements ITenantProductInfo {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["productId"] = this.productId;
+        data["priceOptionId"] = this.priceOptionId;
         data["paymentPeriodType"] = this.paymentPeriodType;
         data["quantity"] = this.quantity;
         return data;
@@ -112711,6 +113068,7 @@ export class TenantProductInfo implements ITenantProductInfo {
 
 export interface ITenantProductInfo {
     productId: number;
+    priceOptionId: number | undefined;
     paymentPeriodType: PaymentPeriodType;
     quantity: number;
 }
@@ -117090,6 +117448,7 @@ export class UpdateInvoiceLineInput implements IUpdateInvoiceLineInput {
     total!: number;
     commissionableAmount!: number | undefined;
     unitId!: ProductMeasurementUnit;
+    priceOptionId!: number | undefined;
     productCode!: string | undefined;
     description!: string | undefined;
     sortOrder!: number;
@@ -117111,6 +117470,7 @@ export class UpdateInvoiceLineInput implements IUpdateInvoiceLineInput {
             this.total = _data["total"];
             this.commissionableAmount = _data["commissionableAmount"];
             this.unitId = _data["unitId"];
+            this.priceOptionId = _data["priceOptionId"];
             this.productCode = _data["productCode"];
             this.description = _data["description"];
             this.sortOrder = _data["sortOrder"];
@@ -117132,6 +117492,7 @@ export class UpdateInvoiceLineInput implements IUpdateInvoiceLineInput {
         data["total"] = this.total;
         data["commissionableAmount"] = this.commissionableAmount;
         data["unitId"] = this.unitId;
+        data["priceOptionId"] = this.priceOptionId;
         data["productCode"] = this.productCode;
         data["description"] = this.description;
         data["sortOrder"] = this.sortOrder;
@@ -117146,6 +117507,7 @@ export interface IUpdateInvoiceLineInput {
     total: number;
     commissionableAmount: number | undefined;
     unitId: ProductMeasurementUnit;
+    priceOptionId: number | undefined;
     productCode: string | undefined;
     description: string | undefined;
     sortOrder: number;
@@ -118297,6 +118659,7 @@ export class UpdateOrderSubscriptionInput implements IUpdateOrderSubscriptionInp
     products!: UpdateOrderSubscriptionProductInfo[] | undefined;
     productId!: number | undefined;
     productCode!: string | undefined;
+    priceOptionId!: number | undefined;
     paymentPeriodType!: RecurringPaymentFrequency | undefined;
     hasRecurringBilling!: boolean;
     statusId!: string | undefined;
@@ -118329,6 +118692,7 @@ export class UpdateOrderSubscriptionInput implements IUpdateOrderSubscriptionInp
             }
             this.productId = _data["productId"];
             this.productCode = _data["productCode"];
+            this.priceOptionId = _data["priceOptionId"];
             this.paymentPeriodType = _data["paymentPeriodType"];
             this.hasRecurringBilling = _data["hasRecurringBilling"];
             this.statusId = _data["statusId"];
@@ -118361,6 +118725,7 @@ export class UpdateOrderSubscriptionInput implements IUpdateOrderSubscriptionInp
         }
         data["productId"] = this.productId;
         data["productCode"] = this.productCode;
+        data["priceOptionId"] = this.priceOptionId;
         data["paymentPeriodType"] = this.paymentPeriodType;
         data["hasRecurringBilling"] = this.hasRecurringBilling;
         data["statusId"] = this.statusId;
@@ -118378,6 +118743,7 @@ export interface IUpdateOrderSubscriptionInput {
     products: UpdateOrderSubscriptionProductInfo[] | undefined;
     productId: number | undefined;
     productCode: string | undefined;
+    priceOptionId: number | undefined;
     paymentPeriodType: RecurringPaymentFrequency | undefined;
     hasRecurringBilling: boolean;
     statusId: string | undefined;
@@ -118431,6 +118797,7 @@ export interface IUpdateOrderSubscriptionPeriodInput {
 export class UpdateOrderSubscriptionProductInfo implements IUpdateOrderSubscriptionProductInfo {
     productId!: number | undefined;
     productCode!: string | undefined;
+    priceOptionId!: number | undefined;
     paymentPeriodType!: RecurringPaymentFrequency | undefined;
     hasRecurringBilling!: boolean;
     startDate!: moment.Moment | undefined;
@@ -118450,6 +118817,7 @@ export class UpdateOrderSubscriptionProductInfo implements IUpdateOrderSubscript
         if (_data) {
             this.productId = _data["productId"];
             this.productCode = _data["productCode"];
+            this.priceOptionId = _data["priceOptionId"];
             this.paymentPeriodType = _data["paymentPeriodType"];
             this.hasRecurringBilling = _data["hasRecurringBilling"];
             this.startDate = _data["startDate"] ? moment(_data["startDate"].toString()) : <any>undefined;
@@ -118469,6 +118837,7 @@ export class UpdateOrderSubscriptionProductInfo implements IUpdateOrderSubscript
         data = typeof data === 'object' ? data : {};
         data["productId"] = this.productId;
         data["productCode"] = this.productCode;
+        data["priceOptionId"] = this.priceOptionId;
         data["paymentPeriodType"] = this.paymentPeriodType;
         data["hasRecurringBilling"] = this.hasRecurringBilling;
         data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
@@ -118481,6 +118850,7 @@ export class UpdateOrderSubscriptionProductInfo implements IUpdateOrderSubscript
 export interface IUpdateOrderSubscriptionProductInfo {
     productId: number | undefined;
     productCode: string | undefined;
+    priceOptionId: number | undefined;
     paymentPeriodType: RecurringPaymentFrequency | undefined;
     hasRecurringBilling: boolean;
     startDate: moment.Moment | undefined;
