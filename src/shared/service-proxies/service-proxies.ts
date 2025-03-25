@@ -72809,7 +72809,7 @@ export class CreateProductInput implements ICreateProductInput {
     redirectUrl!: string | undefined;
     productInventory!: ProductInventoryInfo | undefined;
     productServices!: ProductServiceInfo[] | undefined;
-    productSubscriptionOptions!: ProductSubscriptionOptionInfo[] | undefined;
+    priceOptions!: PriceOptionInfo[] | undefined;
     productUpgradeAssignments!: ProductUpgradeAssignmentInfo[] | undefined;
     recommendedProducts!: RecommendedProductInfo[] | undefined;
     productResources!: ProductResourceDto[] | undefined;
@@ -72865,10 +72865,10 @@ export class CreateProductInput implements ICreateProductInput {
                 for (let item of _data["productServices"])
                     this.productServices!.push(ProductServiceInfo.fromJS(item));
             }
-            if (Array.isArray(_data["productSubscriptionOptions"])) {
-                this.productSubscriptionOptions = [] as any;
-                for (let item of _data["productSubscriptionOptions"])
-                    this.productSubscriptionOptions!.push(ProductSubscriptionOptionInfo.fromJS(item));
+            if (Array.isArray(_data["priceOptions"])) {
+                this.priceOptions = [] as any;
+                for (let item of _data["priceOptions"])
+                    this.priceOptions!.push(PriceOptionInfo.fromJS(item));
             }
             if (Array.isArray(_data["productUpgradeAssignments"])) {
                 this.productUpgradeAssignments = [] as any;
@@ -72937,10 +72937,10 @@ export class CreateProductInput implements ICreateProductInput {
             for (let item of this.productServices)
                 data["productServices"].push(item.toJSON());
         }
-        if (Array.isArray(this.productSubscriptionOptions)) {
-            data["productSubscriptionOptions"] = [];
-            for (let item of this.productSubscriptionOptions)
-                data["productSubscriptionOptions"].push(item.toJSON());
+        if (Array.isArray(this.priceOptions)) {
+            data["priceOptions"] = [];
+            for (let item of this.priceOptions)
+                data["priceOptions"].push(item.toJSON());
         }
         if (Array.isArray(this.productUpgradeAssignments)) {
             data["productUpgradeAssignments"] = [];
@@ -72998,7 +72998,7 @@ export interface ICreateProductInput {
     redirectUrl: string | undefined;
     productInventory: ProductInventoryInfo | undefined;
     productServices: ProductServiceInfo[] | undefined;
-    productSubscriptionOptions: ProductSubscriptionOptionInfo[] | undefined;
+    priceOptions: PriceOptionInfo[] | undefined;
     productUpgradeAssignments: ProductUpgradeAssignmentInfo[] | undefined;
     recommendedProducts: RecommendedProductInfo[] | undefined;
     productResources: ProductResourceDto[] | undefined;
@@ -79335,6 +79335,7 @@ export class GetApplicablePaymentMethodsInput implements IGetApplicablePaymentMe
     discountTotal!: number | undefined;
     shippingTotal!: number | undefined;
     taxTotal!: number | undefined;
+    isAutoCalculatedTax!: boolean;
     subscriptionStartOn!: moment.Moment | undefined;
     lines!: ApplicableCheckLine[] | undefined;
 
@@ -79356,6 +79357,7 @@ export class GetApplicablePaymentMethodsInput implements IGetApplicablePaymentMe
             this.discountTotal = _data["discountTotal"];
             this.shippingTotal = _data["shippingTotal"];
             this.taxTotal = _data["taxTotal"];
+            this.isAutoCalculatedTax = _data["isAutoCalculatedTax"];
             this.subscriptionStartOn = _data["subscriptionStartOn"] ? moment(_data["subscriptionStartOn"].toString()) : <any>undefined;
             if (Array.isArray(_data["lines"])) {
                 this.lines = [] as any;
@@ -79381,6 +79383,7 @@ export class GetApplicablePaymentMethodsInput implements IGetApplicablePaymentMe
         data["discountTotal"] = this.discountTotal;
         data["shippingTotal"] = this.shippingTotal;
         data["taxTotal"] = this.taxTotal;
+        data["isAutoCalculatedTax"] = this.isAutoCalculatedTax;
         data["subscriptionStartOn"] = this.subscriptionStartOn ? this.subscriptionStartOn.toISOString() : <any>undefined;
         if (Array.isArray(this.lines)) {
             data["lines"] = [];
@@ -79399,6 +79402,7 @@ export interface IGetApplicablePaymentMethodsInput {
     discountTotal: number | undefined;
     shippingTotal: number | undefined;
     taxTotal: number | undefined;
+    isAutoCalculatedTax: boolean;
     subscriptionStartOn: moment.Moment | undefined;
     lines: ApplicableCheckLine[] | undefined;
 }
@@ -82424,7 +82428,7 @@ export class GetProductInfoOutput implements IGetProductInfoOutput {
     stripeTaxProcuctCode!: string | undefined;
     productInventory!: ProductInventoryDto | undefined;
     productServices!: ProductServiceInfo[] | undefined;
-    productSubscriptionOptions!: ProductSubscriptionOptionInfo[] | undefined;
+    priceOptions!: PriceOptionInfo[] | undefined;
     productUpgradeAssignments!: ProductUpgradeAssignmentInfo[] | undefined;
 
     constructor(data?: IGetProductInfoOutput) {
@@ -82494,10 +82498,10 @@ export class GetProductInfoOutput implements IGetProductInfoOutput {
                 for (let item of _data["productServices"])
                     this.productServices!.push(ProductServiceInfo.fromJS(item));
             }
-            if (Array.isArray(_data["productSubscriptionOptions"])) {
-                this.productSubscriptionOptions = [] as any;
-                for (let item of _data["productSubscriptionOptions"])
-                    this.productSubscriptionOptions!.push(ProductSubscriptionOptionInfo.fromJS(item));
+            if (Array.isArray(_data["priceOptions"])) {
+                this.priceOptions = [] as any;
+                for (let item of _data["priceOptions"])
+                    this.priceOptions!.push(PriceOptionInfo.fromJS(item));
             }
             if (Array.isArray(_data["productUpgradeAssignments"])) {
                 this.productUpgradeAssignments = [] as any;
@@ -82572,10 +82576,10 @@ export class GetProductInfoOutput implements IGetProductInfoOutput {
             for (let item of this.productServices)
                 data["productServices"].push(item.toJSON());
         }
-        if (Array.isArray(this.productSubscriptionOptions)) {
-            data["productSubscriptionOptions"] = [];
-            for (let item of this.productSubscriptionOptions)
-                data["productSubscriptionOptions"].push(item.toJSON());
+        if (Array.isArray(this.priceOptions)) {
+            data["priceOptions"] = [];
+            for (let item of this.priceOptions)
+                data["priceOptions"].push(item.toJSON());
         }
         if (Array.isArray(this.productUpgradeAssignments)) {
             data["productUpgradeAssignments"] = [];
@@ -82631,7 +82635,7 @@ export interface IGetProductInfoOutput {
     stripeTaxProcuctCode: string | undefined;
     productInventory: ProductInventoryDto | undefined;
     productServices: ProductServiceInfo[] | undefined;
-    productSubscriptionOptions: ProductSubscriptionOptionInfo[] | undefined;
+    priceOptions: PriceOptionInfo[] | undefined;
     productUpgradeAssignments: ProductUpgradeAssignmentInfo[] | undefined;
 }
 
@@ -83914,7 +83918,7 @@ export interface IGetSystemTotalsOutput {
 }
 
 export class GetTaxCalculationInput implements IGetTaxCalculationInput {
-    tenantId!: number;
+    tenantId!: number | undefined;
     paymentGateway!: string | undefined;
     stateId!: string | undefined;
     zip!: string | undefined;
@@ -83978,7 +83982,7 @@ export class GetTaxCalculationInput implements IGetTaxCalculationInput {
 }
 
 export interface IGetTaxCalculationInput {
-    tenantId: number;
+    tenantId: number | undefined;
     paymentGateway: string | undefined;
     stateId: string | undefined;
     zip: string | undefined;
@@ -98719,6 +98723,114 @@ export enum PreferredProperties {
     CreditsBalancePlan = 16,
 }
 
+export class PriceOptionInfo implements IPriceOptionInfo {
+    id!: number | undefined;
+    frequency!: RecurringPaymentFrequency;
+    signupFee!: number;
+    commissionableSignupFeeAmount!: number | undefined;
+    signUpCredits!: number | undefined;
+    fee!: number | undefined;
+    customerChoosesPrice!: boolean;
+    minCustomerPrice!: number | undefined;
+    maxCustomerPrice!: number | undefined;
+    commissionableFeeAmount!: number | undefined;
+    credits!: number | undefined;
+    trialDayCount!: number;
+    customPeriodCount!: number | undefined;
+    customPeriodType!: CustomPeriodType | undefined;
+    cycles!: number | undefined;
+    gracePeriodDayCount!: number | undefined;
+    stripeXref!: string | undefined;
+    stripeXrefUrl!: string | undefined;
+    paypalXref!: string | undefined;
+
+    constructor(data?: IPriceOptionInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.frequency = _data["frequency"];
+            this.signupFee = _data["signupFee"];
+            this.commissionableSignupFeeAmount = _data["commissionableSignupFeeAmount"];
+            this.signUpCredits = _data["signUpCredits"];
+            this.fee = _data["fee"];
+            this.customerChoosesPrice = _data["customerChoosesPrice"];
+            this.minCustomerPrice = _data["minCustomerPrice"];
+            this.maxCustomerPrice = _data["maxCustomerPrice"];
+            this.commissionableFeeAmount = _data["commissionableFeeAmount"];
+            this.credits = _data["credits"];
+            this.trialDayCount = _data["trialDayCount"];
+            this.customPeriodCount = _data["customPeriodCount"];
+            this.customPeriodType = _data["customPeriodType"];
+            this.cycles = _data["cycles"];
+            this.gracePeriodDayCount = _data["gracePeriodDayCount"];
+            this.stripeXref = _data["stripeXref"];
+            this.stripeXrefUrl = _data["stripeXrefUrl"];
+            this.paypalXref = _data["paypalXref"];
+        }
+    }
+
+    static fromJS(data: any): PriceOptionInfo {
+        data = typeof data === 'object' ? data : {};
+        let result = new PriceOptionInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["frequency"] = this.frequency;
+        data["signupFee"] = this.signupFee;
+        data["commissionableSignupFeeAmount"] = this.commissionableSignupFeeAmount;
+        data["signUpCredits"] = this.signUpCredits;
+        data["fee"] = this.fee;
+        data["customerChoosesPrice"] = this.customerChoosesPrice;
+        data["minCustomerPrice"] = this.minCustomerPrice;
+        data["maxCustomerPrice"] = this.maxCustomerPrice;
+        data["commissionableFeeAmount"] = this.commissionableFeeAmount;
+        data["credits"] = this.credits;
+        data["trialDayCount"] = this.trialDayCount;
+        data["customPeriodCount"] = this.customPeriodCount;
+        data["customPeriodType"] = this.customPeriodType;
+        data["cycles"] = this.cycles;
+        data["gracePeriodDayCount"] = this.gracePeriodDayCount;
+        data["stripeXref"] = this.stripeXref;
+        data["stripeXrefUrl"] = this.stripeXrefUrl;
+        data["paypalXref"] = this.paypalXref;
+        return data;
+    }
+}
+
+export interface IPriceOptionInfo {
+    id: number | undefined;
+    frequency: RecurringPaymentFrequency;
+    signupFee: number;
+    commissionableSignupFeeAmount: number | undefined;
+    signUpCredits: number | undefined;
+    fee: number | undefined;
+    customerChoosesPrice: boolean;
+    minCustomerPrice: number | undefined;
+    maxCustomerPrice: number | undefined;
+    commissionableFeeAmount: number | undefined;
+    credits: number | undefined;
+    trialDayCount: number;
+    customPeriodCount: number | undefined;
+    customPeriodType: CustomPeriodType | undefined;
+    cycles: number | undefined;
+    gracePeriodDayCount: number | undefined;
+    stripeXref: string | undefined;
+    stripeXrefUrl: string | undefined;
+    paypalXref: string | undefined;
+}
+
 export class PricingTableFeatureDefinition implements IPricingTableFeatureDefinition {
     name!: string | undefined;
     displayName!: LocalizableString | undefined;
@@ -99297,7 +99409,7 @@ export class ProductInfo implements IProductInfo {
     stripeTaxProcuctCode!: string | undefined;
     productInventory!: ProductInventoryDto | undefined;
     productServices!: ProductServiceInfo[] | undefined;
-    productSubscriptionOptions!: ProductSubscriptionOptionInfo[] | undefined;
+    priceOptions!: PriceOptionInfo[] | undefined;
     productUpgradeAssignments!: ProductUpgradeAssignmentInfo[] | undefined;
 
     constructor(data?: IProductInfo) {
@@ -99340,10 +99452,10 @@ export class ProductInfo implements IProductInfo {
                 for (let item of _data["productServices"])
                     this.productServices!.push(ProductServiceInfo.fromJS(item));
             }
-            if (Array.isArray(_data["productSubscriptionOptions"])) {
-                this.productSubscriptionOptions = [] as any;
-                for (let item of _data["productSubscriptionOptions"])
-                    this.productSubscriptionOptions!.push(ProductSubscriptionOptionInfo.fromJS(item));
+            if (Array.isArray(_data["priceOptions"])) {
+                this.priceOptions = [] as any;
+                for (let item of _data["priceOptions"])
+                    this.priceOptions!.push(PriceOptionInfo.fromJS(item));
             }
             if (Array.isArray(_data["productUpgradeAssignments"])) {
                 this.productUpgradeAssignments = [] as any;
@@ -99391,10 +99503,10 @@ export class ProductInfo implements IProductInfo {
             for (let item of this.productServices)
                 data["productServices"].push(item.toJSON());
         }
-        if (Array.isArray(this.productSubscriptionOptions)) {
-            data["productSubscriptionOptions"] = [];
-            for (let item of this.productSubscriptionOptions)
-                data["productSubscriptionOptions"].push(item.toJSON());
+        if (Array.isArray(this.priceOptions)) {
+            data["priceOptions"] = [];
+            for (let item of this.priceOptions)
+                data["priceOptions"].push(item.toJSON());
         }
         if (Array.isArray(this.productUpgradeAssignments)) {
             data["productUpgradeAssignments"] = [];
@@ -99431,7 +99543,7 @@ export interface IProductInfo {
     stripeTaxProcuctCode: string | undefined;
     productInventory: ProductInventoryDto | undefined;
     productServices: ProductServiceInfo[] | undefined;
-    productSubscriptionOptions: ProductSubscriptionOptionInfo[] | undefined;
+    priceOptions: PriceOptionInfo[] | undefined;
     productUpgradeAssignments: ProductUpgradeAssignmentInfo[] | undefined;
 }
 
@@ -99833,114 +99945,6 @@ export interface IProductShortInfo {
     description: string | undefined;
     unitId: ProductMeasurementUnit;
     rate: number;
-}
-
-export class ProductSubscriptionOptionInfo implements IProductSubscriptionOptionInfo {
-    id!: number | undefined;
-    frequency!: RecurringPaymentFrequency;
-    signupFee!: number;
-    commissionableSignupFeeAmount!: number | undefined;
-    signUpCredits!: number | undefined;
-    fee!: number | undefined;
-    customerChoosesPrice!: boolean;
-    minCustomerPrice!: number | undefined;
-    maxCustomerPrice!: number | undefined;
-    commissionableFeeAmount!: number | undefined;
-    credits!: number | undefined;
-    trialDayCount!: number;
-    customPeriodCount!: number | undefined;
-    customPeriodType!: CustomPeriodType | undefined;
-    cycles!: number | undefined;
-    gracePeriodDayCount!: number | undefined;
-    stripeXref!: string | undefined;
-    stripeXrefUrl!: string | undefined;
-    paypalXref!: string | undefined;
-
-    constructor(data?: IProductSubscriptionOptionInfo) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.id = _data["id"];
-            this.frequency = _data["frequency"];
-            this.signupFee = _data["signupFee"];
-            this.commissionableSignupFeeAmount = _data["commissionableSignupFeeAmount"];
-            this.signUpCredits = _data["signUpCredits"];
-            this.fee = _data["fee"];
-            this.customerChoosesPrice = _data["customerChoosesPrice"];
-            this.minCustomerPrice = _data["minCustomerPrice"];
-            this.maxCustomerPrice = _data["maxCustomerPrice"];
-            this.commissionableFeeAmount = _data["commissionableFeeAmount"];
-            this.credits = _data["credits"];
-            this.trialDayCount = _data["trialDayCount"];
-            this.customPeriodCount = _data["customPeriodCount"];
-            this.customPeriodType = _data["customPeriodType"];
-            this.cycles = _data["cycles"];
-            this.gracePeriodDayCount = _data["gracePeriodDayCount"];
-            this.stripeXref = _data["stripeXref"];
-            this.stripeXrefUrl = _data["stripeXrefUrl"];
-            this.paypalXref = _data["paypalXref"];
-        }
-    }
-
-    static fromJS(data: any): ProductSubscriptionOptionInfo {
-        data = typeof data === 'object' ? data : {};
-        let result = new ProductSubscriptionOptionInfo();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["frequency"] = this.frequency;
-        data["signupFee"] = this.signupFee;
-        data["commissionableSignupFeeAmount"] = this.commissionableSignupFeeAmount;
-        data["signUpCredits"] = this.signUpCredits;
-        data["fee"] = this.fee;
-        data["customerChoosesPrice"] = this.customerChoosesPrice;
-        data["minCustomerPrice"] = this.minCustomerPrice;
-        data["maxCustomerPrice"] = this.maxCustomerPrice;
-        data["commissionableFeeAmount"] = this.commissionableFeeAmount;
-        data["credits"] = this.credits;
-        data["trialDayCount"] = this.trialDayCount;
-        data["customPeriodCount"] = this.customPeriodCount;
-        data["customPeriodType"] = this.customPeriodType;
-        data["cycles"] = this.cycles;
-        data["gracePeriodDayCount"] = this.gracePeriodDayCount;
-        data["stripeXref"] = this.stripeXref;
-        data["stripeXrefUrl"] = this.stripeXrefUrl;
-        data["paypalXref"] = this.paypalXref;
-        return data;
-    }
-}
-
-export interface IProductSubscriptionOptionInfo {
-    id: number | undefined;
-    frequency: RecurringPaymentFrequency;
-    signupFee: number;
-    commissionableSignupFeeAmount: number | undefined;
-    signUpCredits: number | undefined;
-    fee: number | undefined;
-    customerChoosesPrice: boolean;
-    minCustomerPrice: number | undefined;
-    maxCustomerPrice: number | undefined;
-    commissionableFeeAmount: number | undefined;
-    credits: number | undefined;
-    trialDayCount: number;
-    customPeriodCount: number | undefined;
-    customPeriodType: CustomPeriodType | undefined;
-    cycles: number | undefined;
-    gracePeriodDayCount: number | undefined;
-    stripeXref: string | undefined;
-    stripeXrefUrl: string | undefined;
-    paypalXref: string | undefined;
 }
 
 export class ProductTaxInput implements IProductTaxInput {
@@ -102124,6 +102128,70 @@ export interface IPublicContactInfo {
     trackingTools: TrackingToolsSettingsDto | undefined;
 }
 
+export class PublicContactPriceOptionInfo implements IPublicContactPriceOptionInfo {
+    id!: number;
+    signupFee!: number;
+    fee!: number;
+    frequency!: RecurringPaymentFrequency;
+    trialDayCount!: number;
+    customPeriodCount!: number | undefined;
+    customPeriodType!: CustomPeriodType | undefined;
+    cycles!: number | undefined;
+
+    constructor(data?: IPublicContactPriceOptionInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.signupFee = _data["signupFee"];
+            this.fee = _data["fee"];
+            this.frequency = _data["frequency"];
+            this.trialDayCount = _data["trialDayCount"];
+            this.customPeriodCount = _data["customPeriodCount"];
+            this.customPeriodType = _data["customPeriodType"];
+            this.cycles = _data["cycles"];
+        }
+    }
+
+    static fromJS(data: any): PublicContactPriceOptionInfo {
+        data = typeof data === 'object' ? data : {};
+        let result = new PublicContactPriceOptionInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["signupFee"] = this.signupFee;
+        data["fee"] = this.fee;
+        data["frequency"] = this.frequency;
+        data["trialDayCount"] = this.trialDayCount;
+        data["customPeriodCount"] = this.customPeriodCount;
+        data["customPeriodType"] = this.customPeriodType;
+        data["cycles"] = this.cycles;
+        return data;
+    }
+}
+
+export interface IPublicContactPriceOptionInfo {
+    id: number;
+    signupFee: number;
+    fee: number;
+    frequency: RecurringPaymentFrequency;
+    trialDayCount: number;
+    customPeriodCount: number | undefined;
+    customPeriodType: CustomPeriodType | undefined;
+    cycles: number | undefined;
+}
+
 export class PublicContactProductInfo implements IPublicContactProductInfo {
     id!: number;
     name!: string | undefined;
@@ -102139,7 +102207,7 @@ export class PublicContactProductInfo implements IPublicContactProductInfo {
     isPublished!: boolean;
     publishDate!: moment.Moment | undefined;
     publicAllowCoupon!: boolean;
-    productSubscriptionOptions!: PublicContactProductOptionInfo[] | undefined;
+    priceOptions!: PublicContactPriceOptionInfo[] | undefined;
 
     constructor(data?: IPublicContactProductInfo) {
         if (data) {
@@ -102166,10 +102234,10 @@ export class PublicContactProductInfo implements IPublicContactProductInfo {
             this.isPublished = _data["isPublished"];
             this.publishDate = _data["publishDate"] ? moment(_data["publishDate"].toString()) : <any>undefined;
             this.publicAllowCoupon = _data["publicAllowCoupon"];
-            if (Array.isArray(_data["productSubscriptionOptions"])) {
-                this.productSubscriptionOptions = [] as any;
-                for (let item of _data["productSubscriptionOptions"])
-                    this.productSubscriptionOptions!.push(PublicContactProductOptionInfo.fromJS(item));
+            if (Array.isArray(_data["priceOptions"])) {
+                this.priceOptions = [] as any;
+                for (let item of _data["priceOptions"])
+                    this.priceOptions!.push(PublicContactPriceOptionInfo.fromJS(item));
             }
         }
     }
@@ -102197,10 +102265,10 @@ export class PublicContactProductInfo implements IPublicContactProductInfo {
         data["isPublished"] = this.isPublished;
         data["publishDate"] = this.publishDate ? this.publishDate.toISOString() : <any>undefined;
         data["publicAllowCoupon"] = this.publicAllowCoupon;
-        if (Array.isArray(this.productSubscriptionOptions)) {
-            data["productSubscriptionOptions"] = [];
-            for (let item of this.productSubscriptionOptions)
-                data["productSubscriptionOptions"].push(item.toJSON());
+        if (Array.isArray(this.priceOptions)) {
+            data["priceOptions"] = [];
+            for (let item of this.priceOptions)
+                data["priceOptions"].push(item.toJSON());
         }
         return data;
     }
@@ -102221,71 +102289,7 @@ export interface IPublicContactProductInfo {
     isPublished: boolean;
     publishDate: moment.Moment | undefined;
     publicAllowCoupon: boolean;
-    productSubscriptionOptions: PublicContactProductOptionInfo[] | undefined;
-}
-
-export class PublicContactProductOptionInfo implements IPublicContactProductOptionInfo {
-    id!: number;
-    signupFee!: number;
-    fee!: number;
-    frequency!: RecurringPaymentFrequency;
-    trialDayCount!: number;
-    customPeriodCount!: number | undefined;
-    customPeriodType!: CustomPeriodType | undefined;
-    cycles!: number | undefined;
-
-    constructor(data?: IPublicContactProductOptionInfo) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.id = _data["id"];
-            this.signupFee = _data["signupFee"];
-            this.fee = _data["fee"];
-            this.frequency = _data["frequency"];
-            this.trialDayCount = _data["trialDayCount"];
-            this.customPeriodCount = _data["customPeriodCount"];
-            this.customPeriodType = _data["customPeriodType"];
-            this.cycles = _data["cycles"];
-        }
-    }
-
-    static fromJS(data: any): PublicContactProductOptionInfo {
-        data = typeof data === 'object' ? data : {};
-        let result = new PublicContactProductOptionInfo();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["signupFee"] = this.signupFee;
-        data["fee"] = this.fee;
-        data["frequency"] = this.frequency;
-        data["trialDayCount"] = this.trialDayCount;
-        data["customPeriodCount"] = this.customPeriodCount;
-        data["customPeriodType"] = this.customPeriodType;
-        data["cycles"] = this.cycles;
-        return data;
-    }
-}
-
-export interface IPublicContactProductOptionInfo {
-    id: number;
-    signupFee: number;
-    fee: number;
-    frequency: RecurringPaymentFrequency;
-    trialDayCount: number;
-    customPeriodCount: number | undefined;
-    customPeriodType: CustomPeriodType | undefined;
-    cycles: number | undefined;
+    priceOptions: PublicContactPriceOptionInfo[] | undefined;
 }
 
 export class PublicContactSettings implements IPublicContactSettings {
@@ -102556,6 +102560,82 @@ export interface IPublicDonationInfo {
     productDonationSuggestedAmounts: ProductDonationSuggestedAmountInfo[] | undefined;
 }
 
+export class PublicPriceOptionInfo implements IPublicPriceOptionInfo {
+    id!: number;
+    signupFee!: number;
+    fee!: number | undefined;
+    customerChoosesPrice!: boolean;
+    minCustomerPrice!: number | undefined;
+    maxCustomerPrice!: number | undefined;
+    frequency!: RecurringPaymentFrequency;
+    trialDayCount!: number;
+    customPeriodCount!: number | undefined;
+    customPeriodType!: CustomPeriodType | undefined;
+    cycles!: number | undefined;
+
+    constructor(data?: IPublicPriceOptionInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.signupFee = _data["signupFee"];
+            this.fee = _data["fee"];
+            this.customerChoosesPrice = _data["customerChoosesPrice"];
+            this.minCustomerPrice = _data["minCustomerPrice"];
+            this.maxCustomerPrice = _data["maxCustomerPrice"];
+            this.frequency = _data["frequency"];
+            this.trialDayCount = _data["trialDayCount"];
+            this.customPeriodCount = _data["customPeriodCount"];
+            this.customPeriodType = _data["customPeriodType"];
+            this.cycles = _data["cycles"];
+        }
+    }
+
+    static fromJS(data: any): PublicPriceOptionInfo {
+        data = typeof data === 'object' ? data : {};
+        let result = new PublicPriceOptionInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["signupFee"] = this.signupFee;
+        data["fee"] = this.fee;
+        data["customerChoosesPrice"] = this.customerChoosesPrice;
+        data["minCustomerPrice"] = this.minCustomerPrice;
+        data["maxCustomerPrice"] = this.maxCustomerPrice;
+        data["frequency"] = this.frequency;
+        data["trialDayCount"] = this.trialDayCount;
+        data["customPeriodCount"] = this.customPeriodCount;
+        data["customPeriodType"] = this.customPeriodType;
+        data["cycles"] = this.cycles;
+        return data;
+    }
+}
+
+export interface IPublicPriceOptionInfo {
+    id: number;
+    signupFee: number;
+    fee: number | undefined;
+    customerChoosesPrice: boolean;
+    minCustomerPrice: number | undefined;
+    maxCustomerPrice: number | undefined;
+    frequency: RecurringPaymentFrequency;
+    trialDayCount: number;
+    customPeriodCount: number | undefined;
+    customPeriodType: CustomPeriodType | undefined;
+    cycles: number | undefined;
+}
+
 export class PublicProductData implements IPublicProductData {
     paypalClientId!: string | undefined;
     stripeConfigured!: boolean;
@@ -102637,7 +102717,7 @@ export class PublicProductInfo implements IPublicProductInfo {
     thumbnailUrl!: string | undefined;
     publicAllowCoupon!: boolean;
     stripeTaxProcuctCode!: string | undefined;
-    productSubscriptionOptions!: PublicProductSubscriptionOptionInfo[] | undefined;
+    priceOptions!: PublicPriceOptionInfo[] | undefined;
     productDonation!: PublicDonationInfo | undefined;
     data!: PublicProductData | undefined;
     recommendedProductsList!: PublicProductRecommendedProduct[] | undefined;
@@ -102669,10 +102749,10 @@ export class PublicProductInfo implements IPublicProductInfo {
             this.thumbnailUrl = _data["thumbnailUrl"];
             this.publicAllowCoupon = _data["publicAllowCoupon"];
             this.stripeTaxProcuctCode = _data["stripeTaxProcuctCode"];
-            if (Array.isArray(_data["productSubscriptionOptions"])) {
-                this.productSubscriptionOptions = [] as any;
-                for (let item of _data["productSubscriptionOptions"])
-                    this.productSubscriptionOptions!.push(PublicProductSubscriptionOptionInfo.fromJS(item));
+            if (Array.isArray(_data["priceOptions"])) {
+                this.priceOptions = [] as any;
+                for (let item of _data["priceOptions"])
+                    this.priceOptions!.push(PublicPriceOptionInfo.fromJS(item));
             }
             this.productDonation = _data["productDonation"] ? PublicDonationInfo.fromJS(_data["productDonation"]) : <any>undefined;
             this.data = _data["data"] ? PublicProductData.fromJS(_data["data"]) : <any>undefined;
@@ -102709,10 +102789,10 @@ export class PublicProductInfo implements IPublicProductInfo {
         data["thumbnailUrl"] = this.thumbnailUrl;
         data["publicAllowCoupon"] = this.publicAllowCoupon;
         data["stripeTaxProcuctCode"] = this.stripeTaxProcuctCode;
-        if (Array.isArray(this.productSubscriptionOptions)) {
-            data["productSubscriptionOptions"] = [];
-            for (let item of this.productSubscriptionOptions)
-                data["productSubscriptionOptions"].push(item.toJSON());
+        if (Array.isArray(this.priceOptions)) {
+            data["priceOptions"] = [];
+            for (let item of this.priceOptions)
+                data["priceOptions"].push(item.toJSON());
         }
         data["productDonation"] = this.productDonation ? this.productDonation.toJSON() : <any>undefined;
         data["data"] = this.data ? this.data.toJSON() : <any>undefined;
@@ -102742,7 +102822,7 @@ export interface IPublicProductInfo {
     thumbnailUrl: string | undefined;
     publicAllowCoupon: boolean;
     stripeTaxProcuctCode: string | undefined;
-    productSubscriptionOptions: PublicProductSubscriptionOptionInfo[] | undefined;
+    priceOptions: PublicPriceOptionInfo[] | undefined;
     productDonation: PublicDonationInfo | undefined;
     data: PublicProductData | undefined;
     recommendedProductsList: PublicProductRecommendedProduct[] | undefined;
@@ -102866,82 +102946,6 @@ export interface IPublicProductRecommendedProduct {
     maxCustomerPrice: number | undefined;
     imageUrl: string | undefined;
     publicAllowCoupon: boolean;
-}
-
-export class PublicProductSubscriptionOptionInfo implements IPublicProductSubscriptionOptionInfo {
-    id!: number;
-    signupFee!: number;
-    fee!: number | undefined;
-    customerChoosesPrice!: boolean;
-    minCustomerPrice!: number | undefined;
-    maxCustomerPrice!: number | undefined;
-    frequency!: RecurringPaymentFrequency;
-    trialDayCount!: number;
-    customPeriodCount!: number | undefined;
-    customPeriodType!: CustomPeriodType | undefined;
-    cycles!: number | undefined;
-
-    constructor(data?: IPublicProductSubscriptionOptionInfo) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.id = _data["id"];
-            this.signupFee = _data["signupFee"];
-            this.fee = _data["fee"];
-            this.customerChoosesPrice = _data["customerChoosesPrice"];
-            this.minCustomerPrice = _data["minCustomerPrice"];
-            this.maxCustomerPrice = _data["maxCustomerPrice"];
-            this.frequency = _data["frequency"];
-            this.trialDayCount = _data["trialDayCount"];
-            this.customPeriodCount = _data["customPeriodCount"];
-            this.customPeriodType = _data["customPeriodType"];
-            this.cycles = _data["cycles"];
-        }
-    }
-
-    static fromJS(data: any): PublicProductSubscriptionOptionInfo {
-        data = typeof data === 'object' ? data : {};
-        let result = new PublicProductSubscriptionOptionInfo();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["signupFee"] = this.signupFee;
-        data["fee"] = this.fee;
-        data["customerChoosesPrice"] = this.customerChoosesPrice;
-        data["minCustomerPrice"] = this.minCustomerPrice;
-        data["maxCustomerPrice"] = this.maxCustomerPrice;
-        data["frequency"] = this.frequency;
-        data["trialDayCount"] = this.trialDayCount;
-        data["customPeriodCount"] = this.customPeriodCount;
-        data["customPeriodType"] = this.customPeriodType;
-        data["cycles"] = this.cycles;
-        return data;
-    }
-}
-
-export interface IPublicProductSubscriptionOptionInfo {
-    id: number;
-    signupFee: number;
-    fee: number | undefined;
-    customerChoosesPrice: boolean;
-    minCustomerPrice: number | undefined;
-    maxCustomerPrice: number | undefined;
-    frequency: RecurringPaymentFrequency;
-    trialDayCount: number;
-    customPeriodCount: number | undefined;
-    customPeriodType: CustomPeriodType | undefined;
-    cycles: number | undefined;
 }
 
 export class PublicReceiverSettingsEditDto implements IPublicReceiverSettingsEditDto {
@@ -119454,7 +119458,7 @@ export class UpdateProductInput implements IUpdateProductInput {
     redirectUrl!: string | undefined;
     productInventory!: ProductInventoryInfo | undefined;
     productServices!: ProductServiceInfo[] | undefined;
-    productSubscriptionOptions!: ProductSubscriptionOptionInfo[] | undefined;
+    priceOptions!: PriceOptionInfo[] | undefined;
     productUpgradeAssignments!: ProductUpgradeAssignmentInfo[] | undefined;
     recommendedProducts!: RecommendedProductInfo[] | undefined;
     productResources!: ProductResourceDto[] | undefined;
@@ -119511,10 +119515,10 @@ export class UpdateProductInput implements IUpdateProductInput {
                 for (let item of _data["productServices"])
                     this.productServices!.push(ProductServiceInfo.fromJS(item));
             }
-            if (Array.isArray(_data["productSubscriptionOptions"])) {
-                this.productSubscriptionOptions = [] as any;
-                for (let item of _data["productSubscriptionOptions"])
-                    this.productSubscriptionOptions!.push(ProductSubscriptionOptionInfo.fromJS(item));
+            if (Array.isArray(_data["priceOptions"])) {
+                this.priceOptions = [] as any;
+                for (let item of _data["priceOptions"])
+                    this.priceOptions!.push(PriceOptionInfo.fromJS(item));
             }
             if (Array.isArray(_data["productUpgradeAssignments"])) {
                 this.productUpgradeAssignments = [] as any;
@@ -119584,10 +119588,10 @@ export class UpdateProductInput implements IUpdateProductInput {
             for (let item of this.productServices)
                 data["productServices"].push(item.toJSON());
         }
-        if (Array.isArray(this.productSubscriptionOptions)) {
-            data["productSubscriptionOptions"] = [];
-            for (let item of this.productSubscriptionOptions)
-                data["productSubscriptionOptions"].push(item.toJSON());
+        if (Array.isArray(this.priceOptions)) {
+            data["priceOptions"] = [];
+            for (let item of this.priceOptions)
+                data["priceOptions"].push(item.toJSON());
         }
         if (Array.isArray(this.productUpgradeAssignments)) {
             data["productUpgradeAssignments"] = [];
@@ -119646,7 +119650,7 @@ export interface IUpdateProductInput {
     redirectUrl: string | undefined;
     productInventory: ProductInventoryInfo | undefined;
     productServices: ProductServiceInfo[] | undefined;
-    productSubscriptionOptions: ProductSubscriptionOptionInfo[] | undefined;
+    priceOptions: PriceOptionInfo[] | undefined;
     productUpgradeAssignments: ProductUpgradeAssignmentInfo[] | undefined;
     recommendedProducts: RecommendedProductInfo[] | undefined;
     productResources: ProductResourceDto[] | undefined;
