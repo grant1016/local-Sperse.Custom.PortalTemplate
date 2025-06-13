@@ -131,6 +131,15 @@
                             <pay-pal [height]="54" (onApprove)="onPayPalApprove()"></pay-pal>
                         </div>
                     </mat-tab>
+                    <mat-tab *ngIf="spreedlyApplicable" [label]="l('Bank Card')">
+                        <div class="stripe-wrap">
+                            <spreedly-pay-buttons [environmentKey]="paymentSystemSettings.spreedlyConfiguration.environmentKey"
+                                                  [gateways]="paymentSystemSettings.spreedlyConfiguration.spreedlyGateways"
+                                                  (onButtonClick)="onSpreedlyClick($event)"
+                                                  (onPaymentMethod)="onSpreedlyPaymentMethod($event)">
+                            </spreedly-pay-buttons>
+                        </div>
+                    </mat-tab>
 
                     <!--<mat-tab [label]="l('CreditCard')">
                         <credit-card (onSubmit)="submitData($event, paymentMethods.CreditCard)"></credit-card>

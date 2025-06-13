@@ -85,6 +85,7 @@ import { PeriodComponent } from './period/period.component';
 import { ToolBarComponent } from './toolbar/toolbar.component';
 import { ActionMenuModule } from './action-menu/action-menu.module';
 import { PaypalModule } from '@shared/common/paypal/paypal.module';
+import { SpreedlyPayButtonsModule } from '@shared/common/spreedly-pay-buttons/spreedly-pay-buttons.module';
 
 @NgModule({
     imports: [
@@ -120,6 +121,7 @@ import { PaypalModule } from '@shared/common/paypal/paypal.module';
         ModalDialogModule,
         ActionMenuModule,
         PaypalModule,
+        SpreedlyPayButtonsModule,
 
         DxListModule,
         DxCheckBoxModule,
