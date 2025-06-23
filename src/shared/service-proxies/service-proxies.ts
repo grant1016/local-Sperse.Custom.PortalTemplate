@@ -20325,6 +20325,144 @@ export class DictionaryServiceProxy {
 }
 
 @Injectable()
+export class DiscordServiceProxy {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : "";
+    }
+
+    /**
+     * @param body (optional) 
+     * @return Success
+     */
+    getServers(body: GetDiscordServersInput | undefined): Observable<DiscordServerDto[]> {
+        let url_ = this.baseUrl + "/api/services/Platform/Discord/GetServers";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json;odata.metadata=minimal;odata.streaming=true",
+                "Accept": "application/json;odata.metadata=minimal;odata.streaming=true"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetServers(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetServers(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<DiscordServerDto[]>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<DiscordServerDto[]>;
+        }));
+    }
+
+    protected processGetServers(response: HttpResponseBase): Observable<DiscordServerDto[]> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(DiscordServerDto.fromJS(item));
+            }
+            else {
+                result200 = <any>null;
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<DiscordServerDto[]>(null as any);
+    }
+
+    /**
+     * @param serverId (optional) 
+     * @return Success
+     */
+    getServerRoles(serverId: string | undefined): Observable<DiscordRoleDto[]> {
+        let url_ = this.baseUrl + "/api/services/Platform/Discord/GetServerRoles?";
+        if (serverId === null)
+            throw new Error("The parameter 'serverId' cannot be null.");
+        else if (serverId !== undefined)
+            url_ += "serverId=" + encodeURIComponent("" + serverId) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json;odata.metadata=minimal;odata.streaming=true"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetServerRoles(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetServerRoles(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<DiscordRoleDto[]>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<DiscordRoleDto[]>;
+        }));
+    }
+
+    protected processGetServerRoles(response: HttpResponseBase): Observable<DiscordRoleDto[]> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(DiscordRoleDto.fromJS(item));
+            }
+            else {
+                result200 = <any>null;
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<DiscordRoleDto[]>(null as any);
+    }
+}
+
+@Injectable()
 export class DocumentServiceProxy {
     private http: HttpClient;
     private baseUrl: string;
@@ -23853,6 +23991,58 @@ export class HostSettingsServiceProxy {
             }));
         }
         return _observableOf<MaintenanceSettingsDto>(null as any);
+    }
+
+    /**
+     * @return Success
+     */
+    getDiscordCientId(): Observable<string> {
+        let url_ = this.baseUrl + "/api/services/Platform/HostSettings/GetDiscordCientId";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json;odata.metadata=minimal;odata.streaming=true"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetDiscordCientId(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetDiscordCientId(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<string>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<string>;
+        }));
+    }
+
+    protected processGetDiscordCientId(response: HttpResponseBase): Observable<string> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                result200 = resultData200 !== undefined ? resultData200 : <any>null;
+    
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<string>(null as any);
     }
 
     /**
@@ -37943,9 +38133,10 @@ export class ProductServiceProxy {
      * @param currencyId (optional) 
      * @param onlyTenant (optional) 
      * @param hasCredits (optional) 
+     * @param filterArchived (optional) 
      * @return Success
      */
-    getProducts(type: PriceOptionType | undefined, currencyId: string | undefined, onlyTenant: boolean | undefined, hasCredits: boolean | undefined): Observable<ProductDto[]> {
+    getProducts(type: PriceOptionType | undefined, currencyId: string | undefined, onlyTenant: boolean | undefined, hasCredits: boolean | undefined, filterArchived: boolean | undefined): Observable<ProductDto[]> {
         let url_ = this.baseUrl + "/api/services/CRM/Product/GetProducts?";
         if (type === null)
             throw new Error("The parameter 'type' cannot be null.");
@@ -37963,6 +38154,10 @@ export class ProductServiceProxy {
             throw new Error("The parameter 'hasCredits' cannot be null.");
         else if (hasCredits !== undefined)
             url_ += "hasCredits=" + encodeURIComponent("" + hasCredits) + "&";
+        if (filterArchived === null)
+            throw new Error("The parameter 'filterArchived' cannot be null.");
+        else if (filterArchived !== undefined)
+            url_ += "filterArchived=" + encodeURIComponent("" + filterArchived) + "&";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -42203,6 +42398,62 @@ export class PublicProductServiceProxy {
      * @param body (optional) 
      * @return Success
      */
+    publicProductCharge(body: PublicProductChargeInput | undefined): Observable<PublicProductChargeOutput> {
+        let url_ = this.baseUrl + "/api/services/CRM/PublicProduct/PublicProductCharge";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json;odata.metadata=minimal;odata.streaming=true",
+                "Accept": "application/json;odata.metadata=minimal;odata.streaming=true"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processPublicProductCharge(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processPublicProductCharge(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<PublicProductChargeOutput>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<PublicProductChargeOutput>;
+        }));
+    }
+
+    protected processPublicProductCharge(response: HttpResponseBase): Observable<PublicProductChargeOutput> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = PublicProductChargeOutput.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<PublicProductChargeOutput>(null as any);
+    }
+
+    /**
+     * @param body (optional) 
+     * @return Success
+     */
     getTaxCalculation(body: GetTaxCalculationInput | undefined): Observable<TaxCalculationResultDto> {
         let url_ = this.baseUrl + "/api/services/CRM/PublicProduct/GetTaxCalculation";
         url_ = url_.replace(/[?&]$/, "");
@@ -44254,6 +44505,74 @@ export class SessionServiceProxy {
             }));
         }
         return _observableOf<AuthTestOutput>(null as any);
+    }
+}
+
+@Injectable()
+export class SpreedlyServiceProxy {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : "";
+    }
+
+    /**
+     * @param body (optional) 
+     * @return Success
+     */
+    charge(body: SpreedlyInvoiceChargeInput | undefined): Observable<SpreedlyInvoiceChargeOutput> {
+        let url_ = this.baseUrl + "/api/services/CRM/Spreedly/Charge";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json;odata.metadata=minimal;odata.streaming=true",
+                "Accept": "application/json;odata.metadata=minimal;odata.streaming=true"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCharge(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCharge(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<SpreedlyInvoiceChargeOutput>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<SpreedlyInvoiceChargeOutput>;
+        }));
+    }
+
+    protected processCharge(response: HttpResponseBase): Observable<SpreedlyInvoiceChargeOutput> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = SpreedlyInvoiceChargeOutput.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<SpreedlyInvoiceChargeOutput>(null as any);
     }
 }
 
@@ -49053,6 +49372,173 @@ export class TenantPaymentSettingsServiceProxy {
     }
 
     protected processDeleteStripeAccount(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(null as any);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(null as any);
+    }
+
+    /**
+     * @return Success
+     */
+    getSpreedlyGatewayConnections(): Observable<SpreedlyGatewayConnectionDto[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/TenantPaymentSettings/GetSpreedlyGatewayConnections";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json;odata.metadata=minimal;odata.streaming=true"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetSpreedlyGatewayConnections(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetSpreedlyGatewayConnections(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<SpreedlyGatewayConnectionDto[]>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<SpreedlyGatewayConnectionDto[]>;
+        }));
+    }
+
+    protected processGetSpreedlyGatewayConnections(response: HttpResponseBase): Observable<SpreedlyGatewayConnectionDto[]> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(SpreedlyGatewayConnectionDto.fromJS(item));
+            }
+            else {
+                result200 = <any>null;
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<SpreedlyGatewayConnectionDto[]>(null as any);
+    }
+
+    /**
+     * @param body (optional) 
+     * @return Success
+     */
+    createSpreedlyGatewayConnection(body: CreateSpreedlyGatewayInput | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/TenantPaymentSettings/CreateSpreedlyGatewayConnection";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json;odata.metadata=minimal;odata.streaming=true",
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCreateSpreedlyGatewayConnection(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCreateSpreedlyGatewayConnection(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<void>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<void>;
+        }));
+    }
+
+    protected processCreateSpreedlyGatewayConnection(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(null as any);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(null as any);
+    }
+
+    /**
+     * @param id (optional) 
+     * @param active (optional) 
+     * @return Success
+     */
+    setActiveSpreedlyGatewayConnection(id: number | undefined, active: boolean | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/TenantPaymentSettings/SetActiveSpreedlyGatewayConnection?";
+        if (id === null)
+            throw new Error("The parameter 'id' cannot be null.");
+        else if (id !== undefined)
+            url_ += "id=" + encodeURIComponent("" + id) + "&";
+        if (active === null)
+            throw new Error("The parameter 'active' cannot be null.");
+        else if (active !== undefined)
+            url_ += "active=" + encodeURIComponent("" + active) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processSetActiveSpreedlyGatewayConnection(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processSetActiveSpreedlyGatewayConnection(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<void>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<void>;
+        }));
+    }
+
+    protected processSetActiveSpreedlyGatewayConnection(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -65568,6 +66054,70 @@ export enum CommissionTier {
     Tier2 = "Tier2",
 }
 
+export class CommunicationDeliverableInfo implements ICommunicationDeliverableInfo {
+    serverId!: string;
+    serverName!: string | undefined;
+    roles!: CommunicationRole[] | undefined;
+    id!: number | undefined;
+    type!: ProductDeliverableTypes;
+    isActive!: boolean;
+
+    constructor(data?: ICommunicationDeliverableInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.serverId = _data["serverId"];
+            this.serverName = _data["serverName"];
+            if (Array.isArray(_data["roles"])) {
+                this.roles = [] as any;
+                for (let item of _data["roles"])
+                    this.roles!.push(CommunicationRole.fromJS(item));
+            }
+            this.id = _data["id"];
+            this.type = _data["type"];
+            this.isActive = _data["isActive"];
+        }
+    }
+
+    static fromJS(data: any): CommunicationDeliverableInfo {
+        data = typeof data === 'object' ? data : {};
+        let result = new CommunicationDeliverableInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["serverId"] = this.serverId;
+        data["serverName"] = this.serverName;
+        if (Array.isArray(this.roles)) {
+            data["roles"] = [];
+            for (let item of this.roles)
+                data["roles"].push(item.toJSON());
+        }
+        data["id"] = this.id;
+        data["type"] = this.type;
+        data["isActive"] = this.isActive;
+        return data;
+    }
+}
+
+export interface ICommunicationDeliverableInfo {
+    serverId: string;
+    serverName: string | undefined;
+    roles: CommunicationRole[] | undefined;
+    id: number | undefined;
+    type: ProductDeliverableTypes;
+    isActive: boolean;
+}
+
 export enum CommunicationMessageDeliveryStatus {
     Delivered = "Delivered",
     Bounce = "Bounce",
@@ -65586,6 +66136,46 @@ export enum CommunicationMessageSendingStatus {
     Pending = "Pending",
     Failed = "Failed",
     Sent = "Sent",
+}
+
+export class CommunicationRole implements ICommunicationRole {
+    roleId!: string;
+    roleName!: string | undefined;
+
+    constructor(data?: ICommunicationRole) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.roleId = _data["roleId"];
+            this.roleName = _data["roleName"];
+        }
+    }
+
+    static fromJS(data: any): CommunicationRole {
+        data = typeof data === 'object' ? data : {};
+        let result = new CommunicationRole();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["roleId"] = this.roleId;
+        data["roleName"] = this.roleName;
+        return data;
+    }
+}
+
+export interface ICommunicationRole {
+    roleId: string;
+    roleName: string | undefined;
 }
 
 export class CompleteTenantRegistrationInput implements ICompleteTenantRegistrationInput {
@@ -67299,6 +67889,8 @@ export class ContactInfoForMerge implements IContactInfoForMerge {
     doB!: moment.Moment | undefined;
     ssn!: string | undefined;
     gender!: Gender;
+    discordUserId!: string | undefined;
+    telegramUserId!: string | undefined;
     contactEmails!: ContactEmailInfo[] | undefined;
     contactPhones!: ContactPhoneInfo[] | undefined;
     contactAddresses!: ContactAddressInfo[] | undefined;
@@ -67347,6 +67939,8 @@ export class ContactInfoForMerge implements IContactInfoForMerge {
             this.doB = _data["doB"] ? moment(_data["doB"].toString()) : <any>undefined;
             this.ssn = _data["ssn"];
             this.gender = _data["gender"];
+            this.discordUserId = _data["discordUserId"];
+            this.telegramUserId = _data["telegramUserId"];
             if (Array.isArray(_data["contactEmails"])) {
                 this.contactEmails = [] as any;
                 for (let item of _data["contactEmails"])
@@ -67411,6 +68005,8 @@ export class ContactInfoForMerge implements IContactInfoForMerge {
         data["doB"] = this.doB ? this.doB.toISOString() : <any>undefined;
         data["ssn"] = this.ssn;
         data["gender"] = this.gender;
+        data["discordUserId"] = this.discordUserId;
+        data["telegramUserId"] = this.telegramUserId;
         if (Array.isArray(this.contactEmails)) {
             data["contactEmails"] = [];
             for (let item of this.contactEmails)
@@ -67460,6 +68056,8 @@ export interface IContactInfoForMerge {
     doB: moment.Moment | undefined;
     ssn: string | undefined;
     gender: Gender;
+    discordUserId: string | undefined;
+    telegramUserId: string | undefined;
     contactEmails: ContactEmailInfo[] | undefined;
     contactPhones: ContactPhoneInfo[] | undefined;
     contactAddresses: ContactAddressInfo[] | undefined;
@@ -72860,6 +73458,7 @@ export class CreateProductInput implements ICreateProductInput {
     recommendedProducts!: RecommendedProductInfo[] | undefined;
     productResources!: ProductResourceDto[] | undefined;
     productAddOns!: ProductAddOnDto[] | undefined;
+    productDeliverables!: ProductDeliverableInfo[] | undefined;
     productEvent!: ProductEventDto | undefined;
     productDonation!: ProductDonationDto | undefined;
 
@@ -72930,6 +73529,11 @@ export class CreateProductInput implements ICreateProductInput {
                 this.productAddOns = [] as any;
                 for (let item of _data["productAddOns"])
                     this.productAddOns!.push(ProductAddOnDto.fromJS(item));
+            }
+            if (Array.isArray(_data["productDeliverables"])) {
+                this.productDeliverables = [] as any;
+                for (let item of _data["productDeliverables"])
+                    this.productDeliverables!.push(ProductDeliverableInfo.fromJS(item));
             }
             this.productEvent = _data["productEvent"] ? ProductEventDto.fromJS(_data["productEvent"]) : <any>undefined;
             this.productDonation = _data["productDonation"] ? ProductDonationDto.fromJS(_data["productDonation"]) : <any>undefined;
@@ -73002,6 +73606,11 @@ export class CreateProductInput implements ICreateProductInput {
             for (let item of this.productAddOns)
                 data["productAddOns"].push(item.toJSON());
         }
+        if (Array.isArray(this.productDeliverables)) {
+            data["productDeliverables"] = [];
+            for (let item of this.productDeliverables)
+                data["productDeliverables"].push(item.toJSON());
+        }
         data["productEvent"] = this.productEvent ? this.productEvent.toJSON() : <any>undefined;
         data["productDonation"] = this.productDonation ? this.productDonation.toJSON() : <any>undefined;
         return data;
@@ -73042,6 +73651,7 @@ export interface ICreateProductInput {
     recommendedProducts: RecommendedProductInfo[] | undefined;
     productResources: ProductResourceDto[] | undefined;
     productAddOns: ProductAddOnDto[] | undefined;
+    productDeliverables: ProductDeliverableInfo[] | undefined;
     productEvent: ProductEventDto | undefined;
     productDonation: ProductDonationDto | undefined;
 }
@@ -73227,6 +73837,66 @@ export interface ICreateRuleDto {
     condition: ConditionDto;
     sourceTransactionList: number[] | undefined;
     applyOption: ApplyToTransactionsOption;
+}
+
+export class CreateSpreedlyGatewayInput implements ICreateSpreedlyGatewayInput {
+    gatewayType!: string | undefined;
+    fields!: { [key: string]: string; } | undefined;
+    sandbox!: boolean;
+    isActive!: boolean;
+
+    constructor(data?: ICreateSpreedlyGatewayInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.gatewayType = _data["gatewayType"];
+            if (_data["fields"]) {
+                this.fields = {} as any;
+                for (let key in _data["fields"]) {
+                    if (_data["fields"].hasOwnProperty(key))
+                        (<any>this.fields)![key] = _data["fields"][key];
+                }
+            }
+            this.sandbox = _data["sandbox"];
+            this.isActive = _data["isActive"];
+        }
+    }
+
+    static fromJS(data: any): CreateSpreedlyGatewayInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateSpreedlyGatewayInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["gatewayType"] = this.gatewayType;
+        if (this.fields) {
+            data["fields"] = {};
+            for (let key in this.fields) {
+                if (this.fields.hasOwnProperty(key))
+                    (<any>data["fields"])[key] = (<any>this.fields)[key];
+            }
+        }
+        data["sandbox"] = this.sandbox;
+        data["isActive"] = this.isActive;
+        return data;
+    }
+}
+
+export interface ICreateSpreedlyGatewayInput {
+    gatewayType: string | undefined;
+    fields: { [key: string]: string; } | undefined;
+    sandbox: boolean;
+    isActive: boolean;
 }
 
 export class CreateStageChecklistPointInput implements ICreateStageChecklistPointInput {
@@ -74988,6 +75658,7 @@ export class DiscordExternalLoginProviderSettings implements IDiscordExternalLog
     appSecret!: string | undefined;
     serverId!: string | undefined;
     serverName!: string | undefined;
+    botToken!: string | undefined;
     telegramChannelId!: string | undefined;
 
     constructor(data?: IDiscordExternalLoginProviderSettings) {
@@ -75005,6 +75676,7 @@ export class DiscordExternalLoginProviderSettings implements IDiscordExternalLog
             this.appSecret = _data["appSecret"];
             this.serverId = _data["serverId"];
             this.serverName = _data["serverName"];
+            this.botToken = _data["botToken"];
             this.telegramChannelId = _data["telegramChannelId"];
         }
     }
@@ -75022,6 +75694,7 @@ export class DiscordExternalLoginProviderSettings implements IDiscordExternalLog
         data["appSecret"] = this.appSecret;
         data["serverId"] = this.serverId;
         data["serverName"] = this.serverName;
+        data["botToken"] = this.botToken;
         data["telegramChannelId"] = this.telegramChannelId;
         return data;
     }
@@ -75032,6 +75705,7 @@ export interface IDiscordExternalLoginProviderSettings {
     appSecret: string | undefined;
     serverId: string | undefined;
     serverName: string | undefined;
+    botToken: string | undefined;
     telegramChannelId: string | undefined;
 }
 
@@ -75077,6 +75751,86 @@ export interface IDiscordExternalLoginProviderSettingsDto {
     isDeactivated: boolean;
     isHostSettingsEnabled: boolean;
     settings: DiscordExternalLoginProviderSettings | undefined;
+}
+
+export class DiscordRoleDto implements IDiscordRoleDto {
+    id!: string | undefined;
+    name!: string | undefined;
+
+    constructor(data?: IDiscordRoleDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.name = _data["name"];
+        }
+    }
+
+    static fromJS(data: any): DiscordRoleDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new DiscordRoleDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        return data;
+    }
+}
+
+export interface IDiscordRoleDto {
+    id: string | undefined;
+    name: string | undefined;
+}
+
+export class DiscordServerDto implements IDiscordServerDto {
+    id!: string | undefined;
+    name!: string | undefined;
+
+    constructor(data?: IDiscordServerDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.name = _data["name"];
+        }
+    }
+
+    static fromJS(data: any): DiscordServerDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new DiscordServerDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        return data;
+    }
+}
+
+export interface IDiscordServerDto {
+    id: string | undefined;
+    name: string | undefined;
 }
 
 export class DocumentInfo implements IDocumentInfo {
@@ -80515,6 +81269,46 @@ export interface IGetDefaultEditionNameOutput {
     name: string | undefined;
 }
 
+export class GetDiscordServersInput implements IGetDiscordServersInput {
+    code!: string;
+    redirectUrl!: string;
+
+    constructor(data?: IGetDiscordServersInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.code = _data["code"];
+            this.redirectUrl = _data["redirectUrl"];
+        }
+    }
+
+    static fromJS(data: any): GetDiscordServersInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new GetDiscordServersInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["code"] = this.code;
+        data["redirectUrl"] = this.redirectUrl;
+        return data;
+    }
+}
+
+export interface IGetDiscordServersInput {
+    code: string;
+    redirectUrl: string;
+}
+
 export class GetDomainVariablesInfo implements IGetDomainVariablesInfo {
     tenancyName!: string | undefined;
     description!: string | undefined;
@@ -80824,9 +81618,11 @@ export interface IGetExpiringTenantsOutput {
 }
 
 export class GetExternalUserDataInput implements IGetExternalUserDataInput {
+    tenantId!: number | undefined;
     provider!: string | undefined;
     exchangeCode!: string | undefined;
     loginReturnUrl!: string | undefined;
+    vault!: boolean;
     options!: { [key: string]: string; } | undefined;
 
     constructor(data?: IGetExternalUserDataInput) {
@@ -80840,9 +81636,11 @@ export class GetExternalUserDataInput implements IGetExternalUserDataInput {
 
     init(_data?: any) {
         if (_data) {
+            this.tenantId = _data["tenantId"];
             this.provider = _data["provider"];
             this.exchangeCode = _data["exchangeCode"];
             this.loginReturnUrl = _data["loginReturnUrl"];
+            this.vault = _data["vault"];
             if (_data["options"]) {
                 this.options = {} as any;
                 for (let key in _data["options"]) {
@@ -80862,9 +81660,11 @@ export class GetExternalUserDataInput implements IGetExternalUserDataInput {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["tenantId"] = this.tenantId;
         data["provider"] = this.provider;
         data["exchangeCode"] = this.exchangeCode;
         data["loginReturnUrl"] = this.loginReturnUrl;
+        data["vault"] = this.vault;
         if (this.options) {
             data["options"] = {};
             for (let key in this.options) {
@@ -80877,9 +81677,11 @@ export class GetExternalUserDataInput implements IGetExternalUserDataInput {
 }
 
 export interface IGetExternalUserDataInput {
+    tenantId: number | undefined;
     provider: string | undefined;
     exchangeCode: string | undefined;
     loginReturnUrl: string | undefined;
+    vault: boolean;
     options: { [key: string]: string; } | undefined;
 }
 
@@ -82457,6 +83259,7 @@ export class GetProductInfoOutput implements IGetProductInfoOutput {
     productResources!: ProductResourceDto[] | undefined;
     recommendedProducts!: RecommendedProductInfo[] | undefined;
     productAddOns!: ProductAddOnDto[] | undefined;
+    productDeliverablesData!: ProductDeliverablesData | undefined;
     id!: number;
     code!: string | undefined;
     name!: string | undefined;
@@ -82476,7 +83279,7 @@ export class GetProductInfoOutput implements IGetProductInfoOutput {
     stripeTaxProcuctCode!: string | undefined;
     productInventory!: ProductInventoryDto | undefined;
     productServices!: ProductServiceInfo[] | undefined;
-    priceOptions!: PriceOptionInfo[] | undefined;
+    priceOptions!: GetProductPriceInfoOutput[] | undefined;
     productUpgradeAssignments!: ProductUpgradeAssignmentInfo[] | undefined;
 
     constructor(data?: IGetProductInfoOutput) {
@@ -82523,6 +83326,7 @@ export class GetProductInfoOutput implements IGetProductInfoOutput {
                 for (let item of _data["productAddOns"])
                     this.productAddOns!.push(ProductAddOnDto.fromJS(item));
             }
+            this.productDeliverablesData = _data["productDeliverablesData"] ? ProductDeliverablesData.fromJS(_data["productDeliverablesData"]) : <any>undefined;
             this.id = _data["id"];
             this.code = _data["code"];
             this.name = _data["name"];
@@ -82549,7 +83353,7 @@ export class GetProductInfoOutput implements IGetProductInfoOutput {
             if (Array.isArray(_data["priceOptions"])) {
                 this.priceOptions = [] as any;
                 for (let item of _data["priceOptions"])
-                    this.priceOptions!.push(PriceOptionInfo.fromJS(item));
+                    this.priceOptions!.push(GetProductPriceInfoOutput.fromJS(item));
             }
             if (Array.isArray(_data["productUpgradeAssignments"])) {
                 this.productUpgradeAssignments = [] as any;
@@ -82601,6 +83405,7 @@ export class GetProductInfoOutput implements IGetProductInfoOutput {
             for (let item of this.productAddOns)
                 data["productAddOns"].push(item.toJSON());
         }
+        data["productDeliverablesData"] = this.productDeliverablesData ? this.productDeliverablesData.toJSON() : <any>undefined;
         data["id"] = this.id;
         data["code"] = this.code;
         data["name"] = this.name;
@@ -82660,6 +83465,7 @@ export interface IGetProductInfoOutput {
     productResources: ProductResourceDto[] | undefined;
     recommendedProducts: RecommendedProductInfo[] | undefined;
     productAddOns: ProductAddOnDto[] | undefined;
+    productDeliverablesData: ProductDeliverablesData | undefined;
     id: number;
     code: string | undefined;
     name: string | undefined;
@@ -82679,8 +83485,136 @@ export interface IGetProductInfoOutput {
     stripeTaxProcuctCode: string | undefined;
     productInventory: ProductInventoryDto | undefined;
     productServices: ProductServiceInfo[] | undefined;
-    priceOptions: PriceOptionInfo[] | undefined;
+    priceOptions: GetProductPriceInfoOutput[] | undefined;
     productUpgradeAssignments: ProductUpgradeAssignmentInfo[] | undefined;
+}
+
+export class GetProductPriceInfoOutput implements IGetProductPriceInfoOutput {
+    hasInvoices!: boolean;
+    id!: number | undefined;
+    name!: string | undefined;
+    type!: PriceOptionType;
+    isArchived!: boolean;
+    frequency!: RecurringPaymentFrequency | undefined;
+    unit!: ProductMeasurementUnit | undefined;
+    signupFee!: number | undefined;
+    commissionableSignupFeeAmount!: number | undefined;
+    signUpCredits!: number | undefined;
+    fee!: number | undefined;
+    customerChoosesPrice!: boolean;
+    minCustomerPrice!: number | undefined;
+    maxCustomerPrice!: number | undefined;
+    commissionableFeeAmount!: number | undefined;
+    credits!: number | undefined;
+    trialDayCount!: number | undefined;
+    customPeriodCount!: number | undefined;
+    customPeriodType!: CustomPeriodType | undefined;
+    cycles!: number | undefined;
+    gracePeriodDayCount!: number | undefined;
+    stripeXref!: string | undefined;
+    stripeXrefUrl!: string | undefined;
+    paypalXref!: string | undefined;
+
+    constructor(data?: IGetProductPriceInfoOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.hasInvoices = _data["hasInvoices"];
+            this.id = _data["id"];
+            this.name = _data["name"];
+            this.type = _data["type"];
+            this.isArchived = _data["isArchived"];
+            this.frequency = _data["frequency"];
+            this.unit = _data["unit"];
+            this.signupFee = _data["signupFee"];
+            this.commissionableSignupFeeAmount = _data["commissionableSignupFeeAmount"];
+            this.signUpCredits = _data["signUpCredits"];
+            this.fee = _data["fee"];
+            this.customerChoosesPrice = _data["customerChoosesPrice"];
+            this.minCustomerPrice = _data["minCustomerPrice"];
+            this.maxCustomerPrice = _data["maxCustomerPrice"];
+            this.commissionableFeeAmount = _data["commissionableFeeAmount"];
+            this.credits = _data["credits"];
+            this.trialDayCount = _data["trialDayCount"];
+            this.customPeriodCount = _data["customPeriodCount"];
+            this.customPeriodType = _data["customPeriodType"];
+            this.cycles = _data["cycles"];
+            this.gracePeriodDayCount = _data["gracePeriodDayCount"];
+            this.stripeXref = _data["stripeXref"];
+            this.stripeXrefUrl = _data["stripeXrefUrl"];
+            this.paypalXref = _data["paypalXref"];
+        }
+    }
+
+    static fromJS(data: any): GetProductPriceInfoOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new GetProductPriceInfoOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["hasInvoices"] = this.hasInvoices;
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["type"] = this.type;
+        data["isArchived"] = this.isArchived;
+        data["frequency"] = this.frequency;
+        data["unit"] = this.unit;
+        data["signupFee"] = this.signupFee;
+        data["commissionableSignupFeeAmount"] = this.commissionableSignupFeeAmount;
+        data["signUpCredits"] = this.signUpCredits;
+        data["fee"] = this.fee;
+        data["customerChoosesPrice"] = this.customerChoosesPrice;
+        data["minCustomerPrice"] = this.minCustomerPrice;
+        data["maxCustomerPrice"] = this.maxCustomerPrice;
+        data["commissionableFeeAmount"] = this.commissionableFeeAmount;
+        data["credits"] = this.credits;
+        data["trialDayCount"] = this.trialDayCount;
+        data["customPeriodCount"] = this.customPeriodCount;
+        data["customPeriodType"] = this.customPeriodType;
+        data["cycles"] = this.cycles;
+        data["gracePeriodDayCount"] = this.gracePeriodDayCount;
+        data["stripeXref"] = this.stripeXref;
+        data["stripeXrefUrl"] = this.stripeXrefUrl;
+        data["paypalXref"] = this.paypalXref;
+        return data;
+    }
+}
+
+export interface IGetProductPriceInfoOutput {
+    hasInvoices: boolean;
+    id: number | undefined;
+    name: string | undefined;
+    type: PriceOptionType;
+    isArchived: boolean;
+    frequency: RecurringPaymentFrequency | undefined;
+    unit: ProductMeasurementUnit | undefined;
+    signupFee: number | undefined;
+    commissionableSignupFeeAmount: number | undefined;
+    signUpCredits: number | undefined;
+    fee: number | undefined;
+    customerChoosesPrice: boolean;
+    minCustomerPrice: number | undefined;
+    maxCustomerPrice: number | undefined;
+    commissionableFeeAmount: number | undefined;
+    credits: number | undefined;
+    trialDayCount: number | undefined;
+    customPeriodCount: number | undefined;
+    customPeriodType: CustomPeriodType | undefined;
+    cycles: number | undefined;
+    gracePeriodDayCount: number | undefined;
+    stripeXref: string | undefined;
+    stripeXrefUrl: string | undefined;
+    paypalXref: string | undefined;
 }
 
 export class GetProfilePictureOutput implements IGetProfilePictureOutput {
@@ -82773,6 +83707,7 @@ export class GetPublicInvoiceInfoOutput implements IGetPublicInvoiceInfoOutput {
     futureSubscriptionIsSetUp!: boolean | undefined;
     paymentSettings!: BankTransferSettings | undefined;
     stripePayUrl!: string | undefined;
+    spreedlyConfiguration!: SpreedlyConfiguration | undefined;
     isPaymentsEnabled!: boolean;
     isQuantityAvailable!: boolean;
 
@@ -82796,6 +83731,7 @@ export class GetPublicInvoiceInfoOutput implements IGetPublicInvoiceInfoOutput {
             this.futureSubscriptionIsSetUp = _data["futureSubscriptionIsSetUp"];
             this.paymentSettings = _data["paymentSettings"] ? BankTransferSettings.fromJS(_data["paymentSettings"]) : <any>undefined;
             this.stripePayUrl = _data["stripePayUrl"];
+            this.spreedlyConfiguration = _data["spreedlyConfiguration"] ? SpreedlyConfiguration.fromJS(_data["spreedlyConfiguration"]) : <any>undefined;
             this.isPaymentsEnabled = _data["isPaymentsEnabled"];
             this.isQuantityAvailable = _data["isQuantityAvailable"];
         }
@@ -82819,6 +83755,7 @@ export class GetPublicInvoiceInfoOutput implements IGetPublicInvoiceInfoOutput {
         data["futureSubscriptionIsSetUp"] = this.futureSubscriptionIsSetUp;
         data["paymentSettings"] = this.paymentSettings ? this.paymentSettings.toJSON() : <any>undefined;
         data["stripePayUrl"] = this.stripePayUrl;
+        data["spreedlyConfiguration"] = this.spreedlyConfiguration ? this.spreedlyConfiguration.toJSON() : <any>undefined;
         data["isPaymentsEnabled"] = this.isPaymentsEnabled;
         data["isQuantityAvailable"] = this.isQuantityAvailable;
         return data;
@@ -82835,6 +83772,7 @@ export interface IGetPublicInvoiceInfoOutput {
     futureSubscriptionIsSetUp: boolean | undefined;
     paymentSettings: BankTransferSettings | undefined;
     stripePayUrl: string | undefined;
+    spreedlyConfiguration: SpreedlyConfiguration | undefined;
     isPaymentsEnabled: boolean;
     isQuantityAvailable: boolean;
 }
@@ -88981,6 +89919,46 @@ export class KeyValuePairOfBureauListOfScoreHistoryDto implements IKeyValuePairO
 export interface IKeyValuePairOfBureauListOfScoreHistoryDto {
     key: Bureau;
     value: ScoreHistoryDto[] | undefined;
+}
+
+export class KeyValuePairOfInt32String implements IKeyValuePairOfInt32String {
+    key!: number;
+    value!: string | undefined;
+
+    constructor(data?: IKeyValuePairOfInt32String) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.key = _data["key"];
+            this.value = _data["value"];
+        }
+    }
+
+    static fromJS(data: any): KeyValuePairOfInt32String {
+        data = typeof data === 'object' ? data : {};
+        let result = new KeyValuePairOfInt32String();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["key"] = this.key;
+        data["value"] = this.value;
+        return data;
+    }
+}
+
+export interface IKeyValuePairOfInt32String {
+    key: number;
+    value: string | undefined;
 }
 
 export class KeyValuePairOfStringString implements IKeyValuePairOfStringString {
@@ -97082,6 +98060,7 @@ export enum PaymentSystem {
 export class PaymentSystemSettingsDto implements IPaymentSystemSettingsDto {
     stripeIsEnabled!: boolean;
     paypalClientId!: string | undefined;
+    spreedlyConfiguration!: SpreedlyConfiguration | undefined;
 
     constructor(data?: IPaymentSystemSettingsDto) {
         if (data) {
@@ -97096,6 +98075,7 @@ export class PaymentSystemSettingsDto implements IPaymentSystemSettingsDto {
         if (_data) {
             this.stripeIsEnabled = _data["stripeIsEnabled"];
             this.paypalClientId = _data["paypalClientId"];
+            this.spreedlyConfiguration = _data["spreedlyConfiguration"] ? SpreedlyConfiguration.fromJS(_data["spreedlyConfiguration"]) : <any>undefined;
         }
     }
 
@@ -97110,6 +98090,7 @@ export class PaymentSystemSettingsDto implements IPaymentSystemSettingsDto {
         data = typeof data === 'object' ? data : {};
         data["stripeIsEnabled"] = this.stripeIsEnabled;
         data["paypalClientId"] = this.paypalClientId;
+        data["spreedlyConfiguration"] = this.spreedlyConfiguration ? this.spreedlyConfiguration.toJSON() : <any>undefined;
         return data;
     }
 }
@@ -97117,6 +98098,7 @@ export class PaymentSystemSettingsDto implements IPaymentSystemSettingsDto {
 export interface IPaymentSystemSettingsDto {
     stripeIsEnabled: boolean;
     paypalClientId: string | undefined;
+    spreedlyConfiguration: SpreedlyConfiguration | undefined;
 }
 
 export enum PaymentTransactionType {
@@ -97667,6 +98649,8 @@ export class PersonInfoDto implements IPersonInfoDto {
     drivingLicense!: string | undefined;
     drivingLicenseState!: string | undefined;
     isActiveMilitaryDuty!: boolean | undefined;
+    discordUserId!: string | undefined;
+    discordUserName!: string | undefined;
     interests!: string[] | undefined;
     contactId!: number;
     firstName!: string | undefined;
@@ -97705,6 +98689,8 @@ export class PersonInfoDto implements IPersonInfoDto {
             this.drivingLicense = _data["drivingLicense"];
             this.drivingLicenseState = _data["drivingLicenseState"];
             this.isActiveMilitaryDuty = _data["isActiveMilitaryDuty"];
+            this.discordUserId = _data["discordUserId"];
+            this.discordUserName = _data["discordUserName"];
             if (Array.isArray(_data["interests"])) {
                 this.interests = [] as any;
                 for (let item of _data["interests"])
@@ -97747,6 +98733,8 @@ export class PersonInfoDto implements IPersonInfoDto {
         data["drivingLicense"] = this.drivingLicense;
         data["drivingLicenseState"] = this.drivingLicenseState;
         data["isActiveMilitaryDuty"] = this.isActiveMilitaryDuty;
+        data["discordUserId"] = this.discordUserId;
+        data["discordUserName"] = this.discordUserName;
         if (Array.isArray(this.interests)) {
             data["interests"] = [];
             for (let item of this.interests)
@@ -97782,6 +98770,8 @@ export interface IPersonInfoDto {
     drivingLicense: string | undefined;
     drivingLicenseState: string | undefined;
     isActiveMilitaryDuty: boolean | undefined;
+    discordUserId: string | undefined;
+    discordUserName: string | undefined;
     interests: string[] | undefined;
     contactId: number;
     firstName: string | undefined;
@@ -98607,6 +99597,7 @@ export class PriceOptionInfo implements IPriceOptionInfo {
     id!: number | undefined;
     name!: string | undefined;
     type!: PriceOptionType;
+    isArchived!: boolean;
     frequency!: RecurringPaymentFrequency | undefined;
     unit!: ProductMeasurementUnit | undefined;
     signupFee!: number | undefined;
@@ -98641,6 +99632,7 @@ export class PriceOptionInfo implements IPriceOptionInfo {
             this.id = _data["id"];
             this.name = _data["name"];
             this.type = _data["type"];
+            this.isArchived = _data["isArchived"];
             this.frequency = _data["frequency"];
             this.unit = _data["unit"];
             this.signupFee = _data["signupFee"];
@@ -98675,6 +99667,7 @@ export class PriceOptionInfo implements IPriceOptionInfo {
         data["id"] = this.id;
         data["name"] = this.name;
         data["type"] = this.type;
+        data["isArchived"] = this.isArchived;
         data["frequency"] = this.frequency;
         data["unit"] = this.unit;
         data["signupFee"] = this.signupFee;
@@ -98702,6 +99695,7 @@ export interface IPriceOptionInfo {
     id: number | undefined;
     name: string | undefined;
     type: PriceOptionType;
+    isArchived: boolean;
     frequency: RecurringPaymentFrequency | undefined;
     unit: ProductMeasurementUnit | undefined;
     signupFee: number | undefined;
@@ -99071,6 +100065,98 @@ export interface IProductAddOnOptionDto {
     id: number | undefined;
     name: string;
     price: number;
+}
+
+export class ProductDeliverableInfo implements IProductDeliverableInfo {
+    id!: number | undefined;
+    type!: ProductDeliverableTypes;
+    isActive!: boolean;
+
+    constructor(data?: IProductDeliverableInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.type = _data["type"];
+            this.isActive = _data["isActive"];
+        }
+    }
+
+    static fromJS(data: any): ProductDeliverableInfo {
+        data = typeof data === 'object' ? data : {};
+        let result = new ProductDeliverableInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["type"] = this.type;
+        data["isActive"] = this.isActive;
+        return data;
+    }
+}
+
+export interface IProductDeliverableInfo {
+    id: number | undefined;
+    type: ProductDeliverableTypes;
+    isActive: boolean;
+}
+
+export enum ProductDeliverableTypes {
+    Discord = "Discord",
+}
+
+export class ProductDeliverablesData implements IProductDeliverablesData {
+    discord!: CommunicationDeliverableInfo[] | undefined;
+
+    constructor(data?: IProductDeliverablesData) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            if (Array.isArray(_data["discord"])) {
+                this.discord = [] as any;
+                for (let item of _data["discord"])
+                    this.discord!.push(CommunicationDeliverableInfo.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): ProductDeliverablesData {
+        data = typeof data === 'object' ? data : {};
+        let result = new ProductDeliverablesData();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (Array.isArray(this.discord)) {
+            data["discord"] = [];
+            for (let item of this.discord)
+                data["discord"].push(item.toJSON());
+        }
+        return data;
+    }
+}
+
+export interface IProductDeliverablesData {
+    discord: CommunicationDeliverableInfo[] | undefined;
 }
 
 export class ProductDonationDto implements IProductDonationDto {
@@ -102194,6 +103280,7 @@ export class PublicContactProductInfo implements IPublicContactProductInfo {
     groupName!: string | undefined;
     description!: string | undefined;
     descriptionHtml!: string | undefined;
+    currencyId!: string | undefined;
     type!: ProductType;
     imageUrl!: string | undefined;
     thumbnailUrl!: string | undefined;
@@ -102219,6 +103306,7 @@ export class PublicContactProductInfo implements IPublicContactProductInfo {
             this.groupName = _data["groupName"];
             this.description = _data["description"];
             this.descriptionHtml = _data["descriptionHtml"];
+            this.currencyId = _data["currencyId"];
             this.type = _data["type"];
             this.imageUrl = _data["imageUrl"];
             this.thumbnailUrl = _data["thumbnailUrl"];
@@ -102248,6 +103336,7 @@ export class PublicContactProductInfo implements IPublicContactProductInfo {
         data["groupName"] = this.groupName;
         data["description"] = this.description;
         data["descriptionHtml"] = this.descriptionHtml;
+        data["currencyId"] = this.currencyId;
         data["type"] = this.type;
         data["imageUrl"] = this.imageUrl;
         data["thumbnailUrl"] = this.thumbnailUrl;
@@ -102270,6 +103359,7 @@ export interface IPublicContactProductInfo {
     groupName: string | undefined;
     description: string | undefined;
     descriptionHtml: string | undefined;
+    currencyId: string | undefined;
     type: ProductType;
     imageUrl: string | undefined;
     thumbnailUrl: string | undefined;
@@ -102920,14 +104010,109 @@ export interface IPublicProductAddOnOptionInfo {
     price: number;
 }
 
+export class PublicProductChargeInput implements IPublicProductChargeInput {
+    tenantId!: number;
+    paymentGateway!: string;
+    paymentGatewayTokenId!: number;
+    paymentMethodToken!: string;
+    leadRequestId!: number;
+
+    constructor(data?: IPublicProductChargeInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.tenantId = _data["tenantId"];
+            this.paymentGateway = _data["paymentGateway"];
+            this.paymentGatewayTokenId = _data["paymentGatewayTokenId"];
+            this.paymentMethodToken = _data["paymentMethodToken"];
+            this.leadRequestId = _data["leadRequestId"];
+        }
+    }
+
+    static fromJS(data: any): PublicProductChargeInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new PublicProductChargeInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["tenantId"] = this.tenantId;
+        data["paymentGateway"] = this.paymentGateway;
+        data["paymentGatewayTokenId"] = this.paymentGatewayTokenId;
+        data["paymentMethodToken"] = this.paymentMethodToken;
+        data["leadRequestId"] = this.leadRequestId;
+        return data;
+    }
+}
+
+export interface IPublicProductChargeInput {
+    tenantId: number;
+    paymentGateway: string;
+    paymentGatewayTokenId: number;
+    paymentMethodToken: string;
+    leadRequestId: number;
+}
+
+export class PublicProductChargeOutput implements IPublicProductChargeOutput {
+    invoicePublicId!: string | undefined;
+    errorMessage!: string | undefined;
+
+    constructor(data?: IPublicProductChargeOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.invoicePublicId = _data["invoicePublicId"];
+            this.errorMessage = _data["errorMessage"];
+        }
+    }
+
+    static fromJS(data: any): PublicProductChargeOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new PublicProductChargeOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["invoicePublicId"] = this.invoicePublicId;
+        data["errorMessage"] = this.errorMessage;
+        return data;
+    }
+}
+
+export interface IPublicProductChargeOutput {
+    invoicePublicId: string | undefined;
+    errorMessage: string | undefined;
+}
+
 export class PublicProductData implements IPublicProductData {
     paypalClientId!: string | undefined;
     stripeConfigured!: boolean;
     stripePublishableKey!: string | undefined;
     isStripeTaxationEnabled!: boolean;
+    hasDiscordService!: boolean;
+    discordAppId!: string | undefined;
     hasTenantService!: boolean;
     tenantHasPrivacyPolicy!: boolean;
     tenantHasTerms!: boolean;
+    spreedlyConfiguration!: SpreedlyConfiguration | undefined;
     trackingTools!: TrackingToolsSettingsDto | undefined;
 
     constructor(data?: IPublicProductData) {
@@ -102945,9 +104130,12 @@ export class PublicProductData implements IPublicProductData {
             this.stripeConfigured = _data["stripeConfigured"];
             this.stripePublishableKey = _data["stripePublishableKey"];
             this.isStripeTaxationEnabled = _data["isStripeTaxationEnabled"];
+            this.hasDiscordService = _data["hasDiscordService"];
+            this.discordAppId = _data["discordAppId"];
             this.hasTenantService = _data["hasTenantService"];
             this.tenantHasPrivacyPolicy = _data["tenantHasPrivacyPolicy"];
             this.tenantHasTerms = _data["tenantHasTerms"];
+            this.spreedlyConfiguration = _data["spreedlyConfiguration"] ? SpreedlyConfiguration.fromJS(_data["spreedlyConfiguration"]) : <any>undefined;
             this.trackingTools = _data["trackingTools"] ? TrackingToolsSettingsDto.fromJS(_data["trackingTools"]) : <any>undefined;
         }
     }
@@ -102965,9 +104153,12 @@ export class PublicProductData implements IPublicProductData {
         data["stripeConfigured"] = this.stripeConfigured;
         data["stripePublishableKey"] = this.stripePublishableKey;
         data["isStripeTaxationEnabled"] = this.isStripeTaxationEnabled;
+        data["hasDiscordService"] = this.hasDiscordService;
+        data["discordAppId"] = this.discordAppId;
         data["hasTenantService"] = this.hasTenantService;
         data["tenantHasPrivacyPolicy"] = this.tenantHasPrivacyPolicy;
         data["tenantHasTerms"] = this.tenantHasTerms;
+        data["spreedlyConfiguration"] = this.spreedlyConfiguration ? this.spreedlyConfiguration.toJSON() : <any>undefined;
         data["trackingTools"] = this.trackingTools ? this.trackingTools.toJSON() : <any>undefined;
         return data;
     }
@@ -102978,9 +104169,12 @@ export interface IPublicProductData {
     stripeConfigured: boolean;
     stripePublishableKey: string | undefined;
     isStripeTaxationEnabled: boolean;
+    hasDiscordService: boolean;
+    discordAppId: string | undefined;
     hasTenantService: boolean;
     tenantHasPrivacyPolicy: boolean;
     tenantHasTerms: boolean;
+    spreedlyConfiguration: SpreedlyConfiguration | undefined;
     trackingTools: TrackingToolsSettingsDto | undefined;
 }
 
@@ -105643,12 +106837,14 @@ export enum RequestPaymentType {
     Free = "Free",
     Stripe = "Stripe",
     PayPal = "PayPal",
+    Spreedly = "Spreedly",
     ManualBankTransfer = "ManualBankTransfer",
 }
 
 export class RequestProductPaymentOutput implements IRequestProductPaymentOutput {
     stripePaymentLink!: string | undefined;
     paypalCode!: string | undefined;
+    invoicePublicId!: string;
     receiptUrl!: string | undefined;
 
     constructor(data?: IRequestProductPaymentOutput) {
@@ -105664,6 +106860,7 @@ export class RequestProductPaymentOutput implements IRequestProductPaymentOutput
         if (_data) {
             this.stripePaymentLink = _data["stripePaymentLink"];
             this.paypalCode = _data["paypalCode"];
+            this.invoicePublicId = _data["invoicePublicId"];
             this.receiptUrl = _data["receiptUrl"];
         }
     }
@@ -105679,6 +106876,7 @@ export class RequestProductPaymentOutput implements IRequestProductPaymentOutput
         data = typeof data === 'object' ? data : {};
         data["stripePaymentLink"] = this.stripePaymentLink;
         data["paypalCode"] = this.paypalCode;
+        data["invoicePublicId"] = this.invoicePublicId;
         data["receiptUrl"] = this.receiptUrl;
         return data;
     }
@@ -105687,6 +106885,7 @@ export class RequestProductPaymentOutput implements IRequestProductPaymentOutput
 export interface IRequestProductPaymentOutput {
     stripePaymentLink: string | undefined;
     paypalCode: string | undefined;
+    invoicePublicId: string;
     receiptUrl: string | undefined;
 }
 
@@ -108923,6 +110122,194 @@ export interface ISourceContactLevelInfo {
     photoPublicId: string | undefined;
 }
 
+export class SpreedlyConfiguration implements ISpreedlyConfiguration {
+    environmentKey!: string | undefined;
+    spreedlyGateways!: KeyValuePairOfInt32String[] | undefined;
+
+    constructor(data?: ISpreedlyConfiguration) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.environmentKey = _data["environmentKey"];
+            if (Array.isArray(_data["spreedlyGateways"])) {
+                this.spreedlyGateways = [] as any;
+                for (let item of _data["spreedlyGateways"])
+                    this.spreedlyGateways!.push(KeyValuePairOfInt32String.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): SpreedlyConfiguration {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpreedlyConfiguration();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["environmentKey"] = this.environmentKey;
+        if (Array.isArray(this.spreedlyGateways)) {
+            data["spreedlyGateways"] = [];
+            for (let item of this.spreedlyGateways)
+                data["spreedlyGateways"].push(item.toJSON());
+        }
+        return data;
+    }
+}
+
+export interface ISpreedlyConfiguration {
+    environmentKey: string | undefined;
+    spreedlyGateways: KeyValuePairOfInt32String[] | undefined;
+}
+
+export class SpreedlyGatewayConnectionDto implements ISpreedlyGatewayConnectionDto {
+    id!: number;
+    isActive!: boolean;
+    type!: string | undefined;
+    name!: string | undefined;
+    sandbox!: boolean;
+
+    constructor(data?: ISpreedlyGatewayConnectionDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.isActive = _data["isActive"];
+            this.type = _data["type"];
+            this.name = _data["name"];
+            this.sandbox = _data["sandbox"];
+        }
+    }
+
+    static fromJS(data: any): SpreedlyGatewayConnectionDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpreedlyGatewayConnectionDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["isActive"] = this.isActive;
+        data["type"] = this.type;
+        data["name"] = this.name;
+        data["sandbox"] = this.sandbox;
+        return data;
+    }
+}
+
+export interface ISpreedlyGatewayConnectionDto {
+    id: number;
+    isActive: boolean;
+    type: string | undefined;
+    name: string | undefined;
+    sandbox: boolean;
+}
+
+export class SpreedlyInvoiceChargeInput implements ISpreedlyInvoiceChargeInput {
+    tenantId!: number;
+    invoicePublicId!: string;
+    paymentGatewayTokenId!: number;
+    paymentMethodToken!: string;
+
+    constructor(data?: ISpreedlyInvoiceChargeInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.tenantId = _data["tenantId"];
+            this.invoicePublicId = _data["invoicePublicId"];
+            this.paymentGatewayTokenId = _data["paymentGatewayTokenId"];
+            this.paymentMethodToken = _data["paymentMethodToken"];
+        }
+    }
+
+    static fromJS(data: any): SpreedlyInvoiceChargeInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpreedlyInvoiceChargeInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["tenantId"] = this.tenantId;
+        data["invoicePublicId"] = this.invoicePublicId;
+        data["paymentGatewayTokenId"] = this.paymentGatewayTokenId;
+        data["paymentMethodToken"] = this.paymentMethodToken;
+        return data;
+    }
+}
+
+export interface ISpreedlyInvoiceChargeInput {
+    tenantId: number;
+    invoicePublicId: string;
+    paymentGatewayTokenId: number;
+    paymentMethodToken: string;
+}
+
+export class SpreedlyInvoiceChargeOutput implements ISpreedlyInvoiceChargeOutput {
+    invoicePublicId!: string | undefined;
+    errorMessage!: string | undefined;
+
+    constructor(data?: ISpreedlyInvoiceChargeOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.invoicePublicId = _data["invoicePublicId"];
+            this.errorMessage = _data["errorMessage"];
+        }
+    }
+
+    static fromJS(data: any): SpreedlyInvoiceChargeOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpreedlyInvoiceChargeOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["invoicePublicId"] = this.invoicePublicId;
+        data["errorMessage"] = this.errorMessage;
+        return data;
+    }
+}
+
+export interface ISpreedlyInvoiceChargeOutput {
+    invoicePublicId: string | undefined;
+    errorMessage: string | undefined;
+}
+
 export class StageChecklistPointDto implements IStageChecklistPointDto {
     id!: number;
     name!: string | undefined;
@@ -110413,6 +111800,8 @@ export class SubmitProductRequestInput implements ISubmitProductRequestInput {
     billingAddress!: AddressInfoDto | undefined;
     dob!: moment.Moment | undefined;
     companyName!: string | undefined;
+    discordUserId!: string | undefined;
+    discordUserName!: string | undefined;
     customField1!: string | undefined;
     customField2!: string | undefined;
     customField3!: string | undefined;
@@ -110465,6 +111854,8 @@ export class SubmitProductRequestInput implements ISubmitProductRequestInput {
             this.billingAddress = _data["billingAddress"] ? AddressInfoDto.fromJS(_data["billingAddress"]) : <any>undefined;
             this.dob = _data["dob"] ? moment(_data["dob"].toString()) : <any>undefined;
             this.companyName = _data["companyName"];
+            this.discordUserId = _data["discordUserId"];
+            this.discordUserName = _data["discordUserName"];
             this.customField1 = _data["customField1"];
             this.customField2 = _data["customField2"];
             this.customField3 = _data["customField3"];
@@ -110514,6 +111905,8 @@ export class SubmitProductRequestInput implements ISubmitProductRequestInput {
         data["billingAddress"] = this.billingAddress ? this.billingAddress.toJSON() : <any>undefined;
         data["dob"] = this.dob ? this.dob.toISOString() : <any>undefined;
         data["companyName"] = this.companyName;
+        data["discordUserId"] = this.discordUserId;
+        data["discordUserName"] = this.discordUserName;
         data["customField1"] = this.customField1;
         data["customField2"] = this.customField2;
         data["customField3"] = this.customField3;
@@ -110552,6 +111945,8 @@ export interface ISubmitProductRequestInput {
     billingAddress: AddressInfoDto | undefined;
     dob: moment.Moment | undefined;
     companyName: string | undefined;
+    discordUserId: string | undefined;
+    discordUserName: string | undefined;
     customField1: string | undefined;
     customField2: string | undefined;
     customField3: string | undefined;
@@ -119785,6 +121180,7 @@ export class UpdateProductInput implements IUpdateProductInput {
     recommendedProducts!: RecommendedProductInfo[] | undefined;
     productResources!: ProductResourceDto[] | undefined;
     productAddOns!: ProductAddOnDto[] | undefined;
+    productDeliverables!: ProductDeliverableInfo[] | undefined;
     productEvent!: ProductEventDto | undefined;
     productDonation!: ProductDonationDto | undefined;
 
@@ -119856,6 +121252,11 @@ export class UpdateProductInput implements IUpdateProductInput {
                 this.productAddOns = [] as any;
                 for (let item of _data["productAddOns"])
                     this.productAddOns!.push(ProductAddOnDto.fromJS(item));
+            }
+            if (Array.isArray(_data["productDeliverables"])) {
+                this.productDeliverables = [] as any;
+                for (let item of _data["productDeliverables"])
+                    this.productDeliverables!.push(ProductDeliverableInfo.fromJS(item));
             }
             this.productEvent = _data["productEvent"] ? ProductEventDto.fromJS(_data["productEvent"]) : <any>undefined;
             this.productDonation = _data["productDonation"] ? ProductDonationDto.fromJS(_data["productDonation"]) : <any>undefined;
@@ -119929,6 +121330,11 @@ export class UpdateProductInput implements IUpdateProductInput {
             for (let item of this.productAddOns)
                 data["productAddOns"].push(item.toJSON());
         }
+        if (Array.isArray(this.productDeliverables)) {
+            data["productDeliverables"] = [];
+            for (let item of this.productDeliverables)
+                data["productDeliverables"].push(item.toJSON());
+        }
         data["productEvent"] = this.productEvent ? this.productEvent.toJSON() : <any>undefined;
         data["productDonation"] = this.productDonation ? this.productDonation.toJSON() : <any>undefined;
         return data;
@@ -119970,6 +121376,7 @@ export interface IUpdateProductInput {
     recommendedProducts: RecommendedProductInfo[] | undefined;
     productResources: ProductResourceDto[] | undefined;
     productAddOns: ProductAddOnDto[] | undefined;
+    productDeliverables: ProductDeliverableInfo[] | undefined;
     productEvent: ProductEventDto | undefined;
     productDonation: ProductDonationDto | undefined;
 }
