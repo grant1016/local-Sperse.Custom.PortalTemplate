@@ -1,4 +1,9 @@
 :host {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+
     button {
         cursor: pointer;
         font-size: 20px;
@@ -9,6 +14,10 @@
         transition: color 0.3s, background-color 0.3s, border-color 0.3s;
         color: #fff;
         background-color: #0A66C2;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        max-width: 280px;
 
         &:hover {
             opacity: .7;
