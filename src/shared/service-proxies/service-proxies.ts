@@ -25797,7 +25797,7 @@ export class ImportServiceProxy {
      * @param body (optional) 
      * @return Success
      */
-    importContact(body: ImportContactInput | undefined): Observable<number> {
+    importContact(body: ImportContactInput | undefined): Observable<ImportContactOutput> {
         let url_ = this.baseUrl + "/api/services/CRM/Import/ImportContact";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -25820,14 +25820,14 @@ export class ImportServiceProxy {
                 try {
                     return this.processImportContact(response_ as any);
                 } catch (e) {
-                    return _observableThrow(e) as any as Observable<number>;
+                    return _observableThrow(e) as any as Observable<ImportContactOutput>;
                 }
             } else
-                return _observableThrow(response_) as any as Observable<number>;
+                return _observableThrow(response_) as any as Observable<ImportContactOutput>;
         }));
     }
 
-    protected processImportContact(response: HttpResponseBase): Observable<number> {
+    protected processImportContact(response: HttpResponseBase): Observable<ImportContactOutput> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -25838,8 +25838,7 @@ export class ImportServiceProxy {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                result200 = resultData200 !== undefined ? resultData200 : <any>null;
-    
+            result200 = ImportContactOutput.fromJS(resultData200);
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -25847,7 +25846,7 @@ export class ImportServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<number>(null as any);
+        return _observableOf<ImportContactOutput>(null as any);
     }
 
     /**
@@ -27319,6 +27318,62 @@ export class InvoiceServiceProxy {
             }));
         }
         return _observableOf<void>(null as any);
+    }
+
+    /**
+     * @param body (optional) 
+     * @return Success
+     */
+    refundInvoice(body: RefundInvoiceInput | undefined): Observable<RefundInvoiceOutput> {
+        let url_ = this.baseUrl + "/api/services/CRM/Invoice/RefundInvoice";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json;odata.metadata=minimal;odata.streaming=true",
+                "Accept": "application/json;odata.metadata=minimal;odata.streaming=true"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processRefundInvoice(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processRefundInvoice(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<RefundInvoiceOutput>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<RefundInvoiceOutput>;
+        }));
+    }
+
+    protected processRefundInvoice(response: HttpResponseBase): Observable<RefundInvoiceOutput> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = RefundInvoiceOutput.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<RefundInvoiceOutput>(null as any);
     }
 
     /**
@@ -47791,6 +47846,110 @@ export class TenantHostServiceProxy {
         }
         return _observableOf<void>(null as any);
     }
+
+    /**
+     * @param domainName (optional) 
+     * @return Success
+     */
+    createWhitelistDomain(domainName: string | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/Platform/TenantHost/CreateWhitelistDomain?";
+        if (domainName === null)
+            throw new Error("The parameter 'domainName' cannot be null.");
+        else if (domainName !== undefined)
+            url_ += "domainName=" + encodeURIComponent("" + domainName) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCreateWhitelistDomain(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCreateWhitelistDomain(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<void>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<void>;
+        }));
+    }
+
+    protected processCreateWhitelistDomain(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(null as any);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(null as any);
+    }
+
+    /**
+     * @param id (optional) 
+     * @return Success
+     */
+    deleteWhitelistDomain(id: number | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/Platform/TenantHost/DeleteWhitelistDomain?";
+        if (id === null)
+            throw new Error("The parameter 'id' cannot be null.");
+        else if (id !== undefined)
+            url_ += "id=" + encodeURIComponent("" + id) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+            })
+        };
+
+        return this.http.request("delete", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processDeleteWhitelistDomain(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processDeleteWhitelistDomain(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<void>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<void>;
+        }));
+    }
+
+    protected processDeleteWhitelistDomain(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(null as any);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(null as any);
+    }
 }
 
 @Injectable()
@@ -48466,7 +48625,7 @@ export class TenantPaymentSettingsServiceProxy {
     /**
      * @return Success
      */
-    getPayPalSettings(): Observable<PayPalSettings> {
+    getPayPalSettings(): Observable<PayPalSettingsDto> {
         let url_ = this.baseUrl + "/api/services/CRM/TenantPaymentSettings/GetPayPalSettings";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -48485,14 +48644,14 @@ export class TenantPaymentSettingsServiceProxy {
                 try {
                     return this.processGetPayPalSettings(response_ as any);
                 } catch (e) {
-                    return _observableThrow(e) as any as Observable<PayPalSettings>;
+                    return _observableThrow(e) as any as Observable<PayPalSettingsDto>;
                 }
             } else
-                return _observableThrow(response_) as any as Observable<PayPalSettings>;
+                return _observableThrow(response_) as any as Observable<PayPalSettingsDto>;
         }));
     }
 
-    protected processGetPayPalSettings(response: HttpResponseBase): Observable<PayPalSettings> {
+    protected processGetPayPalSettings(response: HttpResponseBase): Observable<PayPalSettingsDto> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -48503,7 +48662,7 @@ export class TenantPaymentSettingsServiceProxy {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = PayPalSettings.fromJS(resultData200);
+            result200 = PayPalSettingsDto.fromJS(resultData200);
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -48511,7 +48670,7 @@ export class TenantPaymentSettingsServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<PayPalSettings>(null as any);
+        return _observableOf<PayPalSettingsDto>(null as any);
     }
 
     /**
@@ -48548,6 +48707,105 @@ export class TenantPaymentSettingsServiceProxy {
     }
 
     protected processUpdatePayPalSettings(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(null as any);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(null as any);
+    }
+
+    /**
+     * @return Success
+     */
+    getPayPalPartnerConnectUrl(): Observable<string> {
+        let url_ = this.baseUrl + "/api/services/CRM/TenantPaymentSettings/GetPayPalPartnerConnectUrl";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json;odata.metadata=minimal;odata.streaming=true"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetPayPalPartnerConnectUrl(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetPayPalPartnerConnectUrl(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<string>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<string>;
+        }));
+    }
+
+    protected processGetPayPalPartnerConnectUrl(response: HttpResponseBase): Observable<string> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                result200 = resultData200 !== undefined ? resultData200 : <any>null;
+    
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<string>(null as any);
+    }
+
+    /**
+     * @return Success
+     */
+    unlinkPayPalMerchant(): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/TenantPaymentSettings/UnlinkPayPalMerchant";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUnlinkPayPalMerchant(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUnlinkPayPalMerchant(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<void>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<void>;
+        }));
+    }
+
+    protected processUnlinkPayPalMerchant(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -49539,6 +49797,58 @@ export class TenantPaymentSettingsServiceProxy {
     }
 
     protected processSetActiveSpreedlyGatewayConnection(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(null as any);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(null as any);
+    }
+
+    /**
+     * @param id (optional) 
+     * @return Success
+     */
+    deleteSpreedlyGatewayConnection(id: number | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/TenantPaymentSettings/DeleteSpreedlyGatewayConnection?";
+        if (id === null)
+            throw new Error("The parameter 'id' cannot be null.");
+        else if (id !== undefined)
+            url_ += "id=" + encodeURIComponent("" + id) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+            })
+        };
+
+        return this.http.request("delete", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processDeleteSpreedlyGatewayConnection(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processDeleteSpreedlyGatewayConnection(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<void>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<void>;
+        }));
+    }
+
+    protected processDeleteSpreedlyGatewayConnection(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -61227,6 +61537,7 @@ export class ApplicationInfoDto implements IApplicationInfoDto {
     releaseDate!: moment.Moment;
     currency!: string | undefined;
     currencySign!: string | undefined;
+    spreedlyConfigured!: boolean;
     userDelegationIsEnabled!: boolean;
     twoFactorCodeExpireSeconds!: number;
     modules!: { [key: string]: boolean; } | undefined;
@@ -61247,6 +61558,7 @@ export class ApplicationInfoDto implements IApplicationInfoDto {
             this.releaseDate = _data["releaseDate"] ? moment(_data["releaseDate"].toString()) : <any>undefined;
             this.currency = _data["currency"];
             this.currencySign = _data["currencySign"];
+            this.spreedlyConfigured = _data["spreedlyConfigured"];
             this.userDelegationIsEnabled = _data["userDelegationIsEnabled"];
             this.twoFactorCodeExpireSeconds = _data["twoFactorCodeExpireSeconds"];
             if (_data["modules"]) {
@@ -61279,6 +61591,7 @@ export class ApplicationInfoDto implements IApplicationInfoDto {
         data["releaseDate"] = this.releaseDate ? this.releaseDate.toISOString() : <any>undefined;
         data["currency"] = this.currency;
         data["currencySign"] = this.currencySign;
+        data["spreedlyConfigured"] = this.spreedlyConfigured;
         data["userDelegationIsEnabled"] = this.userDelegationIsEnabled;
         data["twoFactorCodeExpireSeconds"] = this.twoFactorCodeExpireSeconds;
         if (this.modules) {
@@ -61304,6 +61617,7 @@ export interface IApplicationInfoDto {
     releaseDate: moment.Moment;
     currency: string | undefined;
     currencySign: string | undefined;
+    spreedlyConfigured: boolean;
     userDelegationIsEnabled: boolean;
     twoFactorCodeExpireSeconds: number;
     modules: { [key: string]: boolean; } | undefined;
@@ -73375,7 +73689,7 @@ export interface ICreatePointInfoOutput {
 export class CreatePriceOutput implements ICreatePriceOutput {
     id!: number;
     name!: string | undefined;
-    price!: number;
+    fee!: number | undefined;
     frequency!: RecurringPaymentFrequency | undefined;
     unit!: ProductMeasurementUnit | undefined;
 
@@ -73392,7 +73706,7 @@ export class CreatePriceOutput implements ICreatePriceOutput {
         if (_data) {
             this.id = _data["id"];
             this.name = _data["name"];
-            this.price = _data["price"];
+            this.fee = _data["fee"];
             this.frequency = _data["frequency"];
             this.unit = _data["unit"];
         }
@@ -73409,7 +73723,7 @@ export class CreatePriceOutput implements ICreatePriceOutput {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
         data["name"] = this.name;
-        data["price"] = this.price;
+        data["fee"] = this.fee;
         data["frequency"] = this.frequency;
         data["unit"] = this.unit;
         return data;
@@ -73419,7 +73733,7 @@ export class CreatePriceOutput implements ICreatePriceOutput {
 export interface ICreatePriceOutput {
     id: number;
     name: string | undefined;
-    price: number;
+    fee: number | undefined;
     frequency: RecurringPaymentFrequency | undefined;
     unit: ProductMeasurementUnit | undefined;
 }
@@ -85258,9 +85572,11 @@ export class GetTotalsOutput implements IGetTotalsOutput {
     newLeadCount!: number;
     newClientCount!: number;
     newOrderAmount!: number;
+    newOrderConvertedAmounts!: { [key: string]: number; } | undefined;
     totalLeadCount!: number;
     totalClientCount!: number;
     totalOrderAmount!: number;
+    totalOrderConvertedAmounts!: { [key: string]: number; } | undefined;
 
     constructor(data?: IGetTotalsOutput) {
         if (data) {
@@ -85276,9 +85592,23 @@ export class GetTotalsOutput implements IGetTotalsOutput {
             this.newLeadCount = _data["newLeadCount"];
             this.newClientCount = _data["newClientCount"];
             this.newOrderAmount = _data["newOrderAmount"];
+            if (_data["newOrderConvertedAmounts"]) {
+                this.newOrderConvertedAmounts = {} as any;
+                for (let key in _data["newOrderConvertedAmounts"]) {
+                    if (_data["newOrderConvertedAmounts"].hasOwnProperty(key))
+                        (<any>this.newOrderConvertedAmounts)![key] = _data["newOrderConvertedAmounts"][key];
+                }
+            }
             this.totalLeadCount = _data["totalLeadCount"];
             this.totalClientCount = _data["totalClientCount"];
             this.totalOrderAmount = _data["totalOrderAmount"];
+            if (_data["totalOrderConvertedAmounts"]) {
+                this.totalOrderConvertedAmounts = {} as any;
+                for (let key in _data["totalOrderConvertedAmounts"]) {
+                    if (_data["totalOrderConvertedAmounts"].hasOwnProperty(key))
+                        (<any>this.totalOrderConvertedAmounts)![key] = _data["totalOrderConvertedAmounts"][key];
+                }
+            }
         }
     }
 
@@ -85294,9 +85624,23 @@ export class GetTotalsOutput implements IGetTotalsOutput {
         data["newLeadCount"] = this.newLeadCount;
         data["newClientCount"] = this.newClientCount;
         data["newOrderAmount"] = this.newOrderAmount;
+        if (this.newOrderConvertedAmounts) {
+            data["newOrderConvertedAmounts"] = {};
+            for (let key in this.newOrderConvertedAmounts) {
+                if (this.newOrderConvertedAmounts.hasOwnProperty(key))
+                    (<any>data["newOrderConvertedAmounts"])[key] = (<any>this.newOrderConvertedAmounts)[key];
+            }
+        }
         data["totalLeadCount"] = this.totalLeadCount;
         data["totalClientCount"] = this.totalClientCount;
         data["totalOrderAmount"] = this.totalOrderAmount;
+        if (this.totalOrderConvertedAmounts) {
+            data["totalOrderConvertedAmounts"] = {};
+            for (let key in this.totalOrderConvertedAmounts) {
+                if (this.totalOrderConvertedAmounts.hasOwnProperty(key))
+                    (<any>data["totalOrderConvertedAmounts"])[key] = (<any>this.totalOrderConvertedAmounts)[key];
+            }
+        }
         return data;
     }
 }
@@ -85305,9 +85649,11 @@ export interface IGetTotalsOutput {
     newLeadCount: number;
     newClientCount: number;
     newOrderAmount: number;
+    newOrderConvertedAmounts: { [key: string]: number; } | undefined;
     totalLeadCount: number;
     totalClientCount: number;
     totalOrderAmount: number;
+    totalOrderConvertedAmounts: { [key: string]: number; } | undefined;
 }
 
 export class GetTransactionAttributeTypesOutput implements IGetTransactionAttributeTypesOutput {
@@ -87196,6 +87542,46 @@ export interface IImportContactInput {
     classificationInfo: ImportClassificationInput | undefined;
 }
 
+export class ImportContactOutput implements IImportContactOutput {
+    contactId!: number;
+    leadId!: number | undefined;
+
+    constructor(data?: IImportContactOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.contactId = _data["contactId"];
+            this.leadId = _data["leadId"];
+        }
+    }
+
+    static fromJS(data: any): ImportContactOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new ImportContactOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["contactId"] = this.contactId;
+        data["leadId"] = this.leadId;
+        return data;
+    }
+}
+
+export interface IImportContactOutput {
+    contactId: number;
+    leadId: number | undefined;
+}
+
 export class ImportExtensionDto implements IImportExtensionDto {
     code!: string;
     name!: string;
@@ -87840,13 +88226,77 @@ export interface IImportInvoiceLineInput {
     sortOrder: number;
 }
 
+export class ImportInvoiceTransactionConvertedAmountInput implements IImportInvoiceTransactionConvertedAmountInput {
+    currencyId!: string;
+    exchangeRate!: number;
+    amount!: number;
+    netAmount!: number | undefined;
+    paymentSystemFee!: number | undefined;
+    partnerFee!: number | undefined;
+    otherFee!: number | undefined;
+
+    constructor(data?: IImportInvoiceTransactionConvertedAmountInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.currencyId = _data["currencyId"];
+            this.exchangeRate = _data["exchangeRate"];
+            this.amount = _data["amount"];
+            this.netAmount = _data["netAmount"];
+            this.paymentSystemFee = _data["paymentSystemFee"];
+            this.partnerFee = _data["partnerFee"];
+            this.otherFee = _data["otherFee"];
+        }
+    }
+
+    static fromJS(data: any): ImportInvoiceTransactionConvertedAmountInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new ImportInvoiceTransactionConvertedAmountInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["currencyId"] = this.currencyId;
+        data["exchangeRate"] = this.exchangeRate;
+        data["amount"] = this.amount;
+        data["netAmount"] = this.netAmount;
+        data["paymentSystemFee"] = this.paymentSystemFee;
+        data["partnerFee"] = this.partnerFee;
+        data["otherFee"] = this.otherFee;
+        return data;
+    }
+}
+
+export interface IImportInvoiceTransactionConvertedAmountInput {
+    currencyId: string;
+    exchangeRate: number;
+    amount: number;
+    netAmount: number | undefined;
+    paymentSystemFee: number | undefined;
+    partnerFee: number | undefined;
+    otherFee: number | undefined;
+}
+
 export class ImportInvoiceTransactionInput implements IImportInvoiceTransactionInput {
     date!: moment.Moment;
     description!: string | undefined;
     amount!: number;
     netAmount!: number | undefined;
+    paymentSystemFee!: number | undefined;
+    partnerFee!: number | undefined;
+    otherFee!: number | undefined;
     gatewayName!: string | undefined;
     gatewayTransactionId!: string | undefined;
+    convertedAmount!: ImportInvoiceTransactionConvertedAmountInput | undefined;
 
     constructor(data?: IImportInvoiceTransactionInput) {
         if (data) {
@@ -87863,8 +88313,12 @@ export class ImportInvoiceTransactionInput implements IImportInvoiceTransactionI
             this.description = _data["description"];
             this.amount = _data["amount"];
             this.netAmount = _data["netAmount"];
+            this.paymentSystemFee = _data["paymentSystemFee"];
+            this.partnerFee = _data["partnerFee"];
+            this.otherFee = _data["otherFee"];
             this.gatewayName = _data["gatewayName"];
             this.gatewayTransactionId = _data["gatewayTransactionId"];
+            this.convertedAmount = _data["convertedAmount"] ? ImportInvoiceTransactionConvertedAmountInput.fromJS(_data["convertedAmount"]) : <any>undefined;
         }
     }
 
@@ -87881,8 +88335,12 @@ export class ImportInvoiceTransactionInput implements IImportInvoiceTransactionI
         data["description"] = this.description;
         data["amount"] = this.amount;
         data["netAmount"] = this.netAmount;
+        data["paymentSystemFee"] = this.paymentSystemFee;
+        data["partnerFee"] = this.partnerFee;
+        data["otherFee"] = this.otherFee;
         data["gatewayName"] = this.gatewayName;
         data["gatewayTransactionId"] = this.gatewayTransactionId;
+        data["convertedAmount"] = this.convertedAmount ? this.convertedAmount.toJSON() : <any>undefined;
         return data;
     }
 }
@@ -87892,8 +88350,12 @@ export interface IImportInvoiceTransactionInput {
     description: string | undefined;
     amount: number;
     netAmount: number | undefined;
+    paymentSystemFee: number | undefined;
+    partnerFee: number | undefined;
+    otherFee: number | undefined;
     gatewayName: string | undefined;
     gatewayTransactionId: string | undefined;
+    convertedAmount: ImportInvoiceTransactionConvertedAmountInput | undefined;
 }
 
 export class ImportItemInput implements IImportItemInput {
@@ -89522,6 +89984,8 @@ export class InvoicePaypalPaymentInfo implements IInvoicePaypalPaymentInfo {
     isApplicable!: boolean;
     isSubscription!: boolean;
     clientId!: string | undefined;
+    merchantId!: string | undefined;
+    bnCode!: string | undefined;
 
     constructor(data?: IInvoicePaypalPaymentInfo) {
         if (data) {
@@ -89537,6 +90001,8 @@ export class InvoicePaypalPaymentInfo implements IInvoicePaypalPaymentInfo {
             this.isApplicable = _data["isApplicable"];
             this.isSubscription = _data["isSubscription"];
             this.clientId = _data["clientId"];
+            this.merchantId = _data["merchantId"];
+            this.bnCode = _data["bnCode"];
         }
     }
 
@@ -89552,6 +90018,8 @@ export class InvoicePaypalPaymentInfo implements IInvoicePaypalPaymentInfo {
         data["isApplicable"] = this.isApplicable;
         data["isSubscription"] = this.isSubscription;
         data["clientId"] = this.clientId;
+        data["merchantId"] = this.merchantId;
+        data["bnCode"] = this.bnCode;
         return data;
     }
 }
@@ -89560,6 +90028,8 @@ export interface IInvoicePaypalPaymentInfo {
     isApplicable: boolean;
     isSubscription: boolean;
     clientId: string | undefined;
+    merchantId: string | undefined;
+    bnCode: string | undefined;
 }
 
 export class InvoiceReceiptResource implements IInvoiceReceiptResource {
@@ -97682,6 +98152,13 @@ export class PayPalSettings implements IPayPalSettings {
     clientId!: string | undefined;
     clientSecret!: string | undefined;
     webhookKey!: string | undefined;
+    bnCode!: string | undefined;
+    hostMerchantId!: string | undefined;
+    merchantId!: string | undefined;
+    merchantLegalName!: string | undefined;
+    merchantEmail!: string | undefined;
+    merchantEmailConfirmed!: boolean;
+    merchantPaymentsReceivable!: boolean;
 
     constructor(data?: IPayPalSettings) {
         if (data) {
@@ -97699,6 +98176,13 @@ export class PayPalSettings implements IPayPalSettings {
             this.clientId = _data["clientId"];
             this.clientSecret = _data["clientSecret"];
             this.webhookKey = _data["webhookKey"];
+            this.bnCode = _data["bnCode"];
+            this.hostMerchantId = _data["hostMerchantId"];
+            this.merchantId = _data["merchantId"];
+            this.merchantLegalName = _data["merchantLegalName"];
+            this.merchantEmail = _data["merchantEmail"];
+            this.merchantEmailConfirmed = _data["merchantEmailConfirmed"];
+            this.merchantPaymentsReceivable = _data["merchantPaymentsReceivable"];
         }
     }
 
@@ -97716,6 +98200,13 @@ export class PayPalSettings implements IPayPalSettings {
         data["clientId"] = this.clientId;
         data["clientSecret"] = this.clientSecret;
         data["webhookKey"] = this.webhookKey;
+        data["bnCode"] = this.bnCode;
+        data["hostMerchantId"] = this.hostMerchantId;
+        data["merchantId"] = this.merchantId;
+        data["merchantLegalName"] = this.merchantLegalName;
+        data["merchantEmail"] = this.merchantEmail;
+        data["merchantEmailConfirmed"] = this.merchantEmailConfirmed;
+        data["merchantPaymentsReceivable"] = this.merchantPaymentsReceivable;
         return data;
     }
 }
@@ -97726,6 +98217,97 @@ export interface IPayPalSettings {
     clientId: string | undefined;
     clientSecret: string | undefined;
     webhookKey: string | undefined;
+    bnCode: string | undefined;
+    hostMerchantId: string | undefined;
+    merchantId: string | undefined;
+    merchantLegalName: string | undefined;
+    merchantEmail: string | undefined;
+    merchantEmailConfirmed: boolean;
+    merchantPaymentsReceivable: boolean;
+}
+
+export class PayPalSettingsDto implements IPayPalSettingsDto {
+    isHostAccountEnabled!: boolean;
+    isEnabled!: boolean;
+    environment!: string | undefined;
+    clientId!: string | undefined;
+    clientSecret!: string | undefined;
+    webhookKey!: string | undefined;
+    bnCode!: string | undefined;
+    hostMerchantId!: string | undefined;
+    merchantId!: string | undefined;
+    merchantLegalName!: string | undefined;
+    merchantEmail!: string | undefined;
+    merchantEmailConfirmed!: boolean;
+    merchantPaymentsReceivable!: boolean;
+
+    constructor(data?: IPayPalSettingsDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.isHostAccountEnabled = _data["isHostAccountEnabled"];
+            this.isEnabled = _data["isEnabled"];
+            this.environment = _data["environment"];
+            this.clientId = _data["clientId"];
+            this.clientSecret = _data["clientSecret"];
+            this.webhookKey = _data["webhookKey"];
+            this.bnCode = _data["bnCode"];
+            this.hostMerchantId = _data["hostMerchantId"];
+            this.merchantId = _data["merchantId"];
+            this.merchantLegalName = _data["merchantLegalName"];
+            this.merchantEmail = _data["merchantEmail"];
+            this.merchantEmailConfirmed = _data["merchantEmailConfirmed"];
+            this.merchantPaymentsReceivable = _data["merchantPaymentsReceivable"];
+        }
+    }
+
+    static fromJS(data: any): PayPalSettingsDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new PayPalSettingsDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["isHostAccountEnabled"] = this.isHostAccountEnabled;
+        data["isEnabled"] = this.isEnabled;
+        data["environment"] = this.environment;
+        data["clientId"] = this.clientId;
+        data["clientSecret"] = this.clientSecret;
+        data["webhookKey"] = this.webhookKey;
+        data["bnCode"] = this.bnCode;
+        data["hostMerchantId"] = this.hostMerchantId;
+        data["merchantId"] = this.merchantId;
+        data["merchantLegalName"] = this.merchantLegalName;
+        data["merchantEmail"] = this.merchantEmail;
+        data["merchantEmailConfirmed"] = this.merchantEmailConfirmed;
+        data["merchantPaymentsReceivable"] = this.merchantPaymentsReceivable;
+        return data;
+    }
+}
+
+export interface IPayPalSettingsDto {
+    isHostAccountEnabled: boolean;
+    isEnabled: boolean;
+    environment: string | undefined;
+    clientId: string | undefined;
+    clientSecret: string | undefined;
+    webhookKey: string | undefined;
+    bnCode: string | undefined;
+    hostMerchantId: string | undefined;
+    merchantId: string | undefined;
+    merchantLegalName: string | undefined;
+    merchantEmail: string | undefined;
+    merchantEmailConfirmed: boolean;
+    merchantPaymentsReceivable: boolean;
 }
 
 export class PaymentAuthorizeResponseDto implements IPaymentAuthorizeResponseDto {
@@ -98060,6 +98642,8 @@ export enum PaymentSystem {
 export class PaymentSystemSettingsDto implements IPaymentSystemSettingsDto {
     stripeIsEnabled!: boolean;
     paypalClientId!: string | undefined;
+    paypalMerchantId!: string | undefined;
+    paypalBNCode!: string | undefined;
     spreedlyConfiguration!: SpreedlyConfiguration | undefined;
 
     constructor(data?: IPaymentSystemSettingsDto) {
@@ -98075,6 +98659,8 @@ export class PaymentSystemSettingsDto implements IPaymentSystemSettingsDto {
         if (_data) {
             this.stripeIsEnabled = _data["stripeIsEnabled"];
             this.paypalClientId = _data["paypalClientId"];
+            this.paypalMerchantId = _data["paypalMerchantId"];
+            this.paypalBNCode = _data["paypalBNCode"];
             this.spreedlyConfiguration = _data["spreedlyConfiguration"] ? SpreedlyConfiguration.fromJS(_data["spreedlyConfiguration"]) : <any>undefined;
         }
     }
@@ -98090,6 +98676,8 @@ export class PaymentSystemSettingsDto implements IPaymentSystemSettingsDto {
         data = typeof data === 'object' ? data : {};
         data["stripeIsEnabled"] = this.stripeIsEnabled;
         data["paypalClientId"] = this.paypalClientId;
+        data["paypalMerchantId"] = this.paypalMerchantId;
+        data["paypalBNCode"] = this.paypalBNCode;
         data["spreedlyConfiguration"] = this.spreedlyConfiguration ? this.spreedlyConfiguration.toJSON() : <any>undefined;
         return data;
     }
@@ -98098,6 +98686,8 @@ export class PaymentSystemSettingsDto implements IPaymentSystemSettingsDto {
 export interface IPaymentSystemSettingsDto {
     stripeIsEnabled: boolean;
     paypalClientId: string | undefined;
+    paypalMerchantId: string | undefined;
+    paypalBNCode: string | undefined;
     spreedlyConfiguration: SpreedlyConfiguration | undefined;
 }
 
@@ -98157,6 +98747,8 @@ export interface IPaypalCustomerShortInfo {
 export class PaypalSettingsInfo implements IPaypalSettingsInfo {
     isEnabled!: boolean;
     clientId!: string | undefined;
+    merchantId!: string | undefined;
+    bnCode!: string | undefined;
 
     constructor(data?: IPaypalSettingsInfo) {
         if (data) {
@@ -98171,6 +98763,8 @@ export class PaypalSettingsInfo implements IPaypalSettingsInfo {
         if (_data) {
             this.isEnabled = _data["isEnabled"];
             this.clientId = _data["clientId"];
+            this.merchantId = _data["merchantId"];
+            this.bnCode = _data["bnCode"];
         }
     }
 
@@ -98185,6 +98779,8 @@ export class PaypalSettingsInfo implements IPaypalSettingsInfo {
         data = typeof data === 'object' ? data : {};
         data["isEnabled"] = this.isEnabled;
         data["clientId"] = this.clientId;
+        data["merchantId"] = this.merchantId;
+        data["bnCode"] = this.bnCode;
         return data;
     }
 }
@@ -98192,6 +98788,8 @@ export class PaypalSettingsInfo implements IPaypalSettingsInfo {
 export interface IPaypalSettingsInfo {
     isEnabled: boolean;
     clientId: string | undefined;
+    merchantId: string | undefined;
+    bnCode: string | undefined;
 }
 
 export class PendingCommissionContactInfo implements IPendingCommissionContactInfo {
@@ -104104,6 +104702,8 @@ export interface IPublicProductChargeOutput {
 
 export class PublicProductData implements IPublicProductData {
     paypalClientId!: string | undefined;
+    paypalMerchantId!: string | undefined;
+    paypalBNCode!: string | undefined;
     stripeConfigured!: boolean;
     stripePublishableKey!: string | undefined;
     isStripeTaxationEnabled!: boolean;
@@ -104127,6 +104727,8 @@ export class PublicProductData implements IPublicProductData {
     init(_data?: any) {
         if (_data) {
             this.paypalClientId = _data["paypalClientId"];
+            this.paypalMerchantId = _data["paypalMerchantId"];
+            this.paypalBNCode = _data["paypalBNCode"];
             this.stripeConfigured = _data["stripeConfigured"];
             this.stripePublishableKey = _data["stripePublishableKey"];
             this.isStripeTaxationEnabled = _data["isStripeTaxationEnabled"];
@@ -104150,6 +104752,8 @@ export class PublicProductData implements IPublicProductData {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["paypalClientId"] = this.paypalClientId;
+        data["paypalMerchantId"] = this.paypalMerchantId;
+        data["paypalBNCode"] = this.paypalBNCode;
         data["stripeConfigured"] = this.stripeConfigured;
         data["stripePublishableKey"] = this.stripePublishableKey;
         data["isStripeTaxationEnabled"] = this.isStripeTaxationEnabled;
@@ -104166,6 +104770,8 @@ export class PublicProductData implements IPublicProductData {
 
 export interface IPublicProductData {
     paypalClientId: string | undefined;
+    paypalMerchantId: string | undefined;
+    paypalBNCode: string | undefined;
     stripeConfigured: boolean;
     stripePublishableKey: string | undefined;
     isStripeTaxationEnabled: boolean;
@@ -104364,6 +104970,7 @@ export interface IPublicProductInput {
 
 export class PublicProductRecommendedProduct implements IPublicProductRecommendedProduct {
     name!: string | undefined;
+    publicName!: string | undefined;
     description!: string | undefined;
     imageUrl!: string | undefined;
     publicAllowCoupon!: boolean;
@@ -104381,6 +104988,7 @@ export class PublicProductRecommendedProduct implements IPublicProductRecommende
     init(_data?: any) {
         if (_data) {
             this.name = _data["name"];
+            this.publicName = _data["publicName"];
             this.description = _data["description"];
             this.imageUrl = _data["imageUrl"];
             this.publicAllowCoupon = _data["publicAllowCoupon"];
@@ -104402,6 +105010,7 @@ export class PublicProductRecommendedProduct implements IPublicProductRecommende
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["name"] = this.name;
+        data["publicName"] = this.publicName;
         data["description"] = this.description;
         data["imageUrl"] = this.imageUrl;
         data["publicAllowCoupon"] = this.publicAllowCoupon;
@@ -104416,6 +105025,7 @@ export class PublicProductRecommendedProduct implements IPublicProductRecommende
 
 export interface IPublicProductRecommendedProduct {
     name: string | undefined;
+    publicName: string | undefined;
     description: string | undefined;
     imageUrl: string | undefined;
     publicAllowCoupon: boolean;
@@ -104423,7 +105033,7 @@ export interface IPublicProductRecommendedProduct {
 }
 
 export class PublicProductRecommendedProductOption implements IPublicProductRecommendedProductOption {
-    price!: number | undefined;
+    fee!: number | undefined;
     customerChoosesPrice!: boolean;
     minCustomerPrice!: number | undefined;
     maxCustomerPrice!: number | undefined;
@@ -104439,7 +105049,7 @@ export class PublicProductRecommendedProductOption implements IPublicProductReco
 
     init(_data?: any) {
         if (_data) {
-            this.price = _data["price"];
+            this.fee = _data["fee"];
             this.customerChoosesPrice = _data["customerChoosesPrice"];
             this.minCustomerPrice = _data["minCustomerPrice"];
             this.maxCustomerPrice = _data["maxCustomerPrice"];
@@ -104455,7 +105065,7 @@ export class PublicProductRecommendedProductOption implements IPublicProductReco
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["price"] = this.price;
+        data["fee"] = this.fee;
         data["customerChoosesPrice"] = this.customerChoosesPrice;
         data["minCustomerPrice"] = this.minCustomerPrice;
         data["maxCustomerPrice"] = this.maxCustomerPrice;
@@ -104464,7 +105074,7 @@ export class PublicProductRecommendedProductOption implements IPublicProductReco
 }
 
 export interface IPublicProductRecommendedProductOption {
-    price: number | undefined;
+    fee: number | undefined;
     customerChoosesPrice: boolean;
     minCustomerPrice: number | undefined;
     maxCustomerPrice: number | undefined;
@@ -105711,6 +106321,90 @@ export class RefundInfo implements IRefundInfo {
 export interface IRefundInfo {
     totalAmount: number;
     count: number;
+}
+
+export class RefundInvoiceInput implements IRefundInvoiceInput {
+    invoiceId!: number | undefined;
+    invoiceNumber!: string | undefined;
+
+    constructor(data?: IRefundInvoiceInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.invoiceId = _data["invoiceId"];
+            this.invoiceNumber = _data["invoiceNumber"];
+        }
+    }
+
+    static fromJS(data: any): RefundInvoiceInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new RefundInvoiceInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["invoiceId"] = this.invoiceId;
+        data["invoiceNumber"] = this.invoiceNumber;
+        return data;
+    }
+}
+
+export interface IRefundInvoiceInput {
+    invoiceId: number | undefined;
+    invoiceNumber: string | undefined;
+}
+
+export class RefundInvoiceOutput implements IRefundInvoiceOutput {
+    errorMessages!: string[] | undefined;
+
+    constructor(data?: IRefundInvoiceOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            if (Array.isArray(_data["errorMessages"])) {
+                this.errorMessages = [] as any;
+                for (let item of _data["errorMessages"])
+                    this.errorMessages!.push(item);
+            }
+        }
+    }
+
+    static fromJS(data: any): RefundInvoiceOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new RefundInvoiceOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (Array.isArray(this.errorMessages)) {
+            data["errorMessages"] = [];
+            for (let item of this.errorMessages)
+                data["errorMessages"].push(item);
+        }
+        return data;
+    }
+}
+
+export interface IRefundInvoiceOutput {
+    errorMessages: string[] | undefined;
 }
 
 export class RegionalStatCountry implements IRegionalStatCountry {
@@ -111580,8 +112274,8 @@ export class SubmitClientRequestInput implements ISubmitClientRequestInput {
     customContactInfo!: CustomFieldsInput | undefined;
     customRequestInfo!: CustomFieldsInput | undefined;
     leadRequestXref!: string | undefined;
-    firstName!: string;
-    lastName!: string;
+    firstName!: string | undefined;
+    lastName!: string | undefined;
     email!: string;
     phone!: string | undefined;
     phoneExt!: string | undefined;
@@ -111690,8 +112384,8 @@ export interface ISubmitClientRequestInput {
     customContactInfo: CustomFieldsInput | undefined;
     customRequestInfo: CustomFieldsInput | undefined;
     leadRequestXref: string | undefined;
-    firstName: string;
-    lastName: string;
+    firstName: string | undefined;
+    lastName: string | undefined;
     email: string;
     phone: string | undefined;
     phoneExt: string | undefined;
@@ -111808,8 +112502,8 @@ export class SubmitProductRequestInput implements ISubmitProductRequestInput {
     customField4!: string | undefined;
     customField5!: string | undefined;
     leadRequestXref!: string | undefined;
-    firstName!: string;
-    lastName!: string;
+    firstName!: string | undefined;
+    lastName!: string | undefined;
     email!: string;
     phone!: string | undefined;
     phoneExt!: string | undefined;
@@ -111953,8 +112647,8 @@ export interface ISubmitProductRequestInput {
     customField4: string | undefined;
     customField5: string | undefined;
     leadRequestXref: string | undefined;
-    firstName: string;
-    lastName: string;
+    firstName: string | undefined;
+    lastName: string | undefined;
     email: string;
     phone: string | undefined;
     phoneExt: string | undefined;
@@ -112402,8 +113096,8 @@ export class SubmitTenancyRequestInput implements ISubmitTenancyRequestInput {
     utmParameter!: UTMParameterInfo | undefined;
     leadDate!: moment.Moment | undefined;
     leadRequestXref!: string | undefined;
-    firstName!: string;
-    lastName!: string;
+    firstName!: string | undefined;
+    lastName!: string | undefined;
     email!: string;
     phone!: string | undefined;
     phoneExt!: string | undefined;
@@ -112517,8 +113211,8 @@ export interface ISubmitTenancyRequestInput {
     utmParameter: UTMParameterInfo | undefined;
     leadDate: moment.Moment | undefined;
     leadRequestXref: string | undefined;
-    firstName: string;
-    lastName: string;
+    firstName: string | undefined;
+    lastName: string | undefined;
     email: string;
     phone: string | undefined;
     phoneExt: string | undefined;
@@ -114270,6 +114964,7 @@ export enum TenantHostType {
     PlatformApp = "PlatformApp",
     MemberPortal = "MemberPortal",
     LandingPage = "LandingPage",
+    WhiteList = "WhiteList",
 }
 
 export class TenantLandingPageInfo implements ITenantLandingPageInfo {
