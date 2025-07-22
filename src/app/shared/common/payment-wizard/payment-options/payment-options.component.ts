@@ -209,7 +209,9 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
             this.payPal.initialize(this.paymentSystemSettings.paypalClientId, type,
                 () => this.payByPaypal(),
                 () => this.payByPaypal(),
-                this.plan.currencyId
+                this.plan.currencyId,
+                this.paymentSystemSettings.paypalMerchantId,
+                this.paymentSystemSettings.paypalBNCode
             );
         }
     }

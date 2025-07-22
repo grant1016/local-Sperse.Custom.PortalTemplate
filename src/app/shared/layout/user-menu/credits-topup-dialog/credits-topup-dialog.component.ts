@@ -62,7 +62,9 @@ export class CreditsTopupDialogComponent implements OnInit {
             this.payPal.initialize(this.availablePaymentsInfo.paypalInfo.clientId, ButtonType.Payment,
                 () => this.getSubmitRequest('PayPal').pipe(map(v => v.paymentData)).toPromise(),
                 null,
-                this.currencyId
+                this.currencyId,
+                this.availablePaymentsInfo.paypalInfo.merchantId,
+                this.availablePaymentsInfo.paypalInfo.bnCode
             );
         }
     }
