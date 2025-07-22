@@ -414,6 +414,7 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
     }
 
     redirectToReceipt() {
+        this.loadingService.startLoading(this.elementRef.nativeElement);
         location.href = this.receiptLink;
     }
 
