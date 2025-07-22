@@ -128,7 +128,7 @@
                             <p class="payment-text">
                                 {{ l('PayPalPaymentDescriptionText') }}
                             </p>
-                            <pay-pal [height]="54" (onApprove)="onPayPalApprove()"></pay-pal>
+                            <pay-pal [height]="54" (onApprove)="redirectToReceipt()"></pay-pal>
                         </div>
                     </mat-tab>
                     <mat-tab *ngIf="spreedlyApplicable" [label]="l('Bank Card')">
