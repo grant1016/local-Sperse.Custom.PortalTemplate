@@ -12,6 +12,7 @@ import { ValidateTwoFactorCodeComponent } from './login/validate-two-factor-code
 import { SelectTenantComponent } from './login/select-tenant.component';
 import { AccountComponent } from './account.component';
 import { SignupComponent } from './signup/signup.component';
+import { OAuthRedirectComponent } from './oauth-redirect/oauth-redirect.component';
 
 @NgModule({
     imports: [
@@ -28,8 +29,9 @@ import { SignupComponent } from './signup/signup.component';
                     { path: 'confirm-email', component: ConfirmEmailComponent },
                     { path: 'send-code', component: SendTwoFactorCodeComponent },
                     { path: 'verify-code', component: ValidateTwoFactorCodeComponent },
-                    { path: 'select-tenant', component: SelectTenantComponent }
+                    { path: 'select-tenant', component: SelectTenantComponent },
                     //{ path: 'signup', component: SignupComponent }
+                    { path: 'oauth-redirect', component: OAuthRedirectComponent }
                 ]
             }
         ])

@@ -9,7 +9,6 @@ import {
 import { ActivatedRoute, ParamMap } from '@angular/router';
 
 /** Third party imports */
-import { MatDialog } from '@angular/material/dialog';
 import { first } from 'rxjs/operators';
 import * as moment from 'moment';
 
@@ -21,11 +20,10 @@ import { accountModuleAnimation } from '@shared/animations/routerTransition';
 import { SessionServiceProxy, UpdateUserSignInTokenOutput } from '@shared/service-proxies/service-proxies';
 import { UrlHelper } from '@shared/helpers/UrlHelper';
 import { ExternalLoginProvider, LoginService } from './login.service';
-import { SettingService } from 'abp-ng2-module';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { ConditionsModalService } from '@shared/common/conditions-modal/conditions-modal.service';
 import { environment } from '@root/environments/environment';
+import { ConditionsModalService } from '@shared/common/conditions-modal/conditions-modal.service';
 import { TitleService } from '@root/shared/common/title/title.service';
 
 export class AdLoginHostDirective {
@@ -40,29 +38,30 @@ export class AdLoginHostDirective {
 })
 export class LoginComponent implements OnInit {
     @ViewChild('loginForm') loginForm;
+    currentYear: number = moment().year();
     width = innerWidth;
     tenantId = abp.session.tenantId;
     remoteServiceBaseUrl = AppConsts.remoteServiceBaseUrl;
-    isSignUpEnabled = this.appSession.tenant && 
-        abp.setting.get('App.UserManagement.IsSignUpPageEnabled') == 'true';
-    currentYear: number = moment().year();
     tenantName = this.appSession.tenantName || AppConsts.defaultTenantName;
     conditions = ConditionsType;
-    showExternalLogin = false;
     loginInProgress = false;
     showPassword = false;
+    isLoggedIn: boolean = false;
+    isExtLogin: boolean = false;
+    showExternalLogin = false;
+    get redirectToSignUp() { return false; }
+    isSignUpEnabled = this.appSession.tenant && 
+        abp.setting.get('App.UserManagement.IsSignUpPageEnabled') == 'true';
 
     constructor(
-        public dialog: MatDialog,
         private sessionService: AbpSessionService,
         private sessionAppService: SessionServiceProxy,
-        private setting: SettingService,
-        private appSession: AppSessionService,
         private activatedRoute: ActivatedRoute,
+        public conditionsModalService: ConditionsModalService,
+        private appSession: AppSessionService,
         private titleService: TitleService,
         public loginService: LoginService,
         public ls: AppLocalizationService,
-        public conditionsModalService: ConditionsModalService
     ) {
         this.activatedRoute.queryParamMap.pipe(
             first()
@@ -70,13 +69,23 @@ export class LoginComponent implements OnInit {
             let email = paramsMap.get('email');
             if (email)
                 this.loginService.authenticateModel.userNameOrEmailAddress = email;
+
+            let exchangeCode = paramsMap.get('code');
+            let state = paramsMap.get('state');
+            let providerName = paramsMap.get('provider');
+
+            if (!!exchangeCode && !!state)
+                this.loginService.oAuth2Login(providerName, exchangeCode, state, null, this.isExtLogin, this.redirectToSignUp, (result) => {
+                    this.isLoggedIn = result.accessToken && this.isExtLogin;
+                });
+            else if (providerName)
+                this.loginService.clearOAuth2Params();
         });
     }
 
     ngOnInit(): void {
         this.titleService.setTitle('Login');
-        let tenant = this.appSession.tenant;
-        this.showExternalLogin = environment.releaseStage == 'staging' || (tenant && !environment.production);
+        this.showExternalLogin = environment.releaseStage != 'production';
         if (this.sessionService.userId > 0 && UrlHelper.getReturnUrl() && UrlHelper.getSingleSignIn()) {
             this.sessionAppService.updateUserSignInToken()
                 .subscribe((result: UpdateUserSignInTokenOutput) => {
@@ -111,11 +120,14 @@ export class LoginComponent implements OnInit {
         return abp.session.tenantId ? this.ls.l('UserNameOrEmail') : this.ls.l('EmailAddress');
     }
 
-    showHidePassword(event) {
+    showHidePassword(event?) {
         this.showPassword = !this.showPassword;
-        if (event.currentTarget.text) event.currentTarget.text = this.ls.l((this.showPassword ? 'Hide' : 'Show'));
-        this.showPassword
-            ? event.currentTarget.classList.add('visible')
-            : event.currentTarget.classList.remove('visible');
+        if (event) {
+            if (event.currentTarget.text)
+                event.currentTarget.text = this.ls.l((this.showPassword ? 'Hide' : 'Show'));
+            this.showPassword
+                ? event.currentTarget.classList.add('visible')
+                : event.currentTarget.classList.remove('visible');
+        }
     }
 }
