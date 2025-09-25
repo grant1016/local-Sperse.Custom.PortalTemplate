@@ -26,6 +26,7 @@ import { TenantChangeComponent } from './shared/tenant-change.component';
 import { SelectTenantComponent } from './login/select-tenant.component';
 import { ApplicationServiceProxy } from '@shared/service-proxies/service-proxies';
 import { TranslateModule } from '@ngx-translate/core';
+import { OAuthRedirectModule } from './oauth-redirect/oauth-redirect.module';
 
 @NgModule({
     imports: [
@@ -40,7 +41,8 @@ import { TranslateModule } from '@ngx-translate/core';
         DxButtonModule,
         TranslateModule.forChild({
             extend: true
-        })
+        }),
+        OAuthRedirectModule
     ],
     declarations: [
         AccountComponent,

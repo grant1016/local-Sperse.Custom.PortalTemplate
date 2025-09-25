@@ -1,6 +1,6 @@
 {
   "name": "sperse-portal-template",
-  "version": "8.6.6",
+  "version": "8.7.3",
   "license": "MIT",
   "angular-cli": {},
   "scripts": {
@@ -51,8 +51,8 @@
     "@types/lodash": "^4.14.110",
     "abp-ng2-module": "^6.3.0",
     "abp-web-resources": "^5.4.0",
-    "angular-code-input": "^1.6.0",
     "angular-cc-library": "3.0.0",
+    "angular-code-input": "^1.6.0",
     "angular2-counto": "^1.2.5",
     "animate.css": "3.5.2",
     "autosize": "^4.0.0",
@@ -114,6 +114,7 @@
     "libphonenumber-js": "^1.7.57",
     "localforage": "^1.5.0",
     "lodash": "^4.17.15",
+    "lucide-angular": "^0.544.0",
     "malihu-custom-scrollbar-plugin": "^3.1.5",
     "moment": "^2.22.1",
     "moment-timezone": "^0.5.17",
@@ -132,8 +133,8 @@
     "ngx-google-places-autocomplete": "^2.0.5",
     "ngx-image-cropper": "^5.0.1",
     "ngx-mask": "^13.1.1",
-    "odata-query": "5.7.0",
     "number-to-words": "^1.2.4",
+    "odata-query": "5.7.0",
     "pace-progress": "^1.0.2",
     "parse-full-name": "^1.2.3",
     "popper.js": "^1.12.9",
@@ -168,6 +169,7 @@
     "underscore.string": "^3.3.4",
     "urijs": "^1.19.0",
     "waypoints": "^4.0.1",
+    "windows-iana": "^5.1.0",
     "zone.js": "~0.11.4"
   },
   "devDependencies": {

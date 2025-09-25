@@ -15,11 +15,14 @@ export class AppConsts {
     static appBaseUrl: string;
     static appBaseHref: string; // returns angular's base-href parameter value if used during the publish
     static appBaseUrlFormat: string;
+    static appConfigOrigin: any;
+    
     static recaptchaSiteKey: string;
     static googleSheetClientId: string;
     static subscriptionExpireNootifyDayCount: number;
     static subscriptionRecurringBillingPeriod = 40; /* Days */
     static subscriptionGracePeriod = 7; /* Days */
+    static appConfigOrigin: any;
 
     static localeMappings: any = [];
 
