@@ -57560,7 +57560,60 @@ export class UserInvoiceServiceProxy {
         }
         return _observableOf<string>(null as any);
     }
+
+    /**
+     * @param body (optional) 
+     * @return Success
+     */
+    setDiscordForContact(body: SetDiscordForContactInput | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/UserInvoice/SetDiscordForContact";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json;odata.metadata=minimal;odata.streaming=true",
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processSetDiscordForContact(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processSetDiscordForContact(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<void>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<void>;
+        }));
+    }
+
+    protected processSetDiscordForContact(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(null as any);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(null as any);
+    }
 }
+
 
 @Injectable()
 export class UserLinkServiceProxy {
@@ -82282,7 +82335,44 @@ export class GetIncomeStatisticsDataOutput implements IGetIncomeStatisticsDataOu
 export interface IGetIncomeStatisticsDataOutput {
     incomeStatistics: IncomeStastistic[] | undefined;
 }
+export interface IInvoiceReceiptDiscordInfo {
+    showDiscordAuthButton: boolean;
+    discordAppId: string | undefined;
+}
+export class InvoiceReceiptDiscordInfo implements IInvoiceReceiptDiscordInfo {
+    showDiscordAuthButton!: boolean;
+    discordAppId!: string | undefined;
 
+    constructor(data?: IInvoiceReceiptDiscordInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.showDiscordAuthButton = _data["showDiscordAuthButton"];
+            this.discordAppId = _data["discordAppId"];
+        }
+    }
+
+    static fromJS(data: any): InvoiceReceiptDiscordInfo {
+        data = typeof data === 'object' ? data : {};
+        let result = new InvoiceReceiptDiscordInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["showDiscordAuthButton"] = this.showDiscordAuthButton;
+        data["discordAppId"] = this.discordAppId;
+        return data;
+    }
+}
 export class GetInvoiceReceiptInfoOutput implements IGetInvoiceReceiptInfoOutput {
     tenantName!: string | undefined;
     tenantLogo!: string | undefined;
@@ -82293,6 +82383,7 @@ export class GetInvoiceReceiptInfoOutput implements IGetInvoiceReceiptInfoOutput
     currencyId!: string | undefined;
     invoiceStatus!: InvoiceStatus;
     waitingForFutureSubscriptionPayment!: boolean;
+    memberPortalUrl!: string;
     paymentDate!: moment.Moment | undefined;
     paymentCardNumber!: string | undefined;
     paymentCardNetwork!: string | undefined;
@@ -82302,6 +82393,7 @@ export class GetInvoiceReceiptInfoOutput implements IGetInvoiceReceiptInfoOutput
     redirectUrls!: string[] | undefined;
     resources!: InvoiceReceiptResource[] | undefined;
     events!: InvoiceEventInfo[] | undefined;
+    discordInfo!: InvoiceReceiptDiscordInfo | undefined;
 
     constructor(data?: IGetInvoiceReceiptInfoOutput) {
         if (data) {
@@ -82322,6 +82414,7 @@ export class GetInvoiceReceiptInfoOutput implements IGetInvoiceReceiptInfoOutput
             this.invoiceAmount = _data["invoiceAmount"];
             this.currencyId = _data["currencyId"];
             this.invoiceStatus = _data["invoiceStatus"];
+            this.memberPortalUrl = _data["memberPortalUrl"];
             this.waitingForFutureSubscriptionPayment = _data["waitingForFutureSubscriptionPayment"];
             this.paymentDate = _data["paymentDate"] ? moment(_data["paymentDate"].toString()) : <any>undefined;
             this.paymentCardNumber = _data["paymentCardNumber"];
@@ -82344,6 +82437,7 @@ export class GetInvoiceReceiptInfoOutput implements IGetInvoiceReceiptInfoOutput
                 for (let item of _data["events"])
                     this.events!.push(InvoiceEventInfo.fromJS(item));
             }
+            this.discordInfo = _data["discordInfo"] ? InvoiceReceiptDiscordInfo.fromJS(_data["discordInfo"]) : <any>undefined;
         }
     }
 
@@ -82386,6 +82480,7 @@ export class GetInvoiceReceiptInfoOutput implements IGetInvoiceReceiptInfoOutput
             for (let item of this.events)
                 data["events"].push(item.toJSON());
         }
+        data["discordInfo"] = this.discordInfo ? this.discordInfo.toJSON() : <any>undefined;
         return data;
     }
 }
@@ -124784,4 +124879,52 @@ function blobToText(blob: any): Observable<string> {
             reader.readAsText(blob);
         }
     });
+}
+
+export class SetDiscordForContactInput implements ISetDiscordForContactInput {
+    tenantId!: number;
+    publicId!: string;
+    discordUserId!: string;
+    discordUserName!: string;
+
+    constructor(data?: ISetDiscordForContactInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.tenantId = _data["tenantId"];
+            this.publicId = _data["publicId"];
+            this.discordUserId = _data["discordUserId"];
+            this.discordUserName = _data["discordUserName"];
+        }
+    }
+
+    static fromJS(data: any): SetDiscordForContactInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new SetDiscordForContactInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["tenantId"] = this.tenantId;
+        data["publicId"] = this.publicId;
+        data["discordUserId"] = this.discordUserId;
+        data["discordUserName"] = this.discordUserName;
+        return data;
+    }
+}
+
+export interface ISetDiscordForContactInput {
+    tenantId: number;
+    publicId: string;
+    discordUserId: string;
+    discordUserName: string;
 }

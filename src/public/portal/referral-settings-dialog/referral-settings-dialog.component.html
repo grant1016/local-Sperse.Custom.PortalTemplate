@@ -1,0 +1,92 @@
+<div class="referral-settings-dialog" [class]="isDarkMode ? 'dark-mode' : ''">
+    <!-- Header -->
+    <div class="dialog-header">
+        <div>
+            <div class="header-left">
+                <lucide-angular name="Upload" class="w-[20px] h-[20px]"
+                    [color]="isDarkMode ? '#3c83f6' : 'black'"></lucide-angular>
+                <div class="header-text">
+                    <h2 class="dialog-title" [class]="isDarkMode ? 'text-white' : 'text-black'">Referral Settings</h2>
+                </div>
+            </div>
+            <p class="dialog-subtitle" [class]="isDarkMode ? 'text-[#94a3b8]' : 'text-[#64748b]'">
+                Manage your referral code and share your tracking link to earn commissions.
+            </p>
+        </div>
+        <button class="close-button" (click)="onClose()">
+            <lucide-angular name="X" class="w-[16px] h-[16px]"
+                [color]="isDarkMode ? 'white' : 'black'"></lucide-angular>
+        </button>
+    </div>
+
+    <!-- Content -->
+    <div class="dialog-content mt-[1rem]">
+        <!-- Your Referral Code Section -->
+        <div class="p-[1.5rem] rounded-[0.75rem] "
+            [class]="isDarkMode ? '!bg-[#282c3480] border-[#2e3d5280]' : 'bg-white border-[#e2e8f080]'">
+            <h3 class="text-[1.125rem]/[1.75rem] font-semibold mb-0 pb-[1rem]"
+                [class]="isDarkMode ? 'text-white' : 'text-black'">Your Referral Code</h3>
+            <div class="input-group ">
+                <div class="flex items-center justify-between w-full">
+                    <label class="text-[0.875rem]/[1.25rem] font-medium mb-0"
+                        [class]="isDarkMode ? 'text-white' : 'text-black'">Custom
+                        Referral
+                        Code</label>
+                    <button class="text-[0.75rem]/[1rem] font-medium mb-0"
+                    [class]="isDarkMode?'text-[#3c83f6]':'text-black'"
+                    (click)="useDiscordId()">
+                        Use DiscordID
+                    </button>
+                </div>
+                <input type="text" class="w-full h-[2.5rem] py-[0.5rem] px-[0.75rem] mt-[0.5rem] rounded-[0.75rem]" [class]="isDarkMode ? 'bg-[#020817] border-[#e2e8f0]' : 'bg-[#eff2f5] border-[#e2e8f0]'"
+                    [(ngModel)]="referralCode" placeholder="Enter your referral code">
+
+                <p class="mt-[0.5rem] text-[#64748b] text-[0.75rem]/[1rem]" [class]="isDarkMode ? 'text-[#94a3b8]' : 'text-[#64748b]'">
+                    Use letters and numbers only. Keep it memorable and professional.
+                </p>
+            </div>
+        </div>
+
+        <!-- Your Referral Link Section -->
+        <div class="section mt-[1rem]">
+            <h3 class="section-title" [class]="isDarkMode ? 'text-white' : 'text-black'">Your Referral Link</h3>
+            <div class="input-group">
+                <input type="text" class="referral-link-input" [class]="isDarkMode ? 'dark-input' : 'light-input'"
+                    [value]="referralLink" readonly>
+                <p class="link-description" [class]="isDarkMode ? 'text-[#94a3b8]' : 'text-[#64748b]'">
+                    Share this link to earn commissions on new member signups.
+                </p>
+                <div class="action-buttons w-full">
+                    <button class="copy-button w-full justify-center" (click)="copyReferralLink()">
+                        <lucide-angular name="Copy" class="w-[16px] h-[16px]" color="white"></lucide-angular>
+                        Copy Link
+                    </button>
+                    <button class="share-button w-full justify-center" (click)="shareOnSocial()">
+                        <lucide-angular name="Share" class="w-[16px] h-[16px]"
+                            [color]="isDarkMode ? 'white' : 'black'"></lucide-angular>
+                        Share on Social
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Commission Structure Section -->
+        <div class="commission-section" [class]="isDarkMode ? 'dark-commission' : 'light-commission'">
+            <h3 class="commission-title" [class]="isDarkMode ? 'text-white' : 'text-black'">Commission Structure</h3>
+            <ul class="commission-list">
+                <li class="commission-item" [class]="isDarkMode ? 'text-[#94a3b8]' : 'text-[#64748b]'">
+                    Earn 25% commission on first month subscription
+                </li>
+                <li class="commission-item" [class]="isDarkMode ? 'text-[#94a3b8]' : 'text-[#64748b]'">
+                    15% recurring commission on subsequent months
+                </li>
+                <li class="commission-item" [class]="isDarkMode ? 'text-[#94a3b8]' : 'text-[#64748b]'">
+                    Minimum payout threshold: $50
+                </li>
+                <li class="commission-item" [class]="isDarkMode ? 'text-[#94a3b8]' : 'text-[#64748b]'">
+                    Payments processed monthly on the 1st
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>

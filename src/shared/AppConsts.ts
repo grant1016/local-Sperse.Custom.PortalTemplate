@@ -22,6 +22,7 @@ export class AppConsts {
     static subscriptionExpireNootifyDayCount: number;
     static subscriptionRecurringBillingPeriod = 40; /* Days */
     static subscriptionGracePeriod = 7; /* Days */
+    static appConfigOrigin: any;
 
     static localeMappings: any = [];
 

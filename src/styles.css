@@ -210,3 +210,11 @@ i.save-to-clipboard {
 .pac-container {
     z-index: 1002;
 }
+
+.referral-settings-dialog-panel {
+    .mat-dialog-container {
+      padding: 0 !important;
+      border-radius: 12px !important;
+      overflow: hidden;
+    }
+  }
