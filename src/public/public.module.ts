@@ -4,6 +4,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { HomeComponent } from './home/home.component';
 import { PublicRoutingModule } from './public-routing.module';
 import { MemberPortalComponent } from './portal/member.portal.component';
+import { ReferralSettingsDialogComponent } from './portal/referral-settings-dialog/referral-settings-dialog.component';
 import { LucideAngularModule, CheckCircle, Sun, Moon, Users, Check, FileText, Calendar, Headphones, Download, Receipt, Mail, Link, Copy, CalendarPlus, MapPin, ExternalLink, Clock, Globe, Send, ChevronDown, User, Share, Settings, Crown, MoreHorizontal, Upload, X, LogOut} from 'lucide-angular';
 import { ServiceProxyModule } from '@shared/service-proxies/service-proxy.module';
 import { API_BASE_URL } from '@shared/service-proxies/service-proxies';
@@ -15,7 +16,8 @@ import { ClipboardModule } from 'ngx-clipboard';
 @NgModule({
   declarations: [
       HomeComponent,
-      MemberPortalComponent
+      MemberPortalComponent,
+      ReferralSettingsDialogComponent
     ],
     imports: [
       CommonModule,

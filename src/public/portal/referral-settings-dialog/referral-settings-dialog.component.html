@@ -57,11 +57,11 @@
                     Share this link to earn commissions on new member signups.
                 </p>
                 <div class="action-buttons w-full">
-                    <button class="copy-button w-full justify-center" (click)="copyReferralLink()">
-                        <lucide-angular name="Copy" class="w-[16px] h-[16px]" color="white"></lucide-angular>
+                    <button class="copy-button w-full justify-center" [class]="isDarkMode?'!bg-[#3c83f6]  !border-[#3c83f6] !text-[#0f172a]':''"  (click)="copyReferralLink()">
+                        <lucide-angular name="Copy" class="w-[16px] h-[16px]" [color]="isDarkMode?'#0f172a':'white'"></lucide-angular>
                         Copy Link
                     </button>
-                    <button class="share-button w-full justify-center" (click)="shareOnSocial()">
+                    <button class="share-button w-full justify-center" [class]="isDarkMode?'!bg-[#1e293b] !text-white !border-[#1e293b]':''" (click)="shareOnSocial()">
                         <lucide-angular name="Share" class="w-[16px] h-[16px]"
                             [color]="isDarkMode ? 'white' : 'black'"></lucide-angular>
                         Share on Social
