@@ -27,6 +27,7 @@ import { ConditionsModalService } from '@shared/common/conditions-modal/conditio
 import { AppConsts } from '@shared/AppConsts';
 import { finalize } from 'rxjs/operators';
 import { ReferralSettingsDialogComponent } from './referral-settings-dialog/referral-settings-dialog.component';
+import { SubscriptionManagementDialogComponent } from './subscription-management-dialog/subscription-management-dialog.component';
 
 @Component({
     selector: 'public-portal',
@@ -130,6 +131,7 @@ export class MemberPortalComponent implements OnInit, OnDestroy {
         this.loadTailwindCSS();
         this.clearQueryParam();
         this.initializeConfetti();
+        this.isDarkMode = localStorage.getItem('isDarkMode') === 'true';
         abp.ui.setBusy();
 
         if (this.isTestMode) {
@@ -580,6 +582,7 @@ export class MemberPortalComponent implements OnInit, OnDestroy {
     // Dark mode toggle for receipt page only
     toggleDarkMode() {
         this.isDarkMode = !this.isDarkMode;
+        localStorage.setItem('isDarkMode', this.isDarkMode.toString());
     }
 
     // Calendar dropdown methods
@@ -680,6 +683,21 @@ END:VCALENDAR`;
         const dialogRef = this.dialog.open(ReferralSettingsDialogComponent, {
             maxWidth: '42rem',
             panelClass: 'referral-settings-dialog-panel',
+            data: {
+                isDarkMode: this.isDarkMode
+            }
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+            // Handle dialog close if needed
+        });
+    }
+
+    openSubscriptionManagementDialog() {
+        const dialogRef = this.dialog.open(SubscriptionManagementDialogComponent, {
+            maxWidth: '500px',
+            width: '100%',
+            panelClass: 'subscription-management-dialog-panel',
             data: {
                 isDarkMode: this.isDarkMode
             }

@@ -1,0 +1,272 @@
+<div class="subscription-management-dialog" [class]="isDarkMode ? 'dark-mode' : ''">
+    <!-- Main Step -->
+    <div *ngIf="step === 'main'" class="dialog-content">
+        <!-- Header -->
+        <button class="absolute top-[1rem] right-[1rem]" (click)="onClose()">
+            <lucide-angular name="X" class="w-[16px] h-[16px]"
+                [color]="isDarkMode ? 'white' : 'black'"></lucide-angular>
+        </button>
+        <div class="dialog-header">
+            <div class="header-left">
+                <lucide-angular name="Settings" class="w-[20px] h-[20px] text-[#0f172a]"
+                    [color]="isDarkMode ? '#3c83f6' : '#0f172a'"></lucide-angular>
+                <h2 class="dialog-title text-xl" [class]="isDarkMode ? 'text-white' : 'text-black'">
+                    Manage Your Subscription
+                </h2>
+            </div>
+        </div>
+
+        <!-- Current Plan Card -->
+        <div class="plan-card" [class]="isDarkMode ? '!bg-[#282c34] border-[#1f293780]' : 'bg-white'">
+            <div class="plan-header">
+                <div class="plan-info">
+                    <div class="plan-status">
+                        <span class="text-sm text-muted-foreground">Current Plan</span>
+                        <span class="status-badge bg-[#16a24933] text-[#16a249] border border-[#16a24933]">Active</span>
+                    </div>
+                    <h3 class="plan-name text-lg font-semibold" [class]="isDarkMode ? 'text-white' : 'text-black'">
+                        {{subscriptionData.planName}}
+                    </h3>
+                </div>
+            </div>
+
+            <div class="plan-details">
+                <div class="detail-item" [class]="isDarkMode ? '!bg-[#02081780]' : 'bg-[#eff2f580]'">
+                    <div class="flex items-center gap-[0.5rem]">
+                        <lucide-angular name="Calendar" class="w-4 h-4 text-[#64748b]"></lucide-angular>
+                        <span class="text-sm">Next billing</span>
+                    </div>
+                    <span class="text-sm font-medium"
+                        [class]="isDarkMode ? 'text-white' : 'text-black'">{{subscriptionData.nextBilling}}</span>
+                </div>
+                <div class="detail-item" [class]="isDarkMode ? '!bg-[#02081780]' : 'bg-[#eff2f580]'">
+                    <div class="flex items-center gap-[0.5rem]">
+                        <lucide-angular name="CreditCard" class="w-4 h-4 text-[#64748b]"></lucide-angular>
+                        <span class="text-sm">Amount</span>
+                    </div>
+                    <span class="text-lg font-semibold "
+                        [class]="isDarkMode ? 'text-[#3c83f6]' : 'text-[#0f172a]'">{{subscriptionData.amount}}</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+            <button class="action-btn" (click)="updatePaymentMethod()"
+                [class]="isDarkMode ? '!bg-[#020817] border !border-[#2e3d52] text-white' : 'bg-[#eff2f5] border !border-[#e2e8f0] text-[#0f172a]'">
+                <lucide-angular name="CreditCard" class="w-4 h-4"></lucide-angular>
+                Update Payment Method
+            </button>
+            <button class="action-btn" (click)="changePlan()"
+                [class]="isDarkMode ? '!bg-[#020817] border !border-[#2e3d52] text-white' : 'bg-[#eff2f5] border-[#e2e8f0] text-[#0f172a]'">
+                <lucide-angular name="Settings" class="w-4 h-4"></lucide-angular>
+                Change Plan
+            </button>
+            <button class="action-btn cancel-btn" (click)="handleCancel()"
+                [class]="isDarkMode ? '!bg-[#020817] border !border-[#ef44444d] text-red-400' : 'bg-[#eff2f5] border border-[#ef44444d] text-red-600'">
+                <lucide-angular name="AlertTriangle" class="w-4 h-4" color="currentColor"></lucide-angular>
+                Cancel Subscription
+            </button>
+        </div>
+    </div>
+
+    <!-- Cancel Options Step -->
+    <div *ngIf="step === 'cancel-options'" class="dialog-content">
+        <button class="absolute top-[1rem] right-[1rem]" (click)="onClose()">
+            <lucide-angular name="X" class="w-[16px] h-[16px]"
+                [color]="isDarkMode ? 'white' : 'black'"></lucide-angular>
+        </button>
+        <div class="dialog-header">
+            <div class="header-left">
+                <lucide-angular name="AlertTriangle" class="w-[20px] h-[20px] text-[#ef4444]"
+                    color="#dc2626"></lucide-angular>
+                <h2 class="dialog-title text-xl text-[#ef4444]"
+                    [class]="isDarkMode ? 'text-red-400' : 'text-[#ef4444]'">
+                    Cancel Your Subscription
+                </h2>
+            </div>
+        </div>
+
+        <div class="warning-message"
+            [class]="isDarkMode ? '!bg-[#1f29374d] !border-[#ef444480]' : '!bg-[#f1f5f94d] !border-[#ef444480]'">
+            <p class="text-sm text-muted-foreground">
+                We're sorry to see you go. Please choose when you'd like your cancellation to take effect:
+            </p>
+        </div>
+
+        <div class="cancellation-options">
+            <div class="option-item" [class]="cancellationType === 'end-of-period' ? 'selected' : ''" [class]="isDarkMode ? '!border-2 !border-[#2e3d52]' : '!border-2 !border-[#3c83f64d]'"
+                (click)="cancellationType = 'end-of-period'">
+                <div class="option-radio">
+                    <div class="radio-circle" [class]="cancellationType === 'end-of-period' ? 'selected' : ''"></div>
+                </div>
+                <div class="option-content">
+                    <label class="option-title">Cancel at end of current billing period</label>
+                    <p class="option-description">
+                        Keep access until <span class="font-medium"
+                            [class]="isDarkMode ? 'text-white' : 'text-black'">{{subscriptionData.nextBilling}}</span>.
+                        No additional charges.
+                    </p>
+                    <div class="option-badge">
+                        <lucide-angular name="Check" class="w-3 h-3" color="#16a34a"></lucide-angular>
+                        <span>Recommended option</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="option-item" [class]="cancellationType === 'immediate' ? 'selected' : ''" [class]="isDarkMode ? '!border-2 !border-[#2e3d52]' : '!border-2 !border-[#3c83f64d]'"
+                (click)="cancellationType = 'immediate'">
+                <div class="option-radio">
+                    <div class="radio-circle" [class]="cancellationType === 'immediate' ? 'selected' : ''"></div>
+                </div>
+                <div class="option-content">
+                    <label class="option-title">Cancel immediately</label>
+                    <p class="option-description">
+                        Lose access right away. <span class="font-medium text-[#ef4444]">No refund</span> for current
+                        period.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="dialog-actions flex md:flex-row flex-col">
+            <button class="btn-secondary" (click)="step = 'retention-offer'">
+                Back
+            </button>
+            <button class="btn-destructive" (click)="handleCancelConfirm()">
+                Continue Cancellation
+            </button>
+        </div>
+    </div>
+
+    <!-- Retention Offer Step -->
+    <div *ngIf="step === 'retention-offer'" class="dialog-content">
+        <button class="absolute top-[1rem] right-[1rem]" (click)="onClose()">
+            <lucide-angular name="X" class="w-[16px] h-[16px]"
+                [color]="isDarkMode ? 'white' : 'black'"></lucide-angular>
+        </button>
+        <div class="dialog-header text-center">
+            <div class="offer-icon"
+                [class]="isDarkMode ? '!bg-gradient-to-r from-[#3c83f6] to-[#3c83f699]' : '!bg-gradient-to-r from-[#3c83f6] to-[#3c83f699]'">
+                <lucide-angular name="Gift" class="w-6 h-6" [color]="isDarkMode?'#0f172a':'white'"></lucide-angular>
+            </div>
+            <h2 class="dialog-title text-xl  bg-clip-text text-transparent"
+                [class]="isDarkMode ? 'bg-gradient-to-r from-[#3c83f6] to-[#3c83f6cc]' : 'bg-gradient-to-r from-[#0f172a] to-[#0f172acc]'">
+                Wait! Special Offer Just for You
+            </h2>
+        </div>
+
+        <div class="offer-card"
+            [class]="isDarkMode ? 'bg-gradient-to-br from-[#3c83f61a] via-[#3c83f600] to-[#020817] border-2 border-[#3c83f633] bg-[#282c34] before:!bg-gradient-to-br before:!from-[#3c83f633] before:!to-transparent ' : 'bg-gradient-to-br from-[#0f172a1a] via-[#0f172a1a] to-[#eff2f5] border-2 border-[#0f172a33] bg-white before:bg-[#0f172a33] before:opacity-50'">
+            <div class="offer-content">
+                <div class="offer-header">
+                    <div class="offer-badge">
+                        <lucide-angular name="Sparkles" class="w-6 h-6 text-] animate-pulse"
+                            [color]="isDarkMode?'#3c83f6':'#0f172a'"></lucide-angular>
+                        <h3 class="offer-title"
+                            [class]="isDarkMode ? '!bg-gradient-to-r !from-[#3c83f6] !to-[#3c83f6cc]' : ''">50% OFF</h3>
+                        <lucide-angular name="Sparkles" class="w-6 h-6 text-[#0f172a] animate-pulse"
+                            [color]="isDarkMode?'#3c83f6':'#0f172a'"></lucide-angular>
+                    </div>
+                    <p class="offer-subtitle">Stay with us for 90 more days!</p>
+                </div>
+
+                <div class="pricing-section">
+                    <p class="original-price line-through text-sm text-[#64748b]">
+                        Regular price: $59/month
+                    </p>
+                    <div class="discounted-price"
+                        [class]="isDarkMode ? '!bg-[#020817] border-primary/20' : 'bg-[#eff2f5cc] border border-[#0f172a33]'">
+                        <p class="price-amount text-2xl sm:text-3xl font-bold " [class]="isDarkMode ? 'text-[#3c83f6]' : 'text-[#0f172a]'">
+                            $29.95/month
+                        </p>
+                        <p class="price-note text-sm " [class]="isDarkMode ? 'text-[#94a3b8]' : 'text-[#0f172a]'">
+                            For the next 3 months only
+                        </p>
+                    </div>
+
+                    <button class="accept-offer-btn" (click)="handleAcceptOffer()">
+                        <lucide-angular name="Check" class="w-5 h-5" color="white"></lucide-angular>
+                        Accept 50% Off - Get Started
+                    </button>
+                </div>
+            </div>
+
+            <div class="benefits-section"
+                [class]="isDarkMode ? '!bg-[#020817] border-primary/10' : '!bg-[#eff2f5b3] border !border-[#0f172a1a]'">
+                <h4 class="benefits-title">You'll still get everything:</h4>
+                <div class="benefits-list">
+                    <div class="benefit-item">
+                        <div class="benefit-icon">
+                            <lucide-angular name="Check" class="w-3 h-3" color="#16a34a"></lucide-angular>
+                        </div>
+                        <span class="text-sm">Premium trading strategies</span>
+                    </div>
+                    <div class="benefit-item">
+                        <div class="benefit-icon">
+                            <lucide-angular name="Check" class="w-3 h-3" color="#16a34a"></lucide-angular>
+                        </div>
+                        <span class="text-sm">Live market analysis</span>
+                    </div>
+                    <div class="benefit-item">
+                        <div class="benefit-icon">
+                            <lucide-angular name="Check" class="w-3 h-3" color="#16a34a"></lucide-angular>
+                        </div>
+                        <span class="text-sm">Discord community access</span>
+                    </div>
+                    <div class="benefit-item">
+                        <div class="benefit-icon">
+                            <lucide-angular name="Check" class="w-3 h-3" color="#16a34a"></lucide-angular>
+                        </div>
+                        <span class="text-sm">Monthly masterclasses</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="decline-section">
+            <button class="decline-btn" (click)="handleDeclineOffer()">
+                No Thanks, Cancel
+            </button>
+        </div>
+
+        <div class="expiry-notice" [class]="isDarkMode ? '!bg-[#1f29374d]' : 'bg-muted/30'">
+            <p class="text-xs text-muted-foreground">
+                ⚡ This exclusive offer expires when you close this window
+            </p>
+        </div>
+    </div>
+
+    <!-- Confirmed Step -->
+    <div *ngIf="step === 'confirmed'" class="dialog-content text-center">
+        <button class="absolute top-[1rem] right-[1rem]" (click)="onClose()">
+            <lucide-angular name="X" class="w-[16px] h-[16px]"
+                [color]="isDarkMode ? 'white' : 'black'"></lucide-angular>
+        </button>
+        <div class="dialog-header">
+            <h2 class="dialog-title text-xl" [class]="isDarkMode ? 'text-white' : 'text-black'">Thank You!</h2>
+        </div>
+
+        <div class="success-content">
+            <div class="success-icon">
+                <lucide-angular name="Check" class="w-8 h-8 text-success" color="#16a34a"></lucide-angular>
+            </div>
+
+            <div class="success-message">
+                <h3 class="success-title" [class]="isDarkMode ? 'text-white' : 'text-black'">We're glad you're staying!
+                </h3>
+                <div class="success-details !bg-[#1cca5b1a] border !border-[#1cca5b33]">
+                    <p class="text-sm text-muted-foreground">
+                        Your <span class="font-semibold text-success">50% discount</span> has been applied for the next
+                        3 months.
+                        You'll continue to have full access to all premium features.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <button class="close-btn" [class]="isDarkMode ? '!bg-[#3c83f6e6]  !text-[#0f172a]' : ''" (click)="onClose()">
+            Close
+        </button>
+    </div>
+</div>
