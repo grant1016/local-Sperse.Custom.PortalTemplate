@@ -235,5 +235,10 @@ i.save-to-clipboard {
       padding: 0 !important;
       border-radius: 12px !important;
       overflow: hidden;
+      background: none!important;
     }
+  }
+
+  .cdk-overlay-dark-backdrop{
+    background-color: #000c;
   }
