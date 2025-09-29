@@ -15,6 +15,7 @@ import { DxDataGridModule } from 'devextreme-angular/ui/data-grid';
 import { DxTextBoxModule } from 'devextreme-angular/ui/text-box';
 import { DxListModule } from 'devextreme-angular/ui/list';
 import { DxTooltipModule } from 'devextreme-angular/ui/tooltip';
+import { DxRadioGroupModule } from 'devextreme-angular/ui/radio-group';
 import { ImageViewerModule } from 'ng2-image-viewer';
 
 /** Application imports */
@@ -40,6 +41,7 @@ import { CancelSubscriptionDialogComponent } from './contacts/subscriptions/canc
 import { CountsAndTotalsModule } from '@shared/crm/dashboard-widgets/counts-and-totals/counts-and-totals.module';
 import { TypesDropdownComponent } from '@app/crm/shared/types-dropdown/types-dropdown.component';
 import { InvoicesComponent } from './invoices/invoices.component';
+import { DateTimeModule } from '@shared/common/pipes/datetime/datetime.module';
 
 @NgModule({
     imports: [
@@ -52,6 +54,7 @@ import { InvoicesComponent } from './invoices/invoices.component';
         GhostListModule,
         DxTextBoxModule,
         DxTooltipModule,
+        DxRadioGroupModule,
         DxDataGridModule,
         ActionMenuModule,
         DxSelectBoxModule,
@@ -65,7 +68,8 @@ import { InvoicesComponent } from './invoices/invoices.component';
         CountsAndTotalsModule,
         ImageViewerModule,
         MatDialogModule,
-        MatInputModule
+        MatInputModule,
+        DateTimeModule
     ],
     declarations: [
         LeadsComponent,

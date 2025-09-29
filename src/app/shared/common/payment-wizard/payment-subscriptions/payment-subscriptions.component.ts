@@ -127,9 +127,18 @@ export class PaymentSubscriptionsComponent extends AppComponentBase implements O
             return [];
     }
 
-    isExpired(cell) {
-        return cell.data.statusCode == 'A' && cell.data.paymentPeriodType != RecurringPaymentFrequency.LifeTime &&
-            cell.data.endDate && moment(cell.data.endDate).diff(moment(), 'minutes') <= 0;
+    isExpired(data: OrderSubscriptionDto) {
+        return data.statusCode == 'A' && data.paymentPeriodType != RecurringPaymentFrequency.LifeTime &&
+            data.endDate && moment(data.endDate).diff(moment(), 'minutes') <= 0;
+    }
+
+    getDisplayStatus(data: OrderSubscriptionDto) {
+        return data.statusCode == 'A' && data.cancellationDate ? 'Cancelling' : data.status;
+    }
+
+    getStatusClassName(data: OrderSubscriptionDto){
+        return (data.statusCode == 'A' && data.cancellationDate) ? 'X' :
+             this.isExpired(data) ? 'E' : data.statusCode;
     }
 
     toggleActionsMenu(event, data) {
@@ -165,7 +174,11 @@ export class PaymentSubscriptionsComponent extends AppComponentBase implements O
         this.dialog.open(CancelSubscriptionDialogComponent, {
             width: '400px',
             data: {
-                title: this.l('CancelBillingConfirm')
+                title: this.l('CancelBillingConfirm'),
+                cancelAtPeriodEnd: false,
+                endDate: capturedData.endDate,
+                cancellationDate: capturedData.cancellationDate,
+                gateway: capturedData.gateway
             }
         }).afterClosed().subscribe(result => {
             if (result) {
@@ -173,7 +186,8 @@ export class PaymentSubscriptionsComponent extends AppComponentBase implements O
                 this.subscriptionProxy
                     .cancel(new CancelOrderSubscriptionInput({
                         subscriptionId: capturedData.id,
-                        cancelationReason: result.cancellationReason
+                        cancelationReason: result.cancellationReason,
+                        cancelAtPeriodEnd: result.cancelAtPeriodEnd
                     })).pipe(finalize(() => this.finishLoading())).subscribe(() => {
                         capturedData.statusCode = 'C';
                         abp.notify.success(this.l('Cancelled'));

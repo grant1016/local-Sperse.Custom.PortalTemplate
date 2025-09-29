@@ -104,6 +104,7 @@ export class DashboardWidgetsService  {
             debounceTime(100),
             tap(() => this.totalsDataLoading.next(true)),
             switchMap(([period, contactId, orgUnitIds, ]: [PeriodModel, number, number[], null]) => this.dashboardServiceProxy.getTotals(
+                false,
                 SettingsHelper.getCurrency(),
                 period && period.from,
                 period && period.to,

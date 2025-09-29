@@ -1,5 +1,20 @@
 <h1 mat-dialog-title class="text-center">{{data.title}}</h1>
 <div mat-dialog-content>
+    <ng-container *ngIf="data.endDate && showCancelAtPeriodEnd">
+        <dx-radio-group [(value)]="data.cancelAtPeriodEnd"
+                        [items]="cancelOptions"
+                        valueExpr="id">
+            <div *dxTemplate="let option of 'item'">
+                <div>
+                    {{ option.text }}
+                    <span *ngIf="option.id" class="end-date">({{data.endDate | datetime: formatting.dateMoment}})</span>
+                </div>
+            </div>
+        </dx-radio-group>
+    </ng-container>
+    <ng-container *ngIf="data.cancellationDate">
+        <div class="cancellation-date-warning">Your subscription will end at the close of this billing period, unless you cancel immediately now</div>
+    </ng-container>
     <mat-form-field appearance="legacy">
         <mat-label>{{ls.l('Cancellation reason')}}</mat-label>
         <input matInput

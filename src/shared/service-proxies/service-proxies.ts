@@ -1988,14 +1988,13 @@ export class AffiliatePayoutSettingServiceProxy {
     }
 
     /**
-     * @param type (optional) 
      * @return Success
      */
-    delete(type: PaymentSettingType | undefined): Observable<void> {
+    delete(type: PaymentSettingType): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CRM/AffiliatePayoutSetting/Delete?";
-        if (type === null)
-            throw new Error("The parameter 'type' cannot be null.");
-        else if (type !== undefined)
+        if (type === undefined || type === null)
+            throw new Error("The parameter 'type' must be defined and cannot be null.");
+        else
             url_ += "type=" + encodeURIComponent("" + type) + "&";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -3286,9 +3285,10 @@ export class BankAccountsServiceProxy {
      * @param accounts (optional) 
      * @param startDate (optional) 
      * @param endDate (optional) 
+     * @param groupBy (optional) 
      * @return Success
      */
-    getStats(instanceType: InstanceType | undefined, instanceId: number | undefined, currency: string, forecastModelId: number | undefined, accounts: number[] | undefined, startDate: moment.Moment | undefined, endDate: moment.Moment | undefined, groupBy: GroupByPeriod): Observable<BankAccountDailyStatDto[]> {
+    getStats(instanceType: InstanceType | undefined, instanceId: number | undefined, currency: string, forecastModelId: number | undefined, accounts: number[] | undefined, startDate: moment.Moment | undefined, endDate: moment.Moment | undefined, groupBy: GroupByPeriod | undefined): Observable<BankAccountDailyStatDto[]> {
         let url_ = this.baseUrl + "/api/services/CFO/BankAccounts/GetStats?";
         if (instanceType === null)
             throw new Error("The parameter 'instanceType' cannot be null.");
@@ -3318,9 +3318,9 @@ export class BankAccountsServiceProxy {
             throw new Error("The parameter 'endDate' cannot be null.");
         else if (endDate !== undefined)
             url_ += "EndDate=" + encodeURIComponent(endDate ? "" + endDate.toISOString() : "") + "&";
-        if (groupBy === undefined || groupBy === null)
-            throw new Error("The parameter 'groupBy' must be defined and cannot be null.");
-        else
+        if (groupBy === null)
+            throw new Error("The parameter 'groupBy' cannot be null.");
+        else if (groupBy !== undefined)
             url_ += "GroupBy=" + encodeURIComponent("" + groupBy) + "&";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -6607,9 +6607,10 @@ export class CategoryTreeServiceProxy {
     /**
      * @param instanceType (optional) 
      * @param instanceId (optional) 
+     * @param reportTemplate (optional) 
      * @return Success
      */
-    getReportTemplateDefinition(instanceType: InstanceType | undefined, instanceId: number | undefined, reportTemplate: ReportTemplate): Observable<GetReportTemplateDefinitionOutput> {
+    getReportTemplateDefinition(instanceType: InstanceType | undefined, instanceId: number | undefined, reportTemplate: ReportTemplate | undefined): Observable<GetReportTemplateDefinitionOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/CategoryTree/GetReportTemplateDefinition?";
         if (instanceType === null)
             throw new Error("The parameter 'instanceType' cannot be null.");
@@ -6619,9 +6620,9 @@ export class CategoryTreeServiceProxy {
             throw new Error("The parameter 'instanceId' cannot be null.");
         else if (instanceId !== undefined)
             url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&";
-        if (reportTemplate === undefined || reportTemplate === null)
-            throw new Error("The parameter 'reportTemplate' must be defined and cannot be null.");
-        else
+        if (reportTemplate === null)
+            throw new Error("The parameter 'reportTemplate' cannot be null.");
+        else if (reportTemplate !== undefined)
             url_ += "reportTemplate=" + encodeURIComponent("" + reportTemplate) + "&";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -7787,10 +7788,11 @@ export class ClassificationServiceProxy {
      * @param instanceType (optional) 
      * @param instanceId (optional) 
      * @param sourceTransactionList (optional) 
+     * @param applyOption (optional) 
      * @param id (optional) 
      * @return Success
      */
-    deleteRule(instanceType: InstanceType | undefined, instanceId: number | undefined, sourceTransactionList: number[] | undefined, applyOption: ApplyToTransactionsOption, id: number | undefined): Observable<void> {
+    deleteRule(instanceType: InstanceType | undefined, instanceId: number | undefined, sourceTransactionList: number[] | undefined, applyOption: ApplyToTransactionsOption | undefined, id: number | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/Classification/DeleteRule?";
         if (instanceType === null)
             throw new Error("The parameter 'instanceType' cannot be null.");
@@ -7804,9 +7806,9 @@ export class ClassificationServiceProxy {
             throw new Error("The parameter 'sourceTransactionList' cannot be null.");
         else if (sourceTransactionList !== undefined)
             sourceTransactionList && sourceTransactionList.forEach(item => { url_ += "SourceTransactionList=" + encodeURIComponent("" + item) + "&"; });
-        if (applyOption === undefined || applyOption === null)
-            throw new Error("The parameter 'applyOption' must be defined and cannot be null.");
-        else
+        if (applyOption === null)
+            throw new Error("The parameter 'applyOption' cannot be null.");
+        else if (applyOption !== undefined)
             url_ += "ApplyOption=" + encodeURIComponent("" + applyOption) + "&";
         if (id === null)
             throw new Error("The parameter 'id' cannot be null.");
@@ -11684,6 +11686,58 @@ export class ContactServiceProxy {
     }
 
     protected processSendReferralPartnersEmail(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(null as any);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(null as any);
+    }
+
+    /**
+     * @param body (optional) 
+     * @return Success
+     */
+    setStripeCustomerId(body: SetStripeCustomerIdInput | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Contact/SetStripeCustomerId";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json;odata.metadata=minimal;odata.streaming=true",
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processSetStripeCustomerId(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processSetStripeCustomerId(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<void>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<void>;
+        }));
+    }
+
+    protected processSetStripeCustomerId(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -17306,6 +17360,7 @@ export class DashboardServiceProxy {
     }
 
     /**
+     * @param retreiveSubscriptionsData (optional) 
      * @param startDate (optional) 
      * @param endDate (optional) 
      * @param contactGroupId (optional) 
@@ -17313,8 +17368,12 @@ export class DashboardServiceProxy {
      * @param sourceOrganizationUnitIds (optional) 
      * @return Success
      */
-    getTotals(currencyId: string, startDate: moment.Moment | undefined, endDate: moment.Moment | undefined, contactGroupId: string | undefined, sourceContactId: number | undefined, sourceOrganizationUnitIds: number[] | undefined): Observable<GetTotalsOutput> {
+    getTotals(retreiveSubscriptionsData: boolean | undefined, currencyId: string, startDate: moment.Moment | undefined, endDate: moment.Moment | undefined, contactGroupId: string | undefined, sourceContactId: number | undefined, sourceOrganizationUnitIds: number[] | undefined): Observable<GetTotalsOutput> {
         let url_ = this.baseUrl + "/api/services/CRM/Dashboard/GetTotals?";
+        if (retreiveSubscriptionsData === null)
+            throw new Error("The parameter 'retreiveSubscriptionsData' cannot be null.");
+        else if (retreiveSubscriptionsData !== undefined)
+            url_ += "RetreiveSubscriptionsData=" + encodeURIComponent("" + retreiveSubscriptionsData) + "&";
         if (currencyId === undefined || currencyId === null)
             throw new Error("The parameter 'currencyId' must be defined and cannot be null.");
         else
@@ -17386,6 +17445,7 @@ export class DashboardServiceProxy {
     }
 
     /**
+     * @param groupBy (optional) 
      * @param startDate (optional) 
      * @param endDate (optional) 
      * @param periodCount (optional) 
@@ -17394,11 +17454,11 @@ export class DashboardServiceProxy {
      * @param sourceOrganizationUnitIds (optional) 
      * @return Success
      */
-    getCustomerAndLeadStats(groupBy: GroupByPeriod, startDate: moment.Moment | undefined, endDate: moment.Moment | undefined, periodCount: number | undefined, isCumulative: boolean | undefined, sourceContactId: number | undefined, sourceOrganizationUnitIds: number[] | undefined): Observable<GetCustomerAndLeadStatsOutput[]> {
+    getCustomerAndLeadStats(groupBy: GroupByPeriod | undefined, startDate: moment.Moment | undefined, endDate: moment.Moment | undefined, periodCount: number | undefined, isCumulative: boolean | undefined, sourceContactId: number | undefined, sourceOrganizationUnitIds: number[] | undefined): Observable<GetCustomerAndLeadStatsOutput[]> {
         let url_ = this.baseUrl + "/api/services/CRM/Dashboard/GetCustomerAndLeadStats?";
-        if (groupBy === undefined || groupBy === null)
-            throw new Error("The parameter 'groupBy' must be defined and cannot be null.");
-        else
+        if (groupBy === null)
+            throw new Error("The parameter 'groupBy' cannot be null.");
+        else if (groupBy !== undefined)
             url_ += "GroupBy=" + encodeURIComponent("" + groupBy) + "&";
         if (startDate === null)
             throw new Error("The parameter 'startDate' cannot be null.");
@@ -17478,6 +17538,7 @@ export class DashboardServiceProxy {
     }
 
     /**
+     * @param groupBy (optional) 
      * @param periodCount (optional) 
      * @param isCumulative (optional) 
      * @param startDate (optional) 
@@ -17487,11 +17548,11 @@ export class DashboardServiceProxy {
      * @param sourceOrganizationUnitIds (optional) 
      * @return Success
      */
-    getContactAndLeadStats(groupBy: GroupByPeriod, periodCount: number | undefined, isCumulative: boolean | undefined, startDate: moment.Moment | undefined, endDate: moment.Moment | undefined, contactGroupId: string | undefined, sourceContactId: number | undefined, sourceOrganizationUnitIds: number[] | undefined): Observable<GetCustomerAndLeadStatsOutput[]> {
+    getContactAndLeadStats(groupBy: GroupByPeriod | undefined, periodCount: number | undefined, isCumulative: boolean | undefined, startDate: moment.Moment | undefined, endDate: moment.Moment | undefined, contactGroupId: string | undefined, sourceContactId: number | undefined, sourceOrganizationUnitIds: number[] | undefined): Observable<GetCustomerAndLeadStatsOutput[]> {
         let url_ = this.baseUrl + "/api/services/CRM/Dashboard/GetContactAndLeadStats?";
-        if (groupBy === undefined || groupBy === null)
-            throw new Error("The parameter 'groupBy' must be defined and cannot be null.");
-        else
+        if (groupBy === null)
+            throw new Error("The parameter 'groupBy' cannot be null.");
+        else if (groupBy !== undefined)
             url_ += "GroupBy=" + encodeURIComponent("" + groupBy) + "&";
         if (periodCount === null)
             throw new Error("The parameter 'periodCount' cannot be null.");
@@ -17650,6 +17711,98 @@ export class DashboardServiceProxy {
             }));
         }
         return _observableOf<GetRecentlyCreatedCustomersOutput[]>(null as any);
+    }
+
+    /**
+     * @param groupBy (optional) 
+     * @param startDate (optional) 
+     * @param endDate (optional) 
+     * @param contactGroupId (optional) 
+     * @param sourceContactId (optional) 
+     * @param sourceOrganizationUnitIds (optional) 
+     * @return Success
+     */
+    getGrossEarningsStats(currencyId: string, groupBy: GroupByPeriod | undefined, startDate: moment.Moment | undefined, endDate: moment.Moment | undefined, contactGroupId: string | undefined, sourceContactId: number | undefined, sourceOrganizationUnitIds: number[] | undefined): Observable<GetGrossEarningsStatsOutput[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/Dashboard/GetGrossEarningsStats?";
+        if (currencyId === undefined || currencyId === null)
+            throw new Error("The parameter 'currencyId' must be defined and cannot be null.");
+        else
+            url_ += "CurrencyId=" + encodeURIComponent("" + currencyId) + "&";
+        if (groupBy === null)
+            throw new Error("The parameter 'groupBy' cannot be null.");
+        else if (groupBy !== undefined)
+            url_ += "GroupBy=" + encodeURIComponent("" + groupBy) + "&";
+        if (startDate === null)
+            throw new Error("The parameter 'startDate' cannot be null.");
+        else if (startDate !== undefined)
+            url_ += "StartDate=" + encodeURIComponent(startDate ? "" + startDate.toISOString() : "") + "&";
+        if (endDate === null)
+            throw new Error("The parameter 'endDate' cannot be null.");
+        else if (endDate !== undefined)
+            url_ += "EndDate=" + encodeURIComponent(endDate ? "" + endDate.toISOString() : "") + "&";
+        if (contactGroupId === null)
+            throw new Error("The parameter 'contactGroupId' cannot be null.");
+        else if (contactGroupId !== undefined)
+            url_ += "ContactGroupId=" + encodeURIComponent("" + contactGroupId) + "&";
+        if (sourceContactId === null)
+            throw new Error("The parameter 'sourceContactId' cannot be null.");
+        else if (sourceContactId !== undefined)
+            url_ += "SourceContactId=" + encodeURIComponent("" + sourceContactId) + "&";
+        if (sourceOrganizationUnitIds === null)
+            throw new Error("The parameter 'sourceOrganizationUnitIds' cannot be null.");
+        else if (sourceOrganizationUnitIds !== undefined)
+            sourceOrganizationUnitIds && sourceOrganizationUnitIds.forEach(item => { url_ += "SourceOrganizationUnitIds=" + encodeURIComponent("" + item) + "&"; });
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json;odata.metadata=minimal;odata.streaming=true"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetGrossEarningsStats(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetGrossEarningsStats(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<GetGrossEarningsStatsOutput[]>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<GetGrossEarningsStatsOutput[]>;
+        }));
+    }
+
+    protected processGetGrossEarningsStats(response: HttpResponseBase): Observable<GetGrossEarningsStatsOutput[]> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(GetGrossEarningsStatsOutput.fromJS(item));
+            }
+            else {
+                result200 = <any>null;
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<GetGrossEarningsStatsOutput[]>(null as any);
     }
 
     /**
@@ -18569,6 +18722,7 @@ export class DashboardServiceProxy {
     }
 
     /**
+     * @param groupBy (optional) 
      * @param starNames (optional) 
      * @param startDate (optional) 
      * @param endDate (optional) 
@@ -18577,11 +18731,11 @@ export class DashboardServiceProxy {
      * @param sourceOrganizationUnitIds (optional) 
      * @return Success
      */
-    getContactStatsByStar(groupBy: GroupByPeriod, starNames: string[] | undefined, startDate: moment.Moment | undefined, endDate: moment.Moment | undefined, contactGroupId: string | undefined, sourceContactId: number | undefined, sourceOrganizationUnitIds: number[] | undefined): Observable<ContactsStatsByStarInfo[]> {
+    getContactStatsByStar(groupBy: GroupByPeriod | undefined, starNames: string[] | undefined, startDate: moment.Moment | undefined, endDate: moment.Moment | undefined, contactGroupId: string | undefined, sourceContactId: number | undefined, sourceOrganizationUnitIds: number[] | undefined): Observable<ContactsStatsByStarInfo[]> {
         let url_ = this.baseUrl + "/api/services/CRM/Dashboard/GetContactStatsByStar?";
-        if (groupBy === undefined || groupBy === null)
-            throw new Error("The parameter 'groupBy' must be defined and cannot be null.");
-        else
+        if (groupBy === null)
+            throw new Error("The parameter 'groupBy' cannot be null.");
+        else if (groupBy !== undefined)
             url_ += "GroupBy=" + encodeURIComponent("" + groupBy) + "&";
         if (starNames === null)
             throw new Error("The parameter 'starNames' cannot be null.");
@@ -18719,6 +18873,98 @@ export class DashboardServiceProxy {
             }));
         }
         return _observableOf<GetCRMStatusOutput>(null as any);
+    }
+
+    /**
+     * @param groupBy (optional) 
+     * @param startDate (optional) 
+     * @param endDate (optional) 
+     * @param contactGroupId (optional) 
+     * @param sourceContactId (optional) 
+     * @param sourceOrganizationUnitIds (optional) 
+     * @return Success
+     */
+    getCancelledSubscriptions(groupBy: GroupByPeriod | undefined, currencyId: string, startDate: moment.Moment | undefined, endDate: moment.Moment | undefined, contactGroupId: string | undefined, sourceContactId: number | undefined, sourceOrganizationUnitIds: number[] | undefined): Observable<GetCountOutputOfDateTime[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/Dashboard/GetCancelledSubscriptions?";
+        if (groupBy === null)
+            throw new Error("The parameter 'groupBy' cannot be null.");
+        else if (groupBy !== undefined)
+            url_ += "GroupBy=" + encodeURIComponent("" + groupBy) + "&";
+        if (currencyId === undefined || currencyId === null)
+            throw new Error("The parameter 'currencyId' must be defined and cannot be null.");
+        else
+            url_ += "CurrencyId=" + encodeURIComponent("" + currencyId) + "&";
+        if (startDate === null)
+            throw new Error("The parameter 'startDate' cannot be null.");
+        else if (startDate !== undefined)
+            url_ += "StartDate=" + encodeURIComponent(startDate ? "" + startDate.toISOString() : "") + "&";
+        if (endDate === null)
+            throw new Error("The parameter 'endDate' cannot be null.");
+        else if (endDate !== undefined)
+            url_ += "EndDate=" + encodeURIComponent(endDate ? "" + endDate.toISOString() : "") + "&";
+        if (contactGroupId === null)
+            throw new Error("The parameter 'contactGroupId' cannot be null.");
+        else if (contactGroupId !== undefined)
+            url_ += "ContactGroupId=" + encodeURIComponent("" + contactGroupId) + "&";
+        if (sourceContactId === null)
+            throw new Error("The parameter 'sourceContactId' cannot be null.");
+        else if (sourceContactId !== undefined)
+            url_ += "SourceContactId=" + encodeURIComponent("" + sourceContactId) + "&";
+        if (sourceOrganizationUnitIds === null)
+            throw new Error("The parameter 'sourceOrganizationUnitIds' cannot be null.");
+        else if (sourceOrganizationUnitIds !== undefined)
+            sourceOrganizationUnitIds && sourceOrganizationUnitIds.forEach(item => { url_ += "SourceOrganizationUnitIds=" + encodeURIComponent("" + item) + "&"; });
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json;odata.metadata=minimal;odata.streaming=true"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetCancelledSubscriptions(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetCancelledSubscriptions(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<GetCountOutputOfDateTime[]>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<GetCountOutputOfDateTime[]>;
+        }));
+    }
+
+    protected processGetCancelledSubscriptions(response: HttpResponseBase): Observable<GetCountOutputOfDateTime[]> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(GetCountOutputOfDateTime.fromJS(item));
+            }
+            else {
+                result200 = <any>null;
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<GetCountOutputOfDateTime[]>(null as any);
     }
 }
 
@@ -23601,15 +23847,16 @@ export class HostDashboardServiceProxy {
     }
 
     /**
+     * @param incomeStatisticsDateInterval (optional) 
      * @param startDate (optional) 
      * @param endDate (optional) 
      * @return Success
      */
-    getIncomeStatistics(incomeStatisticsDateInterval: ChartDateInterval, startDate: moment.Moment | undefined, endDate: moment.Moment | undefined): Observable<GetIncomeStatisticsDataOutput> {
+    getIncomeStatistics(incomeStatisticsDateInterval: ChartDateInterval | undefined, startDate: moment.Moment | undefined, endDate: moment.Moment | undefined): Observable<GetIncomeStatisticsDataOutput> {
         let url_ = this.baseUrl + "/api/services/Platform/HostDashboard/GetIncomeStatistics?";
-        if (incomeStatisticsDateInterval === undefined || incomeStatisticsDateInterval === null)
-            throw new Error("The parameter 'incomeStatisticsDateInterval' must be defined and cannot be null.");
-        else
+        if (incomeStatisticsDateInterval === null)
+            throw new Error("The parameter 'incomeStatisticsDateInterval' cannot be null.");
+        else if (incomeStatisticsDateInterval !== undefined)
             url_ += "IncomeStatisticsDateInterval=" + encodeURIComponent("" + incomeStatisticsDateInterval) + "&";
         if (startDate === null)
             throw new Error("The parameter 'startDate' cannot be null.");
@@ -26042,14 +26289,15 @@ export class InstanceServiceProxy {
     }
 
     /**
+     * @param instanceType (optional) 
      * @param accountingTreeType (optional) 
      * @return Success
      */
-    setup(instanceType: InstanceType, accountingTreeType: AccountingTreeType | undefined): Observable<SetupOutput> {
+    setup(instanceType: InstanceType | undefined, accountingTreeType: AccountingTreeType | undefined): Observable<SetupOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/Instance/Setup?";
-        if (instanceType === undefined || instanceType === null)
-            throw new Error("The parameter 'instanceType' must be defined and cannot be null.");
-        else
+        if (instanceType === null)
+            throw new Error("The parameter 'instanceType' cannot be null.");
+        else if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&";
         if (accountingTreeType === null)
             throw new Error("The parameter 'accountingTreeType' cannot be null.");
@@ -32871,16 +33119,17 @@ export class OfferServiceProxy {
     }
 
     /**
+     * @param groupByPeriod (optional) 
      * @param campaignId (optional) 
      * @param from (optional) 
      * @param to (optional) 
      * @return Success
      */
-    getOffersStats(groupByPeriod: GroupByPeriod, campaignId: number | undefined, from: moment.Moment | undefined, to: moment.Moment | undefined): Observable<OfferApplicationGroup[]> {
+    getOffersStats(groupByPeriod: GroupByPeriod | undefined, campaignId: number | undefined, from: moment.Moment | undefined, to: moment.Moment | undefined): Observable<OfferApplicationGroup[]> {
         let url_ = this.baseUrl + "/api/services/PFM/Offer/GetOffersStats?";
-        if (groupByPeriod === undefined || groupByPeriod === null)
-            throw new Error("The parameter 'groupByPeriod' must be defined and cannot be null.");
-        else
+        if (groupByPeriod === null)
+            throw new Error("The parameter 'groupByPeriod' cannot be null.");
+        else if (groupByPeriod !== undefined)
             url_ += "GroupByPeriod=" + encodeURIComponent("" + groupByPeriod) + "&";
         if (campaignId === null)
             throw new Error("The parameter 'campaignId' cannot be null.");
@@ -47039,13 +47288,14 @@ export class TenantDashboardServiceProxy {
     }
 
     /**
+     * @param salesSummaryDatePeriod (optional) 
      * @return Success
      */
-    getDashboardData(salesSummaryDatePeriod: SalesSummaryDatePeriod): Observable<GetDashboardDataOutput> {
+    getDashboardData(salesSummaryDatePeriod: SalesSummaryDatePeriod | undefined): Observable<GetDashboardDataOutput> {
         let url_ = this.baseUrl + "/api/services/Platform/TenantDashboard/GetDashboardData?";
-        if (salesSummaryDatePeriod === undefined || salesSummaryDatePeriod === null)
-            throw new Error("The parameter 'salesSummaryDatePeriod' must be defined and cannot be null.");
-        else
+        if (salesSummaryDatePeriod === null)
+            throw new Error("The parameter 'salesSummaryDatePeriod' cannot be null.");
+        else if (salesSummaryDatePeriod !== undefined)
             url_ += "SalesSummaryDatePeriod=" + encodeURIComponent("" + salesSummaryDatePeriod) + "&";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -47247,13 +47497,14 @@ export class TenantDashboardServiceProxy {
     }
 
     /**
+     * @param salesSummaryDatePeriod (optional) 
      * @return Success
      */
-    getSalesSummary(salesSummaryDatePeriod: SalesSummaryDatePeriod): Observable<GetSalesSummaryOutput> {
+    getSalesSummary(salesSummaryDatePeriod: SalesSummaryDatePeriod | undefined): Observable<GetSalesSummaryOutput> {
         let url_ = this.baseUrl + "/api/services/Platform/TenantDashboard/GetSalesSummary?";
-        if (salesSummaryDatePeriod === undefined || salesSummaryDatePeriod === null)
-            throw new Error("The parameter 'salesSummaryDatePeriod' must be defined and cannot be null.");
-        else
+        if (salesSummaryDatePeriod === null)
+            throw new Error("The parameter 'salesSummaryDatePeriod' cannot be null.");
+        else if (salesSummaryDatePeriod !== undefined)
             url_ += "SalesSummaryDatePeriod=" + encodeURIComponent("" + salesSummaryDatePeriod) + "&";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -48778,6 +49029,58 @@ export class TenantPaymentSettingsServiceProxy {
     }
 
     /**
+     * @param body (optional) 
+     * @return Success
+     */
+    setPaypalConnectedAccount(body: GatewayConnectedAccountInput | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/TenantPaymentSettings/SetPaypalConnectedAccount";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json;odata.metadata=minimal;odata.streaming=true",
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processSetPaypalConnectedAccount(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processSetPaypalConnectedAccount(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<void>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<void>;
+        }));
+    }
+
+    protected processSetPaypalConnectedAccount(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(null as any);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(null as any);
+    }
+
+    /**
      * @return Success
      */
     unlinkPayPalMerchant(): Observable<void> {
@@ -49208,19 +49511,14 @@ export class TenantPaymentSettingsServiceProxy {
 
     /**
      * @param settingId (optional) 
-     * @param isConnected (optional) 
      * @return Success
      */
-    createStripeWebhook(settingId: number | undefined, isConnected: boolean | undefined): Observable<void> {
+    createStripeWebhook(settingId: number | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CRM/TenantPaymentSettings/CreateStripeWebhook?";
         if (settingId === null)
             throw new Error("The parameter 'settingId' cannot be null.");
         else if (settingId !== undefined)
             url_ += "settingId=" + encodeURIComponent("" + settingId) + "&";
-        if (isConnected === null)
-            throw new Error("The parameter 'isConnected' cannot be null.");
-        else if (isConnected !== undefined)
-            url_ += "isConnected=" + encodeURIComponent("" + isConnected) + "&";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -49319,7 +49617,7 @@ export class TenantPaymentSettingsServiceProxy {
      * @param body (optional) 
      * @return Success
      */
-    setStripeConnectedAccount(body: StripeConnectedAccountInput | undefined): Observable<void> {
+    setStripeConnectedAccount(body: GatewayConnectedAccountInput | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CRM/TenantPaymentSettings/SetStripeConnectedAccount";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -54104,13 +54402,14 @@ export class TimingServiceProxy {
     }
 
     /**
+     * @param defaultTimezoneScope (optional) 
      * @return Success
      */
-    getTimezones(defaultTimezoneScope: SettingScopes): Observable<ListResultDtoOfNameValueDto> {
+    getTimezones(defaultTimezoneScope: SettingScopes | undefined): Observable<ListResultDtoOfNameValueDto> {
         let url_ = this.baseUrl + "/api/services/Platform/Timing/GetTimezones?";
-        if (defaultTimezoneScope === undefined || defaultTimezoneScope === null)
-            throw new Error("The parameter 'defaultTimezoneScope' must be defined and cannot be null.");
-        else
+        if (defaultTimezoneScope === null)
+            throw new Error("The parameter 'defaultTimezoneScope' cannot be null.");
+        else if (defaultTimezoneScope !== undefined)
             url_ += "DefaultTimezoneScope=" + encodeURIComponent("" + defaultTimezoneScope) + "&";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -56586,13 +56885,14 @@ export class UserServiceProxy {
     }
 
     /**
+     * @param moduleType (optional) 
      * @return Success
      */
-    getAvailableUserCount(moduleType: ModuleType): Observable<number> {
+    getAvailableUserCount(moduleType: ModuleType | undefined): Observable<number> {
         let url_ = this.baseUrl + "/api/services/Platform/User/GetAvailableUserCount?";
-        if (moduleType === undefined || moduleType === null)
-            throw new Error("The parameter 'moduleType' must be defined and cannot be null.");
-        else
+        if (moduleType === null)
+            throw new Error("The parameter 'moduleType' cannot be null.");
+        else if (moduleType !== undefined)
             url_ += "moduleType=" + encodeURIComponent("" + moduleType) + "&";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -57559,6 +57859,58 @@ export class UserInvoiceServiceProxy {
             }));
         }
         return _observableOf<string>(null as any);
+    }
+
+    /**
+     * @param body (optional) 
+     * @return Success
+     */
+    setDiscordForContact(body: SetDiscordForContactInput | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/UserInvoice/SetDiscordForContact";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json;odata.metadata=minimal;odata.streaming=true",
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processSetDiscordForContact(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processSetDiscordForContact(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<void>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<void>;
+        }));
+    }
+
+    protected processSetDiscordForContact(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(null as any);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(null as any);
     }
 }
 
@@ -59092,6 +59444,7 @@ export enum AbpLoginResultType {
     UnknownExternalLogin = 8,
     LockedOut = 9,
     UserPhoneNumberIsNotConfirmed = 10,
+    FailedForOtherReason = 11,
 }
 
 export class AbpStringValueDto implements IAbpStringValueDto {
@@ -59789,6 +60142,66 @@ export enum ActivityType {
     Event = "Event",
 }
 
+export class AddBankCardPaymentConvertedAmountInput implements IAddBankCardPaymentConvertedAmountInput {
+    currencyId!: string;
+    exchangeRate!: number;
+    amount!: number;
+    netAmount!: number | undefined;
+    paymentSystemFee!: number | undefined;
+    partnerFee!: number | undefined;
+    otherFee!: number | undefined;
+
+    constructor(data?: IAddBankCardPaymentConvertedAmountInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.currencyId = _data["currencyId"];
+            this.exchangeRate = _data["exchangeRate"];
+            this.amount = _data["amount"];
+            this.netAmount = _data["netAmount"];
+            this.paymentSystemFee = _data["paymentSystemFee"];
+            this.partnerFee = _data["partnerFee"];
+            this.otherFee = _data["otherFee"];
+        }
+    }
+
+    static fromJS(data: any): AddBankCardPaymentConvertedAmountInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new AddBankCardPaymentConvertedAmountInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["currencyId"] = this.currencyId;
+        data["exchangeRate"] = this.exchangeRate;
+        data["amount"] = this.amount;
+        data["netAmount"] = this.netAmount;
+        data["paymentSystemFee"] = this.paymentSystemFee;
+        data["partnerFee"] = this.partnerFee;
+        data["otherFee"] = this.otherFee;
+        return data;
+    }
+}
+
+export interface IAddBankCardPaymentConvertedAmountInput {
+    currencyId: string;
+    exchangeRate: number;
+    amount: number;
+    netAmount: number | undefined;
+    paymentSystemFee: number | undefined;
+    partnerFee: number | undefined;
+    otherFee: number | undefined;
+}
+
 export class AddBankCardPaymentInput implements IAddBankCardPaymentInput {
     invoiceId!: number | undefined;
     invoiceNumber!: string | undefined;
@@ -59798,6 +60211,10 @@ export class AddBankCardPaymentInput implements IAddBankCardPaymentInput {
     orderStage!: string | undefined;
     amount!: number;
     netAmount!: number | undefined;
+    paymentSystemFee!: number | undefined;
+    partnerFee!: number | undefined;
+    otherFee!: number | undefined;
+    convertedAmount!: AddBankCardPaymentConvertedAmountInput | undefined;
     gatewayName!: string | undefined;
     gatewayTransactionId!: string | undefined;
     gatewayOriginTransactionId!: string | undefined;
@@ -59825,6 +60242,10 @@ export class AddBankCardPaymentInput implements IAddBankCardPaymentInput {
             this.orderStage = _data["orderStage"];
             this.amount = _data["amount"];
             this.netAmount = _data["netAmount"];
+            this.paymentSystemFee = _data["paymentSystemFee"];
+            this.partnerFee = _data["partnerFee"];
+            this.otherFee = _data["otherFee"];
+            this.convertedAmount = _data["convertedAmount"] ? AddBankCardPaymentConvertedAmountInput.fromJS(_data["convertedAmount"]) : <any>undefined;
             this.gatewayName = _data["gatewayName"];
             this.gatewayTransactionId = _data["gatewayTransactionId"];
             this.gatewayOriginTransactionId = _data["gatewayOriginTransactionId"];
@@ -59852,6 +60273,10 @@ export class AddBankCardPaymentInput implements IAddBankCardPaymentInput {
         data["orderStage"] = this.orderStage;
         data["amount"] = this.amount;
         data["netAmount"] = this.netAmount;
+        data["paymentSystemFee"] = this.paymentSystemFee;
+        data["partnerFee"] = this.partnerFee;
+        data["otherFee"] = this.otherFee;
+        data["convertedAmount"] = this.convertedAmount ? this.convertedAmount.toJSON() : <any>undefined;
         data["gatewayName"] = this.gatewayName;
         data["gatewayTransactionId"] = this.gatewayTransactionId;
         data["gatewayOriginTransactionId"] = this.gatewayOriginTransactionId;
@@ -59872,6 +60297,10 @@ export interface IAddBankCardPaymentInput {
     orderStage: string | undefined;
     amount: number;
     netAmount: number | undefined;
+    paymentSystemFee: number | undefined;
+    partnerFee: number | undefined;
+    otherFee: number | undefined;
+    convertedAmount: AddBankCardPaymentConvertedAmountInput | undefined;
     gatewayName: string | undefined;
     gatewayTransactionId: string | undefined;
     gatewayOriginTransactionId: string | undefined;
@@ -64657,6 +65086,7 @@ export interface ICancelOrderInfo {
 
 export class CancelOrderSubscriptionInput implements ICancelOrderSubscriptionInput {
     subscriptionId!: number;
+    cancelAtPeriodEnd!: boolean;
     cancelationReason!: string | undefined;
 
     constructor(data?: ICancelOrderSubscriptionInput) {
@@ -64671,6 +65101,7 @@ export class CancelOrderSubscriptionInput implements ICancelOrderSubscriptionInp
     init(_data?: any) {
         if (_data) {
             this.subscriptionId = _data["subscriptionId"];
+            this.cancelAtPeriodEnd = _data["cancelAtPeriodEnd"];
             this.cancelationReason = _data["cancelationReason"];
         }
     }
@@ -64685,6 +65116,7 @@ export class CancelOrderSubscriptionInput implements ICancelOrderSubscriptionInp
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["subscriptionId"] = this.subscriptionId;
+        data["cancelAtPeriodEnd"] = this.cancelAtPeriodEnd;
         data["cancelationReason"] = this.cancelationReason;
         return data;
     }
@@ -64692,6 +65124,7 @@ export class CancelOrderSubscriptionInput implements ICancelOrderSubscriptionInp
 
 export interface ICancelOrderSubscriptionInput {
     subscriptionId: number;
+    cancelAtPeriodEnd: boolean;
     cancelationReason: string | undefined;
 }
 
@@ -64746,6 +65179,7 @@ export interface ICancelOrderSubscriptionsInput {
 export class CancelSubscriptionInput implements ICancelSubscriptionInput {
     id!: number;
     cancellationReason!: string | undefined;
+    cancelAtPeriodEnd!: boolean;
 
     constructor(data?: ICancelSubscriptionInput) {
         if (data) {
@@ -64760,6 +65194,7 @@ export class CancelSubscriptionInput implements ICancelSubscriptionInput {
         if (_data) {
             this.id = _data["id"];
             this.cancellationReason = _data["cancellationReason"];
+            this.cancelAtPeriodEnd = _data["cancelAtPeriodEnd"];
         }
     }
 
@@ -64774,6 +65209,7 @@ export class CancelSubscriptionInput implements ICancelSubscriptionInput {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
         data["cancellationReason"] = this.cancellationReason;
+        data["cancelAtPeriodEnd"] = this.cancelAtPeriodEnd;
         return data;
     }
 }
@@ -64781,6 +65217,7 @@ export class CancelSubscriptionInput implements ICancelSubscriptionInput {
 export interface ICancelSubscriptionInput {
     id: number;
     cancellationReason: string | undefined;
+    cancelAtPeriodEnd: boolean;
 }
 
 export enum CardNetwork {
@@ -79718,6 +80155,42 @@ export enum GarbageCollection {
     Waste = 4,
 }
 
+export class GatewayConnectedAccountInput implements IGatewayConnectedAccountInput {
+    connectedAccountId!: string;
+
+    constructor(data?: IGatewayConnectedAccountInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.connectedAccountId = _data["connectedAccountId"];
+        }
+    }
+
+    static fromJS(data: any): GatewayConnectedAccountInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new GatewayConnectedAccountInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["connectedAccountId"] = this.connectedAccountId;
+        return data;
+    }
+}
+
+export interface IGatewayConnectedAccountInput {
+    connectedAccountId: string;
+}
+
 export enum Gender {
     Female = "Female",
     Male = "Male",
@@ -81071,6 +81544,46 @@ export interface IGetCountOutput {
     count: number;
 }
 
+export class GetCountOutputOfDateTime implements IGetCountOutputOfDateTime {
+    key!: moment.Moment;
+    count!: number;
+
+    constructor(data?: IGetCountOutputOfDateTime) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.key = _data["key"] ? moment(_data["key"].toString()) : <any>undefined;
+            this.count = _data["count"];
+        }
+    }
+
+    static fromJS(data: any): GetCountOutputOfDateTime {
+        data = typeof data === 'object' ? data : {};
+        let result = new GetCountOutputOfDateTime();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["key"] = this.key ? this.key.toISOString() : <any>undefined;
+        data["count"] = this.count;
+        return data;
+    }
+}
+
+export interface IGetCountOutputOfDateTime {
+    key: moment.Moment;
+    count: number;
+}
+
 export class GetCountOutputOfLeadAgeRange implements IGetCountOutputOfLeadAgeRange {
     key!: LeadAgeRange;
     count!: number;
@@ -82183,6 +82696,46 @@ export interface IGetGeneralStatsOutput {
     bouncePercent: number;
 }
 
+export class GetGrossEarningsStatsOutput implements IGetGrossEarningsStatsOutput {
+    date!: moment.Moment;
+    amount!: number;
+
+    constructor(data?: IGetGrossEarningsStatsOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.date = _data["date"] ? moment(_data["date"].toString()) : <any>undefined;
+            this.amount = _data["amount"];
+        }
+    }
+
+    static fromJS(data: any): GetGrossEarningsStatsOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new GetGrossEarningsStatsOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["date"] = this.date ? this.date.toISOString() : <any>undefined;
+        data["amount"] = this.amount;
+        return data;
+    }
+}
+
+export interface IGetGrossEarningsStatsOutput {
+    date: moment.Moment;
+    amount: number;
+}
+
 export class GetImportStatusOutput implements IGetImportStatusOutput {
     id!: number;
     statusId!: string | undefined;
@@ -82302,6 +82855,7 @@ export class GetInvoiceReceiptInfoOutput implements IGetInvoiceReceiptInfoOutput
     redirectUrls!: string[] | undefined;
     resources!: InvoiceReceiptResource[] | undefined;
     events!: InvoiceEventInfo[] | undefined;
+    discordInfo!: InvoiceReceiptDiscordInfo | undefined;
 
     constructor(data?: IGetInvoiceReceiptInfoOutput) {
         if (data) {
@@ -82344,6 +82898,7 @@ export class GetInvoiceReceiptInfoOutput implements IGetInvoiceReceiptInfoOutput
                 for (let item of _data["events"])
                     this.events!.push(InvoiceEventInfo.fromJS(item));
             }
+            this.discordInfo = _data["discordInfo"] ? InvoiceReceiptDiscordInfo.fromJS(_data["discordInfo"]) : <any>undefined;
         }
     }
 
@@ -82386,6 +82941,7 @@ export class GetInvoiceReceiptInfoOutput implements IGetInvoiceReceiptInfoOutput
             for (let item of this.events)
                 data["events"].push(item.toJSON());
         }
+        data["discordInfo"] = this.discordInfo ? this.discordInfo.toJSON() : <any>undefined;
         return data;
     }
 }
@@ -82409,6 +82965,7 @@ export interface IGetInvoiceReceiptInfoOutput {
     redirectUrls: string[] | undefined;
     resources: InvoiceReceiptResource[] | undefined;
     events: InvoiceEventInfo[] | undefined;
+    discordInfo: InvoiceReceiptDiscordInfo | undefined;
 }
 
 export class GetKeyAttributeValuesInput implements IGetKeyAttributeValuesInput {
@@ -85577,6 +86134,8 @@ export class GetTotalsOutput implements IGetTotalsOutput {
     totalClientCount!: number;
     totalOrderAmount!: number;
     totalOrderConvertedAmounts!: { [key: string]: number; } | undefined;
+    activeSubscriptions!: number;
+    pendingCancels!: number;
 
     constructor(data?: IGetTotalsOutput) {
         if (data) {
@@ -85609,6 +86168,8 @@ export class GetTotalsOutput implements IGetTotalsOutput {
                         (<any>this.totalOrderConvertedAmounts)![key] = _data["totalOrderConvertedAmounts"][key];
                 }
             }
+            this.activeSubscriptions = _data["activeSubscriptions"];
+            this.pendingCancels = _data["pendingCancels"];
         }
     }
 
@@ -85641,6 +86202,8 @@ export class GetTotalsOutput implements IGetTotalsOutput {
                     (<any>data["totalOrderConvertedAmounts"])[key] = (<any>this.totalOrderConvertedAmounts)[key];
             }
         }
+        data["activeSubscriptions"] = this.activeSubscriptions;
+        data["pendingCancels"] = this.pendingCancels;
         return data;
     }
 }
@@ -85654,6 +86217,8 @@ export interface IGetTotalsOutput {
     totalClientCount: number;
     totalOrderAmount: number;
     totalOrderConvertedAmounts: { [key: string]: number; } | undefined;
+    activeSubscriptions: number;
+    pendingCancels: number;
 }
 
 export class GetTransactionAttributeTypesOutput implements IGetTransactionAttributeTypesOutput {
@@ -88167,7 +88732,8 @@ export class ImportInvoiceLineInput implements IImportInvoiceLineInput {
     rate!: number;
     total!: number;
     commissionableAmount!: number | undefined;
-    unitId!: ProductMeasurementUnit;
+    unitId!: ProductMeasurementUnit | undefined;
+    priceOptionId!: number | undefined;
     productCode!: string | undefined;
     description!: string | undefined;
     sortOrder!: number;
@@ -88188,6 +88754,7 @@ export class ImportInvoiceLineInput implements IImportInvoiceLineInput {
             this.total = _data["total"];
             this.commissionableAmount = _data["commissionableAmount"];
             this.unitId = _data["unitId"];
+            this.priceOptionId = _data["priceOptionId"];
             this.productCode = _data["productCode"];
             this.description = _data["description"];
             this.sortOrder = _data["sortOrder"];
@@ -88208,6 +88775,7 @@ export class ImportInvoiceLineInput implements IImportInvoiceLineInput {
         data["total"] = this.total;
         data["commissionableAmount"] = this.commissionableAmount;
         data["unitId"] = this.unitId;
+        data["priceOptionId"] = this.priceOptionId;
         data["productCode"] = this.productCode;
         data["description"] = this.description;
         data["sortOrder"] = this.sortOrder;
@@ -88220,7 +88788,8 @@ export interface IImportInvoiceLineInput {
     rate: number;
     total: number;
     commissionableAmount: number | undefined;
-    unitId: ProductMeasurementUnit;
+    unitId: ProductMeasurementUnit | undefined;
+    priceOptionId: number | undefined;
     productCode: string | undefined;
     description: string | undefined;
     sortOrder: number;
@@ -88599,6 +89168,7 @@ export class ImportPersonalInput implements IImportPersonalInput {
     discordUserId!: string | undefined;
     discordUserName!: string | undefined;
     telegramUserId!: string | undefined;
+    stripeReferenceInfo!: ImportStripeReferenceInput | undefined;
     customFields!: CustomFieldsInput | undefined;
 
     constructor(data?: IImportPersonalInput) {
@@ -88660,6 +89230,7 @@ export class ImportPersonalInput implements IImportPersonalInput {
             this.discordUserId = _data["discordUserId"];
             this.discordUserName = _data["discordUserName"];
             this.telegramUserId = _data["telegramUserId"];
+            this.stripeReferenceInfo = _data["stripeReferenceInfo"] ? ImportStripeReferenceInput.fromJS(_data["stripeReferenceInfo"]) : <any>undefined;
             this.customFields = _data["customFields"] ? CustomFieldsInput.fromJS(_data["customFields"]) : <any>undefined;
         }
     }
@@ -88721,6 +89292,7 @@ export class ImportPersonalInput implements IImportPersonalInput {
         data["discordUserId"] = this.discordUserId;
         data["discordUserName"] = this.discordUserName;
         data["telegramUserId"] = this.telegramUserId;
+        data["stripeReferenceInfo"] = this.stripeReferenceInfo ? this.stripeReferenceInfo.toJSON() : <any>undefined;
         data["customFields"] = this.customFields ? this.customFields.toJSON() : <any>undefined;
         return data;
     }
@@ -88771,6 +89343,7 @@ export interface IImportPersonalInput {
     discordUserId: string | undefined;
     discordUserName: string | undefined;
     telegramUserId: string | undefined;
+    stripeReferenceInfo: ImportStripeReferenceInput | undefined;
     customFields: CustomFieldsInput | undefined;
 }
 
@@ -89128,6 +89701,46 @@ export class ImportStripeDataInput implements IImportStripeDataInput {
 export interface IImportStripeDataInput {
     settingsId: number;
     type: StripeImportType;
+}
+
+export class ImportStripeReferenceInput implements IImportStripeReferenceInput {
+    connectedAccountId!: string | undefined;
+    customerId!: string | undefined;
+
+    constructor(data?: IImportStripeReferenceInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.connectedAccountId = _data["connectedAccountId"];
+            this.customerId = _data["customerId"];
+        }
+    }
+
+    static fromJS(data: any): ImportStripeReferenceInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new ImportStripeReferenceInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["connectedAccountId"] = this.connectedAccountId;
+        data["customerId"] = this.customerId;
+        return data;
+    }
+}
+
+export interface IImportStripeReferenceInput {
+    connectedAccountId: string | undefined;
+    customerId: string | undefined;
 }
 
 export class ImportSubscriptionInput implements IImportSubscriptionInput {
@@ -90030,6 +90643,46 @@ export interface IInvoicePaypalPaymentInfo {
     clientId: string | undefined;
     merchantId: string | undefined;
     bnCode: string | undefined;
+}
+
+export class InvoiceReceiptDiscordInfo implements IInvoiceReceiptDiscordInfo {
+    showDiscordAuthButton!: boolean;
+    discordAppId!: string | undefined;
+
+    constructor(data?: IInvoiceReceiptDiscordInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.showDiscordAuthButton = _data["showDiscordAuthButton"];
+            this.discordAppId = _data["discordAppId"];
+        }
+    }
+
+    static fromJS(data: any): InvoiceReceiptDiscordInfo {
+        data = typeof data === 'object' ? data : {};
+        let result = new InvoiceReceiptDiscordInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["showDiscordAuthButton"] = this.showDiscordAuthButton;
+        data["discordAppId"] = this.discordAppId;
+        return data;
+    }
+}
+
+export interface IInvoiceReceiptDiscordInfo {
+    showDiscordAuthButton: boolean;
+    discordAppId: string | undefined;
 }
 
 export class InvoiceReceiptResource implements IInvoiceReceiptResource {
@@ -94520,12 +95173,14 @@ export class ModuleSubscriptionInfoDto implements IModuleSubscriptionInfoDto {
     paymentPeriodType!: PaymentPeriodType | undefined;
     endDate!: moment.Moment | undefined;
     finalEndDate!: moment.Moment | undefined;
+    cancellationDate!: moment.Moment | undefined;
     editionName!: string | undefined;
     isTrial!: boolean;
     isLocked!: boolean;
     trackingCode!: string | undefined;
     hasRecurringBilling!: boolean;
     isUpgradable!: boolean | undefined;
+    gateway!: string | undefined;
     invoicePublicId!: string | undefined;
     hasCrmFeature!: boolean;
 
@@ -94552,12 +95207,14 @@ export class ModuleSubscriptionInfoDto implements IModuleSubscriptionInfoDto {
             this.paymentPeriodType = _data["paymentPeriodType"];
             this.endDate = _data["endDate"] ? moment(_data["endDate"].toString()) : <any>undefined;
             this.finalEndDate = _data["finalEndDate"] ? moment(_data["finalEndDate"].toString()) : <any>undefined;
+            this.cancellationDate = _data["cancellationDate"] ? moment(_data["cancellationDate"].toString()) : <any>undefined;
             this.editionName = _data["editionName"];
             this.isTrial = _data["isTrial"];
             this.isLocked = _data["isLocked"];
             this.trackingCode = _data["trackingCode"];
             this.hasRecurringBilling = _data["hasRecurringBilling"];
             this.isUpgradable = _data["isUpgradable"];
+            this.gateway = _data["gateway"];
             this.invoicePublicId = _data["invoicePublicId"];
             this.hasCrmFeature = _data["hasCrmFeature"];
         }
@@ -94584,12 +95241,14 @@ export class ModuleSubscriptionInfoDto implements IModuleSubscriptionInfoDto {
         data["paymentPeriodType"] = this.paymentPeriodType;
         data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
         data["finalEndDate"] = this.finalEndDate ? this.finalEndDate.toISOString() : <any>undefined;
+        data["cancellationDate"] = this.cancellationDate ? this.cancellationDate.toISOString() : <any>undefined;
         data["editionName"] = this.editionName;
         data["isTrial"] = this.isTrial;
         data["isLocked"] = this.isLocked;
         data["trackingCode"] = this.trackingCode;
         data["hasRecurringBilling"] = this.hasRecurringBilling;
         data["isUpgradable"] = this.isUpgradable;
+        data["gateway"] = this.gateway;
         data["invoicePublicId"] = this.invoicePublicId;
         data["hasCrmFeature"] = this.hasCrmFeature;
         return data;
@@ -94609,12 +95268,14 @@ export interface IModuleSubscriptionInfoDto {
     paymentPeriodType: PaymentPeriodType | undefined;
     endDate: moment.Moment | undefined;
     finalEndDate: moment.Moment | undefined;
+    cancellationDate: moment.Moment | undefined;
     editionName: string | undefined;
     isTrial: boolean;
     isLocked: boolean;
     trackingCode: string | undefined;
     hasRecurringBilling: boolean;
     isUpgradable: boolean | undefined;
+    gateway: string | undefined;
     invoicePublicId: string | undefined;
     hasCrmFeature: boolean;
 }
@@ -96278,7 +96939,9 @@ export class OrderSubscriptionDto implements IOrderSubscriptionDto {
     isUpgradable!: boolean | undefined;
     statusCode!: string | undefined;
     status!: string | undefined;
+    cancellationDate!: moment.Moment | undefined;
     cancelationReason!: string | undefined;
+    gateway!: string | undefined;
     systemType!: string | undefined;
     systemMemberId!: string | undefined;
     previousSubscriptionId!: number | undefined;
@@ -96314,7 +96977,9 @@ export class OrderSubscriptionDto implements IOrderSubscriptionDto {
             this.isUpgradable = _data["isUpgradable"];
             this.statusCode = _data["statusCode"];
             this.status = _data["status"];
+            this.cancellationDate = _data["cancellationDate"] ? moment(_data["cancellationDate"].toString()) : <any>undefined;
             this.cancelationReason = _data["cancelationReason"];
+            this.gateway = _data["gateway"];
             this.systemType = _data["systemType"];
             this.systemMemberId = _data["systemMemberId"];
             this.previousSubscriptionId = _data["previousSubscriptionId"];
@@ -96358,7 +97023,9 @@ export class OrderSubscriptionDto implements IOrderSubscriptionDto {
         data["isUpgradable"] = this.isUpgradable;
         data["statusCode"] = this.statusCode;
         data["status"] = this.status;
+        data["cancellationDate"] = this.cancellationDate ? this.cancellationDate.toISOString() : <any>undefined;
         data["cancelationReason"] = this.cancelationReason;
+        data["gateway"] = this.gateway;
         data["systemType"] = this.systemType;
         data["systemMemberId"] = this.systemMemberId;
         data["previousSubscriptionId"] = this.previousSubscriptionId;
@@ -96395,7 +97062,9 @@ export interface IOrderSubscriptionDto {
     isUpgradable: boolean | undefined;
     statusCode: string | undefined;
     status: string | undefined;
+    cancellationDate: moment.Moment | undefined;
     cancelationReason: string | undefined;
+    gateway: string | undefined;
     systemType: string | undefined;
     systemMemberId: string | undefined;
     previousSubscriptionId: number | undefined;
@@ -104969,6 +105638,7 @@ export interface IPublicProductInput {
 }
 
 export class PublicProductRecommendedProduct implements IPublicProductRecommendedProduct {
+    id!: number;
     name!: string | undefined;
     publicName!: string | undefined;
     description!: string | undefined;
@@ -104987,6 +105657,7 @@ export class PublicProductRecommendedProduct implements IPublicProductRecommende
 
     init(_data?: any) {
         if (_data) {
+            this.id = _data["id"];
             this.name = _data["name"];
             this.publicName = _data["publicName"];
             this.description = _data["description"];
@@ -105009,6 +105680,7 @@ export class PublicProductRecommendedProduct implements IPublicProductRecommende
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
         data["name"] = this.name;
         data["publicName"] = this.publicName;
         data["description"] = this.description;
@@ -105024,6 +105696,7 @@ export class PublicProductRecommendedProduct implements IPublicProductRecommende
 }
 
 export interface IPublicProductRecommendedProduct {
+    id: number;
     name: string | undefined;
     publicName: string | undefined;
     description: string | undefined;
@@ -110108,6 +110781,54 @@ export interface ISetDefaultLanguageInput {
     name: string;
 }
 
+export class SetDiscordForContactInput implements ISetDiscordForContactInput {
+    tenantId!: number;
+    publicId!: string;
+    discordUserId!: string;
+    discordUserName!: string;
+
+    constructor(data?: ISetDiscordForContactInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.tenantId = _data["tenantId"];
+            this.publicId = _data["publicId"];
+            this.discordUserId = _data["discordUserId"];
+            this.discordUserName = _data["discordUserName"];
+        }
+    }
+
+    static fromJS(data: any): SetDiscordForContactInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new SetDiscordForContactInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["tenantId"] = this.tenantId;
+        data["publicId"] = this.publicId;
+        data["discordUserId"] = this.discordUserId;
+        data["discordUserName"] = this.discordUserName;
+        return data;
+    }
+}
+
+export interface ISetDiscordForContactInput {
+    tenantId: number;
+    publicId: string;
+    discordUserId: string;
+    discordUserName: string;
+}
+
 export class SetLearningResourceGroupImageInput implements ISetLearningResourceGroupImageInput {
     id!: number;
     image!: string | undefined;
@@ -110302,6 +111023,50 @@ export class SetResolvedInput implements ISetResolvedInput {
 export interface ISetResolvedInput {
     threadId: number;
     isResolved: boolean;
+}
+
+export class SetStripeCustomerIdInput implements ISetStripeCustomerIdInput {
+    contactId!: number;
+    customerId!: string | undefined;
+    connectedAccountId!: string;
+
+    constructor(data?: ISetStripeCustomerIdInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.contactId = _data["contactId"];
+            this.customerId = _data["customerId"];
+            this.connectedAccountId = _data["connectedAccountId"];
+        }
+    }
+
+    static fromJS(data: any): SetStripeCustomerIdInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new SetStripeCustomerIdInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["contactId"] = this.contactId;
+        data["customerId"] = this.customerId;
+        data["connectedAccountId"] = this.connectedAccountId;
+        return data;
+    }
+}
+
+export interface ISetStripeCustomerIdInput {
+    contactId: number;
+    customerId: string | undefined;
+    connectedAccountId: string;
 }
 
 export enum SettingScopes {
@@ -111717,6 +112482,7 @@ export class StripeActiveSettingsDto implements IStripeActiveSettingsDto {
     displayName!: string | undefined;
     apiKey!: string | undefined;
     publishableKey!: string | undefined;
+    isPartnerApiKey!: boolean;
     ignoreExternalWebhooks!: boolean;
     webhookSingingSecret!: string | undefined;
     oAuthClientId!: string | undefined;
@@ -111749,6 +112515,7 @@ export class StripeActiveSettingsDto implements IStripeActiveSettingsDto {
             this.displayName = _data["displayName"];
             this.apiKey = _data["apiKey"];
             this.publishableKey = _data["publishableKey"];
+            this.isPartnerApiKey = _data["isPartnerApiKey"];
             this.ignoreExternalWebhooks = _data["ignoreExternalWebhooks"];
             this.webhookSingingSecret = _data["webhookSingingSecret"];
             this.oAuthClientId = _data["oAuthClientId"];
@@ -111781,6 +112548,7 @@ export class StripeActiveSettingsDto implements IStripeActiveSettingsDto {
         data["displayName"] = this.displayName;
         data["apiKey"] = this.apiKey;
         data["publishableKey"] = this.publishableKey;
+        data["isPartnerApiKey"] = this.isPartnerApiKey;
         data["ignoreExternalWebhooks"] = this.ignoreExternalWebhooks;
         data["webhookSingingSecret"] = this.webhookSingingSecret;
         data["oAuthClientId"] = this.oAuthClientId;
@@ -111806,6 +112574,7 @@ export interface IStripeActiveSettingsDto {
     displayName: string | undefined;
     apiKey: string | undefined;
     publishableKey: string | undefined;
+    isPartnerApiKey: boolean;
     ignoreExternalWebhooks: boolean;
     webhookSingingSecret: string | undefined;
     oAuthClientId: string | undefined;
@@ -111819,42 +112588,6 @@ export interface IStripeActiveSettingsDto {
     unsupportedPaymentMethods: InvoicePaymentMethod;
     hasRunningImport: boolean;
     isTaxationEnabled: boolean;
-}
-
-export class StripeConnectedAccountInput implements IStripeConnectedAccountInput {
-    connectedAccountId!: string;
-
-    constructor(data?: IStripeConnectedAccountInput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.connectedAccountId = _data["connectedAccountId"];
-        }
-    }
-
-    static fromJS(data: any): StripeConnectedAccountInput {
-        data = typeof data === 'object' ? data : {};
-        let result = new StripeConnectedAccountInput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["connectedAccountId"] = this.connectedAccountId;
-        return data;
-    }
-}
-
-export interface IStripeConnectedAccountInput {
-    connectedAccountId: string;
 }
 
 export enum StripeImportType {
@@ -111871,6 +112604,7 @@ export class StripeSettingsDto implements IStripeSettingsDto {
     displayName!: string | undefined;
     apiKey!: string | undefined;
     publishableKey!: string | undefined;
+    isPartnerApiKey!: boolean;
     ignoreExternalWebhooks!: boolean;
     webhookSingingSecret!: string | undefined;
     oAuthClientId!: string | undefined;
@@ -111901,6 +112635,7 @@ export class StripeSettingsDto implements IStripeSettingsDto {
             this.displayName = _data["displayName"];
             this.apiKey = _data["apiKey"];
             this.publishableKey = _data["publishableKey"];
+            this.isPartnerApiKey = _data["isPartnerApiKey"];
             this.ignoreExternalWebhooks = _data["ignoreExternalWebhooks"];
             this.webhookSingingSecret = _data["webhookSingingSecret"];
             this.oAuthClientId = _data["oAuthClientId"];
@@ -111931,6 +112666,7 @@ export class StripeSettingsDto implements IStripeSettingsDto {
         data["displayName"] = this.displayName;
         data["apiKey"] = this.apiKey;
         data["publishableKey"] = this.publishableKey;
+        data["isPartnerApiKey"] = this.isPartnerApiKey;
         data["ignoreExternalWebhooks"] = this.ignoreExternalWebhooks;
         data["webhookSingingSecret"] = this.webhookSingingSecret;
         data["oAuthClientId"] = this.oAuthClientId;
@@ -111954,6 +112690,7 @@ export interface IStripeSettingsDto {
     displayName: string | undefined;
     apiKey: string | undefined;
     publishableKey: string | undefined;
+    isPartnerApiKey: boolean;
     ignoreExternalWebhooks: boolean;
     webhookSingingSecret: string | undefined;
     oAuthClientId: string | undefined;
@@ -122378,6 +123115,7 @@ export class UpdateStripeSettingsDto implements IUpdateStripeSettingsDto {
     isActive!: boolean;
     apiKey!: string | undefined;
     publishableKey!: string | undefined;
+    isPartnerApiKey!: boolean;
     ignoreExternalWebhooks!: boolean;
     oAuthClientId!: string | undefined;
     ignoreExternalConnectedAccounts!: boolean;
@@ -122398,6 +123136,7 @@ export class UpdateStripeSettingsDto implements IUpdateStripeSettingsDto {
             this.isActive = _data["isActive"];
             this.apiKey = _data["apiKey"];
             this.publishableKey = _data["publishableKey"];
+            this.isPartnerApiKey = _data["isPartnerApiKey"];
             this.ignoreExternalWebhooks = _data["ignoreExternalWebhooks"];
             this.oAuthClientId = _data["oAuthClientId"];
             this.ignoreExternalConnectedAccounts = _data["ignoreExternalConnectedAccounts"];
@@ -122418,6 +123157,7 @@ export class UpdateStripeSettingsDto implements IUpdateStripeSettingsDto {
         data["isActive"] = this.isActive;
         data["apiKey"] = this.apiKey;
         data["publishableKey"] = this.publishableKey;
+        data["isPartnerApiKey"] = this.isPartnerApiKey;
         data["ignoreExternalWebhooks"] = this.ignoreExternalWebhooks;
         data["oAuthClientId"] = this.oAuthClientId;
         data["ignoreExternalConnectedAccounts"] = this.ignoreExternalConnectedAccounts;
@@ -122431,6 +123171,7 @@ export interface IUpdateStripeSettingsDto {
     isActive: boolean;
     apiKey: string | undefined;
     publishableKey: string | undefined;
+    isPartnerApiKey: boolean;
     ignoreExternalWebhooks: boolean;
     oAuthClientId: string | undefined;
     ignoreExternalConnectedAccounts: boolean;
@@ -123683,6 +124424,8 @@ export class UserLoginInfoDto implements IUserLoginInfoDto {
     groups!: UserGroup[] | undefined;
     contactId!: number;
     creationTime!: moment.Moment;
+    creditBalance!: number | undefined;
+    usedCredits!: number | undefined;
     id!: number;
 
     constructor(data?: IUserLoginInfoDto) {
@@ -123713,6 +124456,8 @@ export class UserLoginInfoDto implements IUserLoginInfoDto {
             }
             this.contactId = _data["contactId"];
             this.creationTime = _data["creationTime"] ? moment(_data["creationTime"].toString()) : <any>undefined;
+            this.creditBalance = _data["creditBalance"];
+            this.usedCredits = _data["usedCredits"];
             this.id = _data["id"];
         }
     }
@@ -123743,6 +124488,8 @@ export class UserLoginInfoDto implements IUserLoginInfoDto {
         }
         data["contactId"] = this.contactId;
         data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["creditBalance"] = this.creditBalance;
+        data["usedCredits"] = this.usedCredits;
         data["id"] = this.id;
         return data;
     }
@@ -123762,6 +124509,8 @@ export interface IUserLoginInfoDto {
     groups: UserGroup[] | undefined;
     contactId: number;
     creationTime: moment.Moment;
+    creditBalance: number | undefined;
+    usedCredits: number | undefined;
     id: number;
 }
 

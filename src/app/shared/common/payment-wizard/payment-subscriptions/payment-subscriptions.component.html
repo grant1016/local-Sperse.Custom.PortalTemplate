@@ -44,8 +44,8 @@
         <span *ngIf="cellData.value" class="date-time" title="{{cellData.value | datetime: formatting.dateTimeMoment}}">{{cellData.value | datetime: formatting.dateMoment}}</span>
     </div>
 
-    <div *dxTemplate="let cellData of 'statusCell'" class="status {{isExpired(cellData) ? 'E' : cellData.value}}">
-        {{cellData.value == 'A' ? l(isExpired(cellData) ? 'Expired' : 'Active') : cellData.data.status}}
+    <div *dxTemplate="let cellData of 'statusCell'" class="status {{getStatusClassName(cellData.data)}}">
+        {{cellData.value == 'A' && !cellData.data.cancellationDate ? l(isExpired(cellData.data) ? 'Expired' : 'Active') : getDisplayStatus(cellData.data)}}
     </div>
 
     <div *dxTemplate="let cellData of 'lastPaymentCell'">
