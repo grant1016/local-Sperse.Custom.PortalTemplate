@@ -34,8 +34,7 @@
                 <div class="relative">
                     <button
                         class="bg-[#5966f3] py-[0.5rem] px-[0.75rem] flex gap-[0.5rem] items-center rounded-[0.75rem]"
-                        (click)="toggleProfileDropdown()"
-                        >
+                        (click)="toggleProfileDropdown()">
                         <span
                             class="w-[1.5rem] h-[1.5rem] rounded-full bg-[#4150f1] text-[0.75rem]/[1rem] text-white flex items-center justify-center">S</span>
                         <span class="text-[0.875rem]/[1.25rem] font-medium
@@ -43,22 +42,44 @@
                         <lucide-angular name="ChevronDown" class="w-[1rem] h-[1rem]" color="white"></lucide-angular>
                     </button>
                     <div *ngIf="showProfileDropdown"
-                        class="profile-dropdown absolute top-full right-0 mt-2 min-w-[200px] rounded-lg shadow-lg z-50"
+                        class="profile-dropdown absolute top-full right-0 mt-2 min-w-[240px] rounded-lg shadow-lg z-50"
                         [class]="isDarkMode ? '!bg-gray-800' : 'bg-white'" (click)="$event.stopPropagation()">
                         <div class="py-2">
-                            <button
-                                class="w-full py-2 px-4 text-left flex items-center gap-3 transition-colors"
+                            <button class="w-full py-2 px-4 text-left flex items-center gap-3 transition-colors"
+                                [class]="isDarkMode ? 'hover:bg-[#12143296] !text-white' : 'hover:bg-gray-50'"
+                                (click)="openChangePassword()">
+                                <lucide-angular name="Lock" class="w-[16px] h-[16px]"
+                                    [color]="isDarkMode ? 'white' : 'black'"></lucide-angular>
+                                <span>Change Passsword</span>
+                            </button>
+                            <button class="w-full py-2 px-4 text-left flex items-center gap-3 transition-colors"
+                                [class]="isDarkMode ? 'hover:bg-[#12143296] !text-white' : 'hover:bg-gray-50'"
+                                (click)="openLoginAttempts()">
+                                <lucide-angular name="ListChecks" class="w-[16px] h-[16px]"
+                                    [color]="isDarkMode ? 'white' : 'black'"></lucide-angular>
+                                <span>Login Attempts</span>
+                            </button>
+                            <button class="w-full py-2 px-4 text-left flex items-center gap-3 transition-colors"
+                                [class]="isDarkMode ? 'hover:bg-[#12143296] !text-white' : 'hover:bg-gray-50'"
+                                (click)="openChangeProfilePhoto()">
+                                <lucide-angular name="Camera" class="w-[16px] h-[16px]"
+                                    [color]="isDarkMode ? 'white' : 'black'"></lucide-angular>
+                                <span>Change Profile Photo</span>
+                            </button>
+                            <button class="w-full py-2 px-4 text-left flex items-center gap-3 transition-colors"
                                 [class]="isDarkMode ? 'hover:bg-[#12143296] !text-white' : 'hover:bg-gray-50'"
                                 (click)="openProfileSettings()">
-                                <span>Profile Settings</span>
+                                <lucide-angular name="Settings" class="w-[16px] h-[16px]"
+                                    [color]="isDarkMode ? 'white' : 'black'"></lucide-angular>
+                                <span>My settings</span>
                             </button>
 
-                            <button
-                                class="w-full py-2 px-4 text-left flex items-center gap-3 transition-colors"
+                            <button class="w-full py-2 px-4 text-left flex items-center gap-3 transition-colors"
                                 [class]="isDarkMode ? 'hover:bg-[#12143296] !text-white' : 'hover:bg-gray-50'"
-                                (click)="openAccount()">
-                               
-                                <span>Account</span>
+                                (click)="openHelp()">
+                                <lucide-angular name="HelpCircle" class="w-[16px] h-[16px]"
+                                    [color]="isDarkMode ? 'white' : 'black'"></lucide-angular>
+                                <span>Help</span>
                             </button>
 
                             <div class="border-t border-gray-200 my-1" [class]="isDarkMode ? '!border-[#2e3d52]' : ''">
@@ -68,16 +89,19 @@
                                 class="w-full py-2 px-4 text-left flex items-center gap-3 transition-colors  text-red-600"
                                 [class]="isDarkMode ? 'hover:bg-[#12143296] !text-red-400' : 'hover:bg-gray-50 text-red-600'"
                                 (click)="signOut()">
-                                
+                                <lucide-angular name="LogOut" class="w-[16px] h-[16px]"
+                                    [class]="isDarkMode ? 'text-red-400' : 'text-red-600'"
+                                    ></lucide-angular>
                                 <span>Sign Out</span>
                             </button>
                         </div>
                     </div>
                 </div>
                 <button class="w-[2.25rem] h-[2.25rem]  flex items-center justify-center rounded-md border"
-                    [class]="isDarkMode ? 'border-[#2e3d52] bg-[#020817]' : 'border-[#2e3d52] bg-[#eff2f5]'" (click)="toggleDarkMode()">
-                    <lucide-angular [name]="isDarkMode ? 'Moon' : 'Sun'" class="w-[16px] h-[16px]" [class]="isDarkMode?'text-white':'text-black'"
-                         ></lucide-angular>
+                    [class]="isDarkMode ? 'border-[#2e3d52] bg-[#020817]' : 'border-[#2e3d52] bg-[#eff2f5]'"
+                    (click)="toggleDarkMode()">
+                    <lucide-angular [name]="isDarkMode ? 'Moon' : 'Sun'" class="w-[16px] h-[16px]"
+                        [class]="isDarkMode?'text-white':'text-black'"></lucide-angular>
                 </button>
             </div>
         </div>
@@ -121,11 +145,11 @@
                         <button
                             class="text-[0.875rem]/[1.25rem] px-[0.75rem] border flex justify-center items-center gap-[0.5rem] h-[2.25rem] rounded-[0.75rem]"
                             [class]="isDarkMode ? '!bg-[#020817] border !border-[#2e3d52] text-white' : 'bg-[#eff2f5] border-[#e2e8f0]'"
-                           >
+                            (click)="openProfileSettings()">
                             <lucide-angular name="Settings" class="w-[16px] h-[16px]"
                                 [color]="isDarkMode ? 'white' : 'black'"></lucide-angular>
                             Profile Settings
-                           
+
                         </button>
 
                         <!-- Profile Dropdown Menu -->
@@ -329,9 +353,14 @@
                     <div class="downloads-grid">
                         <div class="download-card" *ngFor="let resource of invoiceInfo.resources; let i = index"
                             [class]="isDarkMode ? '!bg-[#00000033] !border-[#6b21a880]' : ''">
-                            <img *ngIf="resource.name.split('.').pop()==='pdf'" src="/assets/images/pdf-thumbnail.png" class="w-[30px] h-[30px] rounded-[10px]" />
-                            <img *ngIf="resource.name.split('.').pop()==='csv'||resource.name.split('.').pop()==='xlsx'" src="/assets/images/excel-thumbnail.png" class="w-[30px] h-[30px] rounded-[10px]" />
-                            <lucide-angular *ngIf="resource.name.split('.').pop()!=='pdf'&&resource.name.split('.').pop()!=='csv'&&resource.name.split('.').pop()!=='xlsx'" [name]="resource.url ? 'Link' : 'File'" class="w-[30px] h-[30px] rounded-[10px]" [color]="isDarkMode ? 'white' : 'black'">
+                            <img *ngIf="resource.name.split('.').pop()==='pdf'" src="/assets/images/pdf-thumbnail.png"
+                                class="w-[30px] h-[30px] rounded-[10px]" />
+                            <img *ngIf="resource.name.split('.').pop()==='csv'||resource.name.split('.').pop()==='xlsx'"
+                                src="/assets/images/excel-thumbnail.png" class="w-[30px] h-[30px] rounded-[10px]" />
+                            <lucide-angular
+                                *ngIf="resource.name.split('.').pop()!=='pdf'&&resource.name.split('.').pop()!=='csv'&&resource.name.split('.').pop()!=='xlsx'"
+                                [name]="resource.url ? 'Link' : 'File'" class="w-[30px] h-[30px] rounded-[10px]"
+                                [color]="isDarkMode ? 'white' : 'black'">
                             </lucide-angular>
                             <div class="download-content">
                                 <span class="download-name"

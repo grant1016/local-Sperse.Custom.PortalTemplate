@@ -29,13 +29,24 @@ import { finalize } from 'rxjs/operators';
 import { ReferralSettingsDialogComponent } from './referral-settings-dialog/referral-settings-dialog.component';
 import { EventDurationHelper } from '@shared/crm/helpers/event-duration-types.enum';
 import { SubscriptionManagementDialogComponent } from './subscription-management-dialog/subscription-management-dialog.component';
-
+import { MySettingsModalComponent } from '@app/shared/layout/profile/my-settings-modal.component';
+import { UploadPhotoDialogComponent } from '@app/shared/common/upload-photo-dialog/upload-photo-dialog.component';
+import { ProfileService } from '@shared/common/profile-service/profile.service';
+import { AppSessionService } from '@shared/common/session/app-session.service';
+import { AppAuthService } from '@shared/common/auth/app-auth.service';
+import { ChangePasswordModalComponent } from '@app/shared/layout/profile/change-password-modal.component';
+import { LoginAttemptsModalComponent } from '@app/shared/layout/login-attempts-modal/login-attempts-modal.component';
+import { ProfileServiceProxy, UpdateProfilePictureInput } from '@shared/service-proxies/service-proxies';
+import { StringHelper } from '@shared/helpers/StringHelper';
+import { filter, switchMap, tap } from 'rxjs/operators';
+import { of } from 'rxjs';
 @Component({
     selector: 'public-portal',
     templateUrl: 'member.portal.component.html',
     styleUrls: [
         // '../../../shared/common/styles/core.less',
-        './member.portal.component.less'
+        './member.portal.component.less',
+        '../../shared/common/styles/dx-customs.less',
     ],
     encapsulation: ViewEncapsulation.None,
 })
@@ -48,6 +59,7 @@ export class MemberPortalComponent implements OnInit, OnDestroy {
     hasToSOrPolicy: boolean;
     conditions = ConditionsType;
     private tailwindScript: HTMLScriptElement;
+    helpLink = abp.setting.values['Integrations:Zendesk:AccountUrl'] ? location.protocol + '//' + abp.setting.values['Integrations:Zendesk:AccountUrl'] : null;
 
     static retryDelay: number = 4000;
     static maxRetryCount: number = 15;
@@ -122,6 +134,10 @@ export class MemberPortalComponent implements OnInit, OnDestroy {
         private externalUserDataService: ExternalUserDataServiceProxy,
         public conditionsModalService: ConditionsModalService,
         private dialog: MatDialog,
+        private profileService: ProfileService,
+        private appSessionService: AppSessionService,
+        private profileServiceProxy: ProfileServiceProxy,
+        private authService: AppAuthService,
     ) {
         // Bind the document click handler once in constructor
         this.documentClickHandler = this.onDocumentClick.bind(this);
@@ -748,8 +764,94 @@ END:VCALENDAR`;
 
     openProfileSettings() {
         this.closeProfileDropdown();
-        // TODO: Implement profile settings functionality
-        abp.notify.info('Profile Settings clicked');
+        this.dialog.open(MySettingsModalComponent, {
+            panelClass: ['slider', 'user-info'],
+            disableClose: true,
+            closeOnNavigation: false,
+            data: {}
+        });
+    }
+
+    openChangeProfilePhoto() {
+        this.closeProfileDropdown();
+        const dialogRef = this.dialog.open(UploadPhotoDialogComponent, {
+            data: {
+                source: this.profileService.getProfilePictureUrl(this.appSessionService.user.profilePictureId),
+                maxSizeBytes: AppConsts.maxImageSize,
+                title: this.ls.l('ChangeProfilePicture')
+            },
+            maxWidth: AppConsts.maxImageDialogWidth,
+            hasBackdrop: true
+        });
+
+        dialogRef.afterClosed()
+            .pipe(
+                filter(result => result),
+                switchMap((result: any) => {
+                    if (result.clearPhoto) {
+                        return this.profileServiceProxy.clearProfilePicture().pipe(
+                            tap(() => {
+                                this.appSessionService.user.profilePictureId = null;
+                                abp.notify.success(this.ls.l('ProfilePictureClearedSuccessfully'));
+                            })
+                        );
+                    } else {
+                        const base64OrigImage = StringHelper.getBase64(result.origImage);
+                        const base64ThumbImage = StringHelper.getBase64(result.thumbImage);
+                        
+                        return this.profileServiceProxy.updateProfilePicture(UpdateProfilePictureInput.fromJS({
+                            originalImage: base64OrigImage,
+                            thumbnail: base64ThumbImage,
+                            source: result.source,
+                            userId: this.appSessionService.user.id,
+                            useGravatarProfilePicture: false
+                        })).pipe(
+                            tap((newProfilePictureId: string) => {
+                                this.appSessionService.user.profilePictureId = newProfilePictureId;
+                                abp.notify.success(this.ls.l('ProfilePictureChangedSuccessfully'));
+                            })
+                        );
+                    }
+                })
+            )
+            .subscribe(
+                () => {
+                    // Profile picture updated successfully
+                },
+                (error) => {
+                    abp.notify.error(this.ls.l('AnErrorOccurredWhileUpdatingProfilePicture'));
+                    console.error('Error updating profile picture:', error);
+                }
+            );
+    }
+
+    
+    openChangePassword() {
+        this.closeProfileDropdown();
+        this.dialog.open(ChangePasswordModalComponent, {
+            panelClass: ['slider', 'user-info'],
+            disableClose: true,
+            closeOnNavigation: false,
+            data: {}
+        });
+    }
+    openLoginAttempts() {
+        this.closeProfileDropdown();
+        this.dialog.open(LoginAttemptsModalComponent, {
+            panelClass: ['slider', 'user-info'],
+            disableClose: true,
+            closeOnNavigation: false,
+            data: {}
+        });
+    }
+    openHelp() {
+        this.closeProfileDropdown();
+        if (this.helpLink) {
+            window.open(this.helpLink, '_blank');
+        } else {
+            // Fallback to the support center link shown in the footer
+            window.open('https://support.upgrade.chat', '_blank');
+        }
     }
 
     openAccount() {
@@ -760,8 +862,7 @@ END:VCALENDAR`;
 
     signOut() {
         this.closeProfileDropdown();
-        // TODO: Implement sign out functionality
-        abp.notify.info('Sign Out clicked');
+        this.authService.logout(true);
     }
 
     private loadTailwindCSS(): void {
