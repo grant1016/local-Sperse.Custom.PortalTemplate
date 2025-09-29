@@ -35,7 +35,7 @@ export class AppRedirectGuard implements CanActivate {
         
     if (this.feature.isEnabled(AppFeatures.PortalDashboard) && 
         this.permission.isGranted(AppPermissions.CRMCustomers) && this.isVisible(menuCustomization, 'Dashboard')
-    ) navigatePath = '/app/dashboard';
+    ) navigatePath = '/public/test-portal';
     else if (this.feature.isEnabled(AppFeatures.PortalLeads) && isGrantedCRMGroup && this.isVisible(menuCustomization, 'ReferredLeads')) 
         navigatePath = '/app/leads';
     else if (this.feature.isEnabled(AppFeatures.PortalInvoices) && this.isVisible(menuCustomization, 'MyInvoices'))   
