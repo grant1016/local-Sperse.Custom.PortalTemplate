@@ -189,7 +189,8 @@ export class PaymentSubscriptionsComponent extends AppComponentBase implements O
                         cancelationReason: result.cancellationReason,
                         cancelAtPeriodEnd: result.cancelAtPeriodEnd
                     })).pipe(finalize(() => this.finishLoading())).subscribe(() => {
-                        capturedData.statusCode = 'C';
+                        if (!result.cancelAtPeriodEnd)
+                            capturedData.statusCode = 'C';
                         abp.notify.success(this.l('Cancelled'));
                         this.changeDetectionRef.detectChanges();
                         setTimeout(() => location.reload(), 1000);
