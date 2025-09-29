@@ -47,18 +47,17 @@
                         [class]="isDarkMode ? '!bg-gray-800' : 'bg-white'" (click)="$event.stopPropagation()">
                         <div class="py-2">
                             <button
-                                class="w-full py-2 px-4 text-left flex items-center gap-3 transition-colors hover:bg-gray-50"
-                                [class]="isDarkMode ? '!hover:bg-[#17213d] !text-white' : 'hover:bg-gray-50'"
+                                class="w-full py-2 px-4 text-left flex items-center gap-3 transition-colors"
+                                [class]="isDarkMode ? 'hover:bg-[#12143296] !text-white' : 'hover:bg-gray-50'"
                                 (click)="openProfileSettings()">
                                 <span>Profile Settings</span>
                             </button>
 
                             <button
-                                class="w-full py-2 px-4 text-left flex items-center gap-3 transition-colors hover:bg-gray-50"
-                                [class]="isDarkMode ? '!hover:bg-[#17213d] !text-white' : 'hover:bg-gray-50'"
+                                class="w-full py-2 px-4 text-left flex items-center gap-3 transition-colors"
+                                [class]="isDarkMode ? 'hover:bg-[#12143296] !text-white' : 'hover:bg-gray-50'"
                                 (click)="openAccount()">
-                                <lucide-angular name="Settings" class="w-[16px] h-[16px]"
-                                    [color]="isDarkMode ? 'white' : 'black'"></lucide-angular>
+                               
                                 <span>Account</span>
                             </button>
 
@@ -66,20 +65,19 @@
                             </div>
 
                             <button
-                                class="w-full py-2 px-4 text-left flex items-center gap-3 transition-colors hover:bg-gray-50 text-red-600"
-                                [class]="isDarkMode ? '!hover:bg-[#17213d] !text-red-400' : 'hover:bg-gray-50 text-red-600'"
+                                class="w-full py-2 px-4 text-left flex items-center gap-3 transition-colors  text-red-600"
+                                [class]="isDarkMode ? 'hover:bg-[#12143296] !text-red-400' : 'hover:bg-gray-50 text-red-600'"
                                 (click)="signOut()">
-                                <lucide-angular name="LogOut" class="w-[16px] h-[16px]"
-                                    color="currentColor"></lucide-angular>
+                                
                                 <span>Sign Out</span>
                             </button>
                         </div>
                     </div>
                 </div>
                 <button class="w-[2.25rem] h-[2.25rem]  flex items-center justify-center rounded-md border"
-                    [class]="isDarkMode ? 'border-[#2e3d52] bg-[#020817]' : 'border-[#2e3d52] bg-[#eff2f5]'">
-                    <lucide-angular [name]="isDarkMode ? 'Moon' : 'Sun'" class="w-[16px] h-[16px]"
-                        [color]="isDarkMode ? 'white' : 'black'" (click)="toggleDarkMode()"></lucide-angular>
+                    [class]="isDarkMode ? 'border-[#2e3d52] bg-[#020817]' : 'border-[#2e3d52] bg-[#eff2f5]'" (click)="toggleDarkMode()">
+                    <lucide-angular [name]="isDarkMode ? 'Moon' : 'Sun'" class="w-[16px] h-[16px]" [class]="isDarkMode?'text-white':'text-black'"
+                         ></lucide-angular>
                 </button>
             </div>
         </div>
@@ -127,8 +125,7 @@
                             <lucide-angular name="Settings" class="w-[16px] h-[16px]"
                                 [color]="isDarkMode ? 'white' : 'black'"></lucide-angular>
                             Profile Settings
-                            <lucide-angular name="ChevronDown" class="w-[12px] h-[12px]"
-                                [color]="isDarkMode ? 'white' : 'black'"></lucide-angular>
+                           
                         </button>
 
                         <!-- Profile Dropdown Menu -->
@@ -252,11 +249,11 @@
                                         [class]="isDarkMode ? 'text-white' : 'text-black'">Latest Invoice</span>
                                 </div>
                                 <div class="flex gap-[0.5rem]">
-                                    <button class="w-[2rem] h-[2rem] justify-center items-center">
+                                    <button class="w-[2rem] h-[2rem] flex justify-center items-center">
                                         <lucide-angular name="Download" class="w-[16px] h-[16px]"
                                             [color]="isDarkMode ? 'white' : '#0f172a'"></lucide-angular>
                                     </button>
-                                    <button class="w-[2rem] h-[2rem] justify-center items-center">
+                                    <button class="w-[2rem] h-[2rem] flex justify-center items-center">
                                         <lucide-angular name="MoreHorizontal" class="w-[16px] h-[16px]"
                                             [color]="isDarkMode ? 'white' : '#0f172a'"></lucide-angular>
                                     </button>
