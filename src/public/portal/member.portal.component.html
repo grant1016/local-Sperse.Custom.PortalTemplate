@@ -26,10 +26,10 @@
         <div class="py-[1rem] px-[1.9rem] flex justify-center items-center relative bg-black h-[4.5rem]">
             <div class="flex flex-col absolute top-[1rem] left-[1.9rem]">
                 <span class="text-[#64748b] text-[0.75rem]">Powered by</span>
-                <img src="/assets/images/Upgrade.chat.svg" class="h-[16px]" />
+                <img src="/assets/common/images/host-logo-light.png" class="h-[16px]" />
 
             </div>
-            <img src="/assets/images/Trend-Analytics-Logo.png" class="h-[32px]">
+            <img src="{{tenantLogo}}" class="h-[32px]">
             <div class="flex items-center gap-[0.75rem] absolute top-[1rem] right-[1.9rem]">
                 <div class="relative">
                     <button
@@ -327,57 +327,28 @@
                             [class]="isDarkMode ? 'text-white' : 'text-black'">Downloads</h3>
                     </div>
                     <div class="downloads-grid">
-                        <div class="download-card" [class]="isDarkMode ? '!bg-[#00000033] !border-[#6b21a880]' : ''">
-                            <img src="/assets/images/pdf-thumbnail.png" class="w-[40px] h-[40px] rounded-[10px]" />
+                        <div class="download-card" *ngFor="let resource of invoiceInfo.resources; let i = index"
+                            [class]="isDarkMode ? '!bg-[#00000033] !border-[#6b21a880]' : ''">
+                            <img *ngIf="resource.name.split('.').pop()==='pdf'" src="/assets/images/pdf-thumbnail.png" class="w-[30px] h-[30px] rounded-[10px]" />
+                            <img *ngIf="resource.name.split('.').pop()==='csv'||resource.name.split('.').pop()==='xlsx'" src="/assets/images/excel-thumbnail.png" class="w-[30px] h-[30px] rounded-[10px]" />
+                            <lucide-angular *ngIf="resource.name.split('.').pop()!=='pdf'&&resource.name.split('.').pop()!=='csv'&&resource.name.split('.').pop()!=='xlsx'" [name]="resource.url ? 'Link' : 'File'" class="w-[30px] h-[30px] rounded-[10px]" [color]="isDarkMode ? 'white' : 'black'">
+                            </lucide-angular>
                             <div class="download-content">
-                                <span class="download-name" [class]="isDarkMode ? 'text-white' : 'text-black'">Advanced
-                                    Trading Strategy Guide</span>
-                                <span class="download-type">PDF</span>
+                                <span class="download-name"
+                                    [class]="isDarkMode ? 'text-white' : 'text-black'">{{resource.name}}</span>
+                                <span class="download-type">{{resource.url ?'LINK' :
+                                    resource.name.split('.').pop().toUpperCase()}}</span>
                             </div>
                             <button class="download-action-btn"
                                 [class]="isDarkMode ? '!bg-black !border-[#6b21a8] !text-[#d8b4fe]' : ''"
-                                (click)="resourceClick($event, {url: 'https://example.com/strategy-guide.pdf', type: 'pdf'})">
+                                (click)="resourceClick($event, resource)">
                                 <span class="action-icon">
 
-                                    <lucide-angular name="Download" class="w-[16px] h-[16px]"
+                                    <lucide-angular [name]="resource.url ? 'Copy' : 'Download'"
+                                        class="w-[16px] h-[16px]"
                                         [color]="isDarkMode ? '#d8b4fe' : '#9333ea'"></lucide-angular>
                                 </span>
-                                Download
-                            </button>
-                        </div>
-                        <div class="download-card" [class]="isDarkMode ? '!bg-[#00000033] !border-[#6b21a880]' : ''">
-                            <img src="/assets/images/excel-thumbnail.png" class="w-[40px] h-[40px] rounded-[10px]" />
-                            <div class="download-content">
-                                <span class="download-name" [class]="isDarkMode ? 'text-white' : 'text-black'">Market
-                                    Analysis Template</span>
-                                <span class="download-type">EXCEL</span>
-                            </div>
-                            <button class="download-action-btn"
-                                [class]="isDarkMode ? '!bg-black !border-[#6b21a8] !text-[#d8b4fe]' : ''"
-                                (click)="resourceClick($event, {url: 'https://example.com/analysis-template.xlsx', type: 'excel'})">
-                                <span class="action-icon">
-                                    <lucide-angular name="Download" class="w-[16px] h-[16px]"
-                                        [color]="isDarkMode ? '#d8b4fe' : '#9333ea'"></lucide-angular>
-                                </span>
-                                Download
-                            </button>
-                        </div>
-                        <div class="download-card" [class]="isDarkMode ? '!bg-[#00000033] !border-[#6b21a880]' : ''">
-                            <img src="/assets/images/pdf-thumbnail.png" class="w-[40px] h-[40px] rounded-[10px]" />
-                            <div class="download-content">
-                                <span class="download-name" [class]="isDarkMode ? 'text-white' : 'text-black'">Risk
-                                    Management Workbook</span>
-                                <span class="download-type">PDF</span>
-                            </div>
-                            <button class="download-action-btn"
-                                [class]="isDarkMode ? '!bg-black !border-[#6b21a8] !text-[#d8b4fe]' : ''"
-                                (click)="resourceClick($event, {url: 'https://example.com/strategy-guide.pdf', type: 'pdf'})">
-                                <span class="action-icon">
-
-                                    <lucide-angular name="Download" class="w-[16px] h-[16px]"
-                                        [color]="isDarkMode ? '#d8b4fe' : '#9333ea'"></lucide-angular>
-                                </span>
-                                Download
+                                {{resource.url ? 'Copy' : 'Download'}}
                             </button>
                         </div>
                     </div>
@@ -486,6 +457,26 @@
                                                 Link
                                             </div>
                                             <a [href]="event.link" target="_blank" class="detail-link">Join Event</a>
+                                        </div>
+                                        <div class="event-detail-row border-b border-[#e2e8f0] pb-[10px]"
+                                            [class]="isDarkMode ? '!border-[#1e293b]' : ''" *ngIf="event.address">
+                                            <div class="detail-label">
+                                                <lucide-angular name="Locate" class="w-[16px] h-[16px]"
+                                                    color="#2563eb"></lucide-angular>
+                                                Location
+                                            </div>
+                                            <div class="flex flex-col items-end">
+                                                <span class="detail-value"
+                                                    [class]="isDarkMode ? 'text-white' : 'text-black'">{{event.address.streetAddress}}</span>
+                                                <span class="detail-value"
+                                                    [class]="isDarkMode ? 'text-white' : 'text-black'">{{event.address.city}}</span>
+                                                <span class="detail-value"
+                                                    [class]="isDarkMode ? 'text-white' : 'text-black'">{{event.address.stateName}}</span>
+                                                <span class="detail-value"
+                                                    [class]="isDarkMode ? 'text-white' : 'text-black'">{{event.address.countryName}}</span>
+                                                <span class="detail-value"
+                                                    [class]="isDarkMode ? 'text-white' : 'text-black'">{{event.address.zip}}</span>
+                                            </div>
                                         </div>
                                         <div class="event-detail-row border-b border-[#e2e8f0] pb-[10px]"
                                             [class]="isDarkMode ? '!border-[#1e293b]' : ''" *ngIf="event.durationStr">

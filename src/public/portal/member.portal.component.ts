@@ -27,6 +27,7 @@ import { ConditionsModalService } from '@shared/common/conditions-modal/conditio
 import { AppConsts } from '@shared/AppConsts';
 import { finalize } from 'rxjs/operators';
 import { ReferralSettingsDialogComponent } from './referral-settings-dialog/referral-settings-dialog.component';
+import { EventDurationHelper } from '@shared/crm/helpers/event-duration-types.enum';
 import { SubscriptionManagementDialogComponent } from './subscription-management-dialog/subscription-management-dialog.component';
 
 @Component({
@@ -79,7 +80,7 @@ export class MemberPortalComponent implements OnInit, OnDestroy {
     showCalendarDropdown: boolean = false;
     selectedEvent: any = null;
     private documentClickHandler: (event: Event) => void;
-    
+
     // Profile dropdown
     showProfileDropdown: boolean = false;
     private profileDocumentClickHandler: (event: Event) => void;
@@ -411,6 +412,10 @@ export class MemberPortalComponent implements OnInit, OnDestroy {
             } else if (event.date) {
                 event['dateStr'] = moment(new Date(event.date)).utc().format('MMM D, YYYY');
             }
+            if (event.durationMinutes) {
+                let durationInfo = EventDurationHelper.ParseDuration(event.durationMinutes);
+                event['durationStr'] = `${durationInfo.eventDuration} ${EventDurationHelper.getDisplayValue(durationInfo.eventDurationType)}`;
+            }
 
         }
     }
@@ -449,10 +454,12 @@ export class MemberPortalComponent implements OnInit, OnDestroy {
     }
 
     discordOAuth() {
+        console.log("asdfasdf");
+
         let scopes = ['email', 'identify', 'guilds.join'];
         let scopesString = scopes.join('%20');
         let redirectUrl = `${AppConsts.appConfigOrigin.remoteServiceBaseUrl}/account/oauth-redirect?provider=discord`;
-        let popupUrl = 'https://discord.com/oauth2/authorize?response_type=code&client_id=' + this.invoiceInfo.discordInfo.discordAppId +
+        let popupUrl = 'https://discord.com/oauth2/authorize?response_type=code&client_id=' + this.invoiceInfo.discordInfo?.discordAppId +
             `&redirect_uri=${redirectUrl}&state=${this.tenantId}&scope=${scopesString}&prompt=none`;
 
         this.discordPopup = window.open(popupUrl, 'discordOAuth', 'width=500,height=600');
@@ -677,7 +684,7 @@ END:VCALENDAR`;
         this.closeCalendarDropdown();
     }
 
-    
+
 
     openReferralSettingsDialog() {
         const dialogRef = this.dialog.open(ReferralSettingsDialogComponent, {
@@ -711,7 +718,7 @@ END:VCALENDAR`;
     // Profile dropdown methods
     toggleProfileDropdown() {
         this.showProfileDropdown = !this.showProfileDropdown;
-        
+
         // Add click listener to document when dropdown opens
         if (this.showProfileDropdown) {
             setTimeout(() => {
@@ -733,7 +740,7 @@ END:VCALENDAR`;
         // Check if click is outside the dropdown
         const target = event.target as HTMLElement;
         const dropdown = document.querySelector('.profile-dropdown');
-        
+
         if (dropdown && !dropdown.contains(target)) {
             this.closeProfileDropdown();
         }
