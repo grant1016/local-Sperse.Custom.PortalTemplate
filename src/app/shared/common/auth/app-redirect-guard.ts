@@ -33,18 +33,18 @@ export class AppRedirectGuard implements CanActivate {
             || this.permission.isGranted(AppPermissions.CRMOthers);
     let menuCustomization = this.getMenuConfig();
         
-    if (this.feature.isEnabled(AppFeatures.PortalDashboard) && 
-        this.permission.isGranted(AppPermissions.CRMCustomers) && this.isVisible(menuCustomization, 'Dashboard')
-    ) navigatePath = '/app/dashboard';
-    else if (this.feature.isEnabled(AppFeatures.PortalLeads) && isGrantedCRMGroup && this.isVisible(menuCustomization, 'ReferredLeads')) 
-        navigatePath = '/app/leads';
-    else if (this.feature.isEnabled(AppFeatures.PortalInvoices) && this.isVisible(menuCustomization, 'MyInvoices'))   
-        navigatePath = '/app/invoices';
-    else if (this.feature.isEnabled(AppFeatures.PortalReseller) && this.isVisible(menuCustomization, 'MyReferralPortal'))   
-        navigatePath = '/app/reseller-info';
-    else
-        navigatePath = '/app/home';
-    
+    // if (this.feature.isEnabled(AppFeatures.PortalDashboard) && 
+    //     this.permission.isGranted(AppPermissions.CRMCustomers) && this.isVisible(menuCustomization, 'Dashboard')
+    // ) navigatePath = '/app/dashboard';
+    // else if (this.feature.isEnabled(AppFeatures.PortalLeads) && isGrantedCRMGroup && this.isVisible(menuCustomization, 'ReferredLeads')) 
+    //     navigatePath = '/app/leads';
+    // else if (this.feature.isEnabled(AppFeatures.PortalInvoices) && this.isVisible(menuCustomization, 'MyInvoices'))   
+    //     navigatePath = '/app/invoices';
+    // else if (this.feature.isEnabled(AppFeatures.PortalReseller) && this.isVisible(menuCustomization, 'MyReferralPortal'))   
+    //     navigatePath = '/app/reseller-info';
+    // else
+    //     navigatePath = '/app/home';
+    navigatePath = '/public/member-portal';
     this.router.navigate([navigatePath]);
     return false;
   }

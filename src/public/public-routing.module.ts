@@ -30,7 +30,7 @@ import { MemberPortalComponent } from './portal/member.portal.component';
                 canActivate: [],
             },
             {
-                path: 'test-portal',
+                path: 'member-portal',
                 component: MemberPortalComponent,
                 canActivate: [],
             }
