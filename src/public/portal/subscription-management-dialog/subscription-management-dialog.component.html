@@ -141,13 +141,19 @@
             [class]="isDarkMode ? 'text-white' : 'text-black'">Cancel Reason</label>
         <input type="text" class="w-full h-[2.5rem] py-[0.5rem] px-[0.75rem] mt-[0.5rem] rounded-[0.75rem] border"
             [class]="isDarkMode ? 'bg-[#020817] border-[#5c6f82] text-white' : 'bg-[#eff2f5] border-[#e2e8f0] text-black'"
-            [(ngModel)]="cancelReason" placeholder="Enter your cancel reason">
+            [value]="cancelReason"
+            (input)="onCancelReasonInput($event)"
+            placeholder="Enter your cancel reason">
         <div class="dialog-actions flex md:flex-row flex-col">
-            <button class="btn-secondary" (click)="step = 'retention-offer'">
+            <button class="btn-secondary" (click)="step = 'main'" [disabled]="isCancelling">
                 Back
             </button>
-            <button class="btn-destructive" (click)="handleCancelConfirm()">
-                Continue Cancellation
+            <button class="btn-destructive" (click)="handleCancelConfirm()" [disabled]="isCancelling">
+                <div *ngIf="isCancelling" class="flex items-center gap-2">
+                    <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                    <span>Cancelling...</span>
+                </div>
+                <span *ngIf="!isCancelling">Continue Cancellation</span>
             </button>
         </div>
     </div>

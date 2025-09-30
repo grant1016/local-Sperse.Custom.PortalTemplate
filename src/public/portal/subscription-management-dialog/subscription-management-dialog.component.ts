@@ -8,7 +8,7 @@ import { finalize } from 'rxjs/operators';
 
 /** Application imports */
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { UserSubscriptionServiceProxy, OrderSubscriptionDto } from '@shared/service-proxies/service-proxies';
+import { UserSubscriptionServiceProxy, OrderSubscriptionDto, CancelOrderSubscriptionInput } from '@shared/service-proxies/service-proxies';
 
 export type CancellationStep = 'main' | 'cancel-options' | 'retention-offer' | 'confirmed';
 export type CancellationType = 'immediate' | 'end-of-period';
@@ -22,6 +22,8 @@ export class SubscriptionManagementDialogComponent implements OnInit {
     step: CancellationStep = 'main';
     cancellationType: CancellationType = 'end-of-period';
     isDarkMode: boolean = false;
+    cancelReason: string = '';
+    isCancelling: boolean = false;
 
     // Subscription data
     subscriptionHistory: OrderSubscriptionDto[] = [];
@@ -82,12 +84,17 @@ export class SubscriptionManagementDialogComponent implements OnInit {
     // Helper method to format currency and amount
     formatCurrency(amount: number, currency: string): string {
         if (!amount || !currency) return '';
-        return `${currency}${amount}`;
+        return `${currency==="USD"?"$":currency==="EUR"?"€":currency}${amount}`;
     }
 
     // Helper method to format payment period
     formatPaymentPeriod(period: string): string {
         if (!period) return 'month';
+        if(period.toLowerCase()==="monthly"){
+            return "month"
+        }else if(period.toLowerCase()==="yearly"){
+            return "year"
+        }
         return period.toLowerCase();
     }
 
@@ -121,7 +128,7 @@ export class SubscriptionManagementDialogComponent implements OnInit {
     // Helper method to get amount
     getAmount(): string {
         if (this.currentSubscription?.fee && this.currentSubscription?.currencyId) {
-            return `${this.currentSubscription.fee} ${this.currentSubscription.currencyId}/${this.formatPaymentPeriod(this.currentSubscription.paymentPeriodType)}`;
+            return `${this.formatCurrency(this.currentSubscription.fee, this.currentSubscription.currencyId)}/${this.formatPaymentPeriod(this.currentSubscription.paymentPeriodType)}`;
         }
         return this.subscriptionData.amount;
     }
@@ -135,7 +142,7 @@ export class SubscriptionManagementDialogComponent implements OnInit {
     getDiscountedPrice(): string {
         if (this.currentSubscription?.fee && this.currentSubscription?.currencyId) {
             const discountedAmount = this.currentSubscription.fee * 0.5;
-            return `${discountedAmount.toFixed(2)} ${this.currentSubscription.currencyId}/${this.formatPaymentPeriod(this.currentSubscription.paymentPeriodType)}`;
+            return `${this.formatCurrency(discountedAmount, this.currentSubscription.currencyId)}/${this.formatPaymentPeriod(this.currentSubscription.paymentPeriodType)}`;
         }
         return '$29.95/month';
     }
@@ -148,9 +155,53 @@ export class SubscriptionManagementDialogComponent implements OnInit {
         this.step = 'cancel-options';
     }
 
+    onCancelReasonInput(event: any): void {
+        const value = event.target.value;
+        console.log('Cancel reason input:', value);
+        this.cancelReason = value;
+    }
+
     handleCancelConfirm(): void {
-        this.step = 'confirmed';
-        // Here you would proceed with the actual cancellation
+        if (!this.currentSubscription) {
+            abp.notify.error('No subscription found to cancel');
+            return;
+        }
+        
+        console.log('Current cancelReason value:', this.cancelReason);
+        console.log('CancelReason type:', typeof this.cancelReason);
+        console.log('CancelReason length:', this.cancelReason ? this.cancelReason.length : 'null/undefined');
+        
+        if (!this.cancelReason || !this.cancelReason.trim()) {
+            abp.notify.error('Please provide a cancellation reason');
+            return;
+        }
+
+        this.isCancelling = true;
+        
+        const cancelInput = new CancelOrderSubscriptionInput();
+        cancelInput.subscriptionId = this.currentSubscription.id;
+        cancelInput.cancelAtPeriodEnd = this.cancellationType === 'end-of-period';
+        cancelInput.cancelationReason = this.cancelReason.trim();
+
+        this.userSubscriptionService.cancel(cancelInput)
+            .pipe(finalize(() => {
+                this.isCancelling = false;
+            }))
+            .subscribe(
+                () => {
+                    abp.notify.success('Subscription cancelled successfully');
+                    this.step = 'confirmed';
+                    // Update the subscription status
+                    if (this.currentSubscription) {
+                        this.currentSubscription.statusCode = 'C';
+                        this.currentSubscription.status = 'Cancelled';
+                    }
+                },
+                (error) => {
+                    console.error('Error cancelling subscription:', error);
+                    abp.notify.error('Failed to cancel subscription. Please try again.');
+                }
+            );
     }
 
     handleAcceptOffer(): void {

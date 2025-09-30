@@ -26,17 +26,19 @@
         <div class="py-[1rem] px-[1.9rem] flex justify-center items-center relative bg-black h-[4.5rem]">
             <div class="flex flex-col absolute top-[1rem] left-[1.9rem]">
                 <span class="text-[#64748b] text-[0.75rem]">Powered by</span>
-                <img src="/assets/common/images/host-logo-light.png" class="h-[16px]" />
+                <img src="/assets/images/upgrade-chat-logo.png" class="h-[16px]" />
 
             </div>
-            <img [src]="remoteServiceBaseUrl + '/api/TenantCustomization/GetLogo?' + appSessionService.getTenantLogoUrlParams()" class="h-[70px]">
+            <img [src]="remoteServiceBaseUrl + '/api/TenantCustomization/GetLogo?' + appSessionService.getTenantLogoUrlParams()"
+                class="h-[70px]">
             <div class="flex items-center gap-[0.75rem] absolute top-[1rem] right-[1.9rem]">
                 <div class="relative">
                     <button
                         class="bg-[#5966f3] py-[0.5rem] px-[0.75rem] flex gap-[0.5rem] items-center rounded-[0.75rem]"
                         (click)="toggleProfileDropdown()">
                         <span
-                            class="w-[1.5rem] h-[1.5rem] rounded-full bg-[#4150f1] text-[0.75rem]/[1rem] text-white flex items-center justify-center">{{this.appSessionService.tenantName?.charAt(0) || 'S'}}</span>
+                            class="w-[1.5rem] h-[1.5rem] rounded-full bg-[#4150f1] text-[0.75rem]/[1rem] text-white flex items-center justify-center">{{this.appSessionService.tenantName?.charAt(0)
+                            || 'S'}}</span>
                         <span class="text-[0.875rem]/[1.25rem] font-medium
                         um text-white">{{this.appSessionService.tenantName || 'SUPERLINX'}}</span>
                         <lucide-angular name="ChevronDown" class="w-[1rem] h-[1rem]" color="white"></lucide-angular>
@@ -90,8 +92,7 @@
                                 [class]="isDarkMode ? 'hover:bg-[#12143296] !text-red-400' : 'hover:bg-gray-50 text-red-600'"
                                 (click)="signOut()">
                                 <lucide-angular name="LogOut" class="w-[16px] h-[16px]"
-                                    [class]="isDarkMode ? 'text-red-400' : 'text-red-600'"
-                                    ></lucide-angular>
+                                    [class]="isDarkMode ? 'text-red-400' : 'text-red-600'"></lucide-angular>
                                 <span>Sign Out</span>
                             </button>
                         </div>
@@ -123,14 +124,16 @@
                 <div class="flex items-center gap-[1rem]">
                     <div class="sm:w-[4rem] sm:h-[4rem] w-[3rem] h-[3rem] rounded-full  flex items-center justify-center"
                         [class]="isDarkMode ? '!bg-[#3c83f6]' : 'bg-[#0f172a]'">
-                        <img [src]="this.profileService.getProfilePictureUrl(this.appSessionService.user.profileThumbnailId)" class="w-full h-full rounded-full" />
+                        <img [src]="this.profileService.getProfilePictureUrl(this.appSessionService.user.profileThumbnailId)"
+                            class="w-full h-full rounded-full" />
                     </div>
                     <div class="flex flex-col justify-center">
                         <h2 class="text-[1.25rem]/[1.75rem] font-medium mb-0"
                             [class]="isDarkMode ? 'text-white' : 'text-black'">{{
-                                (this.appSessionService.user.name + ' ' + this.appSessionService.user.surname) || 'John Doe'
+                            (this.appSessionService.user.name + ' ' + this.appSessionService.user.surname) || 'John Doe'
                             }}</h2>
-                        <p class="text-[0.875rem]/[1.25rem] text-[#64748b] mb-0">Member since {{getMemberSinceDate()}}</p>
+                        <p class="text-[0.875rem]/[1.25rem] text-[#64748b] mb-0">Member since {{getMemberSinceDate()}}
+                        </p>
                     </div>
                 </div>
                 <div class="gap-[0.5rem] flex items-center">
@@ -220,7 +223,8 @@
             <div class="left-column !mt-[2rem]">
                 <div class="flex md:flex-row flex-col gap-[2rem] w-full items-start">
                     <div class="md:w-[50%] w-full h-auto flex flex-col gap-[1rem]">
-                        <div class="p-[1.5rem] backdrop-blur-sm shadow-sm text-[#020817] w-full rounded-[0.75rem] flex   flex flex-col  flex-1"
+                        <div *ngIf="currentSubscription"
+                            class="p-[1.5rem] backdrop-blur-sm shadow-sm text-[#020817] w-full rounded-[0.75rem] flex   flex flex-col  flex-1"
                             [class]="isDarkMode ? '!bg-[#1f29374d] border !border-[#1f293780]' : 'border !border-[#f1f5f980]'">
                             <div class="flex justify-between w-full mb-[1rem]">
                                 <div class="flex gap-[0.75rem] items-center">
@@ -260,7 +264,8 @@
                                     <p class="text-[#64748b] text-[0.875rem]/[1.25rem] mb-0">Amount</p>
                                     <p class="text-black text-[0.875rem]/[1.25rem] mb-0 font-medium"
                                         [class]="isDarkMode ? 'text-white' : 'text-black'">
-                                        {{formatCurrency(currentSubscription?.fee, currentSubscription?.currencyId)}}/{{formatPaymentPeriod(currentSubscription?.paymentPeriodType)}}
+                                        {{formatCurrency(currentSubscription?.fee,
+                                        currentSubscription?.currencyId)}}/{{formatPaymentPeriod(currentSubscription?.paymentPeriodType)}}
                                     </p>
                                 </div>
                             </div>
@@ -275,7 +280,34 @@
                                 </button>
                             </div>
                         </div>
-                        <div class="p-[1.5rem] backdrop-blur-sm shadow-sm text-[#020817] w-full rounded-[0.75rem] flex   flex flex-col  flex-1"
+                        <div *ngIf="!currentSubscription"
+                            class="p-[1.5rem] backdrop-blur-sm shadow-sm text-[#020817] w-full rounded-[0.75rem] flex   flex flex-col  flex-1"
+                            [class]="isDarkMode ? '!bg-[#1f29374d] border !border-[#1f293780]' : 'border !border-[#f1f5f980]'">
+                            <div class="flex flex-col w-full">
+                                <div class="flex gap-[0.75rem] items-center mb-[1rem]">
+                                    <lucide-angular name="Crown" class="w-[24px] h-[24px]"
+                                        [color]="isDarkMode ? '#94a3b8' : '#94a3b8'"></lucide-angular>
+                                    <span
+                                        class="text-[#0f172a] sm:text-[1.125rem]/[1.75rem] text-[1rem]/[1.5rem] font-semibold mb-0"
+                                        [class]="isDarkMode ? 'text-white' : 'text-black'">Your
+                                        Membership</span>
+                                </div>
+
+                                <div class="w-full py-[1.5rem] flex justify-center items-center flex-col">
+                                    <p [class]="isDarkMode ? 'text-[#94a3b8]' : 'text-[#64748b]' "
+                                        class=" text-[0.875rem]/[1.25rem]">You don't have any active subscription at
+                                        this time</p>
+                                    <button
+                                        class="text-[0.875rem]/[1.25rem] font-medium h-[2.25rem] flex justify-center items-center px-[0.75rem] my-[0.75rem] rounded-[10px]"
+                                        [class]="isDarkMode ? '!bg-[#3c83f6] text-[#0f172a]' : 'bg-[#0f172a] text-white'">
+                                        Browse Plans
+                                    </button>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div *ngIf="latestInvoice"
+                            class="p-[1.5rem] backdrop-blur-sm shadow-sm text-[#020817] w-full rounded-[0.75rem] flex   flex flex-col  flex-1"
                             [class]="isDarkMode ? '!bg-[#1f29374d] border !border-[#1f293780]' : 'border !border-[#f1f5f980]'">
                             <div class="flex justify-between w-full mb-[1rem]">
                                 <div class="flex gap-[0.75rem] items-center">
@@ -286,9 +318,8 @@
                                         [class]="isDarkMode ? 'text-white' : 'text-black'">Latest Invoice</span>
                                 </div>
                                 <div class="flex gap-[0.5rem]">
-                                    <button class="w-[2rem] h-[2rem] flex justify-center items-center" 
-                                        (click)="downloadInvoice()" 
-                                        [disabled]="pdfDownloadLoading">
+                                    <button class="w-[2rem] h-[2rem] flex justify-center items-center"
+                                        (click)="downloadInvoice()" [disabled]="pdfDownloadLoading">
                                         <div *ngIf="!pdfDownloadLoading">
                                             <lucide-angular name="Download" class="w-[16px] h-[16px]"
                                                 [color]="isDarkMode ? 'white' : '#0f172a'"></lucide-angular>
@@ -298,7 +329,8 @@
                                                 [color]="isDarkMode ? 'white' : '#0f172a'"></lucide-angular>
                                         </div>
                                     </button>
-                                    <button class="w-[2rem] h-[2rem] flex justify-center items-center" (click)="openMoreMenu()">
+                                    <button class="w-[2rem] h-[2rem] flex justify-center items-center"
+                                        (click)="openMoreMenu()">
                                         <lucide-angular name="MoreHorizontal" class="w-[16px] h-[16px]"
                                             [color]="isDarkMode ? 'white' : '#0f172a'"></lucide-angular>
                                     </button>
@@ -339,6 +371,26 @@
                                     </p>
                                 </div>
                             </div>
+                        </div>
+                        <div *ngIf="!latestInvoice"
+                            class="p-[1.5rem] backdrop-blur-sm shadow-sm text-[#020817] w-full rounded-[0.75rem] flex   flex flex-col  flex-1"
+                            [class]="isDarkMode ? '!bg-[#1f29374d] border !border-[#1f293780]' : 'border !border-[#f1f5f980]'">
+                            <div class="flex flex-col w-full">
+                                <div class="flex gap-[0.75rem] items-center mb-[1rem]">
+                                    <lucide-angular name="FileText" class="w-[24px] h-[24px]"
+                                        [color]="isDarkMode ? '#94a3b8' : '#94a3b8'"></lucide-angular>
+                                    <span
+                                        class="text-[#0f172a] sm:text-[1.125rem]/[1.75rem] text-[1rem]/[1.5rem] font-semibold mb-0"
+                                        [class]="isDarkMode ? 'text-white' : 'text-black'">Latest Invoice
+                                    </span>
+                                </div>
+
+                                <div class="w-full py-[1.5rem] flex justify-center items-center flex-col">
+                                    <p [class]="isDarkMode ? 'text-[#94a3b8]' : 'text-[#64748b]' "
+                                        class=" text-[0.875rem]/[1.25rem]">You don't have any recent invoices.</p>
+                                </div>
+                            </div>
+
                         </div>
                     </div>
                     <div class="md:w-[50%] w-full p-[1.5rem] backdrop-blur-sm shadow-sm text-[#020817] w-full rounded-[0.75rem] flex   flex flex-col  flex-1"

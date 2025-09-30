@@ -405,12 +405,17 @@ export class MemberPortalComponent implements OnInit, OnDestroy {
     // Helper method to format currency and amount
     formatCurrency(amount: number, currency: string): string {
         if (!amount || !currency) return '';
-        return `${amount} ${currency}`;
+        return `${amount} ${currency==="USD"?"$":currency==="EUR"?"€":currency}`;
     }
 
     // Helper method to format payment period
     formatPaymentPeriod(period: string): string {
         if (!period) return 'month';
+        if(period.toLowerCase()==="monthly"){
+            return "month"
+        }else if(period.toLowerCase()==="yearly"){
+            return "year"
+        }
         return period.toLowerCase();
     }
 
