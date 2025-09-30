@@ -6,7 +6,7 @@ import { PublicRoutingModule } from './public-routing.module';
 import { MemberPortalComponent } from './portal/member.portal.component';
 import { ReferralSettingsDialogComponent } from './portal/referral-settings-dialog/referral-settings-dialog.component';
 import { SubscriptionManagementDialogComponent } from './portal/subscription-management-dialog/subscription-management-dialog.component';
-import { LucideAngularModule, CheckCircle, Sun, Moon, Users, Check, FileText, Calendar, Headphones, Download, Receipt, Mail, Link, Copy, CalendarPlus, MapPin, ExternalLink, Clock, Globe, Send, ChevronDown, User, Share, Settings, Crown, MoreHorizontal, Upload, X, LogOut, AlertTriangle, Gift, CreditCard, Sparkles, File, Locate, Lock, ListChecks, Camera, HelpCircle} from 'lucide-angular';
+import { LucideAngularModule, CheckCircle, Sun, Moon, Users, Check, FileText, Calendar, Headphones, Download, Receipt, Mail, Link, Copy, CalendarPlus, MapPin, ExternalLink, Clock, Globe, Send, ChevronDown, User, Share, Settings, Crown, MoreHorizontal, Upload, X, LogOut, AlertTriangle, Gift, CreditCard, Sparkles, File, Locate, Lock, ListChecks, Camera, HelpCircle, Loader2} from 'lucide-angular';
 import { ServiceProxyModule } from '@shared/service-proxies/service-proxy.module';
 import { API_BASE_URL } from '@shared/service-proxies/service-proxies';
 import { AppConsts } from '@shared/AppConsts';
@@ -47,7 +47,7 @@ import { AppAuthService } from '@shared/common/auth/app-auth.service';
       DxSelectBoxModule,
       DxTextBoxModule,
       InplaceEditModule,
-      LucideAngularModule.pick({ CheckCircle, Sun, Moon, Users,Check, FileText, Calendar, Headphones, Download, Receipt, Mail, Link, Copy, CalendarPlus, MapPin,  ExternalLink, Clock, Globe, Send, ChevronDown, User, Share, Settings, Crown, MoreHorizontal, Upload, X, LogOut, AlertTriangle, Gift, CreditCard, Sparkles, File, Locate, Lock, ListChecks, Camera, HelpCircle })
+      LucideAngularModule.pick({ CheckCircle, Sun, Moon, Users,Check, FileText, Calendar, Headphones, Download, Receipt, Mail, Link, Copy, CalendarPlus, MapPin,  ExternalLink, Clock, Globe, Send, ChevronDown, User, Share, Settings, Crown, MoreHorizontal, Upload, X, LogOut, AlertTriangle, Gift, CreditCard, Sparkles, File, Locate, Lock, ListChecks, Camera, HelpCircle, Loader2 })
   ],
   providers: [
     { provide: API_BASE_URL, useValue: AppConsts.remoteServiceBaseUrl },

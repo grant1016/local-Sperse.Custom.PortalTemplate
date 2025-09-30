@@ -57263,6 +57263,8 @@ export class UserInvoiceServiceProxy {
      * @return Success
      */
     generatePdf(id: number | undefined, payerOrganizationUnitId: number | undefined): Observable<string> {
+        console.log(payerOrganizationUnitId);
+        
         let url_ = this.baseUrl + "/api/services/CRM/UserInvoice/GeneratePdf?";
         if (id === null)
             throw new Error("The parameter 'id' cannot be null.");
@@ -64710,6 +64712,7 @@ export interface ICancelOrderInfo {
 
 export class CancelOrderSubscriptionInput implements ICancelOrderSubscriptionInput {
     subscriptionId!: number;
+    cancelAtPeriodEnd!: boolean;
     cancelationReason!: string | undefined;
 
     constructor(data?: ICancelOrderSubscriptionInput) {

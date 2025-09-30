@@ -29,16 +29,16 @@
                 <img src="/assets/common/images/host-logo-light.png" class="h-[16px]" />
 
             </div>
-            <img [src]="remoteServiceBaseUrl + '/api/TenantCustomization/GetLogo?' + appSessionService.getTenantLogoUrlParams()" class="h-[32px]">
+            <img [src]="remoteServiceBaseUrl + '/api/TenantCustomization/GetLogo?' + appSessionService.getTenantLogoUrlParams()" class="h-[70px]">
             <div class="flex items-center gap-[0.75rem] absolute top-[1rem] right-[1.9rem]">
                 <div class="relative">
                     <button
                         class="bg-[#5966f3] py-[0.5rem] px-[0.75rem] flex gap-[0.5rem] items-center rounded-[0.75rem]"
                         (click)="toggleProfileDropdown()">
                         <span
-                            class="w-[1.5rem] h-[1.5rem] rounded-full bg-[#4150f1] text-[0.75rem]/[1rem] text-white flex items-center justify-center">S</span>
+                            class="w-[1.5rem] h-[1.5rem] rounded-full bg-[#4150f1] text-[0.75rem]/[1rem] text-white flex items-center justify-center">{{this.appSessionService.tenantName?.charAt(0) || 'S'}}</span>
                         <span class="text-[0.875rem]/[1.25rem] font-medium
-                        um text-white">SUPERLINX</span>
+                        um text-white">{{this.appSessionService.tenantName || 'SUPERLINX'}}</span>
                         <lucide-angular name="ChevronDown" class="w-[1rem] h-[1rem]" color="white"></lucide-angular>
                     </button>
                     <div *ngIf="showProfileDropdown"
@@ -123,12 +123,13 @@
                 <div class="flex items-center gap-[1rem]">
                     <div class="sm:w-[4rem] sm:h-[4rem] w-[3rem] h-[3rem] rounded-full  flex items-center justify-center"
                         [class]="isDarkMode ? '!bg-[#3c83f6]' : 'bg-[#0f172a]'">
-                        <lucide-angular name="User" class="w-[2rem] h-[2rem]"
-                            [color]="isDarkMode ? '#0f172a' : 'white'"></lucide-angular>
+                        <img [src]="this.profileService.getProfilePictureUrl(this.appSessionService.user.profileThumbnailId)" class="w-full h-full rounded-full" />
                     </div>
                     <div class="flex flex-col justify-center">
                         <h2 class="text-[1.25rem]/[1.75rem] font-medium mb-0"
-                            [class]="isDarkMode ? 'text-white' : 'text-black'">John Doe</h2>
+                            [class]="isDarkMode ? 'text-white' : 'text-black'">{{
+                                (this.appSessionService.user.name + ' ' + this.appSessionService.user.surname) || 'John Doe'
+                            }}</h2>
                         <p class="text-[0.875rem]/[1.25rem] text-[#64748b] mb-0">Member since {{getMemberSinceDate()}}</p>
                     </div>
                 </div>
@@ -285,11 +286,19 @@
                                         [class]="isDarkMode ? 'text-white' : 'text-black'">Latest Invoice</span>
                                 </div>
                                 <div class="flex gap-[0.5rem]">
-                                    <button class="w-[2rem] h-[2rem] flex justify-center items-center" (click)="downloadInvoice()">
-                                        <lucide-angular name="Download" class="w-[16px] h-[16px]"
-                                            [color]="isDarkMode ? 'white' : '#0f172a'"></lucide-angular>
+                                    <button class="w-[2rem] h-[2rem] flex justify-center items-center" 
+                                        (click)="downloadInvoice()" 
+                                        [disabled]="pdfDownloadLoading">
+                                        <div *ngIf="!pdfDownloadLoading">
+                                            <lucide-angular name="Download" class="w-[16px] h-[16px]"
+                                                [color]="isDarkMode ? 'white' : '#0f172a'"></lucide-angular>
+                                        </div>
+                                        <div *ngIf="pdfDownloadLoading" class="animate-spin">
+                                            <lucide-angular name="Loader2" class="w-[16px] h-[16px]"
+                                                [color]="isDarkMode ? 'white' : '#0f172a'"></lucide-angular>
+                                        </div>
                                     </button>
-                                    <button class="w-[2rem] h-[2rem] flex justify-center items-center">
+                                    <button class="w-[2rem] h-[2rem] flex justify-center items-center" (click)="openMoreMenu()">
                                         <lucide-angular name="MoreHorizontal" class="w-[16px] h-[16px]"
                                             [color]="isDarkMode ? 'white' : '#0f172a'"></lucide-angular>
                                     </button>
@@ -300,29 +309,33 @@
                                     <p class="text-[#64748b] text-[0.875rem]/[1.25rem] mb-0">Invoice</p>
                                     <p class="text-black text-[0.875rem]/[1.25rem] mb-0 font-medium"
                                         [class]="isDarkMode ? 'text-white' : 'text-black'">
-                                        {{invoiceInfo?.invoiceNumber || 'MEXIJQDE-0001'}}
+                                        {{getInvoiceNumber()}}
                                     </p>
                                 </div>
                                 <div class="flex flex-col items-start gap-[0.25rem]">
                                     <p class="text-[#64748b] text-[0.875rem]/[1.25rem] mb-0">Status</p>
-                                    <span
+                                    <span *ngIf="!invoiceLoading"
                                         class="border text-[0.75rem]/[1rem] px-[0.625rem] py-[0.125rem] rounded-[2rem]"
-                                        [class]="invoiceInfo?.invoiceStatus === 'Paid' ? '!border-[#16a249] text-[#16a249]' : '!border-[#dc2626] text-[#dc2626]'">
-                                        {{invoiceInfo?.invoiceStatus || 'Paid'}}
+                                        [class]="getInvoiceStatusColor(getInvoiceStatus())">
+                                        {{getInvoiceStatus()}}
                                     </span>
+                                    <div *ngIf="invoiceLoading" class="flex items-center gap-2">
+                                        <div class="animate-spin rounded-full h-3 w-3 border-b-2 border-blue-500"></div>
+                                        <span class="text-xs text-[#64748b]">Loading...</span>
+                                    </div>
                                 </div>
                                 <div class="flex flex-col gap-[0.25rem]">
                                     <p class="text-[#64748b] text-[0.875rem]/[1.25rem] mb-0">Amount</p>
                                     <p class="text-black text-[0.875rem]/[1.25rem] mb-0 font-medium"
                                         [class]="isDarkMode ? 'text-white' : 'text-black'">
-                                        {{invoiceInfo?.invoiceAmount || currentSubscription?.fee || '594.00'}} {{invoiceInfo?.currencyId}}
+                                        {{getInvoiceAmount()}}
                                     </p>
                                 </div>
                                 <div class="flex flex-col gap-[0.25rem]">
                                     <p class="text-[#64748b] text-[0.875rem]/[1.25rem] mb-0">Date</p>
                                     <p class="text-black text-[0.875rem]/[1.25rem] mb-0 font-medium"
                                         [class]="isDarkMode ? 'text-white' : 'text-black'">
-                                        {{invoiceInfo?.paymentDate | date:'MMM d, yyyy' || currentSubscription?.startDate | date:'MMM d, yyyy' || 'Sep 19, 2025'}}
+                                        {{getInvoiceDate()}}
                                     </p>
                                 </div>
                             </div>

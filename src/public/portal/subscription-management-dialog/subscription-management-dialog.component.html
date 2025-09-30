@@ -22,7 +22,8 @@
                 <div class="plan-info">
                     <div class="plan-status">
                         <span class="text-sm text-muted-foreground">Current Plan</span>
-                        <span *ngIf="!subscriptionLoading" class="status-badge" [class]="getSubscriptionStatusColor(currentSubscription?.statusCode || 'A')">
+                        <span *ngIf="!subscriptionLoading" class="status-badge"
+                            [class]="getSubscriptionStatusColor(currentSubscription?.statusCode || 'A')">
                             {{getStatus()}}
                         </span>
                         <div *ngIf="subscriptionLoading" class="flex items-center gap-2">
@@ -101,7 +102,8 @@
         </div>
 
         <div class="cancellation-options">
-            <div class="option-item" [class]="cancellationType === 'end-of-period' ? 'selected' : ''" [class]="isDarkMode ? '!border-2 !border-[#2e3d52]' : '!border-2 !border-[#3c83f64d]'"
+            <div class="option-item" [class]="cancellationType === 'end-of-period' ? 'selected' : ''"
+                [class]="isDarkMode ? '!border-2 !border-[#2e3d52]' : '!border-2 !border-[#3c83f64d]'"
                 (click)="cancellationType = 'end-of-period'">
                 <div class="option-radio">
                     <div class="radio-circle" [class]="cancellationType === 'end-of-period' ? 'selected' : ''"></div>
@@ -120,7 +122,8 @@
                 </div>
             </div>
 
-            <div class="option-item" [class]="cancellationType === 'immediate' ? 'selected' : ''" [class]="isDarkMode ? '!border-2 !border-[#2e3d52]' : '!border-2 !border-[#3c83f64d]'"
+            <div class="option-item" [class]="cancellationType === 'immediate' ? 'selected' : ''"
+                [class]="isDarkMode ? '!border-2 !border-[#2e3d52]' : '!border-2 !border-[#3c83f64d]'"
                 (click)="cancellationType = 'immediate'">
                 <div class="option-radio">
                     <div class="radio-circle" [class]="cancellationType === 'immediate' ? 'selected' : ''"></div>
@@ -134,7 +137,11 @@
                 </div>
             </div>
         </div>
-
+        <label class="text-[0.875rem]/[1.25rem] font-medium mb-0"
+            [class]="isDarkMode ? 'text-white' : 'text-black'">Cancel Reason</label>
+        <input type="text" class="w-full h-[2.5rem] py-[0.5rem] px-[0.75rem] mt-[0.5rem] rounded-[0.75rem] border"
+            [class]="isDarkMode ? 'bg-[#020817] border-[#5c6f82] text-white' : 'bg-[#eff2f5] border-[#e2e8f0] text-black'"
+            [(ngModel)]="cancelReason" placeholder="Enter your cancel reason">
         <div class="dialog-actions flex md:flex-row flex-col">
             <button class="btn-secondary" (click)="step = 'retention-offer'">
                 Back
@@ -183,7 +190,8 @@
                     </p>
                     <div class="discounted-price"
                         [class]="isDarkMode ? '!bg-[#020817] border-primary/20' : 'bg-[#eff2f5cc] border border-[#0f172a33]'">
-                        <p class="price-amount text-2xl sm:text-3xl font-bold " [class]="isDarkMode ? 'text-[#3c83f6]' : 'text-[#0f172a]'">
+                        <p class="price-amount text-2xl sm:text-3xl font-bold "
+                            [class]="isDarkMode ? 'text-[#3c83f6]' : 'text-[#0f172a]'">
                             {{getDiscountedPrice()}}
                         </p>
                         <p class="price-note text-sm " [class]="isDarkMode ? 'text-[#94a3b8]' : 'text-[#0f172a]'">
@@ -263,7 +271,8 @@
                 </h3>
                 <div class="success-details !bg-[#1cca5b1a] border !border-[#1cca5b33]">
                     <p class="text-sm text-muted-foreground">
-                        Your <span class="font-semibold text-[#1cca5b]">50% discount</span> has been applied for the next
+                        Your <span class="font-semibold text-[#1cca5b]">50% discount</span> has been applied for the
+                        next
                         3 months.
                         You'll continue to have full access to all premium features.
                     </p>

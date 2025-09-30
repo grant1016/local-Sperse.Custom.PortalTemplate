@@ -28,6 +28,9 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 import { ConditionsModalService } from '@shared/common/conditions-modal/conditions-modal.service';
 import { AppConsts } from '@shared/AppConsts';
 import { finalize } from 'rxjs/operators';
+import { ODataService } from '@shared/common/odata/odata.service';
+import { StringHelper } from '@shared/helpers/StringHelper';
+import { RequestHelper } from '@shared/helpers/RequestHelper';
 import { ReferralSettingsDialogComponent } from './referral-settings-dialog/referral-settings-dialog.component';
 import { EventDurationHelper } from '@shared/crm/helpers/event-duration-types.enum';
 import { SubscriptionManagementDialogComponent } from './subscription-management-dialog/subscription-management-dialog.component';
@@ -39,9 +42,8 @@ import { AppAuthService } from '@shared/common/auth/app-auth.service';
 import { ChangePasswordModalComponent } from '@app/shared/layout/profile/change-password-modal.component';
 import { LoginAttemptsModalComponent } from '@app/shared/layout/login-attempts-modal/login-attempts-modal.component';
 import { ProfileServiceProxy, UpdateProfilePictureInput } from '@shared/service-proxies/service-proxies';
-import { StringHelper } from '@shared/helpers/StringHelper';
 import { filter, switchMap, tap } from 'rxjs/operators';
-import { of } from 'rxjs';
+import { of, Observable } from 'rxjs';
 @Component({
     selector: 'public-portal',
     templateUrl: 'member.portal.component.html',
@@ -61,11 +63,18 @@ export class MemberPortalComponent implements OnInit, OnDestroy {
     hasToSOrPolicy: boolean;
     conditions = ConditionsType;
     remoteServiceBaseUrl: string = AppConsts.remoteServiceBaseUrl;
-    
+
     // Subscription data
     subscriptionHistory: OrderSubscriptionDto[] = [];
     currentSubscription: OrderSubscriptionDto | null = null;
     subscriptionLoading: boolean = false;
+
+    // Invoice data
+    latestInvoice: any = null;
+    invoiceLoading: boolean = false;
+
+    // PDF download data (same as invoices component)
+    pdfDownloadLoading: boolean = false;
     private tailwindScript: HTMLScriptElement;
     helpLink = abp.setting.values['Integrations:Zendesk:AccountUrl'] ? location.protocol + '//' + abp.setting.values['Integrations:Zendesk:AccountUrl'] : null;
 
@@ -148,6 +157,7 @@ export class MemberPortalComponent implements OnInit, OnDestroy {
         private profileServiceProxy: ProfileServiceProxy,
         private authService: AppAuthService,
         private userSubscriptionService: UserSubscriptionServiceProxy,
+        private oDataService: ODataService,
     ) {
         // Bind the document click handler once in constructor
         this.documentClickHandler = this.onDocumentClick.bind(this);
@@ -161,12 +171,19 @@ export class MemberPortalComponent implements OnInit, OnDestroy {
         this.isDarkMode = localStorage.getItem('isDarkMode') === 'true';
         abp.ui.setBusy();
 
-        
-        
+
+
         // Load subscription history
         this.getSubscriptionHistory();
-        console.log('Tenant ID:', this.appSessionService.tenantId);
+
+        // Load latest invoice
+        this.getLatestInvoice();
+
+        console.log('Current Subscription:', this.appSessionService);
         
+
+        console.log('Tenant ID:', this.appSessionService.tenantId);
+
         if (this.isTestMode) {
             this.loadTestData();
         } else {
@@ -320,7 +337,9 @@ export class MemberPortalComponent implements OnInit, OnDestroy {
     switchTheme(theme: 'original' | 'modern') {
         this.currentTheme = theme;
     }
-
+    openMoreMenu() {
+        this.router.navigate(['app/invoices']);
+    }
     getInvoiceInfo(tenantId, publicId) {
         this.userInvoiceService
             .getInvoiceReceiptInfo(tenantId, publicId)
@@ -407,10 +426,126 @@ export class MemberPortalComponent implements OnInit, OnDestroy {
 
     // Helper method to get member since date
     getMemberSinceDate(): string {
-        if (this.currentSubscription?.startDate) {
-            return moment(this.currentSubscription.startDate).format('MMMM YYYY');
+        if (this.appSessionService.user?.creationTime) {
+            return moment(this.appSessionService.user.creationTime).format('MMMM YYYY');
         }
         return 'September 2025';
+    }
+
+    getLatestInvoice() {
+        this.invoiceLoading = true;
+
+        // Create OData URL for UserInvoices with filters to exclude draft and canceled invoices
+        const filter = [
+            {
+                'and': [
+                    { 'Status': { 'ne': InvoiceStatus.Draft } },
+                    { 'Status': { 'ne': InvoiceStatus.Canceled } }
+                ]
+            }
+        ];
+
+        const odataUrl = this.oDataService.getODataUrl('UserInvoices', filter) + '&$top=1&$orderby=Date desc';
+
+        // Make HTTP request to fetch the latest invoice
+        fetch(odataUrl, {
+            headers: {
+                'Authorization': 'Bearer ' + abp.auth.getToken(),
+                'Accept': 'application/json'
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Latest Invoice Data:', data);
+                if (data.value && data.value.length > 0) {
+                    this.latestInvoice = data.value[0];
+                }
+                this.invoiceLoading = false;
+            })
+            .catch(error => {
+                console.error('Error fetching latest invoice:', error);
+                this.invoiceLoading = false;
+            });
+    }
+
+    // Helper method to get invoice number
+    getInvoiceNumber(): string {
+        return this.latestInvoice?.Number || this.invoiceInfo?.invoiceNumber || 'MEXIJQDE-0001';
+    }
+
+    // Helper method to get invoice status
+    getInvoiceStatus(): string {
+        return this.latestInvoice?.Status || this.invoiceInfo?.invoiceStatus || 'Paid';
+    }
+
+    // Helper method to get invoice amount
+    getInvoiceAmount(): string {
+        if (this.latestInvoice?.Amount && this.latestInvoice?.CurrencyId) {
+            return `${this.latestInvoice.CurrencyId}${this.latestInvoice.Amount}`;
+        }
+        return this.invoiceInfo?.currencyId + this.invoiceInfo?.invoiceAmount || this.currentSubscription?.currencyId + this.currentSubscription?.fee || '$594.00';
+    }
+
+    // Helper method to get invoice date
+    getInvoiceDate(): string {
+        if (this.latestInvoice?.Date) {
+            return new Date(this.latestInvoice.Date).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+            });
+        }
+        if (this.invoiceInfo?.paymentDate) {
+            return new Date(this.invoiceInfo.paymentDate).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+            });
+        }
+        if (this.currentSubscription?.startDate) {
+            return new Date(this.currentSubscription.startDate).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+            });
+        }
+        return 'Sep 19, 2025';
+    }
+
+    // Helper method to get invoice status color
+    getInvoiceStatusColor(status: string): string {
+        switch (status) {
+            case 'Paid': return '!border-[#16a249] text-[#16a249]';
+            case 'Sent': return '!border-[#f59e0b] text-[#f59e0b]';
+            case 'Overdue': return '!border-[#ef4444] text-[#ef4444]';
+            default: return '!border-[#16a249] text-[#16a249]';
+        }
+    }
+
+    // PDF download methods (same as invoices component)
+    getPdfLink(invoiceId): Observable<string> {
+        this.pdfDownloadLoading = true;
+        return this.userInvoiceService.generatePdf(invoiceId, undefined).pipe(
+            finalize(() => {
+                this.pdfDownloadLoading = false;
+            })
+        );
+    }
+
+    getPdfData(pdfLink) {
+        RequestHelper.downloadFileBlob(pdfLink, (blob) => {
+            // Create download link
+            const url = window.URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `invoice-${this.getInvoiceNumber()}.pdf`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            window.URL.revokeObjectURL(url);
+
+            abp.notify.success('Invoice PDF downloaded successfully');
+        });
     }
 
     retryDataRequest(tenantId, publicId) {
@@ -648,8 +783,16 @@ export class MemberPortalComponent implements OnInit, OnDestroy {
     }
 
     downloadInvoice() {
-        if (this.invoiceInfo.downloadInvoiceUrl) {
+        // Use the same pattern as invoices component
+        if (this.latestInvoice?.Id) {
+            this.getPdfLink(this.latestInvoice.Id).subscribe(
+                (pdfLink: string) => this.getPdfData(pdfLink)
+            );
+        } else if (this.invoiceInfo?.downloadInvoiceUrl) {
+            // Fallback to existing download URL
             window.open(this.invoiceInfo.downloadInvoiceUrl, '_blank');
+        } else {
+            abp.notify.error('No invoice available for download');
         }
     }
 
@@ -872,7 +1015,7 @@ END:VCALENDAR`;
                     } else {
                         const base64OrigImage = StringHelper.getBase64(result.origImage);
                         const base64ThumbImage = StringHelper.getBase64(result.thumbImage);
-                        
+
                         return this.profileServiceProxy.updateProfilePicture(UpdateProfilePictureInput.fromJS({
                             originalImage: base64OrigImage,
                             thumbnail: base64ThumbImage,
@@ -899,7 +1042,7 @@ END:VCALENDAR`;
             );
     }
 
-    
+
     openChangePassword() {
         this.closeProfileDropdown();
         this.dialog.open(ChangePasswordModalComponent, {
