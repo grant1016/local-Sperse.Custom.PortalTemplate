@@ -10,7 +10,9 @@ import {
     GetExternalUserDataInput,
     ExternalUserDataServiceProxy,
     GetExternalUserDataOutput,
-    SetDiscordForContactInput
+    SetDiscordForContactInput,
+    UserSubscriptionServiceProxy,
+    OrderSubscriptionDto
 } from '@root/shared/service-proxies/service-proxies';
 import { CheckCircle, Send } from 'lucide-angular';
 
@@ -58,6 +60,12 @@ export class MemberPortalComponent implements OnInit, OnDestroy {
     currentYear: number = new Date().getFullYear();
     hasToSOrPolicy: boolean;
     conditions = ConditionsType;
+    remoteServiceBaseUrl: string = AppConsts.remoteServiceBaseUrl;
+    
+    // Subscription data
+    subscriptionHistory: OrderSubscriptionDto[] = [];
+    currentSubscription: OrderSubscriptionDto | null = null;
+    subscriptionLoading: boolean = false;
     private tailwindScript: HTMLScriptElement;
     helpLink = abp.setting.values['Integrations:Zendesk:AccountUrl'] ? location.protocol + '//' + abp.setting.values['Integrations:Zendesk:AccountUrl'] : null;
 
@@ -71,8 +79,8 @@ export class MemberPortalComponent implements OnInit, OnDestroy {
     publicId = this.activatedRoute.snapshot.paramMap.get('publicId');
     preventRedirect: boolean = Boolean(this.activatedRoute.snapshot.queryParamMap.get('preventRedirect'));
     usePortal = !!this.activatedRoute.snapshot.queryParamMap.get('usePortal');
-    isTestMode: boolean = this.activatedRoute.snapshot.url[0]?.path === 'test-portal';
-
+    isTestMode: boolean = this.activatedRoute.snapshot.url[0]?.path === 'member-portal';
+    tenantLogo: string = '';
     discordPopup: Window;
     discordUserId: string;
     discordUserName: string;
@@ -82,6 +90,7 @@ export class MemberPortalComponent implements OnInit, OnDestroy {
     telegramUserName: string;
     telegramUserUpdated: boolean;
     telegramUserUpdating: boolean;
+    shownLoginInfo: any;
     // Theme switching
     currentTheme: 'original' | 'modern' = 'modern';
 
@@ -138,6 +147,7 @@ export class MemberPortalComponent implements OnInit, OnDestroy {
         private appSessionService: AppSessionService,
         private profileServiceProxy: ProfileServiceProxy,
         private authService: AppAuthService,
+        private userSubscriptionService: UserSubscriptionServiceProxy,
     ) {
         // Bind the document click handler once in constructor
         this.documentClickHandler = this.onDocumentClick.bind(this);
@@ -151,10 +161,16 @@ export class MemberPortalComponent implements OnInit, OnDestroy {
         this.isDarkMode = localStorage.getItem('isDarkMode') === 'true';
         abp.ui.setBusy();
 
+        
+        
+        // Load subscription history
+        this.getSubscriptionHistory();
+        console.log('Tenant ID:', this.appSessionService.tenantId);
+        
         if (this.isTestMode) {
             this.loadTestData();
         } else {
-            this.getInvoiceInfo(this.tenantId, this.publicId);
+            this.getInvoiceInfo(this.appSessionService.tenantId, this.publicId);
         }
     }
 
@@ -309,6 +325,7 @@ export class MemberPortalComponent implements OnInit, OnDestroy {
         this.userInvoiceService
             .getInvoiceReceiptInfo(tenantId, publicId)
             .subscribe(result => {
+                this.tenantLogo = result.tenantLogo;
                 switch (result.invoiceStatus) {
                     case InvoiceStatus.Sent:
                         {
@@ -343,6 +360,57 @@ export class MemberPortalComponent implements OnInit, OnDestroy {
                         }
                 }
             });
+    }
+
+    getSubscriptionHistory() {
+        this.subscriptionLoading = true;
+        this.userSubscriptionService.getSubscriptionHistory()
+            .pipe(finalize(() => {
+                this.subscriptionLoading = false;
+            }))
+            .subscribe(
+                (subscriptions: OrderSubscriptionDto[]) => {
+                    console.log('Subscription History Data:', subscriptions);
+                    this.subscriptionHistory = subscriptions;
+                    // Get the current/active subscription (status "A" for Active/Current)
+                    this.currentSubscription = subscriptions.find(sub => sub.statusCode === 'A') || subscriptions[0] || null;
+                    console.log('Current Subscription:', this.currentSubscription);
+                },
+                (error) => {
+                    console.error('Error fetching subscription history:', error);
+                    abp.notify.error('Failed to load subscription information');
+                }
+            );
+    }
+
+    // Helper method to format currency and amount
+    formatCurrency(amount: number, currency: string): string {
+        if (!amount || !currency) return '';
+        return `${amount} ${currency}`;
+    }
+
+    // Helper method to format payment period
+    formatPaymentPeriod(period: string): string {
+        if (!period) return 'month';
+        return period.toLowerCase();
+    }
+
+    // Helper method to get subscription status color
+    getSubscriptionStatusColor(statusCode: string): string {
+        switch (statusCode) {
+            case 'A': return 'bg-[#16a249]'; // Active/Current
+            case 'C': return 'bg-[#dc2626]'; // Cancelled
+            case 'E': return 'bg-[#f59e0b]'; // Expired
+            default: return 'bg-[#6b7280]'; // Unknown
+        }
+    }
+
+    // Helper method to get member since date
+    getMemberSinceDate(): string {
+        if (this.currentSubscription?.startDate) {
+            return moment(this.currentSubscription.startDate).format('MMMM YYYY');
+        }
+        return 'September 2025';
     }
 
     retryDataRequest(tenantId, publicId) {
@@ -722,12 +790,16 @@ END:VCALENDAR`;
             width: '100%',
             panelClass: 'subscription-management-dialog-panel',
             data: {
-                isDarkMode: this.isDarkMode
+                isDarkMode: this.isDarkMode,
+                currentSubscription: this.currentSubscription
             }
         });
 
         dialogRef.afterClosed().subscribe(result => {
-            // Handle dialog close if needed
+            // Refresh subscription data if needed
+            if (result && result.refreshSubscription) {
+                this.getSubscriptionHistory();
+            }
         });
     }
 
@@ -761,6 +833,8 @@ END:VCALENDAR`;
             this.closeProfileDropdown();
         }
     }
+
+
 
     openProfileSettings() {
         this.closeProfileDropdown();

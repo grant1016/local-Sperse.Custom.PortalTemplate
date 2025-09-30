@@ -1,6 +1,6 @@
 <div *ngIf="loading; else mainContainer" class="loading-container">
     <div *ngIf="!failedToLoad; else failBlock" class="wait-message">
-        Waiting for payment information
+        Loading your portal...
     </div>
     <ng-template #failBlock>
         <div>{{failMessage}}</div>
@@ -29,7 +29,7 @@
                 <img src="/assets/common/images/host-logo-light.png" class="h-[16px]" />
 
             </div>
-            <img src="{{tenantLogo}}" class="h-[32px]">
+            <img [src]="remoteServiceBaseUrl + '/api/TenantCustomization/GetLogo?' + appSessionService.getTenantLogoUrlParams()" class="h-[32px]">
             <div class="flex items-center gap-[0.75rem] absolute top-[1rem] right-[1.9rem]">
                 <div class="relative">
                     <button
@@ -129,7 +129,7 @@
                     <div class="flex flex-col justify-center">
                         <h2 class="text-[1.25rem]/[1.75rem] font-medium mb-0"
                             [class]="isDarkMode ? 'text-white' : 'text-black'">John Doe</h2>
-                        <p class="text-[0.875rem]/[1.25rem] text-[#64748b] mb-0">Member since September 2025</p>
+                        <p class="text-[0.875rem]/[1.25rem] text-[#64748b] mb-0">Member since {{getMemberSinceDate()}}</p>
                     </div>
                 </div>
                 <div class="gap-[0.5rem] flex items-center">
@@ -230,25 +230,37 @@
                                         [class]="isDarkMode ? 'text-white' : 'text-black'">Your
                                         Membership</span>
                                 </div>
-                                <span
-                                    class="text-[#ffffff] text-[0.75rem]/[1rem] py-[0.25rem] px-[0.5rem] rounded-[2rem] font-semibold bg-[#16a249]">Active</span>
+                                <span *ngIf="!subscriptionLoading"
+                                    class="text-[#ffffff] text-[0.75rem]/[1rem] py-[0.25rem] px-[0.5rem] rounded-[2rem] font-semibold"
+                                    [class]="getSubscriptionStatusColor(currentSubscription?.statusCode || 'A')">
+                                    {{currentSubscription?.status || 'Active'}}
+                                </span>
+                                <div *ngIf="subscriptionLoading" class="flex items-center gap-2">
+                                    <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-500"></div>
+                                    <span class="text-[0.75rem]/[1rem] text-[#64748b]">Loading...</span>
+                                </div>
                             </div>
                             <div class="flex flex-col gap-[0.25rem]">
                                 <p class="text-[#64748b] text-[0.875rem]/[1.25rem] mb-0">Plan</p>
                                 <p class="text-black text-[0.875rem]/[1.25rem] mb-0 font-medium"
-                                    [class]="isDarkMode ? 'text-white' : 'text-black'">Premium Trading
-                                    Membership</p>
+                                    [class]="isDarkMode ? 'text-white' : 'text-black'">
+                                    {{currentSubscription?.productName || 'Premium Trading Membership'}}
+                                </p>
                             </div>
                             <div class="grid grid-cols-2 gap-[1rem] mt-[0.75rem]">
                                 <div class="flex flex-col gap-[0.25rem]">
                                     <p class="text-[#64748b] text-[0.875rem]/[1.25rem] mb-0">Next billing</p>
                                     <p class="text-black text-[0.875rem]/[1.25rem] mb-0 font-medium"
-                                        [class]="isDarkMode ? 'text-white' : 'text-black'">Oct 19, 2025</p>
+                                        [class]="isDarkMode ? 'text-white' : 'text-black'">
+                                        {{currentSubscription?.endDate | date:'MMM d, yyyy' || 'Oct 19, 2025'}}
+                                    </p>
                                 </div>
                                 <div class="flex flex-col gap-[0.25rem]">
                                     <p class="text-[#64748b] text-[0.875rem]/[1.25rem] mb-0">Amount</p>
                                     <p class="text-black text-[0.875rem]/[1.25rem] mb-0 font-medium"
-                                        [class]="isDarkMode ? 'text-white' : 'text-black'">$59/month</p>
+                                        [class]="isDarkMode ? 'text-white' : 'text-black'">
+                                        {{formatCurrency(currentSubscription?.fee, currentSubscription?.currencyId)}}/{{formatPaymentPeriod(currentSubscription?.paymentPeriodType)}}
+                                    </p>
                                 </div>
                             </div>
                             <div class="mt-[0.75rem] pt-[0.75rem] border-t border-[#e2e8f0]"
@@ -273,7 +285,7 @@
                                         [class]="isDarkMode ? 'text-white' : 'text-black'">Latest Invoice</span>
                                 </div>
                                 <div class="flex gap-[0.5rem]">
-                                    <button class="w-[2rem] h-[2rem] flex justify-center items-center">
+                                    <button class="w-[2rem] h-[2rem] flex justify-center items-center" (click)="downloadInvoice()">
                                         <lucide-angular name="Download" class="w-[16px] h-[16px]"
                                             [color]="isDarkMode ? 'white' : '#0f172a'"></lucide-angular>
                                     </button>
@@ -287,22 +299,31 @@
                                 <div class="flex flex-col gap-[0.25rem]">
                                     <p class="text-[#64748b] text-[0.875rem]/[1.25rem] mb-0">Invoice</p>
                                     <p class="text-black text-[0.875rem]/[1.25rem] mb-0 font-medium"
-                                        [class]="isDarkMode ? 'text-white' : 'text-black'">MEXIJQDE-0001</p>
+                                        [class]="isDarkMode ? 'text-white' : 'text-black'">
+                                        {{invoiceInfo?.invoiceNumber || 'MEXIJQDE-0001'}}
+                                    </p>
                                 </div>
                                 <div class="flex flex-col items-start gap-[0.25rem]">
                                     <p class="text-[#64748b] text-[0.875rem]/[1.25rem] mb-0">Status</p>
                                     <span
-                                        class="border !border-[#16a249] text-[#16a249] text-[0.75rem]/[1rem] px-[0.625rem] py-[0.125rem] rounded-[2rem]">Paid</span>
+                                        class="border text-[0.75rem]/[1rem] px-[0.625rem] py-[0.125rem] rounded-[2rem]"
+                                        [class]="invoiceInfo?.invoiceStatus === 'Paid' ? '!border-[#16a249] text-[#16a249]' : '!border-[#dc2626] text-[#dc2626]'">
+                                        {{invoiceInfo?.invoiceStatus || 'Paid'}}
+                                    </span>
                                 </div>
                                 <div class="flex flex-col gap-[0.25rem]">
                                     <p class="text-[#64748b] text-[0.875rem]/[1.25rem] mb-0">Amount</p>
                                     <p class="text-black text-[0.875rem]/[1.25rem] mb-0 font-medium"
-                                        [class]="isDarkMode ? 'text-white' : 'text-black'">$594.00</p>
+                                        [class]="isDarkMode ? 'text-white' : 'text-black'">
+                                        {{invoiceInfo?.invoiceAmount || currentSubscription?.fee || '594.00'}} {{invoiceInfo?.currencyId}}
+                                    </p>
                                 </div>
                                 <div class="flex flex-col gap-[0.25rem]">
                                     <p class="text-[#64748b] text-[0.875rem]/[1.25rem] mb-0">Date</p>
                                     <p class="text-black text-[0.875rem]/[1.25rem] mb-0 font-medium"
-                                        [class]="isDarkMode ? 'text-white' : 'text-black'">Sep 19, 2025</p>
+                                        [class]="isDarkMode ? 'text-white' : 'text-black'">
+                                        {{invoiceInfo?.paymentDate | date:'MMM d, yyyy' || currentSubscription?.startDate | date:'MMM d, yyyy' || 'Sep 19, 2025'}}
+                                    </p>
                                 </div>
                             </div>
                         </div>

@@ -22,10 +22,16 @@
                 <div class="plan-info">
                     <div class="plan-status">
                         <span class="text-sm text-muted-foreground">Current Plan</span>
-                        <span class="status-badge bg-[#16a24933] text-[#16a249] border border-[#16a24933]">Active</span>
+                        <span *ngIf="!subscriptionLoading" class="status-badge" [class]="getSubscriptionStatusColor(currentSubscription?.statusCode || 'A')">
+                            {{getStatus()}}
+                        </span>
+                        <div *ngIf="subscriptionLoading" class="flex items-center gap-2">
+                            <div class="animate-spin rounded-full h-3 w-3 border-b-2 border-blue-500"></div>
+                            <span class="text-xs text-[#64748b]">Loading...</span>
+                        </div>
                     </div>
                     <h3 class="plan-name text-lg font-semibold" [class]="isDarkMode ? 'text-white' : 'text-black'">
-                        {{subscriptionData.planName}}
+                        {{getPlanName()}}
                     </h3>
                 </div>
             </div>
@@ -37,7 +43,7 @@
                         <span class="text-sm">Next billing</span>
                     </div>
                     <span class="text-sm font-medium"
-                        [class]="isDarkMode ? 'text-white' : 'text-black'">{{subscriptionData.nextBilling}}</span>
+                        [class]="isDarkMode ? 'text-white' : 'text-black'">{{getNextBillingDate()}}</span>
                 </div>
                 <div class="detail-item" [class]="isDarkMode ? '!bg-[#02081780]' : 'bg-[#eff2f580]'">
                     <div class="flex items-center gap-[0.5rem]">
@@ -45,7 +51,7 @@
                         <span class="text-sm">Amount</span>
                     </div>
                     <span class="text-lg font-semibold "
-                        [class]="isDarkMode ? 'text-[#3c83f6]' : 'text-[#0f172a]'">{{subscriptionData.amount}}</span>
+                        [class]="isDarkMode ? 'text-[#3c83f6]' : 'text-[#0f172a]'">{{getAmount()}}</span>
                 </div>
             </div>
         </div>
@@ -104,7 +110,7 @@
                     <label class="option-title">Cancel at end of current billing period</label>
                     <p class="option-description">
                         Keep access until <span class="font-medium"
-                            [class]="isDarkMode ? 'text-white' : 'text-black'">{{subscriptionData.nextBilling}}</span>.
+                            [class]="isDarkMode ? 'text-white' : 'text-black'">{{getNextBillingDate()}}</span>.
                         No additional charges.
                     </p>
                     <div class="option-badge">
@@ -173,12 +179,12 @@
 
                 <div class="pricing-section">
                     <p class="original-price line-through text-sm text-[#64748b]">
-                        Regular price: $59/month
+                        Regular price: {{getAmount()}}
                     </p>
                     <div class="discounted-price"
                         [class]="isDarkMode ? '!bg-[#020817] border-primary/20' : 'bg-[#eff2f5cc] border border-[#0f172a33]'">
                         <p class="price-amount text-2xl sm:text-3xl font-bold " [class]="isDarkMode ? 'text-[#3c83f6]' : 'text-[#0f172a]'">
-                            $29.95/month
+                            {{getDiscountedPrice()}}
                         </p>
                         <p class="price-note text-sm " [class]="isDarkMode ? 'text-[#94a3b8]' : 'text-[#0f172a]'">
                             For the next 3 months only
