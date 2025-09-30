@@ -26,7 +26,7 @@
         <div class="py-[1rem] px-[1.9rem] flex justify-center items-center relative bg-black h-[4.5rem]">
             <div class="flex flex-col absolute top-[1rem] left-[1.9rem]">
                 <span class="text-[#64748b] text-[0.75rem]">Powered by</span>
-                <img src="/assets/images/upgrade-chat-logo.png" class="h-[16px]" />
+                <img src="assets/images/upgrade-chat-logo.png" class="h-[16px]" />
 
             </div>
             <img [src]="remoteServiceBaseUrl + '/api/TenantCustomization/GetLogo?' + appSessionService.getTenantLogoUrlParams()"
@@ -61,13 +61,13 @@
                                     [color]="isDarkMode ? 'white' : 'black'"></lucide-angular>
                                 <span>Login Attempts</span>
                             </button>
-                            <button class="w-full py-2 px-4 text-left flex items-center gap-3 transition-colors"
+                            <!-- <button class="w-full py-2 px-4 text-left flex items-center gap-3 transition-colors"
                                 [class]="isDarkMode ? 'hover:bg-[#12143296] !text-white' : 'hover:bg-gray-50'"
                                 (click)="openChangeProfilePhoto()">
                                 <lucide-angular name="Camera" class="w-[16px] h-[16px]"
                                     [color]="isDarkMode ? 'white' : 'black'"></lucide-angular>
                                 <span>Change Profile Photo</span>
-                            </button>
+                            </button> -->
                             <button class="w-full py-2 px-4 text-left flex items-center gap-3 transition-colors"
                                 [class]="isDarkMode ? 'hover:bg-[#12143296] !text-white' : 'hover:bg-gray-50'"
                                 (click)="openProfileSettings()">
@@ -439,10 +439,10 @@
                     <div class="downloads-grid">
                         <div class="download-card" *ngFor="let resource of invoiceInfo.resources; let i = index"
                             [class]="isDarkMode ? '!bg-[#00000033] !border-[#6b21a880]' : ''">
-                            <img *ngIf="resource.name.split('.').pop()==='pdf'" src="/assets/images/pdf-thumbnail.png"
+                            <img *ngIf="resource.name.split('.').pop()==='pdf'" src="assets/images/pdf-thumbnail.png"
                                 class="w-[30px] h-[30px] rounded-[10px]" />
                             <img *ngIf="resource.name.split('.').pop()==='csv'||resource.name.split('.').pop()==='xlsx'"
-                                src="/assets/images/excel-thumbnail.png" class="w-[30px] h-[30px] rounded-[10px]" />
+                                src="assets/images/excel-thumbnail.png" class="w-[30px] h-[30px] rounded-[10px]" />
                             <lucide-angular
                                 *ngIf="resource.name.split('.').pop()!=='pdf'&&resource.name.split('.').pop()!=='csv'&&resource.name.split('.').pop()!=='xlsx'"
                                 [name]="resource.url ? 'Link' : 'File'" class="w-[30px] h-[30px] rounded-[10px]"
@@ -481,7 +481,7 @@
                         <div *ngFor="let event of invoiceInfo.events" class="event-card !border-[#b6d1fc]"
                             [class]="isDarkMode ? '!bg-gradient-to-br from-[#00000033] to-[#00000033] !border-[#1e40af80]' : ''">
                             <div class="flex gap-[10px] w-full">
-                                <img src="/assets/images/event-thumbnail.png"
+                                <img src="assets/images/event-thumbnail.png"
                                     class="w-[48px] h-[48px] rounded-[10px]" />
                                 <div class="flex-1">
                                     <div class="event-header">
@@ -632,7 +632,7 @@
                         <div *ngFor="let resource of invoiceInfo.externalResources" class="external-resource-card"
                             [class]="isDarkMode ? '!bg-gradient-to-br from-[#00000033] to-[#00000033] !border-[#16653480]' : ''">
                             <div class="flex gap-[10px] w-full">
-                                <img src="/assets/images/link-thumbnail.png" class="w-[48px] h-[48px] rounded-[10px]" />
+                                <img src="assets/images/link-thumbnail.png" class="w-[48px] h-[48px] rounded-[10px]" />
                                 <div class="flex-1">
                                     <div class="external-resource-content">
                                         <h4 class="resource-title" [class]="isDarkMode ? 'text-white' : 'text-black'">

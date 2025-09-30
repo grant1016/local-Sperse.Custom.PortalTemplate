@@ -25,7 +25,24 @@
     </mat-tab-group>
     <ngx-file-drop (onFileDrop)="fileDropped($event)">
         <ng-template ngx-file-drop-content-tmp>
-            <image-cropper #cropper (imageLoaded)="finishLoading()" (imageCropped)="onCrop($event)"></image-cropper>
+            <image-cropper 
+                #cropper 
+                (imageLoaded)="finishLoading()" 
+                (imageCropped)="onCrop($event)"
+                [maintainAspectRatio]="true"
+                [aspectRatio]="1"
+                [resizeToWidth]="300"
+                [cropperMinWidth]="100"
+                [cropperMinHeight]="100"
+                [onlyScaleDown]="true"
+                [roundCropper]="false"
+                [canvasRotation]="0"
+                [transform]="{scale: 1, rotate: 0, flipH: false, flipV: false}"
+                [alignImage]="'center'"
+                [style.display]="'block'"
+                [style.max-width]="'100%'"
+                [style.height]="'auto'">
+            </image-cropper>
         </ng-template>
     </ngx-file-drop>
 </mat-dialog-content>

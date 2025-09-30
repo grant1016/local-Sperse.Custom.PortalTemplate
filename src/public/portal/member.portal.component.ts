@@ -683,8 +683,8 @@ export class MemberPortalComponent implements OnInit, OnDestroy {
         let scopes = ['email', 'identify', 'guilds.join'];
         let scopesString = scopes.join('%20');
         let redirectUrl = `${AppConsts.appConfigOrigin.remoteServiceBaseUrl}/account/oauth-redirect?provider=discord`;
-        let popupUrl = 'https://discord.com/oauth2/authorize?response_type=code&client_id=' + this.invoiceInfo.discordInfo?.discordAppId +
-            `&redirect_uri=${redirectUrl}&state=${this.tenantId}&scope=${scopesString}&prompt=none`;
+        let popupUrl = 'https://discord.com/oauth2/authorize?response_type=code&client_id=' + this.appSessionService.user?.discordUserId+
+            `&redirect_uri=${redirectUrl}&state=${this.appSessionService.tenantId}&scope=${scopesString}&prompt=none`;
 
         this.discordPopup = window.open(popupUrl, 'discordOAuth', 'width=500,height=600');
         if (!this.discordPopup) {

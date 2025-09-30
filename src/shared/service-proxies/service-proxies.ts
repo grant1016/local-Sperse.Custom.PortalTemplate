@@ -124193,6 +124193,8 @@ export class UserLoginInfoDto implements IUserLoginInfoDto {
     bankCode!: string | undefined;
     affiliateCode!: string | undefined;
     affiliateRate!: number | undefined;
+    discordUserId!:string | undefined;  
+    discordUserName!: string | undefined;
     starName!: string | undefined;
     groups!: UserGroup[] | undefined;
     contactId!: number;
@@ -124221,6 +124223,8 @@ export class UserLoginInfoDto implements IUserLoginInfoDto {
             this.profilePictureId = _data["profilePictureId"];
             this.profileThumbnailId = _data["profileThumbnailId"];
             this.bankCode = _data["bankCode"];
+            this.discordUserId = _data["discordUserId"];
+            this.discordUserName = _data["discordUserName"];
             this.affiliateCode = _data["affiliateCode"];
             this.affiliateRate = _data["affiliateRate"];
             this.starName = _data["starName"];

@@ -59,7 +59,7 @@
 
         <!-- Action Buttons -->
         <div class="action-buttons">
-            <button class="action-btn" (click)="updatePaymentMethod()"
+            <!-- <button class="action-btn" (click)="updatePaymentMethod()"
                 [class]="isDarkMode ? '!bg-[#020817] border !border-[#2e3d52] text-white' : 'bg-[#eff2f5] border !border-[#e2e8f0] text-[#0f172a]'">
                 <lucide-angular name="CreditCard" class="w-4 h-4"></lucide-angular>
                 Update Payment Method
@@ -68,8 +68,8 @@
                 [class]="isDarkMode ? '!bg-[#020817] border !border-[#2e3d52] text-white' : 'bg-[#eff2f5] border-[#e2e8f0] text-[#0f172a]'">
                 <lucide-angular name="Settings" class="w-4 h-4"></lucide-angular>
                 Change Plan
-            </button>
-            <button class="action-btn cancel-btn" (click)="handleCancel()"
+            </button> -->
+            <button *ngIf="currentSubscription?.statusCode !== 'C'" class="action-btn cancel-btn" (click)="handleCancel()"
                 [class]="isDarkMode ? '!bg-[#020817] border !border-[#ef44444d] text-red-400' : 'bg-[#eff2f5] border border-[#ef44444d] text-red-600'">
                 <lucide-angular name="AlertTriangle" class="w-4 h-4" color="currentColor"></lucide-angular>
                 Cancel Subscription
@@ -141,9 +141,7 @@
             [class]="isDarkMode ? 'text-white' : 'text-black'">Cancel Reason</label>
         <input type="text" class="w-full h-[2.5rem] py-[0.5rem] px-[0.75rem] mt-[0.5rem] rounded-[0.75rem] border"
             [class]="isDarkMode ? 'bg-[#020817] border-[#5c6f82] text-white' : 'bg-[#eff2f5] border-[#e2e8f0] text-black'"
-            [value]="cancelReason"
-            (input)="onCancelReasonInput($event)"
-            placeholder="Enter your cancel reason">
+            [value]="cancelReason" (input)="onCancelReasonInput($event)" placeholder="Enter your cancel reason">
         <div class="dialog-actions flex md:flex-row flex-col">
             <button class="btn-secondary" (click)="step = 'main'" [disabled]="isCancelling">
                 Back
@@ -258,7 +256,7 @@
     </div>
 
     <!-- Confirmed Step -->
-    <div *ngIf="step === 'confirmed'" class="dialog-content text-center">
+    <!-- <div *ngIf="step === 'confirmed'" class="dialog-content text-center">
         <button class="absolute top-[1rem] right-[1rem]" (click)="onClose()">
             <lucide-angular name="X" class="w-[16px] h-[16px]"
                 [color]="isDarkMode ? 'white' : 'black'"></lucide-angular>
@@ -281,6 +279,46 @@
                         next
                         3 months.
                         You'll continue to have full access to all premium features.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <button class="close-btn" [class]="isDarkMode ? '!bg-[#3c83f6e6]  !text-[#0f172a]' : ''" (click)="onClose()">
+            Close
+        </button>
+    </div> -->
+
+    <div *ngIf="step === 'confirmed'" class="dialog-content text-center">
+        <button class="absolute top-[1rem] right-[1rem]" (click)="onClose()">
+            <lucide-angular name="X" class="w-[16px] h-[16px]"
+                [color]="isDarkMode ? 'white' : 'black'"></lucide-angular>
+        </button>
+        <div class="dialog-header">
+            <h2 class="dialog-title text-xl" [class]="isDarkMode ? 'text-white' : 'text-black'">We'll Miss You</h2>
+        </div>
+
+        <div class="success-content">
+            <div class="success-icon"
+                [class]="isDarkMode ? '!bg-gradient-to-br from-[#3c83f61a] to-[#020817] border !border-[#3c83f633]' : '!bg-gradient-to-br from-[#0f172a1a] to-[#eff2f5] border !border-[#0f172a33]'">
+                <span class="text-4xl">👋</span>
+            </div>
+
+            <div class="success-message">
+                <h3 class="success-title" [class]="isDarkMode ? 'text-[#3c83f6]' : 'text-black'">Sorry to see you go!
+                </h3>
+                <div [class]="isDarkMode ? '!bg-gradient-to-br from-[#3c83f61a] to-[#020817] border !border-[#3c83f633]' : '!bg-gradient-to-br from-[#0f172a1a] to-[#eff2f5] border !border-[#0f172a33]'"
+                    class="success-details p-[1.5rem]">
+                    <p class="text-[0.875rem]/1.625" [class]="isDarkMode ? 'text-white' : 'text-black'"
+                        *ngIf="cancellationType === 'end-of-period'">
+                        Your subscription has been cancelled and will remain active until the end of your billing
+                        period.
+                    </p>
+                    <p class="text-[0.875rem]/1.625" [class]="isDarkMode ? 'text-white' : 'text-black'"
+                        *ngIf="cancellationType === 'immediate'">
+                        Your subscription has been cancelled immediately.
+                    </p>
+                    <p class="text-[0.875rem] text-[#94a3b8] mt-[0.75rem]">We're always here if you change your mind. 💙
                     </p>
                 </div>
             </div>
