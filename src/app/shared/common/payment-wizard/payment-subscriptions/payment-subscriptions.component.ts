@@ -173,7 +173,7 @@ export class PaymentSubscriptionsComponent extends AppComponentBase implements O
                 this.subscriptionProxy
                     .cancel(new CancelOrderSubscriptionInput({
                         subscriptionId: capturedData.id,
-                        cancelationReason: result.cancellationReason
+                        cancelationReason: result.cancellationReason,
                     })).pipe(finalize(() => this.finishLoading())).subscribe(() => {
                         capturedData.statusCode = 'C';
                         abp.notify.success(this.l('Cancelled'));

@@ -121,7 +121,7 @@ export class SubscriptionManagementDialogComponent implements OnInit {
     // Helper method to get amount
     getAmount(): string {
         if (this.currentSubscription?.fee && this.currentSubscription?.currencyId) {
-            return `${this.currentSubscription.fee}/${this.formatPaymentPeriod(this.currentSubscription.paymentPeriodType)} ${this.currentSubscription.currencyId}`;
+            return `${this.currentSubscription.fee} ${this.currentSubscription.currencyId}/${this.formatPaymentPeriod(this.currentSubscription.paymentPeriodType)}`;
         }
         return this.subscriptionData.amount;
     }
@@ -135,7 +135,7 @@ export class SubscriptionManagementDialogComponent implements OnInit {
     getDiscountedPrice(): string {
         if (this.currentSubscription?.fee && this.currentSubscription?.currencyId) {
             const discountedAmount = this.currentSubscription.fee * 0.5;
-            return `${this.currentSubscription.currencyId}${discountedAmount.toFixed(2)}/${this.formatPaymentPeriod(this.currentSubscription.paymentPeriodType)}`;
+            return `${discountedAmount.toFixed(2)} ${this.currentSubscription.currencyId}/${this.formatPaymentPeriod(this.currentSubscription.paymentPeriodType)}`;
         }
         return '$29.95/month';
     }
@@ -145,7 +145,7 @@ export class SubscriptionManagementDialogComponent implements OnInit {
     }
 
     handleCancel(): void {
-        this.step = 'retention-offer';
+        this.step = 'cancel-options';
     }
 
     handleCancelConfirm(): void {
