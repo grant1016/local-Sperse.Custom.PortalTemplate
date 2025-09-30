@@ -124199,8 +124199,6 @@ export class UserLoginInfoDto implements IUserLoginInfoDto {
     groups!: UserGroup[] | undefined;
     contactId!: number;
     creationTime!: moment.Moment;
-    discordUserId!: string | undefined;
-    discordUserName!: string | undefined;
     creditBalance!: number | undefined;
     usedCredits!: number | undefined;
     id!: number;
