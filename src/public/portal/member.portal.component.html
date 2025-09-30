@@ -1,0 +1,616 @@
+<div *ngIf="loading; else mainContainer" class="loading-container">
+    <div *ngIf="!failedToLoad; else failBlock" class="wait-message">
+        Loading your portal...
+    </div>
+    <ng-template #failBlock>
+        <div>{{failMessage}}</div>
+    </ng-template>
+</div>
+
+<ng-template #mainContainer [class]="'main-container ' + (isDarkMode ? 'dark' : '')">
+    <!-- Theme Switcher -->
+    <!-- <div class="theme-switcher">
+        <button class="theme-btn" [class.active]="currentTheme === 'original'" (click)="switchTheme('original')">
+            Original
+        </button>
+        <button class="theme-btn" [class.active]="currentTheme === 'modern'" (click)="switchTheme('modern')">
+            Modern
+        </button>
+    </div> -->
+
+    <!-- Original Theme -->
+
+    <!-- Modern Theme -->
+    <div class="modern-container modern-theme" [class]="isDarkMode ? '!bg-[#020817]' : ''">
+
+        <div class="py-[1rem] px-[1.9rem] flex justify-center items-center relative bg-black h-[4.5rem]">
+            <div class="flex flex-col absolute top-[1rem] left-[1.9rem]">
+                <span class="text-[#64748b] text-[0.75rem]">Powered by</span>
+                <img src="/assets/common/images/host-logo-light.png" class="h-[16px]" />
+
+            </div>
+            <img [src]="remoteServiceBaseUrl + '/api/TenantCustomization/GetLogo?' + appSessionService.getTenantLogoUrlParams()" class="h-[70px]">
+            <div class="flex items-center gap-[0.75rem] absolute top-[1rem] right-[1.9rem]">
+                <div class="relative">
+                    <button
+                        class="bg-[#5966f3] py-[0.5rem] px-[0.75rem] flex gap-[0.5rem] items-center rounded-[0.75rem]"
+                        (click)="toggleProfileDropdown()">
+                        <span
+                            class="w-[1.5rem] h-[1.5rem] rounded-full bg-[#4150f1] text-[0.75rem]/[1rem] text-white flex items-center justify-center">{{this.appSessionService.tenantName?.charAt(0) || 'S'}}</span>
+                        <span class="text-[0.875rem]/[1.25rem] font-medium
+                        um text-white">{{this.appSessionService.tenantName || 'SUPERLINX'}}</span>
+                        <lucide-angular name="ChevronDown" class="w-[1rem] h-[1rem]" color="white"></lucide-angular>
+                    </button>
+                    <div *ngIf="showProfileDropdown"
+                        class="profile-dropdown absolute top-full right-0 mt-2 min-w-[240px] rounded-lg shadow-lg z-50"
+                        [class]="isDarkMode ? '!bg-gray-800' : 'bg-white'" (click)="$event.stopPropagation()">
+                        <div class="py-2">
+                            <button class="w-full py-2 px-4 text-left flex items-center gap-3 transition-colors"
+                                [class]="isDarkMode ? 'hover:bg-[#12143296] !text-white' : 'hover:bg-gray-50'"
+                                (click)="openChangePassword()">
+                                <lucide-angular name="Lock" class="w-[16px] h-[16px]"
+                                    [color]="isDarkMode ? 'white' : 'black'"></lucide-angular>
+                                <span>Change Passsword</span>
+                            </button>
+                            <button class="w-full py-2 px-4 text-left flex items-center gap-3 transition-colors"
+                                [class]="isDarkMode ? 'hover:bg-[#12143296] !text-white' : 'hover:bg-gray-50'"
+                                (click)="openLoginAttempts()">
+                                <lucide-angular name="ListChecks" class="w-[16px] h-[16px]"
+                                    [color]="isDarkMode ? 'white' : 'black'"></lucide-angular>
+                                <span>Login Attempts</span>
+                            </button>
+                            <button class="w-full py-2 px-4 text-left flex items-center gap-3 transition-colors"
+                                [class]="isDarkMode ? 'hover:bg-[#12143296] !text-white' : 'hover:bg-gray-50'"
+                                (click)="openChangeProfilePhoto()">
+                                <lucide-angular name="Camera" class="w-[16px] h-[16px]"
+                                    [color]="isDarkMode ? 'white' : 'black'"></lucide-angular>
+                                <span>Change Profile Photo</span>
+                            </button>
+                            <button class="w-full py-2 px-4 text-left flex items-center gap-3 transition-colors"
+                                [class]="isDarkMode ? 'hover:bg-[#12143296] !text-white' : 'hover:bg-gray-50'"
+                                (click)="openProfileSettings()">
+                                <lucide-angular name="Settings" class="w-[16px] h-[16px]"
+                                    [color]="isDarkMode ? 'white' : 'black'"></lucide-angular>
+                                <span>My settings</span>
+                            </button>
+
+                            <button class="w-full py-2 px-4 text-left flex items-center gap-3 transition-colors"
+                                [class]="isDarkMode ? 'hover:bg-[#12143296] !text-white' : 'hover:bg-gray-50'"
+                                (click)="openHelp()">
+                                <lucide-angular name="HelpCircle" class="w-[16px] h-[16px]"
+                                    [color]="isDarkMode ? 'white' : 'black'"></lucide-angular>
+                                <span>Help</span>
+                            </button>
+
+                            <div class="border-t border-gray-200 my-1" [class]="isDarkMode ? '!border-[#2e3d52]' : ''">
+                            </div>
+
+                            <button
+                                class="w-full py-2 px-4 text-left flex items-center gap-3 transition-colors  text-red-600"
+                                [class]="isDarkMode ? 'hover:bg-[#12143296] !text-red-400' : 'hover:bg-gray-50 text-red-600'"
+                                (click)="signOut()">
+                                <lucide-angular name="LogOut" class="w-[16px] h-[16px]"
+                                    [class]="isDarkMode ? 'text-red-400' : 'text-red-600'"
+                                    ></lucide-angular>
+                                <span>Sign Out</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <button class="w-[2.25rem] h-[2.25rem]  flex items-center justify-center rounded-md border"
+                    [class]="isDarkMode ? 'border-[#2e3d52] bg-[#020817]' : 'border-[#2e3d52] bg-[#eff2f5]'"
+                    (click)="toggleDarkMode()">
+                    <lucide-angular [name]="isDarkMode ? 'Moon' : 'Sun'" class="w-[16px] h-[16px]"
+                        [class]="isDarkMode?'text-white':'text-black'"></lucide-angular>
+                </button>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="max-w-[1152px] mx-auto px-[1rem] py-[2rem]">
+            <!-- Left Column -->
+            <div class="flex flex-col items-center">
+                <h1 class="text-2xl sm:text-[1.875rem]/[2.25rem] font-[700] mb-0"
+                    [class]="isDarkMode ? 'text-white' : 'text-foreground'">
+                    Welcome to Your Portal
+                </h1>
+                <p class="sm:text-[1rem]/[1.5rem] leading-relaxed text-center mt-[1rem] mb-0"
+                    [class]="isDarkMode ? 'text-[#94a3b8]' : 'text-[#64748b]'">Manage your membership and access
+                    exclusive content</p>
+            </div>
+            <div class="mt-[2rem] p-[1.5rem] backdrop-blur-sm shadow-sm text-[#020817] w-full  rounded-[0.75rem] flex items-center justify-between md:flex-row flex-col gap-[1rem]"
+                [class]="isDarkMode ? '!bg-[#1f29374d] border !border-[#1f293780]' : 'border !border-[#f1f5f980]'">
+                <div class="flex items-center gap-[1rem]">
+                    <div class="sm:w-[4rem] sm:h-[4rem] w-[3rem] h-[3rem] rounded-full  flex items-center justify-center"
+                        [class]="isDarkMode ? '!bg-[#3c83f6]' : 'bg-[#0f172a]'">
+                        <img [src]="this.profileService.getProfilePictureUrl(this.appSessionService.user.profileThumbnailId)" class="w-full h-full rounded-full" />
+                    </div>
+                    <div class="flex flex-col justify-center">
+                        <h2 class="text-[1.25rem]/[1.75rem] font-medium mb-0"
+                            [class]="isDarkMode ? 'text-white' : 'text-black'">{{
+                                (this.appSessionService.user.name + ' ' + this.appSessionService.user.surname) || 'John Doe'
+                            }}</h2>
+                        <p class="text-[0.875rem]/[1.25rem] text-[#64748b] mb-0">Member since {{getMemberSinceDate()}}</p>
+                    </div>
+                </div>
+                <div class="gap-[0.5rem] flex items-center">
+                    <button
+                        class="text-[0.875rem]/[1.25rem] px-[0.75rem] border  flex justify-center items-center gap-[0.5rem] h-[2.25rem] rounded-[0.75rem]"
+                        [class]="isDarkMode ? '!bg-[#020817] border !border-[#2e3d52] text-white' : 'bg-[#eff2f5] border-[#e2e8f0]'"
+                        (click)="openReferralSettingsDialog()">
+                        <lucide-angular name="Share" class="w-[16px] h-[16px]"
+                            [color]="isDarkMode ? 'white' : 'black'"></lucide-angular>
+                        Referral Settings
+                    </button>
+                    <div class="relative">
+                        <button
+                            class="text-[0.875rem]/[1.25rem] px-[0.75rem] border flex justify-center items-center gap-[0.5rem] h-[2.25rem] rounded-[0.75rem]"
+                            [class]="isDarkMode ? '!bg-[#020817] border !border-[#2e3d52] text-white' : 'bg-[#eff2f5] border-[#e2e8f0]'"
+                            (click)="openProfileSettings()">
+                            <lucide-angular name="Settings" class="w-[16px] h-[16px]"
+                                [color]="isDarkMode ? 'white' : 'black'"></lucide-angular>
+                            Profile Settings
+
+                        </button>
+
+                        <!-- Profile Dropdown Menu -->
+
+                    </div>
+                </div>
+            </div>
+            <div class="mt-[2rem] p-[0.25rem] bg-[#5966f30d] rounded-[0.75rem]"
+                [class]="isDarkMode ? '!bg-[#5966f30d]' : 'bg-[#5966f30d]'">
+                <div class="sm:p-[1.5rem] p-[1rem] backdrop-blur-sm shadow-sm rounded-[0.75rem]  flex flex-col items-center"
+                    [class]="isDarkMode ? '!bg-[#1f293780] border !border-[#5966f333]' : 'bg-[#f1f5f980] border-[#5966f333]'">
+                    <div class="flex items-center justify-center gap-[0.75rem]">
+                        <div class="bg-[#5966f3] w-[2rem] h-[2rem] flex items-center justify-center !rounded-[0.75rem]">
+                            <lucide-angular name="Users" class="w-[20px] h-[20px]" color="white"></lucide-angular>
+                        </div>
+                        <h3 class="sm:text-[1.125rem]/[1.75rem] text-[1rem]/[1.5rem] font-medium mb-0"
+                            [class]="isDarkMode ? 'text-white' : 'text-black'">Connect Discord to Get Started
+                        </h3>
+                    </div>
+                    <p class="mt-[0.5rem] sm:text-[0.875rem]/[1.25rem] text-[#64748b] mb-0">
+                        Connect Discord to complete your setup and unlock all benefits
+                    </p>
+                    <div class="discord-content w-full mt-[1rem]" *ngIf="!discordUserId">
+                        <button
+                            class="discord-auth-button md:py-[0.75rem] md:px-[1.5rem] py-[1rem] px-[2rem] text-[1rem]/[1.5rem]"
+                            (click)="discordOAuth()" [disabled]="discordPopup || discordUserUpdating">
+                            <lucide-angular name="Users" class="w-[16px] h-[16px]" color="white"></lucide-angular>
+                            Authorize Discord
+                        </button>
+                    </div>
+                    <div class="discord-authorized" *ngIf="discordUserId && !discordUserUpdated">
+                        <div class="discord-user-info">
+                            <h4>Authorized Discord User:</h4>
+                            <div class="discord-user-card">
+                                <div class="discord-avatar">{{discordUserName?.charAt(0)?.toUpperCase()}}</div>
+                                <div class="discord-user-details">
+                                    <p class="discord-username">{{discordUserName}}</p>
+                                    <p class="discord-userid">({{discordUserId}})</p>
+                                </div>
+                            </div>
+                            <button class="use-discord-btn" (click)="confirmDiscord()" [disabled]="discordUserUpdating">
+                                <i [ngClass]="{ 'fa fa-spinner fa-spin': discordUserUpdating }"></i>
+                                Use This Discord Account
+                            </button>
+                            <button class="disconnect-discord-btn" (click)="disconnectDiscord()">
+                                <span class="disconnect-icon">←</span>
+                                Disconnect & Try Another Account
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="discord-connected" *ngIf="discordUserUpdated">
+                        <div class="discord-success-card">
+                            <div class="discord-avatar">{{discordUserName?.charAt(0)?.toUpperCase()}}</div>
+                            <div class="discord-success-info">
+                                <p class="discord-connected-text">Connected as @{{discordUserName}}</p>
+                                <p class="discord-ready-text">✓ Ready for Discord access</p>
+                            </div>
+                        </div>
+                        <button class="join-discord-btn">
+                            <span class="external-icon">↗</span>
+                            Join Discord Server
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="left-column !mt-[2rem]">
+                <div class="flex md:flex-row flex-col gap-[2rem] w-full items-start">
+                    <div class="md:w-[50%] w-full h-auto flex flex-col gap-[1rem]">
+                        <div class="p-[1.5rem] backdrop-blur-sm shadow-sm text-[#020817] w-full rounded-[0.75rem] flex   flex flex-col  flex-1"
+                            [class]="isDarkMode ? '!bg-[#1f29374d] border !border-[#1f293780]' : 'border !border-[#f1f5f980]'">
+                            <div class="flex justify-between w-full mb-[1rem]">
+                                <div class="flex gap-[0.75rem] items-center">
+                                    <lucide-angular name="Crown" class="w-[24px] h-[24px]"
+                                        [color]="isDarkMode ? '#3c83f6' : '#0f172a'"></lucide-angular>
+                                    <span
+                                        class="text-[#0f172a] sm:text-[1.125rem]/[1.75rem] text-[1rem]/[1.5rem] font-semibold mb-0"
+                                        [class]="isDarkMode ? 'text-white' : 'text-black'">Your
+                                        Membership</span>
+                                </div>
+                                <span *ngIf="!subscriptionLoading"
+                                    class="text-[#ffffff] text-[0.75rem]/[1rem] py-[0.25rem] px-[0.5rem] rounded-[2rem] font-semibold"
+                                    [class]="getSubscriptionStatusColor(currentSubscription?.statusCode || 'A')">
+                                    {{currentSubscription?.status || 'Active'}}
+                                </span>
+                                <div *ngIf="subscriptionLoading" class="flex items-center gap-2">
+                                    <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-500"></div>
+                                    <span class="text-[0.75rem]/[1rem] text-[#64748b]">Loading...</span>
+                                </div>
+                            </div>
+                            <div class="flex flex-col gap-[0.25rem]">
+                                <p class="text-[#64748b] text-[0.875rem]/[1.25rem] mb-0">Plan</p>
+                                <p class="text-black text-[0.875rem]/[1.25rem] mb-0 font-medium"
+                                    [class]="isDarkMode ? 'text-white' : 'text-black'">
+                                    {{currentSubscription?.productName || 'Premium Trading Membership'}}
+                                </p>
+                            </div>
+                            <div class="grid grid-cols-2 gap-[1rem] mt-[0.75rem]">
+                                <div class="flex flex-col gap-[0.25rem]">
+                                    <p class="text-[#64748b] text-[0.875rem]/[1.25rem] mb-0">Next billing</p>
+                                    <p class="text-black text-[0.875rem]/[1.25rem] mb-0 font-medium"
+                                        [class]="isDarkMode ? 'text-white' : 'text-black'">
+                                        {{currentSubscription?.endDate | date:'MMM d, yyyy' || 'Oct 19, 2025'}}
+                                    </p>
+                                </div>
+                                <div class="flex flex-col gap-[0.25rem]">
+                                    <p class="text-[#64748b] text-[0.875rem]/[1.25rem] mb-0">Amount</p>
+                                    <p class="text-black text-[0.875rem]/[1.25rem] mb-0 font-medium"
+                                        [class]="isDarkMode ? 'text-white' : 'text-black'">
+                                        {{formatCurrency(currentSubscription?.fee, currentSubscription?.currencyId)}}/{{formatPaymentPeriod(currentSubscription?.paymentPeriodType)}}
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="mt-[0.75rem] pt-[0.75rem] border-t border-[#e2e8f0]"
+                                [class]="isDarkMode ? '!border-[#2e3d52]' : ''">
+                                <button
+                                    class="bg-[#0f172a1a] !border-[#0f172a4d] border  w-full text-[#0f172a] font-medium text-[0.875rem]/[1.25rem] flex justify-center gap-[0.5rem] rounded-[0.75rem] h-[2.25rem] items-center"
+                                    [class]="isDarkMode ? '!bg-[#3c83f60d] !border-[#3c83f633] text-[#3c83f6]' : 'bg-[#0f172a1a] !border-[#0f172a4d] '"
+                                    (click)="openSubscriptionManagementDialog()">
+                                    <lucide-angular name="Settings" class="w-[16px] h-[16px]"></lucide-angular>
+                                    <span>Manage my subscription</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="p-[1.5rem] backdrop-blur-sm shadow-sm text-[#020817] w-full rounded-[0.75rem] flex   flex flex-col  flex-1"
+                            [class]="isDarkMode ? '!bg-[#1f29374d] border !border-[#1f293780]' : 'border !border-[#f1f5f980]'">
+                            <div class="flex justify-between w-full mb-[1rem]">
+                                <div class="flex gap-[0.75rem] items-center">
+                                    <lucide-angular name="FileText" class="w-[24px] h-[24px]"
+                                        [color]="isDarkMode ? '#3c83f6' : '#0f172a'"></lucide-angular>
+                                    <span
+                                        class="text-[#0f172a] sm:text-[1.125rem]/[1.75rem] text-[1rem]/[1.5rem] font-semibold mb-0"
+                                        [class]="isDarkMode ? 'text-white' : 'text-black'">Latest Invoice</span>
+                                </div>
+                                <div class="flex gap-[0.5rem]">
+                                    <button class="w-[2rem] h-[2rem] flex justify-center items-center" 
+                                        (click)="downloadInvoice()" 
+                                        [disabled]="pdfDownloadLoading">
+                                        <div *ngIf="!pdfDownloadLoading">
+                                            <lucide-angular name="Download" class="w-[16px] h-[16px]"
+                                                [color]="isDarkMode ? 'white' : '#0f172a'"></lucide-angular>
+                                        </div>
+                                        <div *ngIf="pdfDownloadLoading" class="animate-spin">
+                                            <lucide-angular name="Loader2" class="w-[16px] h-[16px]"
+                                                [color]="isDarkMode ? 'white' : '#0f172a'"></lucide-angular>
+                                        </div>
+                                    </button>
+                                    <button class="w-[2rem] h-[2rem] flex justify-center items-center" (click)="openMoreMenu()">
+                                        <lucide-angular name="MoreHorizontal" class="w-[16px] h-[16px]"
+                                            [color]="isDarkMode ? 'white' : '#0f172a'"></lucide-angular>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-[1rem] mt-[0.75rem]">
+                                <div class="flex flex-col gap-[0.25rem]">
+                                    <p class="text-[#64748b] text-[0.875rem]/[1.25rem] mb-0">Invoice</p>
+                                    <p class="text-black text-[0.875rem]/[1.25rem] mb-0 font-medium"
+                                        [class]="isDarkMode ? 'text-white' : 'text-black'">
+                                        {{getInvoiceNumber()}}
+                                    </p>
+                                </div>
+                                <div class="flex flex-col items-start gap-[0.25rem]">
+                                    <p class="text-[#64748b] text-[0.875rem]/[1.25rem] mb-0">Status</p>
+                                    <span *ngIf="!invoiceLoading"
+                                        class="border text-[0.75rem]/[1rem] px-[0.625rem] py-[0.125rem] rounded-[2rem]"
+                                        [class]="getInvoiceStatusColor(getInvoiceStatus())">
+                                        {{getInvoiceStatus()}}
+                                    </span>
+                                    <div *ngIf="invoiceLoading" class="flex items-center gap-2">
+                                        <div class="animate-spin rounded-full h-3 w-3 border-b-2 border-blue-500"></div>
+                                        <span class="text-xs text-[#64748b]">Loading...</span>
+                                    </div>
+                                </div>
+                                <div class="flex flex-col gap-[0.25rem]">
+                                    <p class="text-[#64748b] text-[0.875rem]/[1.25rem] mb-0">Amount</p>
+                                    <p class="text-black text-[0.875rem]/[1.25rem] mb-0 font-medium"
+                                        [class]="isDarkMode ? 'text-white' : 'text-black'">
+                                        {{getInvoiceAmount()}}
+                                    </p>
+                                </div>
+                                <div class="flex flex-col gap-[0.25rem]">
+                                    <p class="text-[#64748b] text-[0.875rem]/[1.25rem] mb-0">Date</p>
+                                    <p class="text-black text-[0.875rem]/[1.25rem] mb-0 font-medium"
+                                        [class]="isDarkMode ? 'text-white' : 'text-black'">
+                                        {{getInvoiceDate()}}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="md:w-[50%] w-full p-[1.5rem] backdrop-blur-sm shadow-sm text-[#020817] w-full rounded-[0.75rem] flex   flex flex-col  flex-1"
+                        [class]="isDarkMode ? '!bg-[#1f29374d] border !border-[#1f293780]' : 'border !border-[#f1f5f980]'">
+                        <div class="flex gap-[10px] items-center">
+                            <div
+                                class="w-[2rem] h-[2rem] rounded-[0.75rem] bg-[#16a249] flex items-center justify-center text-white">
+                                <lucide-angular name="Check" class="w-[20px] h-[20px]" color="white"></lucide-angular>
+                            </div>
+                            <p class="text-[1.125rem]/[1.75rem] font-semibold mb-0"
+                                [class]="isDarkMode ? 'text-white' : 'text-black'">Your Membership Benefits</p>
+                        </div>
+                        <div class="flex flex-col gap-[1rem] mt-[24px]">
+                            <div *ngFor="let benefit of defaultBenefits" class="flex gap-[0.75rem]">
+                                <div class="w-[2rem] h-[2rem] rounded-lg bg-[#cde4d6] flex items-center justify-center text-white"
+                                    [class]="isDarkMode ? '!bg-[#2d533b]' : ''">
+                                    <lucide-angular name="{{benefit.icon}}" class="w-[16px] h-[16px]"
+                                        color="#16a249"></lucide-angular>
+                                </div>
+                                <div class="benefit-content">
+                                    <p class="text-[1rem]/[1.5rem] font-medium mb-0"
+                                        [class]="isDarkMode ? 'text-white' : 'text-black'">{{benefit.title}}</p>
+                                    <p class="text-[0.875rem]/[1.25rem] text-[#64748b] mb-0">{{benefit.description}}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="pt-[0.5rem] mt-[1rem] border-t border-[#e2e8f0]"
+                            [class]="isDarkMode ? '!border-[#1e293b]' : ''">
+                            <p class="text-[0.875rem]/[1.25rem] text-[#64748b]">🎉 Start by connecting Discord above
+                                to unlock all your
+                                benefits.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Downloads Section -->
+                <div class="downloads-section "
+                    [class]="isDarkMode ? '!bg-[#3b07644d] !border-[#6b21a880]' : '!bg-gradient-to-br from-purple-50 to-purple-100 border-[#e9d5ff]'"
+                    *ngIf="invoiceInfo.resources && invoiceInfo.resources.length">
+                    <div class="downloads-header">
+                        <lucide-angular name="Download" class="w-[20px] h-[20px]" color="#9333ea"></lucide-angular>
+                        <h3 class="text-[1.125rem]/[1.75rem] font-medium mb-0"
+                            [class]="isDarkMode ? 'text-white' : 'text-black'">Downloads</h3>
+                    </div>
+                    <div class="downloads-grid">
+                        <div class="download-card" *ngFor="let resource of invoiceInfo.resources; let i = index"
+                            [class]="isDarkMode ? '!bg-[#00000033] !border-[#6b21a880]' : ''">
+                            <img *ngIf="resource.name.split('.').pop()==='pdf'" src="/assets/images/pdf-thumbnail.png"
+                                class="w-[30px] h-[30px] rounded-[10px]" />
+                            <img *ngIf="resource.name.split('.').pop()==='csv'||resource.name.split('.').pop()==='xlsx'"
+                                src="/assets/images/excel-thumbnail.png" class="w-[30px] h-[30px] rounded-[10px]" />
+                            <lucide-angular
+                                *ngIf="resource.name.split('.').pop()!=='pdf'&&resource.name.split('.').pop()!=='csv'&&resource.name.split('.').pop()!=='xlsx'"
+                                [name]="resource.url ? 'Link' : 'File'" class="w-[30px] h-[30px] rounded-[10px]"
+                                [color]="isDarkMode ? 'white' : 'black'">
+                            </lucide-angular>
+                            <div class="download-content">
+                                <span class="download-name"
+                                    [class]="isDarkMode ? 'text-white' : 'text-black'">{{resource.name}}</span>
+                                <span class="download-type">{{resource.url ?'LINK' :
+                                    resource.name.split('.').pop().toUpperCase()}}</span>
+                            </div>
+                            <button class="download-action-btn"
+                                [class]="isDarkMode ? '!bg-black !border-[#6b21a8] !text-[#d8b4fe]' : ''"
+                                (click)="resourceClick($event, resource)">
+                                <span class="action-icon">
+
+                                    <lucide-angular [name]="resource.url ? 'Copy' : 'Download'"
+                                        class="w-[16px] h-[16px]"
+                                        [color]="isDarkMode ? '#d8b4fe' : '#9333ea'"></lucide-angular>
+                                </span>
+                                {{resource.url ? 'Copy' : 'Download'}}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Events Section -->
+                <div class="events-section "
+                    [class]="isDarkMode ? '!bg-[#1725544d] !border-[#1e40af]' : '!bg-gradient-to-br from-blue-50 to-blue-100'"
+                    *ngIf="invoiceInfo.events && invoiceInfo.events.length">
+                    <div class="events-header">
+                        <lucide-angular name="Calendar" class="w-[20px] h-[20px]" color="#2563eb"></lucide-angular>
+                        <h3 [class]="isDarkMode ? 'text-white' : 'text-black'">Events</h3>
+                    </div>
+                    <div class="events-grid">
+                        <div *ngFor="let event of invoiceInfo.events" class="event-card !border-[#b6d1fc]"
+                            [class]="isDarkMode ? '!bg-gradient-to-br from-[#00000033] to-[#00000033] !border-[#1e40af80]' : ''">
+                            <div class="flex gap-[10px] w-full">
+                                <img src="/assets/images/event-thumbnail.png"
+                                    class="w-[48px] h-[48px] rounded-[10px]" />
+                                <div class="flex-1">
+                                    <div class="event-header">
+                                        <h4 class="event-title" [class]="isDarkMode ? 'text-white' : 'text-black'">
+                                            {{event.productName}}</h4>
+                                        <div class="relative">
+                                            <button class="calendar-btn" [class]="isDarkMode ? '!bg-transparent ' : ''"
+                                                (click)="toggleCalendarDropdown(event)">
+                                                <lucide-angular name="CalendarPlus" class="w-[16px] h-[16px]"
+                                                    color="#2563eb"></lucide-angular>
+                                                Add to Calendar
+                                            </button>
+
+                                            <!-- Calendar Dropdown Menu -->
+                                            <div *ngIf="showCalendarDropdown && selectedEvent === event"
+                                                class="calendar-dropdown absolute top-full right-0 mt-2 min-w-[230px] rounded-lg shadow-lg  z-50"
+                                                [class]="isDarkMode ? '!bg-gray-800 ' : 'bg-white'"
+                                                (click)="$event.stopPropagation()">
+                                                <div class="py-2">
+                                                    <button
+                                                        class="w-full py-1 px-[10px] text-left  flex items-center gap-3 transition-colors"
+                                                        [class]="isDarkMode ? '!hover:bg-[#17213d] !text-white' : 'hover:bg-gray-50'"
+                                                        (click)="addToGoogleCalendar(event)">
+                                                        <lucide-angular name="Calendar" class="w-[16px] h-[16px]"
+                                                            [color]="isDarkMode ? 'white' : 'black'"></lucide-angular>
+                                                        <span>Google Calendar</span>
+                                                    </button>
+
+                                                    <button
+                                                        class="w-full py-1 px-[10px] text-left hover:bg-gray-50 flex items-center gap-3 transition-colors"
+                                                        [class]="isDarkMode ? '!hover:bg-gray-700 !text-white' : ''"
+                                                        (click)="addToOutlookCalendar(event)">
+                                                        <lucide-angular name="Calendar" class="w-[16px] h-[16px]"
+                                                            [color]="isDarkMode ? 'white' : 'black'"></lucide-angular>
+                                                        <span>Outlook</span>
+                                                    </button>
+
+                                                    <button
+                                                        class="w-full py-1 px-[10px] text-left hover:bg-gray-50 flex items-center gap-3 transition-colors"
+                                                        [class]="isDarkMode ? '!hover:bg-gray-700 !text-white' : ''"
+                                                        (click)="addToYahooCalendar(event)">
+                                                        <lucide-angular name="Calendar" class="w-[16px] h-[16px]"
+                                                            [color]="isDarkMode ? 'white' : 'black'"></lucide-angular>
+                                                        <span>Yahoo Calendar</span>
+                                                    </button>
+
+                                                    <button
+                                                        class="w-full py-1 px-[10px] text-left hover:bg-gray-50 flex items-center gap-3 transition-colors"
+                                                        [class]="isDarkMode ? '!hover:bg-gray-700 !text-white' : ''"
+                                                        (click)="downloadICSFile(event)">
+                                                        <lucide-angular name="Calendar" class="w-[16px] h-[16px]"
+                                                            [color]="isDarkMode ? 'white' : 'black'"></lucide-angular>
+                                                        <span>Apple Calendar (.ics)</span>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="event-details">
+                                        <div class="event-detail-row border-b border-[#e2e8f0] pb-[10px]"
+                                            [class]="isDarkMode ? '!border-[#1e293b]' : ''">
+                                            <div class="detail-label">
+                                                <lucide-angular name="MapPin" class="w-[16px] h-[16px]"
+                                                    color="#2563eb"></lucide-angular>
+                                                Location
+                                            </div>
+                                            <span class="detail-value"
+                                                [class]="isDarkMode ? 'text-white' : 'text-black'">{{ls.l('ProductEventLocation_'
+                                                + event.location)}}</span>
+                                        </div>
+                                        <div class="event-detail-row border-b border-[#e2e8f0] pb-[10px]"
+                                            *ngIf="event.dateStr" [class]="isDarkMode ? '!border-[#1e293b]' : ''">
+                                            <div class="detail-label">
+                                                <lucide-angular name="Calendar" class="w-[16px] h-[16px]"
+                                                    color="#2563eb"></lucide-angular>
+                                                Date
+                                            </div>
+                                            <span class="detail-value"
+                                                [class]="isDarkMode ? 'text-white' : 'text-black'">{{event.dateStr}}
+                                                <span *ngIf="event.time"
+                                                    [class]="isDarkMode ? 'text-white' : 'text-black'">({{event.timezone}})</span></span>
+                                        </div>
+                                        <div class="event-detail-row border-b border-[#e2e8f0] pb-[10px]"
+                                            *ngIf="event.link" [class]="isDarkMode ? '!border-[#1e293b]' : ''">
+                                            <div class="detail-label">
+                                                <lucide-angular name="ExternalLink" class="w-[16px] h-[16px]"
+                                                    color="#2563eb"></lucide-angular>
+                                                Link
+                                            </div>
+                                            <a [href]="event.link" target="_blank" class="detail-link">Join Event</a>
+                                        </div>
+                                        <div class="event-detail-row border-b border-[#e2e8f0] pb-[10px]"
+                                            [class]="isDarkMode ? '!border-[#1e293b]' : ''" *ngIf="event.address">
+                                            <div class="detail-label">
+                                                <lucide-angular name="Locate" class="w-[16px] h-[16px]"
+                                                    color="#2563eb"></lucide-angular>
+                                                Location
+                                            </div>
+                                            <div class="flex flex-col items-end">
+                                                <span class="detail-value"
+                                                    [class]="isDarkMode ? 'text-white' : 'text-black'">{{event.address.streetAddress}}</span>
+                                                <span class="detail-value"
+                                                    [class]="isDarkMode ? 'text-white' : 'text-black'">{{event.address.city}}</span>
+                                                <span class="detail-value"
+                                                    [class]="isDarkMode ? 'text-white' : 'text-black'">{{event.address.stateName}}</span>
+                                                <span class="detail-value"
+                                                    [class]="isDarkMode ? 'text-white' : 'text-black'">{{event.address.countryName}}</span>
+                                                <span class="detail-value"
+                                                    [class]="isDarkMode ? 'text-white' : 'text-black'">{{event.address.zip}}</span>
+                                            </div>
+                                        </div>
+                                        <div class="event-detail-row border-b border-[#e2e8f0] pb-[10px]"
+                                            [class]="isDarkMode ? '!border-[#1e293b]' : ''" *ngIf="event.durationStr">
+                                            <div class="detail-label">
+                                                <lucide-angular name="Clock" class="w-[16px] h-[16px]"
+                                                    color="#2563eb"></lucide-angular>
+                                                Duration
+                                            </div>
+                                            <span class="detail-value"
+                                                [class]="isDarkMode ? 'text-white' : 'text-black'">{{event.durationStr}}</span>
+                                        </div>
+                                        <div class="event-detail-row border-b border-[#e2e8f0] pb-[10px]"
+                                            [class]="isDarkMode ? '!border-[#1e293b]' : ''">
+                                            <div class="detail-label">
+                                                <lucide-angular name="Globe" class="w-[16px] h-[16px]"
+                                                    color="#2563eb"></lucide-angular>
+                                                Language
+                                            </div>
+                                            <span class="detail-value"
+                                                [class]="isDarkMode ? 'text-white' : 'text-black'">{{event.languageName}}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- External Resources -->
+                <div class="external-resources-section "
+                    [class]="isDarkMode ? '!bg-[#14532d4d] !border-[#166534]' : '!bg-gradient-to-br from-green-50 to-green-100'"
+                    *ngIf="invoiceInfo.externalResources && invoiceInfo.externalResources.length">
+                    <div class="external-resources-header">
+                        <lucide-angular name="ExternalLink" class="w-[20px] h-[20px]" color="#16a34a"></lucide-angular>
+                        <h3 [class]="isDarkMode ? 'text-white' : 'text-black'">External Resources</h3>
+                    </div>
+                    <div class="external-resources-grid">
+                        <div *ngFor="let resource of invoiceInfo.externalResources" class="external-resource-card"
+                            [class]="isDarkMode ? '!bg-gradient-to-br from-[#00000033] to-[#00000033] !border-[#16653480]' : ''">
+                            <div class="flex gap-[10px] w-full">
+                                <img src="/assets/images/link-thumbnail.png" class="w-[48px] h-[48px] rounded-[10px]" />
+                                <div class="flex-1">
+                                    <div class="external-resource-content">
+                                        <h4 class="resource-title" [class]="isDarkMode ? 'text-white' : 'text-black'">
+                                            {{resource.title}}</h4>
+                                        <p class="resource-description">{{resource.description}}</p>
+                                        <span class="resource-platform"
+                                            [class]="isDarkMode ? '!bg-[#14532d80]' : 'bg-[#16a34a80]'">{{resource.platform}}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <button class="access-resource-btn"
+                                [class]="isDarkMode ? '!bg-transparent !border-[#166534] !text-[#16a34a]' : ''"
+                                (click)="openExternalResource(resource.link)">
+                                <lucide-angular name="ExternalLink" class="w-[16px] h-[16px]"
+                                    color="#16a34a"></lucide-angular>
+                                Access
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="w-full border-t  pt-[2rem] pb-[1rem] mt-[2rem] text-center"
+                [class]="isDarkMode ? '!border-[#2e3d52]' : 'border-[#e2e8f0]'">
+                <p class="text-[#64748b] text-[0.875rem]/[1.25rem] mb-0 text-center">Need help? Visit our <a
+                        href="https://support.upgrade.chat" target="_blank" class="!underline text-[#64748b]">Support
+                        Center</a> or contact us directly.</p>
+                <p class="text-[#64748b99] text-center mb-0 mt-[0.5rem] text-[0.75rem]/[1rem]">Powered by Upgrade.chat
+                </p>
+            </div>
+        </div>
+
+    </div>
+</ng-template>

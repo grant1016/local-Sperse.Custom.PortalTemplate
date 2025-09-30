@@ -12,9 +12,28 @@ body {
     position: relative;
     width: 100%;
     height: 100%;
+    font-size: 16px!important;
+    font-family: "ui-sans-serif", "system-ui", "sans-serif", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji" !important;
 }
 .cdk-global-scrollblock {
     overflow: hidden;
+}
+
+/* Dialog panel styles */
+.subscription-management-dialog-panel {
+    .mat-dialog-container {
+        padding: 0;
+        border-radius: 0.75rem;
+        overflow: hidden;
+    }
+}
+
+.referral-settings-dialog-panel {
+    .mat-dialog-container {
+        padding: 0;
+        border-radius: 0.75rem;
+        overflow: hidden;
+    }
 }
 body, html, *, .btn, .dx-texteditor-input, .dx-widget .dx-texteditor-input {
     font-family: var(--app-font-family);
@@ -210,3 +229,16 @@ i.save-to-clipboard {
 .pac-container {
     z-index: 1002;
 }
+
+.referral-settings-dialog-panel {
+    .mat-dialog-container {
+      padding: 0 !important;
+      border-radius: 12px !important;
+      overflow: hidden;
+      background: none!important;
+    }
+  }
+
+  .cdk-overlay-dark-backdrop{
+    background-color: #000c;
+  }

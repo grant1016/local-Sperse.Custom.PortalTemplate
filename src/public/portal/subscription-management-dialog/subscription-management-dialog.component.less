@@ -1,0 +1,635 @@
+ * {
+     font-family: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", Segoe UI Symbol, "Noto Color Emoji" !important;
+ }
+
+ .subscription-management-dialog {
+     max-width: 500px !important;
+     width: 100% !important;
+     max-height: 90vh;
+     overflow-y: auto;
+     background-color: #eff2f5;
+     border: 1px solid #2e3d52;
+     font-family: ui-sans-serif, system-ui, sans-serif !important;
+
+     &.dark-mode {
+         background-color: #020817;
+         color: #f8fafc;
+        border: 1px solid #2e3d52;
+
+         .cancellation-options {
+             .option-item {
+                 .option-radio {
+                     .radio-circle {
+
+                         border: 1px solid #1060d7;
+
+                         &.selected {
+                             border-color: #1060d7;
+                             background-color: black;
+
+                             &::after {
+                                 content: '';
+                                 position: absolute;
+                                 top: 50%;
+                                 left: 50%;
+                                 transform: translate(-50%, -50%);
+                                 width: 0.6rem;
+                                 height: 0.6rem;
+                                 background-color: #1060d7;
+                                 border-radius: 50%;
+                             }
+                         }
+                     }
+                 }
+             }
+
+         }
+
+         .dialog-actions {
+             .btn-secondary {
+                 border: 1px solid #2e3d52;
+                 background-color: transparent;
+                 color: white;
+
+                 &:hover {
+                     background-color: #1f2937;
+                 }
+             }
+         }
+     }
+
+     .dialog-content {
+         position: relative;
+         padding: 1.5rem;
+         animation: fade-in 0.3s ease-in-out;
+     }
+
+     .dialog-header {
+         margin-bottom: 0.5rem;
+
+         .header-left {
+             display: flex;
+             align-items: center;
+             gap: 0.5rem;
+         }
+
+         .dialog-title {
+             letter-spacing: -0.025rem;
+             margin: 0;
+             font-weight: 600;
+         }
+
+         .offer-icon {
+             width: 3rem;
+             height: 3rem;
+
+             border-radius: 50%;
+             display: flex;
+             align-items: center;
+             justify-content: center;
+             margin: 0 auto 1rem;
+         }
+     }
+
+     // Plan Card
+     .plan-card {
+         padding: 1.5rem;
+         border-radius: 0.75rem;
+         margin-bottom: 1.5rem;
+
+         .plan-header {
+             margin-bottom: 1rem;
+
+             .plan-info {
+                 .plan-status {
+                     display: flex;
+                     align-items: center;
+                     gap: 0.5rem;
+                     margin-bottom: 0.25rem;
+
+                     .status-badge {
+                         padding: 0.125rem 0.625rem;
+                         border-radius: 2rem;
+                         font-size: 0.75rem;
+                         line-height: 1rem;
+                         font-weight: 600;
+                     }
+                 }
+
+                 .plan-name {
+                     margin: 0;
+                 }
+             }
+         }
+
+         .plan-details {
+             display: grid;
+             gap: 0.75rem;
+
+             .detail-item {
+                 display: flex;
+                 align-items: center;
+                 justify-content: space-between;
+                 padding: 0.75rem;
+                 border-radius: 0.5rem;
+
+                 .text-sm {
+                     font-size: 0.875rem;
+                 }
+
+                 .text-lg {
+                     font-size: 1.125rem;
+                 }
+
+                 .font-semibold {
+                     font-weight: 600;
+                 }
+
+                 .text-primary {
+                     color: #3c83f6;
+                 }
+             }
+         }
+     }
+
+     // Action Buttons
+     .action-buttons {
+         display: flex;
+         flex-direction: column;
+         gap: 0.75rem;
+
+         .action-btn {
+             display: flex;
+             align-items: center;
+             gap: 0.75rem;
+             padding: 0 2rem;
+             height: 2.75rem;
+             border-radius: 0.5rem;
+             font-size: 0.875rem;
+             line-height: 1.25rem;
+             font-weight: 500;
+             cursor: pointer;
+             transition: all 0.3s ease;
+             width: 100%;
+             justify-content: flex-start;
+
+             &:hover {
+                 transform: translateY(-1px);
+                 box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+             }
+
+             &.cancel-btn {
+                 color: #dc2626;
+                 border-color: #dc2626;
+
+                 &:hover {
+                     background-color: rgba(220, 38, 38, 0.1);
+                 }
+             }
+         }
+     }
+
+     // Warning Message
+     .warning-message {
+         padding: 1rem;
+         border-radius: 0.5rem;
+         border-left: 4px solid;
+         margin-bottom: 1.5rem;
+
+         .text-sm {
+             font-size: 0.875rem;
+         }
+
+         .text-muted-foreground {
+             color: #64748b;
+         }
+     }
+
+
+
+     // Cancellation Options
+     .cancellation-options {
+         margin-bottom: 1.5rem;
+
+         .option-item {
+             display: flex;
+             align-items: flex-start;
+             gap: 1rem;
+             padding: 1rem 1.25rem;
+             border-radius: 0.75rem;
+             cursor: pointer;
+             transition: all 0.3s ease;
+             margin-bottom: 1rem;
+
+             &:hover {
+                 border-color: #ef44444d !important;
+             }
+
+
+             .option-radio {
+                 margin-top: 0.25rem;
+
+                 .radio-circle {
+                     width: 1rem;
+                     height: 1rem;
+                     border: 1px solid #d1d5db;
+                     border-radius: 50%;
+                     position: relative;
+                     transition: all 0.3s ease;
+
+                     &.selected {
+                         border-color: black;
+                         background-color: white;
+
+                         &::after {
+                             content: '';
+                             position: absolute;
+                             top: 50%;
+                             left: 50%;
+                             transform: translate(-50%, -50%);
+                             width: 0.6rem;
+                             height: 0.6rem;
+                             background-color: black;
+                             border-radius: 50%;
+                         }
+                     }
+                 }
+             }
+
+             .option-content {
+                 flex: 1;
+
+                 .option-title {
+                     display: block;
+                     font-size: 1rem;
+                     font-weight: 500;
+                     margin-bottom: 0.5rem;
+                     cursor: pointer;
+                 }
+
+                 .option-description {
+                     font-size: 0.875rem;
+                     color: #64748b;
+                     margin-bottom: 0.5rem;
+
+                     .font-medium {
+                         font-weight: 500;
+                     }
+
+                     .text-destructive {
+                         color: #dc2626;
+                     }
+                 }
+
+                 .option-badge {
+                     display: flex;
+                     align-items: center;
+                     gap: 0.5rem;
+                     font-size: 0.75rem;
+                     color: #16a34a;
+                 }
+             }
+         }
+     }
+
+     // Dialog Actions
+     .dialog-actions {
+         gap: 0.75rem;
+         padding-top: 1rem;
+
+         .btn-secondary {
+             flex: 1;
+             padding: 0.75rem 1rem;
+             border: 1px solid #e2e8f0;
+             border-radius: 0.5rem;
+             background-color: transparent;
+             color: #374151;
+             font-weight: 500;
+             cursor: pointer;
+             transition: all 0.3s ease;
+
+             &:hover {
+                 background-color: #f9fafb;
+             }
+         }
+
+         .btn-destructive {
+             flex: 1;
+             padding: 0.75rem 1rem;
+             border: none;
+             border-radius: 0.5rem;
+             background-color: #ef4444e6;
+             color: white;
+             font-weight: 500;
+             cursor: pointer;
+             transition: all 0.3s ease;
+
+             &:hover {
+                 background-color: #b91c1c;
+             }
+         }
+     }
+
+     // Offer Card
+     .offer-card {
+         padding: 2rem;
+         border-radius: 0.75rem;
+         position: relative;
+         overflow: hidden;
+         margin-bottom: 1.5rem;
+
+         &::before {
+             content: '';
+             position: absolute;
+             top: 0;
+             right: 0;
+             width: 5rem;
+             height: 5rem;
+             background: linear-gradient(135deg, #0f172a33, transparent);
+             border-radius: 50%;
+             transform: translate(2.5rem, -2.5rem);
+         }
+
+         .offer-content {
+             position: relative;
+             z-index: 1;
+
+             .offer-header {
+                 text-align: center;
+                 margin-bottom: 1.5rem;
+
+                 .offer-badge {
+                     display: flex;
+                     align-items: center;
+                     justify-content: center;
+                     gap: 0.5rem;
+                     margin-bottom: 1rem;
+
+                     .offer-title {
+                         font-size: 2rem;
+                         font-weight: 700;
+                         background: linear-gradient(135deg, #0f172a, #0f172acc);
+                         -webkit-background-clip: text;
+                         -webkit-text-fill-color: transparent;
+                         background-clip: text;
+                         margin: 0;
+                     }
+                 }
+
+                 .offer-subtitle {
+                     font-size: 1.125rem;
+                     font-weight: 600;
+                     margin: 0;
+                 }
+             }
+
+             .pricing-section {
+                 text-align: center;
+                 margin-bottom: 1.5rem;
+
+                 .original-price {
+                     margin-bottom: 0.75rem;
+                 }
+
+                 .discounted-price {
+                     padding: 1rem;
+                     border-radius: 0.5rem;
+                     margin-bottom: 1rem;
+
+                     .price-amount {
+                         margin: 0 0 0.5rem;
+                     }
+
+                     .price-note {
+                         margin: 0;
+                     }
+                 }
+
+                 .accept-offer-btn {
+                     width: 100%;
+                     padding: 0.75rem 1rem;
+                     background-color: #16a34a;
+                     color: white;
+                     border: none;
+                     border-radius: 0.5rem;
+                     font-size: 1rem;
+                     font-weight: 600;
+                     cursor: pointer;
+                     transition: all 0.3s ease;
+                     display: flex;
+                     align-items: center;
+                     justify-content: center;
+                     gap: 0.5rem;
+
+                     &:hover {
+                         background-color: #15803d;
+                         transform: translateY(-1px);
+                         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+                     }
+                 }
+             }
+         }
+
+         .benefits-section {
+             padding: 1rem 1.5rem;
+             border-radius: 0.75rem;
+             backdrop-filter: blur(4px);
+
+             .benefits-title {
+                 font-weight: 600;
+                 margin: 0 0 1rem;
+                 text-align: center;
+             }
+
+             .benefits-list {
+                 display: grid;
+                 gap: 0.75rem;
+
+                 .benefit-item {
+                     display: flex;
+                     align-items: center;
+                     gap: 0.75rem;
+
+                     .benefit-icon {
+                         width: 1.25rem;
+                         height: 1.25rem;
+                         background-color: rgba(22, 163, 74, 0.2);
+                         border-radius: 50%;
+                         display: flex;
+                         align-items: center;
+                         justify-content: center;
+                     }
+                 }
+             }
+         }
+     }
+
+     // Decline Section
+     .decline-section {
+         text-align: center;
+         margin-bottom: 1rem;
+
+         .decline-btn {
+             background: none;
+             border: none;
+             color: #64748b;
+             text-decoration: underline;
+             font-size: 0.875rem;
+             font-weight: 500;
+             cursor: pointer;
+             transition: color 0.3s ease;
+
+             &:hover {
+                 color: #374151;
+             }
+         }
+     }
+
+     // Expiry Notice
+     .expiry-notice {
+         padding: 0.75rem;
+         border-radius: 0.5rem;
+         text-align: center;
+
+         .text-xs {
+             font-size: 0.75rem;
+         }
+
+         .text-muted-foreground {
+             color: #64748b;
+         }
+     }
+
+     // Success Content
+     .success-content {
+         margin-bottom: 1.5rem;
+
+         .success-icon {
+             width: 4rem;
+             height: 4rem;
+             background: linear-gradient(135deg, rgba(22, 163, 74, 0.2), rgba(22, 163, 74, 0.1));
+             border-radius: 50%;
+             display: flex;
+             align-items: center;
+             justify-content: center;
+             margin: 0 auto 1rem;
+             animation: scale-in 0.5s ease-out;
+         }
+
+         .success-message {
+             .success-title {
+                 font-size: 1.25rem;
+                 line-height: 1.75rem;
+                 font-weight: 600;
+                 margin: 0 0 0.75rem;
+             }
+
+             .success-details {
+                 padding: 1rem;
+                 border-radius: 0.5rem;
+
+                 .text-sm {
+                     font-size: 0.875rem;
+                 }
+
+                 .text-muted-foreground {
+                     color: #64748b;
+                 }
+
+                 .font-semibold {
+                     font-weight: 600;
+                 }
+
+                 .text-success {
+                     color: #16a34a;
+                 }
+             }
+         }
+     }
+
+     // Close Button
+     .close-btn {
+         width: 100%;
+         padding: 0.75rem 1rem;
+         background-color: #0f172a;
+         color: white;
+         border: none;
+         border-radius: 0.75rem;
+         font-weight: 500;
+         cursor: pointer;
+         transition: all 0.3s ease;
+
+         &:hover {
+             background-color: #0f172ae6;
+             transform: translateY(-1px);
+         }
+     }
+
+     // Animations
+     @keyframes fade-in {
+         from {
+             opacity: 0;
+             transform: translateY(10px);
+         }
+
+         to {
+             opacity: 1;
+             transform: translateY(0);
+         }
+     }
+
+     @keyframes scale-in {
+         from {
+             transform: scale(0.8);
+             opacity: 0;
+         }
+
+         to {
+             transform: scale(1);
+             opacity: 1;
+         }
+     }
+
+     // Dark mode specific styles
+     &.dark-mode {
+         .plan-card {
+             background-color: rgba(31, 41, 55, 0.3);
+             border-color: rgba(31, 41, 55, 0.5);
+         }
+
+         .action-btn {
+             background-color: #020817;
+             border-color: #2e3d52;
+             color: white;
+
+             &:hover {
+                 background-color: #1e293b;
+             }
+         }
+
+         .warning-message {
+             background-color: rgba(31, 41, 55, 0.3);
+             border-color: #dc2626;
+         }
+
+         .option-item {
+             border-color: #374151;
+
+             &:hover {
+                 border-color: #ef44444d;
+             }
+
+         }
+
+
+
+         .benefits-section {
+             background-color: rgba(2, 8, 23, 0.8);
+             border-color: rgba(59, 130, 246, 0.1);
+         }
+
+         .expiry-notice {
+             background-color: rgba(31, 41, 55, 0.3);
+         }
+     }
+ }
