@@ -493,9 +493,9 @@ export class MemberPortalComponent implements OnInit, OnDestroy {
     // Helper method to get invoice amount
     getInvoiceAmount(): string {
         if (this.latestInvoice?.Amount && this.latestInvoice?.CurrencyId) {
-            return `${this.latestInvoice.CurrencyId}${this.latestInvoice.Amount}`;
+            return `${this.latestInvoice.Amount}${this.latestInvoice.CurrencyId==="USD"?"$":this.latestInvoice.CurrencyId==="EUR"?"€":this.latestInvoice.CurrencyId}`;
         }
-        return this.invoiceInfo?.currencyId + this.invoiceInfo?.invoiceAmount || this.currentSubscription?.currencyId + this.currentSubscription?.fee || '$594.00';
+        return ( this.invoiceInfo?.invoiceAmount+(this.invoiceInfo?.currencyId==="USD"?'$':this.invoiceInfo?.currencyId==="EUR"?'€':this.invoiceInfo?.currencyId) ) || (this.currentSubscription?.fee+(this.currentSubscription?.currencyId==='USD'?"$":this.currentSubscription?.currencyId==="EUR"?"€":"$")) || '$594.00';
     }
 
     // Helper method to get invoice date

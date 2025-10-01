@@ -41,7 +41,7 @@
                             class="w-[1.5rem] h-[1.5rem] rounded-full bg-[#4150f1] text-[0.75rem]/[1rem] text-white flex items-center justify-center">{{this.appSessionService.tenantName?.charAt(0)
                             || 'S'}}</span>
                         <span class="text-[0.875rem]/[1.25rem] font-medium
-                        um text-white">{{this.appSessionService.tenantName || 'SUPERLINX'}}</span>
+                        um text-white">{{this.appSessionService.user.name+" "+this.appSessionService.user.surname || 'SUPERLINX'}}</span>
                         <lucide-angular name="ChevronDown" class="w-[1rem] h-[1rem]" color="white"></lucide-angular>
                     </button>
                     <div *ngIf="showProfileDropdown"
@@ -187,11 +187,12 @@
                     </div>
                     <div class="discord-authorized w-full mt-[1rem]" *ngIf="discordUserId && !discordUserUpdated">
                         <div class="discord-user-info">
-                            <h4>Authorized Discord User:</h4>
-                            <div class="discord-user-card">
+                            <h4 [class]="isDarkMode?'text-white':'text-black'">Authorized Discord User:</h4>
+                            <div class="discord-user-card" [class]="isDarkMode?'bg-[#020817]':'bg-[#f1f5f9]'">
                                 <div class="discord-avatar">{{discordUserName?.charAt(0)?.toUpperCase()}}</div>
                                 <div class="discord-user-details">
-                                    <p class="discord-username">{{discordUserName}}</p>
+                                    <p class="discord-username" [class]="isDarkMode?'text-white':'text-black'">
+                                        {{discordUserName}}</p>
                                     <p class="discord-userid">({{discordUserId}})</p>
                                 </div>
                             </div>
@@ -199,9 +200,13 @@
                                 <i [ngClass]="{ 'fa fa-spinner fa-spin': discordUserUpdating }"></i>
                                 Use This Discord Account
                             </button>
-                            <button class="disconnect-discord-btn" (click)="disconnectDiscord()">
+                            <button class="disconnect-discord-btn"
+                                [class]="isDarkMode ? '!bg-[#020817] border !border-[#2e3d52] text-white' : 'bg-[#eff2f5] border-[#e2e8f0]'"
+                                (click)="disconnectDiscord()">
                                 <span class="disconnect-icon">←</span>
                                 Disconnect & Try Another Account
+
+
                             </button>
                         </div>
                     </div>
@@ -330,11 +335,11 @@
                                                 [color]="isDarkMode ? 'white' : '#0f172a'"></lucide-angular>
                                         </div>
                                     </button>
-                                    <button class="w-[2rem] h-[2rem] flex justify-center items-center"
+                                    <!-- <button class="w-[2rem] h-[2rem] flex justify-center items-center"
                                         (click)="openMoreMenu()">
                                         <lucide-angular name="MoreHorizontal" class="w-[16px] h-[16px]"
                                             [color]="isDarkMode ? 'white' : '#0f172a'"></lucide-angular>
-                                    </button>
+                                    </button> -->
                                 </div>
                             </div>
                             <div class="grid grid-cols-2 gap-[1rem] mt-[0.75rem]">
@@ -482,8 +487,7 @@
                         <div *ngFor="let event of invoiceInfo.events" class="event-card !border-[#b6d1fc]"
                             [class]="isDarkMode ? '!bg-gradient-to-br from-[#00000033] to-[#00000033] !border-[#1e40af80]' : ''">
                             <div class="flex gap-[10px] w-full">
-                                <img src="assets/images/event-thumbnail.png"
-                                    class="w-[48px] h-[48px] rounded-[10px]" />
+                                <img src="assets/images/event-thumbnail.png" class="w-[48px] h-[48px] rounded-[10px]" />
                                 <div class="flex-1">
                                     <div class="event-header">
                                         <h4 class="event-title" [class]="isDarkMode ? 'text-white' : 'text-black'">
