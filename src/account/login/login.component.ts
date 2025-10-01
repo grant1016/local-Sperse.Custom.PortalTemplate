@@ -107,8 +107,22 @@ export class LoginComponent implements OnInit {
 
     login(): void {
         if (this.loginForm.valid) {
+            // Trim email/username to remove any accidental whitespace
+            if (this.loginService.authenticateModel.userNameOrEmailAddress) {
+                this.loginService.authenticateModel.userNameOrEmailAddress = 
+                    this.loginService.authenticateModel.userNameOrEmailAddress.trim();
+            }
+            
             this.loginInProgress = true;
             this.loginService.authenticate(() => { this.loginInProgress = false; });
+        }
+    }
+
+    trimEmail(): void {
+        // Trim email on blur to provide immediate feedback
+        if (this.loginService.authenticateModel.userNameOrEmailAddress) {
+            this.loginService.authenticateModel.userNameOrEmailAddress = 
+                this.loginService.authenticateModel.userNameOrEmailAddress.trim();
         }
     }
 

@@ -10,7 +10,7 @@
                     <input [(ngModel)]="loginService.authenticateModel.userNameOrEmailAddress" autoFocus
                            class="form-control form-control-solid placeholder-no-fix input-ltr email" type="text"
                            autocomplete="off" placeholder="{{getLoginPlaceholder()}}" name="userNameOrEmailAddress"
-                           required tabindex="1"/>
+                           required tabindex="1" (blur)="trimEmail()"/>
                 </div>
 
                 <div class="form-group clearfix">
