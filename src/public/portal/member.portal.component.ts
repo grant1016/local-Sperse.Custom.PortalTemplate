@@ -56,6 +56,7 @@ import { of, Observable } from 'rxjs';
 })
 export class MemberPortalComponent implements OnInit, OnDestroy {
     loading: boolean = true;
+    tailwindLoading: boolean = true;
     invoiceInfo: GetInvoiceReceiptInfoOutput;
     returnText: string = '';
     hostName = AppConsts.defaultTenantName;
@@ -100,6 +101,7 @@ export class MemberPortalComponent implements OnInit, OnDestroy {
     telegramUserUpdated: boolean;
     telegramUserUpdating: boolean;
     shownLoginInfo: any;
+    discordClientId: string;
     // Theme switching
     currentTheme: 'original' | 'modern' = 'modern';
 
@@ -180,9 +182,14 @@ export class MemberPortalComponent implements OnInit, OnDestroy {
         this.getLatestInvoice();
 
         console.log('Current Subscription:', this.appSessionService);
-        
+
 
         console.log('Tenant ID:', this.appSessionService.tenantId);
+        this.discordUserId = this.appSessionService.user?.discordUserId;
+        this.discordUserName = this.appSessionService.user?.discordUserName;
+
+        // Fetch Discord client ID from API
+        this.getUserProductResources();
 
         if (this.isTestMode) {
             this.loadTestData();
@@ -405,15 +412,15 @@ export class MemberPortalComponent implements OnInit, OnDestroy {
     // Helper method to format currency and amount
     formatCurrency(amount: number, currency: string): string {
         if (!amount || !currency) return '';
-        return `${amount} ${currency==="USD"?"$":currency==="EUR"?"€":currency}`;
+        return `${amount} ${currency === "USD" ? "$" : currency === "EUR" ? "€" : currency}`;
     }
 
     // Helper method to format payment period
     formatPaymentPeriod(period: string): string {
         if (!period) return 'month';
-        if(period.toLowerCase()==="monthly"){
+        if (period.toLowerCase() === "monthly") {
             return "month"
-        }else if(period.toLowerCase()==="yearly"){
+        } else if (period.toLowerCase() === "yearly") {
             return "year"
         }
         return period.toLowerCase();
@@ -677,13 +684,40 @@ export class MemberPortalComponent implements OnInit, OnDestroy {
         return `${displayName}: ${value}\n`;
     }
 
+    getUserProductResources() {
+        const apiUrl = `${AppConsts.remoteServiceBaseUrl}/api/services/CRM/UserPurchases/GetUserProductResources`;
+        
+        fetch(apiUrl, {
+            headers: {
+                'Authorization': 'Bearer ' + abp.auth.getToken(),
+                'Accept': 'application/json'
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                console.log('UserProductResources Data:', data);
+                if (data.result && data.result.clientId) {
+                    this.discordClientId = data.result.clientId;
+                    console.log('Discord Client ID:', this.discordClientId);
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching user product resources:', error);
+            });
+    }
+
     discordOAuth() {
         console.log("asdfasdf");
+
+        if (!this.discordClientId) {
+            abp.notify.error('Discord client ID not available. Please try again.');
+            return;
+        }
 
         let scopes = ['email', 'identify', 'guilds.join'];
         let scopesString = scopes.join('%20');
         let redirectUrl = `${AppConsts.appConfigOrigin.remoteServiceBaseUrl}/account/oauth-redirect?provider=discord`;
-        let popupUrl = 'https://discord.com/oauth2/authorize?response_type=code&client_id=' + this.appSessionService.user?.discordUserId+
+        let popupUrl = 'https://discord.com/oauth2/authorize?response_type=code&client_id=' + this.discordClientId +
             `&redirect_uri=${redirectUrl}&state=${this.appSessionService.tenantId}&scope=${scopesString}&prompt=none`;
 
         this.discordPopup = window.open(popupUrl, 'discordOAuth', 'width=500,height=600');
@@ -751,6 +785,10 @@ export class MemberPortalComponent implements OnInit, OnDestroy {
         this.discordUserId = null;
         this.discordUserName = null;
         this.discordUserUpdated = false;
+    }
+
+    joinDiscord() {
+        window.open('https://discord.com/channels/@me', '_blank');
     }
 
     disconnectTelegram() {
@@ -1090,6 +1128,7 @@ END:VCALENDAR`;
     private loadTailwindCSS(): void {
         // Check if Tailwind is already loaded
         if (this.document.querySelector('script[src*="tailwindcss"]')) {
+            this.tailwindLoading = false;
             return;
         }
 
@@ -1097,6 +1136,22 @@ END:VCALENDAR`;
         this.tailwindScript = this.document.createElement('script');
         this.tailwindScript.src = 'https://cdn.tailwindcss.com';
         this.tailwindScript.async = true;
+        
+        // Set up load event listener
+        this.tailwindScript.onload = () => {
+            // Give Tailwind a moment to initialize
+            setTimeout(() => {
+                this.tailwindLoading = false;
+            }, 100);
+        };
+        
+        // Handle errors
+        this.tailwindScript.onerror = () => {
+            console.error('Failed to load Tailwind CSS');
+            // Still hide loading screen to show content (with potentially broken styles)
+            this.tailwindLoading = false;
+        };
+        
         this.document.head.appendChild(this.tailwindScript);
     }
 

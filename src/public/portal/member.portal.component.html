@@ -1,6 +1,7 @@
-<div *ngIf="loading; else mainContainer" class="loading-container">
+<div *ngIf="loading || tailwindLoading; else mainContainer" class="loading-container">
     <div *ngIf="!failedToLoad; else failBlock" class="wait-message">
-        Loading your portal...
+        <div class="loading-spinner"></div>
+        <p>Loading your portal...</p>
     </div>
     <ng-template #failBlock>
         <div>{{failMessage}}</div>
@@ -176,7 +177,7 @@
                     <p class="mt-[0.5rem] sm:text-[0.875rem]/[1.25rem] text-[#64748b] mb-0">
                         Connect Discord to complete your setup and unlock all benefits
                     </p>
-                    <div class="discord-content w-full mt-[1rem]" *ngIf="!discordUserId">
+                    <div class="discord-content w-full mt-[1rem]" *ngIf="!discordUserId||!discordUserName">
                         <button
                             class="discord-auth-button md:py-[0.75rem] md:px-[1.5rem] py-[1rem] px-[2rem] text-[1rem]/[1.5rem]"
                             (click)="discordOAuth()" [disabled]="discordPopup || discordUserUpdating">
@@ -184,7 +185,7 @@
                             Authorize Discord
                         </button>
                     </div>
-                    <div class="discord-authorized" *ngIf="discordUserId && !discordUserUpdated">
+                    <div class="discord-authorized w-full mt-[1rem]" *ngIf="discordUserId && !discordUserUpdated">
                         <div class="discord-user-info">
                             <h4>Authorized Discord User:</h4>
                             <div class="discord-user-card">
@@ -205,7 +206,7 @@
                         </div>
                     </div>
 
-                    <div class="discord-connected" *ngIf="discordUserUpdated">
+                    <div class="discord-connected  mt-[1rem]" *ngIf="discordUserId && discordUserUpdated">
                         <div class="discord-success-card">
                             <div class="discord-avatar">{{discordUserName?.charAt(0)?.toUpperCase()}}</div>
                             <div class="discord-success-info">
@@ -213,7 +214,7 @@
                                 <p class="discord-ready-text">✓ Ready for Discord access</p>
                             </div>
                         </div>
-                        <button class="join-discord-btn">
+                        <button class="join-discord-btn" (click)="joinDiscord()">
                             <span class="external-icon">↗</span>
                             Join Discord Server
                         </button>
