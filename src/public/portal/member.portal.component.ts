@@ -698,8 +698,8 @@ export class MemberPortalComponent implements OnInit, OnDestroy {
             .then(response => response.json())
             .then(data => {
                 console.log('UserProductResources Data:', data);
-                if (data.result && data.result.clientId) {
-                    this.discordClientId = data.result.clientId;
+                if (data.result && data.result.discordAppId) {
+                    this.discordClientId = data.result.discordAppId;
                     console.log('Discord Client ID:', this.discordClientId);
                 }
                 if (data.result && data.result.downloads) {
@@ -965,11 +965,17 @@ END:VCALENDAR`;
 
 
     openReferralSettingsDialog() {
+        console.log('Opening dialog with:');
+        console.log('- isDarkMode:', this.isDarkMode);
+        console.log('- discordUserId:', this.discordUserId);
+        console.log('- User object:', this.appSessionService.user);
+        
         const dialogRef = this.dialog.open(ReferralSettingsDialogComponent, {
             maxWidth: '42rem',
             panelClass: 'referral-settings-dialog-panel',
             data: {
-                isDarkMode: this.isDarkMode
+                isDarkMode: this.isDarkMode,
+                discordUserId: this.discordUserId
             }
         });
 

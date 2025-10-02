@@ -1,6 +1,6 @@
 /** Core imports */
 import { Component, Inject, OnInit, OnDestroy } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
 
 /** Third party imports */
 import { ClipboardService } from 'ngx-clipboard';
@@ -15,6 +15,7 @@ import { SharingService } from '@shared/common/sharing-service/sharing.service';
 import { NotifyService } from 'abp-ng2-module';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 import { AffiliateLinkInfo } from '@shared/service-proxies/service-proxies';
+import { ShareSocialDialogComponent } from '../share-social-dialog/share-social-dialog.component';
 
 @Component({
     selector: 'referral-settings-dialog',
@@ -27,6 +28,8 @@ export class ReferralSettingsDialogComponent implements OnInit, OnDestroy {
     selectedLink: string = '';
     suggestedCopy: string = '';
     isDarkMode: boolean = false;
+    discordUserId: string = '';
+    baseUrl: string = '';
     
     links$ = this.referralService.getLinks().pipe(map(links => {
         console.log(links);
@@ -46,20 +49,30 @@ export class ReferralSettingsDialogComponent implements OnInit, OnDestroy {
         private profileService: ProfileService,
         private sharingService: SharingService,
         private notifyService: NotifyService,
-        private lifeCycleSubject: LifecycleSubjectsService
+        private lifeCycleSubject: LifecycleSubjectsService,
+        private dialog: MatDialog
     ) {
+        console.log('Dialog data received:', data);
+        console.log('isDarkMode:', data?.isDarkMode);
+        console.log('discordUserId:', data?.discordUserId);
+        
         if (data && data.isDarkMode !== undefined) {
             this.isDarkMode = data.isDarkMode;
+        }
+        if (data && data.discordUserId) {
+            this.discordUserId = data.discordUserId;
         }
     }
 
     ngOnInit(): void {
         // Initialize with the last available link
         this.links$.pipe(first()).subscribe(links => {
-            console.log(links);
+            console.log('Available links:', links);
             
             if (links && links.length > 0) {
                 const lastLink = links[links.length - 1];
+                this.baseUrl = lastLink.url;
+                console.log('Base URL set to:', this.baseUrl);
                 this.onSelectedLinkChanged({ value: lastLink });
             }
         });
@@ -72,11 +85,28 @@ export class ReferralSettingsDialogComponent implements OnInit, OnDestroy {
     onSelectedLinkChanged(event) {
         this.profileService.accessCode$.pipe(first()).subscribe(accessCode => {
             this.suggestedCopy = event.value.suggestedCopy;
-            this.selectedLink = event.value.url + (accessCode ? 
-                (event.value.url.includes('?') ? '&' : '?') + 'ref=' + accessCode : ''
-            );
-            this.referralLink = this.selectedLink;
+            this.baseUrl = event.value.url;
+            this.referralCode = accessCode || '';
+            console.log('Initial referral code from profile:', this.referralCode);
+            this.updateReferralLink();
         });
+    }
+
+    onReferralCodeInput(event: any) {
+        this.referralCode = event.target.value;
+        this.updateReferralLink();
+    }
+
+    updateReferralLink() {
+        if (!this.baseUrl) {
+            console.warn('Base URL not set yet');
+            return;
+        }
+        
+        // Always rebuild from base URL + referral code
+        this.referralLink = this.baseUrl + (this.referralCode ? '/' + this.referralCode : '');
+        this.selectedLink = this.referralLink;
+        console.log('Updated referral link to:', this.referralLink);
     }
 
     copyReferralLink(): void {
@@ -85,16 +115,27 @@ export class ReferralSettingsDialogComponent implements OnInit, OnDestroy {
     }
 
     shareOnSocial(): void {
-        // For now, just copy the link. Can be enhanced with actual social sharing
-        this.clipboardService.copyFromContent(this.selectedLink || this.referralLink);
-        this.notifyService.info(this.ls.l('SavedToClipboard'));
+        // Open the social sharing dialog
+        this.dialog.open(ShareSocialDialogComponent, {
+            width: '700px',
+            maxWidth: '90vw',
+            panelClass: 'custom-dialog-container',
+            data: {
+                shareLink: this.selectedLink || this.referralLink,
+                referralCode: this.referralCode,
+                isDarkMode: this.isDarkMode
+            }
+        });
     }
 
     useDiscordId(): void {
-        // This would typically get the Discord ID from the user's connected Discord account
-        // For now, we'll use a placeholder
-        this.referralCode = 'DISCORD123';
-        this.referralLink = 'https://buy.domain.com/r/DISCORD123';
+        if (this.discordUserId) {
+            this.referralCode = this.discordUserId;
+            this.updateReferralLink();
+            this.notifyService.success('Discord ID set as referral code');
+        } else {
+            this.notifyService.warn('Discord ID not available. Please connect your Discord account first.');
+        }
     }
 
     ngOnDestroy() {

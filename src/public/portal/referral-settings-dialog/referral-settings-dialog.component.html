@@ -39,7 +39,7 @@
                     </button>
                 </div>
                 <input type="text" class="w-full h-[2.5rem] py-[0.5rem] px-[0.75rem] mt-[0.5rem] rounded-[0.75rem]" [class]="isDarkMode ? 'bg-[#020817] border-[#e2e8f0] text-white' : 'bg-[#eff2f5] border-[#e2e8f0] text-black'"
-                    [(ngModel)]="referralCode" placeholder="Enter your referral code">
+                    [value]="referralCode" (input)="onReferralCodeInput($event)" placeholder="Enter your referral code">
 
                 <p class="mt-[0.5rem] text-[#64748b] text-[0.75rem]/[1rem]" [class]="isDarkMode ? 'text-[#94a3b8]' : 'text-[#64748b]'">
                     Use letters and numbers only. Keep it memorable and professional.

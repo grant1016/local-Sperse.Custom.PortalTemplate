@@ -28,6 +28,15 @@ body {
     }
 }
 
+.custom-dialog-container {
+    .mat-dialog-container {
+        padding: 0;
+        border-radius: 0.75rem;
+        background: transparent;
+        overflow: hidden;
+    }
+}
+
 .referral-settings-dialog-panel {
     .mat-dialog-container {
         padding: 0;

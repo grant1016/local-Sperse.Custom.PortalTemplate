@@ -1,0 +1,93 @@
+<div class="share-social-dialog" [class]="isDarkMode ? 'dark-mode' : ''">
+    <!-- Header -->
+    <div class="dialog-header" [class]="isDarkMode ? '!border-[#29303d]' : '!border-[#e2e8f0]'">
+        <h2 class="dialog-title" [class]="isDarkMode ? 'text-white' : 'text-black'">Share & Embed Video</h2>
+        <button class="close-button" (click)="onClose()">
+            <lucide-angular name="X" class="w-[1rem] h-[1rem]"
+                [color]="isDarkMode ? 'white' : 'black'"></lucide-angular>
+        </button>
+    </div>
+
+    <!-- Content -->
+    <div class="dialog-content">
+        <!-- Share Link Section -->
+        <div class="share-link-section">
+            <label class="section-label" [class]="isDarkMode ? 'text-[#94a3b8]' : 'text-[#64748b]'">Share Link</label>
+            <div class="share-link-input-group">
+                <input type="text" class="share-link-input" 
+                    [class]="isDarkMode ? 'dark-input' : 'light-input'"
+                    [value]="shareLink" 
+                    readonly>
+                <button class="copy-link-button" 
+                    [class]="isDarkMode ? 'dark-button' : 'light-button'" 
+                    (click)="copyLink()">
+                    Copy
+                </button>
+            </div>
+        </div>
+
+        <!-- Social Media Buttons -->
+        <div class="flex flex-wrap gap-[0.5rem]">
+            <button class="h-[2rem] px-[0.75rem] border rounded-[8px] flex items-center gap-[0.5rem] text-[0.875rem]/[1.25rem] hover:bg-[#1877f2] hover:text-white" [class]="isDarkMode ? '!border-[#2e3d52] bg-[#252b3780] text-white' : '!border-[#e2e8f0] bg-[#f8fafc] text-black'" (click)="shareOnPlatform('facebook')">
+                <lucide-angular name="Facebook" class="w-[1rem] h-[1rem]"></lucide-angular>
+                Facebook
+            </button>
+            <button class="h-[2rem] px-[0.75rem] border rounded-[8px] flex items-center gap-[0.5rem] text-[0.875rem]/[1.25rem] hover:bg-[#1877f2] hover:text-white" [class]="isDarkMode ? '!border-[#2e3d52] bg-[#252b3780] text-white' : '!border-[#e2e8f0] bg-[#f8fafc] text-black'" (click)="shareOnPlatform('twitter')">
+                <lucide-angular name="Twitter" class="w-[18px] h-[18px]"></lucide-angular>
+                X.com
+            </button>
+            <button class="h-[2rem] px-[0.75rem] border rounded-[8px] flex items-center gap-[0.5rem] text-[0.875rem]/[1.25rem] hover:bg-[#1877f2] hover:text-white" [class]="isDarkMode ? '!border-[#2e3d52] bg-[#252b3780] text-white' : '!border-[#e2e8f0] bg-[#f8fafc] text-black'" (click)="shareOnPlatform('whatsapp')">
+                <lucide-angular name="MessageCircle" class="w-[18px] h-[18px]"></lucide-angular>
+                Whatsapp
+            </button>
+            <button class="h-[2rem] px-[0.75rem] border rounded-[8px] flex items-center gap-[0.5rem] text-[0.875rem]/[1.25rem] hover:bg-[#1877f2] hover:text-white" [class]="isDarkMode ? '!border-[#2e3d52] bg-[#252b3780] text-white' : '!border-[#e2e8f0] bg-[#f8fafc] text-black'" (click)="shareOnPlatform('linkedin')">
+                <lucide-angular name="Linkedin" class="w-[18px] h-[18px]"></lucide-angular>
+                Linkedin
+            </button>
+            <button class="h-[2rem] px-[0.75rem] border rounded-[8px] flex items-center gap-[0.5rem] text-[0.875rem]/[1.25rem] hover:bg-[#1877f2] hover:text-white" [class]="isDarkMode ? '!border-[#2e3d52] bg-[#252b3780] text-white' : '!border-[#e2e8f0] bg-[#f8fafc] text-black'" (click)="shareOnPlatform('telegram')">
+                <lucide-angular name="Send" class="w-[18px] h-[18px]"></lucide-angular>
+                Telegram
+            </button>
+            <button class="h-[2rem] px-[0.75rem] border rounded-[8px] flex items-center gap-[0.5rem] text-[0.875rem]/[1.25rem] hover:bg-[#1877f2] hover:text-white" [class]="isDarkMode ? '!border-[#2e3d52] bg-[#252b3780] text-white' : '!border-[#e2e8f0] bg-[#f8fafc] text-black'" (click)="shareOnPlatform('reddit')">
+                <lucide-angular name="Circle" class="w-[18px] h-[18px]"></lucide-angular>
+                Reddit
+            </button>
+            <button class="h-[2rem] px-[0.75rem] border rounded-[8px] flex items-center gap-[0.5rem] text-[0.875rem]/[1.25rem] hover:bg-[#1877f2] hover:text-white" [class]="isDarkMode ? '!border-[#2e3d52] bg-[#252b3780] text-white' : '!border-[#e2e8f0] bg-[#f8fafc] text-black'" (click)="shareOnPlatform('email')">
+                <lucide-angular name="Mail" class="w-[18px] h-[18px]"></lucide-angular>
+                Email
+            </button>
+        </div>
+
+        <!-- Message Section -->
+        <div class="message-section mt-[1.5rem]">
+            <div class="message-header">
+                <label class="section-label" [class]="isDarkMode ? 'text-white' : 'text-[#64748b]'">Message</label>
+                <span class="char-count" [class]="isDarkMode ? 'text-[#94a3b8]' : 'text-[#64748b]'">
+                    {{messageText.length}}/128
+                </span>
+            </div>
+            <div class="message-content-wrapper">
+                <div class="message-preview" [class]="isDarkMode ? 'dark-mode' : 'light-mode'">
+                    <div class="gift-icon">
+                        <lucide-angular name="Gift" class="w-[40px] h-[40px]" color="#f59e0b"></lucide-angular>
+                    </div>
+                    <div class="preview-text">
+                        <div class="preview-label" [class]="isDarkMode ? 'text-[#94a3b8]' : 'text-[#64748b]'">
+                            Premium Trading Membership
+                        </div>
+                    </div>
+                </div>
+                <div class="message-text-area">
+                    <textarea 
+                        class="message-textarea" 
+                        [class]="isDarkMode ? 'dark-mode' : 'light-mode'"
+                        [(ngModel)]="messageText"
+                        maxlength="128"
+                        rows="4"
+                        placeholder="Enter your message...">{{messageText}}</textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
