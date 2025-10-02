@@ -110,7 +110,7 @@ export class MemberPortalComponent implements OnInit, OnDestroy {
     currentTheme: 'original' | 'modern' = 'modern';
 
     // Dark mode for receipt page only
-    isDarkMode: boolean = false;
+    isDarkMode: boolean = true;
 
     // Calendar dropdown
     showCalendarDropdown: boolean = false;
@@ -416,7 +416,7 @@ export class MemberPortalComponent implements OnInit, OnDestroy {
     // Helper method to format currency and amount
     formatCurrency(amount: number, currency: string): string {
         if (!amount || !currency) return '';
-        return `${amount} ${currency === "USD" ? "$" : currency === "EUR" ? "€" : currency}`;
+        return `${currency === "USD" ? "$" : currency === "EUR" ? "€" : currency}${amount}`;
     }
 
     // Helper method to format payment period
@@ -497,7 +497,7 @@ export class MemberPortalComponent implements OnInit, OnDestroy {
     // Helper method to get invoice amount
     getInvoiceAmount(): string {
         if (this.latestInvoice?.Amount && this.latestInvoice?.CurrencyId) {
-            return `${this.latestInvoice.Amount}${this.latestInvoice.CurrencyId === "USD" ? "$" : this.latestInvoice.CurrencyId === "EUR" ? "€" : this.latestInvoice.CurrencyId}`;
+            return `${this.latestInvoice.CurrencyId === "USD" ? "$" : this.latestInvoice.CurrencyId === "EUR" ? "€" : this.latestInvoice.CurrencyId}${this.latestInvoice.Amount}`;
         }
         return (this.invoiceInfo?.invoiceAmount + (this.invoiceInfo?.currencyId === "USD" ? '$' : this.invoiceInfo?.currencyId === "EUR" ? '€' : this.invoiceInfo?.currencyId)) || (this.currentSubscription?.fee + (this.currentSubscription?.currencyId === 'USD' ? "$" : this.currentSubscription?.currencyId === "EUR" ? "€" : "$")) || '$594.00';
     }
