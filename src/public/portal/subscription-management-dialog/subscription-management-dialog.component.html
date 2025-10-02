@@ -59,7 +59,7 @@
 
         <!-- Action Buttons -->
         <div class="action-buttons">
-            <!-- <button class="action-btn" (click)="updatePaymentMethod()"
+            <button class="action-btn" (click)="updatePaymentMethod()"
                 [class]="isDarkMode ? '!bg-[#020817] border !border-[#2e3d52] text-white' : 'bg-[#eff2f5] border !border-[#e2e8f0] text-[#0f172a]'">
                 <lucide-angular name="CreditCard" class="w-4 h-4"></lucide-angular>
                 Update Payment Method
@@ -68,7 +68,7 @@
                 [class]="isDarkMode ? '!bg-[#020817] border !border-[#2e3d52] text-white' : 'bg-[#eff2f5] border-[#e2e8f0] text-[#0f172a]'">
                 <lucide-angular name="Settings" class="w-4 h-4"></lucide-angular>
                 Change Plan
-            </button> -->
+            </button>
             <button *ngIf="currentSubscription?.statusCode !== 'C'" class="action-btn cancel-btn" (click)="handleCancel()"
                 [class]="isDarkMode ? '!bg-[#020817] border !border-[#ef44444d] text-red-400' : 'bg-[#eff2f5] border border-[#ef44444d] text-red-600'">
                 <lucide-angular name="AlertTriangle" class="w-4 h-4" color="currentColor"></lucide-angular>

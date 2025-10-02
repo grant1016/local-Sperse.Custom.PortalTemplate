@@ -220,7 +220,7 @@ export class SubscriptionManagementDialogComponent implements OnInit {
 
     updatePaymentMethod(): void {
         // TODO: Implement payment method update
-        abp.notify.info('Payment method update functionality coming soon');
+         this.step = 'retention-offer';
     }
 
     changePlan(): void {

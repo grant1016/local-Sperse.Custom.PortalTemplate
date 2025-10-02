@@ -31,7 +31,7 @@
 
             </div>
             <img [src]="remoteServiceBaseUrl + '/api/TenantCustomization/GetLogo?' + appSessionService.getTenantLogoUrlParams()"
-                class="h-[70px]">
+                class="h-[60px]">
             <div class="flex items-center gap-[0.75rem] absolute top-[1rem] right-[1.9rem]">
                 <div class="relative">
                     <button
@@ -436,14 +436,14 @@
                 <!-- Downloads Section -->
                 <div class="downloads-section "
                     [class]="isDarkMode ? '!bg-[#3b07644d] !border-[#6b21a880]' : '!bg-gradient-to-br from-purple-50 to-purple-100 border-[#e9d5ff]'"
-                    *ngIf="invoiceInfo.resources && invoiceInfo.resources.length">
+                    *ngIf="downloadResources && downloadResources.length">
                     <div class="downloads-header">
                         <lucide-angular name="Download" class="w-[20px] h-[20px]" color="#9333ea"></lucide-angular>
                         <h3 class="text-[1.125rem]/[1.75rem] font-medium mb-0"
                             [class]="isDarkMode ? 'text-white' : 'text-black'">Downloads</h3>
                     </div>
                     <div class="downloads-grid">
-                        <div class="download-card" *ngFor="let resource of invoiceInfo.resources; let i = index"
+                        <div class="download-card" *ngFor="let resource of downloadResources; let i = index"
                             [class]="isDarkMode ? '!bg-[#00000033] !border-[#6b21a880]' : ''">
                             <img *ngIf="resource.name.split('.').pop()==='pdf'" src="assets/images/pdf-thumbnail.png"
                                 class="w-[30px] h-[30px] rounded-[10px]" />
@@ -478,13 +478,13 @@
                 <!-- Events Section -->
                 <div class="events-section "
                     [class]="isDarkMode ? '!bg-[#1725544d] !border-[#1e40af]' : '!bg-gradient-to-br from-blue-50 to-blue-100'"
-                    *ngIf="invoiceInfo.events && invoiceInfo.events.length">
+                    *ngIf="eventResources && eventResources.length">
                     <div class="events-header">
                         <lucide-angular name="Calendar" class="w-[20px] h-[20px]" color="#2563eb"></lucide-angular>
                         <h3 [class]="isDarkMode ? 'text-white' : 'text-black'">Events</h3>
                     </div>
                     <div class="events-grid">
-                        <div *ngFor="let event of invoiceInfo.events" class="event-card !border-[#b6d1fc]"
+                        <div *ngFor="let event of eventResources" class="event-card !border-[#b6d1fc]"
                             [class]="isDarkMode ? '!bg-gradient-to-br from-[#00000033] to-[#00000033] !border-[#1e40af80]' : ''">
                             <div class="flex gap-[10px] w-full">
                                 <img src="assets/images/event-thumbnail.png" class="w-[48px] h-[48px] rounded-[10px]" />
@@ -628,13 +628,13 @@
                 <!-- External Resources -->
                 <div class="external-resources-section "
                     [class]="isDarkMode ? '!bg-[#14532d4d] !border-[#166534]' : '!bg-gradient-to-br from-green-50 to-green-100'"
-                    *ngIf="invoiceInfo.externalResources && invoiceInfo.externalResources.length">
+                    *ngIf="externalResources && externalResources.length">
                     <div class="external-resources-header">
                         <lucide-angular name="ExternalLink" class="w-[20px] h-[20px]" color="#16a34a"></lucide-angular>
                         <h3 [class]="isDarkMode ? 'text-white' : 'text-black'">External Resources</h3>
                     </div>
                     <div class="external-resources-grid">
-                        <div *ngFor="let resource of invoiceInfo.externalResources" class="external-resource-card"
+                        <div *ngFor="let resource of externalResources" class="external-resource-card"
                             [class]="isDarkMode ? '!bg-gradient-to-br from-[#00000033] to-[#00000033] !border-[#16653480]' : ''">
                             <div class="flex gap-[10px] w-full">
                                 <img src="assets/images/link-thumbnail.png" class="w-[48px] h-[48px] rounded-[10px]" />

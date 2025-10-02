@@ -69,6 +69,8 @@ export class MemberPortalComponent implements OnInit, OnDestroy {
     subscriptionHistory: OrderSubscriptionDto[] = [];
     currentSubscription: OrderSubscriptionDto | null = null;
     subscriptionLoading: boolean = false;
+    downloadResources: any[] = [];
+    eventResources: any[] = [];
 
     // Invoice data
     latestInvoice: any = null;
@@ -699,6 +701,12 @@ export class MemberPortalComponent implements OnInit, OnDestroy {
                 if (data.result && data.result.clientId) {
                     this.discordClientId = data.result.clientId;
                     console.log('Discord Client ID:', this.discordClientId);
+                }
+                if (data.result && data.result.downloads) {
+                    this.downloadResources = data.result.downloads;
+                }
+                if (data.result && data.result.events) {
+                    this.eventResources = data.result.events;
                 }
             })
             .catch(error => {
