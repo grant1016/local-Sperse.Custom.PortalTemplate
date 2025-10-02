@@ -94,16 +94,18 @@ export class MemberPortalComponent implements OnInit, OnDestroy {
     isTestMode: boolean = this.activatedRoute.snapshot.url[0]?.path === 'member-portal';
     tenantLogo: string = '';
     discordPopup: Window;
-    discordUserId: string;
-    discordUserName: string;
+    discordUserId: string | null;
+    discordUserName: string | null;
     discordUserUpdated: boolean;
     discordUserUpdating: boolean;
-    telegramUserId: string;
-    telegramUserName: string;
+    telegramUserId: string | null;
+    telegramUserName: string | null;
     telegramUserUpdated: boolean;
     telegramUserUpdating: boolean;
     shownLoginInfo: any;
     discordClientId: string;
+    discordUserIdForPreview: string | null;
+    discordUserNameForPreview: string | null;
     // Theme switching
     currentTheme: 'original' | 'modern' = 'modern';
 
@@ -495,9 +497,9 @@ export class MemberPortalComponent implements OnInit, OnDestroy {
     // Helper method to get invoice amount
     getInvoiceAmount(): string {
         if (this.latestInvoice?.Amount && this.latestInvoice?.CurrencyId) {
-            return `${this.latestInvoice.Amount}${this.latestInvoice.CurrencyId==="USD"?"$":this.latestInvoice.CurrencyId==="EUR"?"€":this.latestInvoice.CurrencyId}`;
+            return `${this.latestInvoice.Amount}${this.latestInvoice.CurrencyId === "USD" ? "$" : this.latestInvoice.CurrencyId === "EUR" ? "€" : this.latestInvoice.CurrencyId}`;
         }
-        return ( this.invoiceInfo?.invoiceAmount+(this.invoiceInfo?.currencyId==="USD"?'$':this.invoiceInfo?.currencyId==="EUR"?'€':this.invoiceInfo?.currencyId) ) || (this.currentSubscription?.fee+(this.currentSubscription?.currencyId==='USD'?"$":this.currentSubscription?.currencyId==="EUR"?"€":"$")) || '$594.00';
+        return (this.invoiceInfo?.invoiceAmount + (this.invoiceInfo?.currencyId === "USD" ? '$' : this.invoiceInfo?.currencyId === "EUR" ? '€' : this.invoiceInfo?.currencyId)) || (this.currentSubscription?.fee + (this.currentSubscription?.currencyId === 'USD' ? "$" : this.currentSubscription?.currencyId === "EUR" ? "€" : "$")) || '$594.00';
     }
 
     // Helper method to get invoice date
@@ -688,7 +690,7 @@ export class MemberPortalComponent implements OnInit, OnDestroy {
 
     getUserProductResources() {
         const apiUrl = `${AppConsts.remoteServiceBaseUrl}/api/services/CRM/UserPurchases/GetUserProductResources`;
-        
+
         fetch(apiUrl, {
             headers: {
                 'Authorization': 'Bearer ' + abp.auth.getToken(),
@@ -756,8 +758,8 @@ export class MemberPortalComponent implements OnInit, OnDestroy {
                     options: null,
                     vault: true
                 })).subscribe(res => {
-                    this.discordUserId = res.additionalData["Id"];
-                    this.discordUserName = res.additionalData["Username"];
+                    this.discordUserIdForPreview = res.additionalData["Id"];
+                    this.discordUserNameForPreview = res.additionalData["Username"];
                 });
             } else {
                 abp.notify.error(event.data.error || 'Failed to get ');
@@ -773,26 +775,91 @@ export class MemberPortalComponent implements OnInit, OnDestroy {
     }
 
     confirmDiscord() {
-        if (!this.discordUserId)
+        if (!this.discordUserIdForPreview)
             return;
 
         this.discordUserUpdating = true;
-        this.userInvoiceService.setDiscordForContact(new SetDiscordForContactInput({
-            tenantId: this.tenantId,
-            publicId: this.publicId,
-            discordUserId: this.discordUserId,
-            discordUserName: this.discordUserName
-        })).pipe(finalize(() => {
-            this.discordUserUpdating = false;
-        })).subscribe(() => {
-            this.discordUserUpdated = true;
-        });
+        const apiUrl = `${AppConsts.remoteServiceBaseUrl}/api/services/CRM/MemberSettings/UpdateDiscordInfo`;
+
+        fetch(apiUrl, {
+            method: 'PUT',
+            headers: {
+                'Authorization': 'Bearer ' + abp.auth.getToken(),
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({
+                tenantId: this.tenantId,
+                publicId: this.publicId,
+                discordUserId: this.discordUserIdForPreview,
+                discordUserName: this.discordUserNameForPreview
+            })
+        })
+            .then(response => {
+                if (response.ok) {
+                    this.discordUserUpdated = true;
+                    this.discordUserId = this.discordUserIdForPreview;
+                    this.discordUserName = this.discordUserNameForPreview;
+                } else {
+                    abp.notify.error('Failed to confirm Discord');
+                }
+            })
+            .catch(error => {
+                console.error('Error confirming Discord:', error);
+                abp.notify.error('Failed to confirm Discord');
+            })
+            .finally(() => {
+                this.discordUserUpdating = false;
+            });
+
     }
 
     disconnectDiscord() {
-        this.discordUserId = null;
-        this.discordUserName = null;
-        this.discordUserUpdated = false;
+        this.discordUserUpdating = true;
+
+        const apiUrl = `${AppConsts.remoteServiceBaseUrl}/api/services/CRM/MemberSettings/UpdateDiscordInfo`;
+
+        fetch(apiUrl, {
+            method: 'PUT',
+            headers: {
+                'Authorization': 'Bearer ' + abp.auth.getToken(),
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({
+                discordUserId: null,
+                discordUserName: null
+            })
+        })
+            .then(response => {
+                if (response.ok) {
+                    this.discordUserId = null;
+                    this.discordUserName = null;
+                    this.discordUserUpdated = false;
+
+                    // Update the session user info as well
+                    if (this.appSessionService.user) {
+                        this.appSessionService.user.discordUserId = null;
+                        this.appSessionService.user.discordUserName = null;
+                    }
+
+                    abp.notify.success('Discord disconnected successfully');
+                } else {
+                    abp.notify.error('Failed to disconnect Discord');
+                }
+            })
+            .catch(error => {
+                console.error('Error disconnecting Discord:', error);
+                abp.notify.error('Failed to disconnect Discord');
+            })
+            .finally(() => {
+                this.discordUserUpdating = false;
+            });
+    }
+
+    anotherDiscord() {
+        this.discordUserIdForPreview = null;
+        this.discordUserNameForPreview = null;
     }
 
     joinDiscord() {
@@ -969,7 +1036,7 @@ END:VCALENDAR`;
         console.log('- isDarkMode:', this.isDarkMode);
         console.log('- discordUserId:', this.discordUserId);
         console.log('- User object:', this.appSessionService.user);
-        
+
         const dialogRef = this.dialog.open(ReferralSettingsDialogComponent, {
             maxWidth: '42rem',
             panelClass: 'referral-settings-dialog-panel',
@@ -1150,7 +1217,7 @@ END:VCALENDAR`;
         this.tailwindScript = this.document.createElement('script');
         this.tailwindScript.src = 'https://cdn.tailwindcss.com';
         this.tailwindScript.async = true;
-        
+
         // Set up load event listener
         this.tailwindScript.onload = () => {
             // Give Tailwind a moment to initialize
@@ -1158,14 +1225,14 @@ END:VCALENDAR`;
                 this.tailwindLoading = false;
             }, 100);
         };
-        
+
         // Handle errors
         this.tailwindScript.onerror = () => {
             console.error('Failed to load Tailwind CSS');
             // Still hide loading screen to show content (with potentially broken styles)
             this.tailwindLoading = false;
         };
-        
+
         this.document.head.appendChild(this.tailwindScript);
     }
 

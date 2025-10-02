@@ -41,7 +41,8 @@
                             class="w-[1.5rem] h-[1.5rem] rounded-full bg-[#4150f1] text-[0.75rem]/[1rem] text-white flex items-center justify-center">{{this.appSessionService.tenantName?.charAt(0)
                             || 'S'}}</span>
                         <span class="text-[0.875rem]/[1.25rem] font-medium
-                        um text-white">{{this.appSessionService.user.name+" "+this.appSessionService.user.surname || 'SUPERLINX'}}</span>
+                        um text-white">{{this.appSessionService.user.name+" "+this.appSessionService.user.surname ||
+                            'SUPERLINX'}}</span>
                         <lucide-angular name="ChevronDown" class="w-[1rem] h-[1rem]" color="white"></lucide-angular>
                     </button>
                     <div *ngIf="showProfileDropdown"
@@ -162,8 +163,7 @@
                     </div>
                 </div>
             </div>
-            <div class="mt-[2rem] p-[0.25rem] bg-[#5966f30d] rounded-[0.75rem]"
-                [class]="isDarkMode ? '!bg-[#5966f30d]' : 'bg-[#5966f30d]'">
+            <div class="mt-[2rem] p-[0.25rem] bg-[#5966f30d] rounded-[0.75rem]" *ngIf="discordClientId">
                 <div class="sm:p-[1.5rem] p-[1rem] backdrop-blur-sm shadow-sm rounded-[0.75rem]  flex flex-col items-center"
                     [class]="isDarkMode ? '!bg-[#1f293780] border !border-[#5966f333]' : 'bg-[#f1f5f980] border-[#5966f333]'">
                     <div class="flex items-center justify-center gap-[0.75rem]">
@@ -177,7 +177,7 @@
                     <p class="mt-[0.5rem] sm:text-[0.875rem]/[1.25rem] text-[#64748b] mb-0">
                         Connect Discord to complete your setup and unlock all benefits
                     </p>
-                    <div class="discord-content w-full mt-[1rem]" *ngIf="!discordUserId||!discordUserName">
+                    <div class="discord-content w-full mt-[1rem]" *ngIf="!discordUserId&&!discordUserNameForPreview">
                         <button
                             class="discord-auth-button md:py-[0.75rem] md:px-[1.5rem] py-[1rem] px-[2rem] text-[1rem]/[1.5rem]"
                             (click)="discordOAuth()" [disabled]="discordPopup || discordUserUpdating">
@@ -185,24 +185,25 @@
                             Authorize Discord
                         </button>
                     </div>
-                    <div class="discord-authorized w-full mt-[1rem]" *ngIf="discordUserId && !discordUserUpdated">
+                    <div class="discord-authorized w-full mt-[1rem]"
+                        *ngIf="!discordUserId && discordUserNameForPreview">
                         <div class="discord-user-info">
                             <h4 [class]="isDarkMode?'text-white':'text-black'">Authorized Discord User:</h4>
                             <div class="discord-user-card" [class]="isDarkMode?'bg-[#020817]':'bg-[#f1f5f9]'">
-                                <div class="discord-avatar">{{discordUserName?.charAt(0)?.toUpperCase()}}</div>
+                                <div class="discord-avatar">{{discordUserNameForPreview?.charAt(0)?.toUpperCase()}}</div>
                                 <div class="discord-user-details">
                                     <p class="discord-username" [class]="isDarkMode?'text-white':'text-black'">
-                                        {{discordUserName}}</p>
-                                    <p class="discord-userid">({{discordUserId}})</p>
+                                        {{discordUserNameForPreview}}</p>
+                                    <p class="discord-userid">({{discordUserIdForPreview}})</p>
                                 </div>
                             </div>
-                            <button class="use-discord-btn" (click)="confirmDiscord()" [disabled]="discordUserUpdating">
+                            <button class="use-discord-btn" (click)="confirmDiscord()">
                                 <i [ngClass]="{ 'fa fa-spinner fa-spin': discordUserUpdating }"></i>
                                 Use This Discord Account
                             </button>
                             <button class="disconnect-discord-btn"
                                 [class]="isDarkMode ? '!bg-[#020817] border !border-[#2e3d52] text-white' : 'bg-[#eff2f5] border-[#e2e8f0]'"
-                                (click)="disconnectDiscord()">
+                                (click)="anotherDiscord()">
                                 <span class="disconnect-icon">←</span>
                                 Disconnect & Try Another Account
 
@@ -211,7 +212,7 @@
                         </div>
                     </div>
 
-                    <div class="discord-connected  mt-[1rem]" *ngIf="discordUserId && discordUserUpdated">
+                    <div class="discord-connected  mt-[1rem]" *ngIf="discordUserId && discordUserName">
                         <div class="discord-success-card">
                             <div class="discord-avatar">{{discordUserName?.charAt(0)?.toUpperCase()}}</div>
                             <div class="discord-success-info">
@@ -222,6 +223,12 @@
                         <button class="join-discord-btn" (click)="joinDiscord()">
                             <span class="external-icon">↗</span>
                             Join Discord Server
+                        </button>
+                        <button class="w-full mt-[1rem] h-[2.25rem] rounded-[0.75rem]"
+                            [class]="isDarkMode ? '!bg-[#020817] border !border-[#2e3d52] text-white' : 'bg-[#eff2f5] border border-[#e2e8f0] hover:bg-[#ebeced]'"
+                            (click)="disconnectDiscord()">
+                            <span class="disconnect-icon">←</span>
+                            Change Discord User
                         </button>
                     </div>
                 </div>
