@@ -219,8 +219,31 @@ export class SubscriptionManagementDialogComponent implements OnInit {
     }
 
     updatePaymentMethod(): void {
-        // TODO: Implement payment method update
-         this.step = 'retention-offer';
+        if (!this.currentSubscription || !this.currentSubscription.id) {
+            abp.notify.error('No subscription found');
+            return;
+        }
+
+        abp.ui.setBusy();
+        
+        this.userSubscriptionService.getUpdatePaymentLink(this.currentSubscription.id)
+            .pipe(finalize(() => {
+                abp.ui.clearBusy();
+            }))
+            .subscribe(
+                (paymentLink: string) => {
+                    if (paymentLink) {
+                        // Open the payment link in a new window
+                        window.open(paymentLink, '_blank');
+                    } else {
+                        abp.notify.error('Failed to generate payment update link');
+                    }
+                },
+                (error) => {
+                    console.error('Error getting payment update link:', error);
+                    abp.notify.error('Failed to get payment update link. Please try again.');
+                }
+            );
     }
 
     changePlan(): void {
