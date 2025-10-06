@@ -24,15 +24,15 @@
     <!-- Modern Theme -->
     <div class="modern-container modern-theme" [class]="isDarkMode ? '!bg-[#020817]' : ''">
 
-        <div class="py-[1rem] px-[1.9rem] flex justify-center items-center relative bg-black h-[4.5rem]">
-            <div class="flex flex-col absolute top-[1rem] left-[1.9rem]">
+        <div class="sm:py-[1rem] py-[0.5rem] sm:px-[1.9rem] px-[0.5rem] flex justify-center sm:items-center items-start relative bg-black sm:h-[4.5rem] h-[7rem]">
+            <div class="flex flex-col absolute sm:top-[1rem] top-[4rem] sm:left-[1.9rem] left-[0.5rem]">
                 <span class="text-[#64748b] text-[0.75rem]">Powered by</span>
                 <img src="assets/images/upgrade-chat-logo.png" class="h-[16px]" />
 
             </div>
             <img [src]="remoteServiceBaseUrl + '/api/TenantCustomization/GetLogo?' + appSessionService.getTenantLogoUrlParams()"
-                class="h-[60px]">
-            <div class="flex items-center gap-[0.75rem] absolute top-[1rem] right-[1.9rem]">
+                class="sm:h-[60px] h-[50px]">
+            <div class="flex items-center gap-[0.75rem] absolute sm:top-[1rem] top-[4rem] sm:right-[1.9rem] right-[0.5rem]">
                 <div class="relative">
                     <button
                         class="bg-[#5966f3] py-[0.5rem] px-[0.75rem] flex gap-[0.5rem] items-center rounded-[0.75rem]"
