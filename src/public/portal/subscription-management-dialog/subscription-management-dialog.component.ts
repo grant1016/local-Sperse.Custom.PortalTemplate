@@ -24,6 +24,7 @@ export class SubscriptionManagementDialogComponent implements OnInit {
     isDarkMode: boolean = false;
     cancelReason: string = '';
     isCancelling: boolean = false;
+   
 
     // Subscription data
     subscriptionHistory: OrderSubscriptionDto[] = [];

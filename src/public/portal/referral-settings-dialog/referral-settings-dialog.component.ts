@@ -5,7 +5,7 @@ import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material/dial
 /** Third party imports */
 import { ClipboardService } from 'ngx-clipboard';
 import { of } from 'rxjs';
-import { map, first, takeUntil } from 'rxjs/operators';
+import { map, first, takeUntil, finalize } from 'rxjs/operators';
 
 /** Application imports */
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -14,7 +14,7 @@ import { ProfileService } from '@shared/common/profile-service/profile.service';
 import { SharingService } from '@shared/common/sharing-service/sharing.service';
 import { NotifyService } from 'abp-ng2-module';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
-import { AffiliateLinkInfo } from '@shared/service-proxies/service-proxies';
+import { AffiliateLinkInfo, MemberSettingsServiceProxy, UpdateUserAffiliateCodeDto } from '@shared/service-proxies/service-proxies';
 import { ShareSocialDialogComponent } from '../share-social-dialog/share-social-dialog.component';
 
 @Component({
@@ -30,6 +30,7 @@ export class ReferralSettingsDialogComponent implements OnInit, OnDestroy {
     isDarkMode: boolean = false;
     discordUserId: string = '';
     baseUrl: string = '';
+    isSaving: boolean = false;
     
     links$ = this.referralService.getLinks().pipe(map(links => {
         console.log(links);
@@ -50,7 +51,8 @@ export class ReferralSettingsDialogComponent implements OnInit, OnDestroy {
         private sharingService: SharingService,
         private notifyService: NotifyService,
         private lifeCycleSubject: LifecycleSubjectsService,
-        private dialog: MatDialog
+        private dialog: MatDialog,
+        private memberSettingsService: MemberSettingsServiceProxy
     ) {
         console.log('Dialog data received:', data);
         console.log('isDarkMode:', data?.isDarkMode);
@@ -61,6 +63,9 @@ export class ReferralSettingsDialogComponent implements OnInit, OnDestroy {
         }
         if (data && data.discordUserId) {
             this.discordUserId = data.discordUserId;
+        }
+        if (data && data.affiliateCode) {
+            this.referralCode = data.affiliateCode;
         }
     }
 
@@ -136,6 +141,45 @@ export class ReferralSettingsDialogComponent implements OnInit, OnDestroy {
         } else {
             this.notifyService.warn('Discord ID not available. Please connect your Discord account first.');
         }
+    }
+
+    saveAffiliateCode(): void {
+        if (!this.referralCode || !this.referralCode.trim()) {
+            this.notifyService.error('Please enter a referral code');
+            return;
+        }
+
+        // Validate referral code format (letters and numbers only)
+        const validCodePattern = /^[a-zA-Z0-9]+$/;
+        if (!validCodePattern.test(this.referralCode.trim())) {
+            this.notifyService.error('Referral code must contain only letters and numbers');
+            return;
+        }
+
+        this.isSaving = true;
+        
+        const input = new UpdateUserAffiliateCodeDto();
+        input.affiliateCode = this.referralCode.trim();
+
+        this.memberSettingsService.updateAffiliateCode(input)
+            .pipe(finalize(() => {
+                this.isSaving = false;
+            }))
+            .subscribe(
+                () => {
+                    this.notifyService.success('Affiliate code updated successfully');
+                    // Update the profile service with new code
+                    this.profileService.refreshMemberInfo({ data: 'update' });
+                },
+                (error) => {
+                    console.error('Error updating affiliate code:', error);
+                    if (error.error && error.error.error && error.error.error.message) {
+                        this.notifyService.error(error.error.error.message);
+                    } else {
+                        this.notifyService.error('Failed to update affiliate code. Please try again.');
+                    }
+                }
+            );
     }
 
     ngOnDestroy() {

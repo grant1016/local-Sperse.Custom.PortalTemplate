@@ -33,24 +33,37 @@
                         Referral
                         Code</label>
                     <button class="text-[0.75rem]/[1rem] font-medium mb-0"
-                    [class]="isDarkMode?'text-[#3c83f6]':'text-black'"
-                    (click)="useDiscordId()">
+                        [class]="isDarkMode?'text-[#3c83f6]':'text-black'" (click)="useDiscordId()">
                         Use DiscordID
                     </button>
                 </div>
-                <input type="text" class="w-full h-[2.5rem] py-[0.5rem] px-[0.75rem] mt-[0.5rem] rounded-[0.75rem]" [class]="isDarkMode ? 'bg-[#020817] border-[#e2e8f0] text-white' : 'bg-[#eff2f5] border-[#e2e8f0] text-black'"
-                    [value]="referralCode" (input)="onReferralCodeInput($event)" placeholder="Enter your referral code">
-
-                <p class="mt-[0.5rem] text-[#64748b] text-[0.75rem]/[1rem]" [class]="isDarkMode ? 'text-[#94a3b8]' : 'text-[#64748b]'">
+                <div class="relative w-full">
+                    <input type="text" class="w-full h-[2.5rem] py-[0.5rem] px-[0.75rem] mt-[0.5rem] rounded-[0.75rem]"
+                        [class]="isDarkMode ? 'bg-[#020817] border-[#e2e8f0] text-white' : 'bg-[#eff2f5] border-[#e2e8f0] text-black'"
+                        [value]="referralCode" (input)="onReferralCodeInput($event)"
+                        placeholder="Enter your referral code">
+                    <button
+                        class="absolute right-[0.25rem] top-[0.75rem] h-[2rem] rounded-[0.75rem] font-medium text-[0.875rem]/[1.25rem] flex items-center justify-center gap-[0.5rem] transition-all px-[0.5rem]"
+                        [class]="isDarkMode ? 'bg-[#3c83f6] text-white hover:bg-[#3c83f6]/90' : 'bg-[#0f172a] text-white hover:bg-[#0f172a]/90'"
+                        [disabled]="isSaving" (click)="saveAffiliateCode()">
+                        <lucide-angular *ngIf="!isSaving" name="Check" class="w-[16px] h-[16px]"></lucide-angular>
+                        <lucide-angular *ngIf="isSaving" name="Loader2"
+                            class="w-[16px] h-[16px] animate-spin"></lucide-angular>
+                        <span>{{ isSaving ? 'Saving...' : 'Set Code' }}</span>
+                    </button>
+                </div>
+                <p class="mt-[0.5rem] text-[#64748b] text-[0.75rem]/[1rem]"
+                    [class]="isDarkMode ? 'text-[#94a3b8]' : 'text-[#64748b]'">
                     Use letters and numbers only. Keep it memorable and professional.
                 </p>
+
+
             </div>
         </div>
 
         <!-- Your Referral Link Section -->
         <div class="section mt-[1.5rem] p-[1.5rem] rounded-[0.75rem]"
-        [class]="isDarkMode ? '!bg-[#1f29374d] border-[#1f293780]' : 'bg-white border-[#e2e8f080]'"
-        >
+            [class]="isDarkMode ? '!bg-[#1f29374d] border-[#1f293780]' : 'bg-white border-[#e2e8f080]'">
             <h3 class="section-title" [class]="isDarkMode ? 'text-white' : 'text-black'">Your Referral Link</h3>
             <div class="input-group">
                 <input type="text" class="referral-link-input" [class]="isDarkMode ? 'dark-input' : 'light-input'"
@@ -59,11 +72,15 @@
                     Share this link to earn commissions on new member signups.
                 </p>
                 <div class="action-buttons w-full">
-                    <button class="copy-button w-full justify-center" [class]="isDarkMode?'!bg-[#3c83f6]  !border-[#3c83f6] !text-[#0f172a]':''"  (click)="copyReferralLink()">
-                        <lucide-angular name="Copy" class="w-[16px] h-[16px]" [color]="isDarkMode?'#0f172a':'white'"></lucide-angular>
+                    <button class="copy-button w-full justify-center"
+                        [class]="isDarkMode?'!bg-[#3c83f6]  !border-[#3c83f6] !text-[#0f172a]':''"
+                        (click)="copyReferralLink()">
+                        <lucide-angular name="Copy" class="w-[16px] h-[16px]"
+                            [color]="isDarkMode?'#0f172a':'white'"></lucide-angular>
                         Copy Link
                     </button>
-                    <button class="share-button w-full justify-center" [class]="isDarkMode?'!bg-[#1e293b] !text-white !border-[#1e293b]':''" (click)="shareOnSocial()">
+                    <button class="share-button w-full justify-center"
+                        [class]="isDarkMode?'!bg-[#1e293b] !text-white !border-[#1e293b]':''" (click)="shareOnSocial()">
                         <lucide-angular name="Share" class="w-[16px] h-[16px]"
                             [color]="isDarkMode ? 'white' : 'black'"></lucide-angular>
                         Share on Social

@@ -1042,7 +1042,8 @@ END:VCALENDAR`;
             panelClass: 'referral-settings-dialog-panel',
             data: {
                 isDarkMode: this.isDarkMode,
-                discordUserId: this.discordUserId
+                discordUserId: this.discordUserId,
+                affiliateCode: this.appSessionService.user.affiliateCode
             }
         });
 
