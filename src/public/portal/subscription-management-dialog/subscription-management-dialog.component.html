@@ -46,20 +46,20 @@
                     <span class="text-sm font-medium"
                         [class]="isDarkMode ? 'text-white' : 'text-black'">{{getNextBillingDate()}}</span>
                 </div>
-                <div class="detail-item" [class]="isDarkMode ? '!bg-[#02081780]' : 'bg-[#eff2f580]'">
+                <!--<div class="detail-item" [class]="isDarkMode ? '!bg-[#02081780]' : 'bg-[#eff2f580]'">
                     <div class="flex items-center gap-[0.5rem]">
                         <lucide-angular name="CreditCard" class="w-4 h-4 text-[#64748b]"></lucide-angular>
                         <span class="text-sm">Amount</span>
                     </div>
                     <span class="text-lg font-semibold "
                         [class]="isDarkMode ? 'text-[#3c83f6]' : 'text-[#0f172a]'">{{getAmount()}}</span>
-                </div>
+                </div>-->
             </div>
         </div>
 
         <!-- Action Buttons -->
         <div class="action-buttons" >
-            <button class="action-btn" (click)="updatePaymentMethod()"
+            <!--<button class="action-btn" (click)="updatePaymentMethod()"
                 [class]="isDarkMode ? '!bg-[#020817] border !border-[#2e3d52] text-white' : 'bg-[#eff2f5] border !border-[#e2e8f0] text-[#0f172a]'">
                 <lucide-angular name="CreditCard" class="w-4 h-4"></lucide-angular>
                 Update Payment Method
@@ -68,7 +68,7 @@
                 [class]="isDarkMode ? '!bg-[#020817] border !border-[#2e3d52] text-white' : 'bg-[#eff2f5] border-[#e2e8f0] text-[#0f172a]'">
                 <lucide-angular name="Settings" class="w-4 h-4"></lucide-angular>
                 Change Plan
-            </button>
+            </button>-->
             <button *ngIf="currentSubscription?.statusCode !== 'C'" class="action-btn cancel-btn" (click)="handleCancel()"
                 [class]="isDarkMode ? '!bg-[#020817] border !border-[#ef44444d] text-red-400' : 'bg-[#eff2f5] border border-[#ef44444d] text-red-600'">
                 <lucide-angular name="AlertTriangle" class="w-4 h-4" color="currentColor"></lucide-angular>
