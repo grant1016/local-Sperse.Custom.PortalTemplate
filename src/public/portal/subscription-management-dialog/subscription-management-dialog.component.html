@@ -102,7 +102,7 @@
         </div>
 
         <div class="cancellation-options">
-            <div class="option-item" [class]="cancellationType === 'end-of-period' ? 'selected' : ''"
+            <div *ngIf="!currentSubscription?.gateway || currentSubscription?.gateway === 'Stripe'" class="option-item" [class]="cancellationType === 'end-of-period' ? 'selected' : ''"
                 [class]="isDarkMode ? '!border-2 !border-[#2e3d52]' : '!border-2 !border-[#3c83f64d]'"
                 (click)="cancellationType = 'end-of-period'">
                 <div class="option-radio">

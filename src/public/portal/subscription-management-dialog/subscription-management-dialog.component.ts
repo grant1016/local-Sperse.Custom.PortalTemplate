@@ -153,6 +153,13 @@ export class SubscriptionManagementDialogComponent implements OnInit {
     }
 
     handleCancel(): void {
+        // Set default cancellation type based on gateway
+        // If gateway is not null and not Stripe, only immediate cancellation is available
+        if (this.currentSubscription?.gateway && this.currentSubscription.gateway !== 'Stripe') {
+            this.cancellationType = 'immediate';
+        } else {
+            this.cancellationType = 'end-of-period';
+        }
         this.step = 'cancel-options';
     }
 
