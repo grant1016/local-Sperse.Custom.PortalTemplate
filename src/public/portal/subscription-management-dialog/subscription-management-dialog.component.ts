@@ -134,6 +134,13 @@ export class SubscriptionManagementDialogComponent implements OnInit {
         return this.subscriptionData.amount;
     }
 
+    getNextFee(): string {
+        if (this.currentSubscription?.fee && this.currentSubscription?.currencyId) {
+            return `${this.formatCurrency(this.currentSubscription.nextFee, this.currentSubscription.currencyId)}/${this.formatPaymentPeriod(this.currentSubscription.paymentPeriodType)}`;
+        }
+        return this.subscriptionData.amount;
+    }
+
     // Helper method to get status
     getStatus(): string {
         return this.currentSubscription?.status || this.subscriptionData.status;

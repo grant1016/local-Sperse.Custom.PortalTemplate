@@ -96668,6 +96668,7 @@ export class OrderSubscriptionDto implements IOrderSubscriptionDto {
     productName!: string | undefined;
     productThumbnailUrl!: string | undefined;
     fee!: number;
+    nextFee! : number;
     currencyId!: string | undefined;
     isUpgradable!: boolean | undefined;
     statusCode!: string | undefined;
@@ -96706,6 +96707,7 @@ export class OrderSubscriptionDto implements IOrderSubscriptionDto {
             this.productName = _data["productName"];
             this.productThumbnailUrl = _data["productThumbnailUrl"];
             this.fee = _data["fee"];
+            this.nextFee = _data["nextFee"];
             this.currencyId = _data["currencyId"];
             this.isUpgradable = _data["isUpgradable"];
             this.statusCode = _data["statusCode"];
@@ -96752,6 +96754,7 @@ export class OrderSubscriptionDto implements IOrderSubscriptionDto {
         data["productName"] = this.productName;
         data["productThumbnailUrl"] = this.productThumbnailUrl;
         data["fee"] = this.fee;
+        data["nextFee"] = this.nextFee;
         data["currencyId"] = this.currencyId;
         data["isUpgradable"] = this.isUpgradable;
         data["statusCode"] = this.statusCode;
@@ -96791,6 +96794,7 @@ export interface IOrderSubscriptionDto {
     productName: string | undefined;
     productThumbnailUrl: string | undefined;
     fee: number;
+    nextFee : number;
     currencyId: string | undefined;
     isUpgradable: boolean | undefined;
     statusCode: string | undefined;
