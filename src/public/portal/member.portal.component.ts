@@ -427,6 +427,9 @@ export class MemberPortalComponent implements OnInit, OnDestroy {
         } else if (period.toLowerCase() === "yearly") {
             return "year"
         }
+        else if (period.toLowerCase() === "custom") {
+            return "Every " + this.currentSubscription?.customPeriodCount + " " + this.currentSubscription?.customPeriodType;
+        }
         return period.toLowerCase();
     }
 

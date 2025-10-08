@@ -96658,6 +96658,8 @@ export class OrderSubscriptionDto implements IOrderSubscriptionDto {
     originalStartDate!: moment.Moment;
     originalTrialEndDate!: moment.Moment | undefined;
     paymentPeriodType!: RecurringPaymentFrequency | undefined;
+    customPeriodCount! : number | undefined;
+    customPeriodType! : string | undefined;
     startDate!: moment.Moment;
     endDate!: moment.Moment | undefined;
     trialEndDate!: moment.Moment | undefined;
@@ -96697,6 +96699,8 @@ export class OrderSubscriptionDto implements IOrderSubscriptionDto {
             this.originalStartDate = _data["originalStartDate"] ? moment(_data["originalStartDate"].toString()) : <any>undefined;
             this.originalTrialEndDate = _data["originalTrialEndDate"] ? moment(_data["originalTrialEndDate"].toString()) : <any>undefined;
             this.paymentPeriodType = _data["paymentPeriodType"];
+            this.customPeriodCount = _data["customPeriodCount"];
+            this.customPeriodType = _data["customPeriodType"];
             this.startDate = _data["startDate"] ? moment(_data["startDate"].toString()) : <any>undefined;
             this.endDate = _data["endDate"] ? moment(_data["endDate"].toString()) : <any>undefined;
             this.trialEndDate = _data["trialEndDate"] ? moment(_data["trialEndDate"].toString()) : <any>undefined;
