@@ -324,6 +324,7 @@
     }
   },
   "cli": {
+    "analytics": false,
     "defaultCollection": "@ngrx/schematics"
   }
 }

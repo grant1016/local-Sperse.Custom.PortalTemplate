@@ -14,7 +14,7 @@ import { ProfileService } from '@shared/common/profile-service/profile.service';
 import { SharingService } from '@shared/common/sharing-service/sharing.service';
 import { NotifyService } from 'abp-ng2-module';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
-import { AffiliateLinkInfo, MemberSettingsServiceProxy, UpdateUserAffiliateCodeDto } from '@shared/service-proxies/service-proxies';
+import { AffiliateLinkInfo, MemberSettingsServiceProxy, UpdateUserAffiliateCodeDto, UserCommissionServiceProxy } from '@shared/service-proxies/service-proxies';
 import { ShareSocialDialogComponent } from '../share-social-dialog/share-social-dialog.component';
 
 @Component({
@@ -24,6 +24,7 @@ import { ShareSocialDialogComponent } from '../share-social-dialog/share-social-
 })
 export class ReferralSettingsDialogComponent implements OnInit, OnDestroy {
     referralCode: string = '';
+    originalReferralCode: string = '';
     referralLink: string = '';
     selectedLink: string = '';
     suggestedCopy: string = '';
@@ -31,9 +32,17 @@ export class ReferralSettingsDialogComponent implements OnInit, OnDestroy {
     discordUserId: string = '';
     baseUrl: string = '';
     isSaving: boolean = false;
+    affiliateLinks: AffiliateLinkInfo[] = [];
+    selectedAffiliateLinkId: number | null = null;
+    
+    // Commission rates
+    tier1CommissionRate: number | null = null;
+    tier2CommissionRate: number | null = null;
+    showCommissionSection: boolean = false;
     
     links$ = this.referralService.getLinks().pipe(map(links => {
-        console.log(links);
+        console.log('Affiliate links fetched:', links);
+        this.affiliateLinks = links || [];
         
         return links.map((link, index) => {
             link['index'] = index + 1;
@@ -52,7 +61,8 @@ export class ReferralSettingsDialogComponent implements OnInit, OnDestroy {
         private notifyService: NotifyService,
         private lifeCycleSubject: LifecycleSubjectsService,
         private dialog: MatDialog,
-        private memberSettingsService: MemberSettingsServiceProxy
+        private memberSettingsService: MemberSettingsServiceProxy,
+        private userCommissionService: UserCommissionServiceProxy
     ) {
         console.log('Dialog data received:', data);
         console.log('isDarkMode:', data?.isDarkMode);
@@ -76,11 +86,44 @@ export class ReferralSettingsDialogComponent implements OnInit, OnDestroy {
             
             if (links && links.length > 0) {
                 const lastLink = links[links.length - 1];
+                this.selectedAffiliateLinkId = lastLink.id;
                 this.baseUrl = lastLink.url;
                 console.log('Base URL set to:', this.baseUrl);
                 this.onSelectedLinkChanged({ value: lastLink });
             }
         });
+        
+        // Fetch commission rates
+        this.loadCommissionRates();
+    }
+
+    loadCommissionRates(): void {
+        this.userCommissionService.getRatesInfo()
+            .pipe(first())
+            .subscribe(
+                (response) => {
+                    console.log('Commission rates response:', response);
+                    
+                    // Extract rates from response - using the pattern: affiliateRate ?? defaultAffiliateRate
+                    this.tier1CommissionRate = response.affiliateRate ?? response.defaultAffiliateRate;
+                    this.tier2CommissionRate = response.affiliateRateTier2 ?? response.defaultAffiliateRateTier2;
+                    
+                    // Show section only if at least one rate exists
+                    this.showCommissionSection = this.tier1CommissionRate !== null && this.tier1CommissionRate !== undefined
+                        || this.tier2CommissionRate !== null && this.tier2CommissionRate !== undefined;
+                },
+                (error) => {
+                    console.error('Error loading commission rates:', error);
+                    this.showCommissionSection = false;
+                }
+            );
+    }
+
+    onAffiliateLinkChange(): void {
+        const selectedLink = this.affiliateLinks.find(link => link.id === this.selectedAffiliateLinkId);
+        if (selectedLink) {
+            this.onSelectedLinkChanged({ value: selectedLink });
+        }
     }
 
     onClose(): void {
@@ -92,9 +135,14 @@ export class ReferralSettingsDialogComponent implements OnInit, OnDestroy {
             this.suggestedCopy = event.value.suggestedCopy;
             this.baseUrl = event.value.url;
             this.referralCode = accessCode || '';
+            this.originalReferralCode = accessCode || '';
             console.log('Initial referral code from profile:', this.referralCode);
             this.updateReferralLink();
         });
+    }
+
+    get isCodeChanged(): boolean {
+        return this.referralCode.trim() !== this.originalReferralCode.trim();
     }
 
     onReferralCodeInput(event: any) {
@@ -128,6 +176,7 @@ export class ReferralSettingsDialogComponent implements OnInit, OnDestroy {
             data: {
                 shareLink: this.selectedLink || this.referralLink,
                 referralCode: this.referralCode,
+                suggestedCopy: this.suggestedCopy,
                 isDarkMode: this.isDarkMode
             }
         });
@@ -168,6 +217,8 @@ export class ReferralSettingsDialogComponent implements OnInit, OnDestroy {
             .subscribe(
                 () => {
                     this.notifyService.success('Affiliate code updated successfully');
+                    // Update the original code to the new saved value
+                    this.originalReferralCode = this.referralCode.trim();
                     // Update the profile service with new code
                     this.profileService.refreshMemberInfo({ data: 'update' });
                 },

@@ -44,8 +44,8 @@
                         placeholder="Enter your referral code">
                     <button
                         class="absolute right-[0.25rem] top-[0.75rem] h-[2rem] rounded-[0.75rem] font-medium text-[0.875rem]/[1.25rem] flex items-center justify-center gap-[0.5rem] transition-all px-[0.5rem]"
-                        [class]="isDarkMode ? 'bg-[#3c83f6] text-white hover:bg-[#3c83f6]/90' : 'bg-[#0f172a] text-white hover:bg-[#0f172a]/90'"
-                        [disabled]="isSaving" (click)="saveAffiliateCode()">
+                        [class]="isDarkMode ? 'bg-[#3c83f6] text-white hover:bg-[#3c83f6]/90 disabled:opacity-50 disabled:cursor-not-allowed' : 'bg-[#0f172a] text-white hover:bg-[#0f172a]/90 disabled:opacity-50 disabled:cursor-not-allowed'"
+                        [disabled]="isSaving || !isCodeChanged" (click)="saveAffiliateCode()">
                         <lucide-angular *ngIf="!isSaving" name="Check" class="w-[16px] h-[16px]"></lucide-angular>
                         <lucide-angular *ngIf="isSaving" name="Loader2"
                             class="w-[16px] h-[16px] animate-spin"></lucide-angular>
@@ -62,10 +62,25 @@
         </div>
 
         <!-- Your Referral Link Section -->
-        <div class="section mt-[1.5rem] p-[1.5rem] rounded-[0.75rem]"
+        <div *ngIf="affiliateLinks && affiliateLinks.length > 0" class="section mt-[1.5rem] p-[1.5rem] rounded-[0.75rem]"
             [class]="isDarkMode ? '!bg-[#1f29374d] border-[#1f293780]' : 'bg-white border-[#e2e8f080]'">
             <h3 class="section-title" [class]="isDarkMode ? 'text-white' : 'text-black'">Your Referral Link</h3>
             <div class="input-group">
+                <!-- Affiliate Link Dropdown (only show if more than 1 link) -->
+                <div  class="mb-[1rem] w-full">
+                    <label class="text-[0.875rem]/[1.25rem] font-medium mb-[0.5rem] block"
+                        [class]="isDarkMode ? 'text-white' : 'text-black'">Select Affiliate Link</label>
+                    <select 
+                        class="w-full h-[2.5rem] py-[0.5rem] px-[0.75rem] rounded-[0.75rem] "
+                        [class]="isDarkMode ? 'bg-[#020817] border !border-[#99999959] text-white' : 'bg-[#eff2f5] border border-[#e2e8f0] text-black'"
+                        [(ngModel)]="selectedAffiliateLinkId"
+                        (ngModelChange)="onAffiliateLinkChange()">
+                        <option *ngFor="let link of affiliateLinks" [ngValue]="link.id">
+                            {{ link.url || link.category || 'Link ' + link.id }}
+                        </option>
+                    </select>
+                </div>
+
                 <input type="text" class="referral-link-input" [class]="isDarkMode ? 'dark-input' : 'light-input'"
                     [value]="selectedLink || referralLink" readonly>
                 <p class="link-description" [class]="isDarkMode ? 'text-[#94a3b8]' : 'text-[#64748b]'">
@@ -90,7 +105,7 @@
         </div>
 
         <!-- Commission Structure Section -->
-        <div class="commission-section" [class]="isDarkMode ? 'dark-commission' : 'light-commission'">
+        <!-- <div class="commission-section" [class]="isDarkMode ? 'dark-commission' : 'light-commission'">
             <h3 class="commission-title" [class]="isDarkMode ? 'text-white' : 'text-black'">Commission Structure</h3>
             <ul class="commission-list">
                 <li class="commission-item" [class]="isDarkMode ? 'text-[#94a3b8]' : 'text-[#64748b]'">
@@ -105,7 +120,37 @@
                 <li class="commission-item" [class]="isDarkMode ? 'text-[#94a3b8]' : 'text-[#64748b]'">
                     Payments processed monthly on the 1st
                 </li>
-            </ul>
+            </ul> -->
+        <div *ngIf="showCommissionSection" class="commission-section mt-[1.5rem] p-[1.5rem] rounded-[0.75rem]" 
+            [class]="isDarkMode ? '!bg-[#1f29374d] border-[#1f293780]' : 'bg-white border-[#e2e8f080]'">
+            <h3 class="text-[1.125rem]/[1.75rem] font-semibold mb-[1rem]" 
+                [class]="isDarkMode ? 'text-white' : 'text-black'">Commission Structure</h3>
+            <div class="space-y-[0.75rem]">
+                <div *ngIf="tier1CommissionRate !== null && tier1CommissionRate !== undefined" 
+                    class="flex items-center justify-between p-[0.75rem] rounded-[0.5rem]"
+                    [class]="isDarkMode ? 'bg-[#282c3480]' : 'bg-[#f8fafc]'">
+                    <span class="text-[0.875rem]/[1.25rem] font-medium" 
+                        [class]="isDarkMode ? 'text-[#94a3b8]' : 'text-[#64748b]'">
+                        Tier 1 Commission Rate
+                    </span>
+                    <span class="text-[1rem]/[1.5rem] font-semibold" 
+                        [class]="isDarkMode ? 'text-[#3c83f6]' : 'text-[#0f172a]'">
+                        {{ tier1CommissionRate }}%
+                    </span>
+                </div>
+                <div *ngIf="tier2CommissionRate !== null && tier2CommissionRate !== undefined" 
+                    class="flex items-center justify-between p-[0.75rem] rounded-[0.5rem]"
+                    [class]="isDarkMode ? 'bg-[#282c3480]' : 'bg-[#f8fafc]'">
+                    <span class="text-[0.875rem]/[1.25rem] font-medium" 
+                        [class]="isDarkMode ? 'text-[#94a3b8]' : 'text-[#64748b]'">
+                        Tier 2 Commission Rate
+                    </span>
+                    <span class="text-[1rem]/[1.5rem] font-semibold" 
+                        [class]="isDarkMode ? 'text-[#3c83f6]' : 'text-[#0f172a]'">
+                        {{ tier2CommissionRate }}%
+                    </span>
+                </div>
+            </div>
         </div>
     </div>
 </div>

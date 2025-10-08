@@ -191,6 +191,7 @@ export class MemberPortalComponent implements OnInit, OnDestroy {
         console.log('Tenant ID:', this.appSessionService.tenantId);
         this.discordUserId = this.appSessionService.user?.discordUserId;
         this.discordUserName = this.appSessionService.user?.discordUserName;
+        this.discordUserUpdated = true; // Prevent reload dialog
 
         // Fetch Discord client ID from API
         this.getUserProductResources();

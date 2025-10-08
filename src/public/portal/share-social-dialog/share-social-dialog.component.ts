@@ -20,6 +20,7 @@ export class ShareSocialDialogComponent implements OnInit {
     messageText: string = '';
     isDarkMode: boolean = false;
 
+
     constructor(
         public dialogRef: MatDialogRef<ShareSocialDialogComponent>,
         @Inject(MAT_DIALOG_DATA) public data: any,
@@ -33,7 +34,7 @@ export class ShareSocialDialogComponent implements OnInit {
             this.isDarkMode = data.isDarkMode || false;
             
             // Set default message
-            this.messageText = `Join me on this amazing platform! Use my referral code: ${this.referralCode}\n\n${this.shareLink}`;
+            this.messageText = data.suggestedCopy;
         }
     }
 

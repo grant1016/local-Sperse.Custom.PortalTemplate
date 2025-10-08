@@ -63,7 +63,7 @@
             <div class="message-header">
                 <label class="section-label" [class]="isDarkMode ? 'text-white' : 'text-[#64748b]'">Message</label>
                 <span class="char-count" [class]="isDarkMode ? 'text-[#94a3b8]' : 'text-[#64748b]'">
-                    {{messageText.length}}/128
+                    {{(messageText||"").length}}/128
                 </span>
             </div>
             <div class="message-content-wrapper">
