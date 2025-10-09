@@ -10,4 +10,225 @@
             align-items: center;
         }
     }
+
+    // Dark mode styles
+    
+    .dark-mode {
+        height: 100%;
+        .modal-body {
+            background: #020817;
+            color: white;
+        }
+        
+        .dark-input {
+            background: #1e293b !important;
+            border-color: #2e3d52 !important;
+            color: white !important;
+
+            &:focus {
+                background: #1e293b !important;
+                border-color: #3b82f6 !important;
+                box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
+            }
+
+            &::placeholder {
+                color: #94a3b8 !important;
+            }
+        }
+
+        label {
+            color: white !important;
+        }
+
+        // Tab styles
+        ::ng-deep {
+            .nav-tabs {
+                border-bottom-color: #2e3d52 !important;
+
+                .nav-link {
+                    color: #94a3b8 !important;
+
+                    &.active {
+                        color: white !important;
+                        background-color: #020817 !important;
+                        border-color: #2e3d52 #2e3d52 transparent !important;
+                    }
+
+                    &:hover {
+                        color: white !important;
+                    }
+                }
+            }
+
+            .tab-content {
+                background: #020817 !important;
+            }
+
+            .m-tabs-line .nav-tabs {
+                border-bottom: 1px solid #2e3d52 !important;
+
+                .m-tabs__link {
+                    color: #94a3b8 !important;
+
+                    &.active {
+                        color: white !important;
+                        border-bottom-color: #3b82f6 !important;
+                    }
+                }
+            }
+        }
+
+        .input-group-addon {
+            background-color: #1e293b !important;
+            border-color: #2e3d52 !important;
+            color: white !important;
+        }
+
+        .btn-primary {
+            background-color: #3b82f6 !important;
+            border-color: #3b82f6 !important;
+
+            &:hover {
+                background-color: #2563eb !important;
+                border-color: #2563eb !important;
+            }
+        }
+
+        h4 {
+            color: white !important;
+        }
+
+        span {
+            color: #94a3b8;
+        }
+
+        a {
+            color: #3b82f6 !important;
+
+            &:hover {
+                color: #2563eb !important;
+            }
+        }
+
+        // Country phone number component dark mode
+        ::ng-deep {
+            .phoneNumber {
+                .input-group {
+                    .form-control {
+                        background-color: transparent!important;
+                        border-color: #2e3d52 !important;
+                        color: white !important;
+
+                        &:focus {
+                            border-color: #3b82f6 !important;
+                            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
+                        }
+                    }
+
+                    select,
+                    select.form-control {
+                        background: #1e293b !important;
+                        background-color: #1e293b !important;
+                        border-color: #2e3d52 !important;
+                        color: white !important;
+
+                        &:focus {
+                            background: #1e293b !important;
+                            background-color: #1e293b !important;
+                            border-color: #3b82f6 !important;
+                            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
+                        }
+
+                        option {
+                            background: #1e293b !important;
+                            background-color: #1e293b !important;
+                            color: white !important;
+                        }
+                    }
+
+                    .input-group-addon {
+                        background-color: transparent!important;
+                        border-color: #2e3d52 !important;
+                        color: #94a3b8 !important;
+                        .dropdown{
+                            .dropbtn{
+                                background-color: transparent!important;
+                            }
+                            .dropdown-content{
+                                background-color: #1e293b!important;
+                                .list-group{
+                                    a{
+                                        color: white!important;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // Target the country code select specifically
+                select[name*="country"],
+                select[name*="Country"],
+                .country-select,
+                .input-group select:first-child {
+                    background: #1e293b !important;
+                    background-color: #1e293b !important;
+                    border-color: #2e3d52 !important;
+                    color: white !important;
+
+                    &:focus {
+                        background: #1e293b !important;
+                        background-color: #1e293b !important;
+                        border-color: #3b82f6 !important;
+                        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
+                    }
+
+                    option {
+                        background: #1e293b !important;
+                        background-color: #1e293b !important;
+                        color: white !important;
+                    }
+                }
+            }
+
+            // Timezone combo component dark mode
+            timezone-combo {
+                select,
+                .form-control {
+                    background: #1e293b !important;
+                    border-color: #2e3d52 !important;
+                    color: white !important;
+
+                    &:focus {
+                        background: #1e293b !important;
+                        border-color: #3b82f6 !important;
+                        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
+                    }
+
+                    option {
+                        background: #1e293b !important;
+                        color: white !important;
+                    }
+                }
+            }
+
+            // General dropdown/select styling
+            select.form-control {
+                background: #1e293b !important;
+                border-color: #2e3d52 !important;
+                color: white !important;
+
+                &:focus {
+                    background: #1e293b !important;
+                    border-color: #3b82f6 !important;
+                    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
+                }
+
+                option {
+                    background: #1e293b !important;
+                    color: white !important;
+                }
+            }
+        }
+    }
 }

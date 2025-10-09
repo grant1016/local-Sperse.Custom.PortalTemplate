@@ -1,33 +1,34 @@
-<modal-dialog [title]="ls.l('MySettings')"
-              [buttons]="buttons"
-              [editTitle]="false"
-              [titleClearButton]="false"
-              [placeholder]="ls.l('MySettings')">
-    <dx-scroll-view showScrollbar="onHover">
-        <div class="tab-content">
-            <div class="modal-body" *ngIf="user">
-                <tabset class="tab-container tabbable-line">
-                    <tab heading="{{ls.l('Profile')}}" customClass="m-tabs__item">
-                        <div class="form-group inline">
-                            <label for="Name">{{ls.l("FirstName")}} *</label>
-                            <input id="Name" #nameInput="ngModel" class="form-control" type="text" name="Name" [(ngModel)]="user.name" required maxlength="32">
-                            <validation-messages [formCtrl]="nameInput"></validation-messages>
-                        </div>
-                        <div class="form-group inline">
-                            <label for="Surname">{{ls.l("LastName")}} *</label>
-                            <input id="Surname" #surnameInput="ngModel" type="text" name="Surname" class="form-control" [(ngModel)]="user.surname" required maxlength="32">
-                            <validation-messages [formCtrl]="surnameInput"></validation-messages>
-                        </div>
-                        <div class="form-group">
-                            <label for="EmailAddress">{{ls.l("EmailAddress")}} *</label>
-                            <input id="EmailAddress" #emailAddressInput="ngModel" type="email" name="EmailAddress" class="form-control" [(ngModel)]="user.emailAddress" required email maxlength="256">
-                            <validation-messages [formCtrl]="emailAddressInput" [errorDefs]="[{email: ls.l('InvalidEmailAddress')}]"></validation-messages>
-                        </div>
+<div [class]="isDarkMode ? 'dark-mode' : ''">
+    <modal-dialog [title]="ls.l('MySettings')"
+                  [buttons]="buttons"
+                  [editTitle]="false"
+                  [titleClearButton]="false"
+                  [placeholder]="ls.l('MySettings')">
+        <dx-scroll-view showScrollbar="onHover">
+            <div class="tab-content">
+                <div class="modal-body" *ngIf="user">
+                    <tabset class="tab-container tabbable-line">
+                        <tab heading="{{ls.l('Profile')}}" customClass="m-tabs__item">
+                            <div class="form-group inline">
+                                <label for="Name" [class]="isDarkMode ? 'text-white' : ''">{{ls.l("FirstName")}} *</label>
+                                <input id="Name" #nameInput="ngModel" [class]="isDarkMode ? 'form-control dark-input' : 'form-control'" type="text" name="Name" [(ngModel)]="user.name" required maxlength="32">
+                                <validation-messages [formCtrl]="nameInput"></validation-messages>
+                            </div>
+                            <div class="form-group inline">
+                                <label for="Surname" [class]="isDarkMode ? 'text-white' : ''">{{ls.l("LastName")}} *</label>
+                                <input id="Surname" #surnameInput="ngModel" type="text" name="Surname" [class]="isDarkMode ? 'form-control dark-input' : 'form-control'" [(ngModel)]="user.surname" required maxlength="32">
+                                <validation-messages [formCtrl]="surnameInput"></validation-messages>
+                            </div>
+                            <div class="form-group">
+                                <label for="EmailAddress" [class]="isDarkMode ? 'text-white' : ''">{{ls.l("EmailAddress")}} *</label>
+                                <input id="EmailAddress" #emailAddressInput="ngModel" type="email" name="EmailAddress" [class]="isDarkMode ? 'form-control dark-input' : 'form-control'" [(ngModel)]="user.emailAddress" required email maxlength="256">
+                                <validation-messages [formCtrl]="emailAddressInput" [errorDefs]="[{email: ls.l('InvalidEmailAddress')}]"></validation-messages>
+                            </div>
                         <div *ngIf="smsEnabled && !isPhoneNumberEmpty">
                             <div class="form-group">
-                                <label>{{ls.l("PhoneNumber")}}</label>
+                                <label [class]="isDarkMode ? 'text-white' : ''">{{ls.l("PhoneNumber")}}</label>
                                 <div class="input-group">
-                                    <input type="text" name="PhoneNumber" class="form-control" [(ngModel)]="user.phoneNumber" maxlength="24">
+                                    <input type="text" name="PhoneNumber" [class]="isDarkMode ? 'form-control dark-input' : 'form-control'" [(ngModel)]="user.phoneNumber" maxlength="24">
                                     <span *ngIf="!isPhoneNumberConfirmed" id="SpanSmsVerificationUnverified" class="input-group-btn">
                                         <button id="btnSmsVerification" (click)="smsVerify()" class="btn btn-primary" type="button" tooltip="{{ls.l('YourPhoneNumberIsNotVerified')}}"><i class="fa fa-warning"></i>{{ls.l('Verify')}}</button>
                                     </span>
@@ -42,7 +43,7 @@
                         </div>
                         <div *ngIf="!smsEnabled || isPhoneNumberEmpty">
                             <div class="form-group">
-                                <label>{{ls.l("PhoneNumber")}}</label>
+                                <label [class]="isDarkMode ? 'text-white' : ''">{{ls.l("PhoneNumber")}}</label>
                                 <country-phone-number class="phoneNumber"
                                                       [(phoneNumber)]="user.phoneNumber"
                                                       [required]="false">
@@ -50,7 +51,7 @@
                             </div>
                         </div>
                         <div class="form-group" *ngIf="showTimezoneSelection">
-                            <label for="Timezone">{{ls.l("Timezone")}}</label>
+                            <label for="Timezone" [class]="isDarkMode ? 'text-white' : ''">{{ls.l("Timezone")}}</label>
                             <timezone-combo id="Timezone"
                                             [(selectedTimeZone)]="user.timezone"
                                             [defaultTimezoneScope]="defaultTimezoneScope">
@@ -59,18 +60,18 @@
                     </tab>
                     <tab heading="{{ls.l('TwoFactorLogin')}}" customClass="m-tabs__item">
                         <div>
-                            <h4>
+                            <h4 [class]="isDarkMode ? 'text-white' : ''">
                                 Google Authenticator
                             </h4>
                             <div [hidden]="!isGoogleAuthenticatorEnabled">
-                                <span>
+                                <span [class]="isDarkMode ? 'text-[#94a3b8]' : ''">
                                     {{ls.l("ScanQrCodeWithYourMobileApp")}}
                                 </span>
                                 <div class="text-center">
                                     <img [src]="user.qrCodeSetupImageUrl" />
                                 </div>
-                                <small>
-                                    {{ls.l("GoogleAuthenticatorReferrerLink")}}: <a href="https://support.google.com/accounts/answer/1066447" target="_blank" rel="noopener noreferrer">Google Authenticator</a>
+                                <small [class]="isDarkMode ? 'text-[#94a3b8]' : ''">
+                                    {{ls.l("GoogleAuthenticatorReferrerLink")}}: <a href="https://support.google.com/accounts/answer/1066447" target="_blank" rel="noopener noreferrer" [class]="isDarkMode ? 'text-[#3b82f6]' : ''">Google Authenticator</a>
                                 </small>
                             </div>
                             <div [hidden]="isGoogleAuthenticatorEnabled">
@@ -84,3 +85,4 @@
     </dx-scroll-view>
     <smsVerificationModal #smsVerificationModal (modalSave)="changePhoneNumberToVerified()"></smsVerificationModal>
 </modal-dialog>
+</div>

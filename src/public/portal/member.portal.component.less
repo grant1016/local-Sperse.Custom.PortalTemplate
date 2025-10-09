@@ -22,6 +22,58 @@ body>.blockUI.blockOverlay {
     animation: pulse-success 2s ease-in-out infinite;
 }
 
+@media (min-width: 768px) {
+    .cdk-overlay-container .cdk-overlay-pane.slider {
+        max-width: 50vw !important;
+    }
+}
+
+.dark-mode .mat-dialog-container {
+    background: #020817;
+    border: 1px solid #2e3d52;
+
+    .close-button {
+        background-color: #1e293b;
+        border: 1px solid #2e3d52;
+        color: white
+    }
+
+    .close-button::before {
+        background-color: white;
+    }
+
+    .close-button::after {
+        background-color: white;
+    }
+}
+
+.dark-mode div.input-group{
+    border-bottom: none!important;
+}
+
+.dark-mode .mat-dialog-header {
+    background-color: #1e293b !important;
+    border-bottom: none !important;
+}
+
+.dark-mode .dx-texteditor-input {
+    background: #1e293b !important;
+    border-color: #1e293b !important;
+    color: white !important;
+}
+
+.dark-mode .alert {
+    background-color: #020817 !important;
+}
+
+.dark-mode .ngx-ic-overlay {
+    outline: #1e293b solid 100vw !important;
+}
+
+.dark-mode .ngx-ic-cropper {
+    outline: #00000000 solid 100vw !important;
+}
+
 
 public-portal {
     background: rgba(216, 237, 254, 1);
@@ -63,6 +115,7 @@ public-portal {
         0% {
             transform: rotate(0deg);
         }
+
         100% {
             transform: rotate(360deg);
         }
@@ -926,6 +979,7 @@ public-portal {
 
         .discord-connected {
             width: 100%;
+
             .discord-success-card {
                 width: 100%;
                 display: flex;

@@ -164,4 +164,86 @@
             }
         }
     }
+
+    // Dark mode styles
+    .dark-mode {
+        .dark-title {
+            color: white !important;
+        }
+
+        .dark-content {
+            background: #020817;
+        }
+
+        .dark-file-loading {
+            background-color: #1e293b !important;
+            
+            .dark-text {
+                color: #94a3b8 !important;
+            }
+        }
+
+        .dark-form-field {
+            ::ng-deep .mat-form-field-label {
+                color: #94a3b8 !important;
+            }
+
+            ::ng-deep .mat-form-field-underline {
+                background-color: #2e3d52 !important;
+            }
+
+            .dark-input {
+                color: white !important;
+            }
+        }
+
+        ::ng-deep .mat-tab-label {
+            color: #94a3b8 !important;
+
+            &.mat-tab-label-active {
+                color: white !important;
+            }
+        }
+
+        ::ng-deep .mat-ink-bar {
+            background-color: #3b82f6 !important;
+        }
+
+        .dark-actions {
+            .mat-button {
+                &.button-default {
+                    background: #1e293b;
+                    border-color: #2e3d52 !important;
+                    color: white;
+
+                    &:hover {
+                        background: #252b37;
+                    }
+
+                    &[disabled] {
+                        &, &:hover {
+                            background-color: #0f172a !important;
+                            border: solid 1px #1e293b !important;
+                            color: #64748b !important;
+                        }
+                    }
+                }
+
+                &.button-primary {
+                    background-color: #3b82f6;
+                    color: white;
+
+                    &:hover {
+                        background-color: #2563eb;
+                    }
+                }
+            }
+        }
+
+        ::ng-deep .mat-error {
+            color: #ef4444 !important;
+        }
+    }
 }
+
+

@@ -1,8 +1,8 @@
 /** Core imports */
-import { Component, ViewChild, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, ViewChild, OnInit, ChangeDetectorRef, Inject } from '@angular/core';
 
 /** Third party imports */
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { finalize } from 'rxjs/operators';
 
 /** Application imports */
@@ -16,6 +16,7 @@ import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.
 @Component({
     selector: 'changePasswordModal',
     templateUrl: './change-password-modal.component.html',
+    styleUrls: ['./change-password-modal.component.less'],
     providers: [ DialogService ]
 })
 export class ChangePasswordModalComponent implements OnInit {
@@ -24,6 +25,7 @@ export class ChangePasswordModalComponent implements OnInit {
     currentPassword = '';
     password = '';
     confirmPassword = '';
+    isDarkMode: boolean = false;
     buttons: IDialogButton[] = [
         {
             title: this.ls.l('SaveAndClose'),
@@ -37,8 +39,13 @@ export class ChangePasswordModalComponent implements OnInit {
         private changeDetectorRef: ChangeDetectorRef,
         private notifyService: NotifyService,
         private dialogRef: MatDialogRef<ChangePasswordModalComponent>,
+        @Inject(MAT_DIALOG_DATA) public data: any,
         public ls: AppLocalizationService
-    ) {}
+    ) {
+        if (data && data.isDarkMode !== undefined) {
+            this.isDarkMode = data.isDarkMode;
+        }
+    }
 
     ngOnInit() {
         this.modalDialog.startLoading();

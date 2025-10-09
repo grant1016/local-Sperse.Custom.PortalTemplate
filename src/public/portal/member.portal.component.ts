@@ -106,6 +106,7 @@ export class MemberPortalComponent implements OnInit, OnDestroy {
     discordClientId: string;
     discordUserIdForPreview: string | null;
     discordUserNameForPreview: string | null;
+    photoUrl: string | null;
     // Theme switching
     currentTheme: 'original' | 'modern' = 'modern';
 
@@ -195,12 +196,17 @@ export class MemberPortalComponent implements OnInit, OnDestroy {
 
         // Fetch Discord client ID from API
         this.getUserProductResources();
+        this.photoUrl = this.profileService.getProfilePictureUrl(this.appSessionService.user.profilePictureId);
 
         if (this.isTestMode) {
             this.loadTestData();
         } else {
             this.getInvoiceInfo(this.appSessionService.tenantId, this.publicId);
         }
+    }
+
+    getPhotoUrl() {
+        this.photoUrl = this.profileService.getProfilePictureUrl(this.appSessionService.user.profilePictureId);
     }
 
     initializeConfetti() {
@@ -1111,10 +1117,12 @@ END:VCALENDAR`;
     openProfileSettings() {
         this.closeProfileDropdown();
         this.dialog.open(MySettingsModalComponent, {
-            panelClass: ['slider', 'user-info'],
+            panelClass: ['slider', 'user-info', `${this.isDarkMode ? 'dark-mode' : 'light-mode'}`],
             disableClose: true,
             closeOnNavigation: false,
-            data: {}
+            data: {
+                isDarkMode: this.isDarkMode
+            }
         });
     }
 
@@ -1124,8 +1132,10 @@ END:VCALENDAR`;
             data: {
                 source: this.profileService.getProfilePictureUrl(this.appSessionService.user.profilePictureId),
                 maxSizeBytes: AppConsts.maxImageSize,
-                title: this.ls.l('ChangeProfilePicture')
+                title: this.ls.l('ChangeProfilePicture'),
+                isDarkMode: this.isDarkMode
             },
+            panelClass: [`${this.isDarkMode ? 'dark-mode' : 'light-mode'}`],
             maxWidth: AppConsts.maxImageDialogWidth,
             hasBackdrop: true
         });
@@ -1144,7 +1154,7 @@ END:VCALENDAR`;
                     } else {
                         const base64OrigImage = StringHelper.getBase64(result.origImage);
                         const base64ThumbImage = StringHelper.getBase64(result.thumbImage);
-
+                        
                         return this.profileServiceProxy.updateProfilePicture(UpdateProfilePictureInput.fromJS({
                             originalImage: base64OrigImage,
                             thumbnail: base64ThumbImage,
@@ -1162,6 +1172,9 @@ END:VCALENDAR`;
             )
             .subscribe(
                 () => {
+                    console.log('Profile picture updated successfully');
+                    
+                    this.getPhotoUrl();
                     // Profile picture updated successfully
                 },
                 (error) => {
@@ -1175,16 +1188,18 @@ END:VCALENDAR`;
     openChangePassword() {
         this.closeProfileDropdown();
         this.dialog.open(ChangePasswordModalComponent, {
-            panelClass: ['slider', 'user-info'],
+            panelClass: ['slider', 'user-info', `${this.isDarkMode ? 'dark-mode' : 'light-mode'}`],
             disableClose: true,
             closeOnNavigation: false,
-            data: {}
+            data: {
+                isDarkMode: this.isDarkMode
+            }
         });
     }
     openLoginAttempts() {
         this.closeProfileDropdown();
         this.dialog.open(LoginAttemptsModalComponent, {
-            panelClass: ['slider', 'user-info'],
+            panelClass: ['slider', 'user-info', `${this.isDarkMode ? 'dark-mode' : 'light-mode'}`],
             disableClose: true,
             closeOnNavigation: false,
             data: {}

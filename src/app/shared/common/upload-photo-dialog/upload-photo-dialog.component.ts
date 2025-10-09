@@ -43,6 +43,7 @@ export class UploadPhotoDialogComponent implements AfterViewInit {
     private imageData: string;
     private thumbData: string;
     title: string = this.data.title;
+    isDarkMode: boolean = false;
 
     constructor(
         private elementRef: ElementRef,
@@ -53,7 +54,11 @@ export class UploadPhotoDialogComponent implements AfterViewInit {
         public dialogRef: MatDialogRef<UploadPhotoDialogComponent>,
         public ls: AppLocalizationService,
         @Inject(MAT_DIALOG_DATA) public data: UploadPhotoData
-    ) {}
+    ) {
+        if (data && data.isDarkMode !== undefined) {
+            this.isDarkMode = data.isDarkMode;
+        }
+    }
 
     ngAfterViewInit() {
         if (this.data.source) {

@@ -7,11 +7,12 @@ import {
     Output,
     ViewChild,
     OnInit,
-    ChangeDetectorRef
+    ChangeDetectorRef,
+    Inject
 } from '@angular/core';
 
 /** Third party imports */
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { finalize } from 'rxjs/operators';
 
 /** Application imports */
@@ -51,6 +52,7 @@ export class MySettingsModalComponent implements AfterViewChecked, OnInit {
     public showTimezoneSelection: boolean = abp.clock.provider.supportsMultipleTimezone;
     public canChangeUserName: boolean;
     public defaultTimezoneScope: SettingScopes = AppTimezoneScope.User;
+    public isDarkMode: boolean = false;
     private _initialTimezone: string = undefined;
     buttons: IDialogButton[] = [
         {
@@ -67,8 +69,13 @@ export class MySettingsModalComponent implements AfterViewChecked, OnInit {
         private messageService: MessageService,
         private settingService: SettingService,
         private changeDetectorRef: ChangeDetectorRef,
+        @Inject(MAT_DIALOG_DATA) public data: any,
         public ls: AppLocalizationService
-    ) {}
+    ) {
+        if (data && data.isDarkMode !== undefined) {
+            this.isDarkMode = data.isDarkMode;
+        }
+    }
 
     ngAfterViewChecked(): void {
         //Temporary fix for: https://github.com/valor-software/ngx-bootstrap/issues/1508
