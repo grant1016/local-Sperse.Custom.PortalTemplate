@@ -768,6 +768,8 @@ export class MemberPortalComponent implements OnInit, OnDestroy {
                     options: null,
                     vault: true
                 })).subscribe(res => {
+                    console.log(res);
+                    
                     this.discordUserIdForPreview = res.additionalData["Id"];
                     this.discordUserNameForPreview = res.additionalData["Username"];
                 });

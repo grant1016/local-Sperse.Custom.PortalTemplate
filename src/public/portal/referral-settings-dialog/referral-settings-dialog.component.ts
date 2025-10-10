@@ -14,6 +14,7 @@ import { ProfileService } from '@shared/common/profile-service/profile.service';
 import { SharingService } from '@shared/common/sharing-service/sharing.service';
 import { NotifyService } from 'abp-ng2-module';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
+import { AppSessionService } from '@shared/common/session/app-session.service';
 import { AffiliateLinkInfo, MemberSettingsServiceProxy, UpdateUserAffiliateCodeDto, UserCommissionServiceProxy } from '@shared/service-proxies/service-proxies';
 import { ShareSocialDialogComponent } from '../share-social-dialog/share-social-dialog.component';
 
@@ -62,7 +63,8 @@ export class ReferralSettingsDialogComponent implements OnInit, OnDestroy {
         private lifeCycleSubject: LifecycleSubjectsService,
         private dialog: MatDialog,
         private memberSettingsService: MemberSettingsServiceProxy,
-        private userCommissionService: UserCommissionServiceProxy
+        private userCommissionService: UserCommissionServiceProxy,
+        private appSessionService: AppSessionService
     ) {
         console.log('Dialog data received:', data);
         console.log('isDarkMode:', data?.isDarkMode);
@@ -76,6 +78,7 @@ export class ReferralSettingsDialogComponent implements OnInit, OnDestroy {
         }
         if (data && data.affiliateCode) {
             this.referralCode = data.affiliateCode;
+            
         }
     }
 
@@ -132,6 +135,8 @@ export class ReferralSettingsDialogComponent implements OnInit, OnDestroy {
 
     onSelectedLinkChanged(event) {
         this.profileService.accessCode$.pipe(first()).subscribe(accessCode => {
+            console.log(accessCode);
+            
             this.suggestedCopy = event.value.suggestedCopy;
             this.baseUrl = event.value.url;
             this.referralCode = accessCode || '';
@@ -219,6 +224,14 @@ export class ReferralSettingsDialogComponent implements OnInit, OnDestroy {
                     this.notifyService.success('Affiliate code updated successfully');
                     // Update the original code to the new saved value
                     this.originalReferralCode = this.referralCode.trim();
+                    // Update the session service user object with the new affiliate code
+                    this.appSessionService.user.affiliateCode = this.referralCode.trim();
+                    // Update the profile service access code BehaviorSubject directly
+                    (this.profileService as any).accessCode.next(this.referralCode.trim());
+                    // Update the parent component's data with the new affiliate code
+                    if (this.data && this.data.affiliateCode !== undefined) {
+                        this.data.affiliateCode = this.referralCode.trim();
+                    }
                     // Update the profile service with new code
                     this.profileService.refreshMemberInfo({ data: 'update' });
                 },
