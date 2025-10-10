@@ -157,7 +157,7 @@ export class ReferralSettingsDialogComponent implements OnInit, OnDestroy {
         }
         
         // Always rebuild from base URL + referral code
-        this.referralLink = this.baseUrl + (this.referralCode ? '/' + this.referralCode : '');
+        this.referralLink = this.baseUrl + (this.referralCode ? '?ref=' + this.referralCode : '');
         this.selectedLink = this.referralLink;
         console.log('Updated referral link to:', this.referralLink);
     }
