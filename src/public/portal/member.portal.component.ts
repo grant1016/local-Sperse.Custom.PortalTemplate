@@ -87,11 +87,12 @@ export class MemberPortalComponent implements OnInit, OnDestroy {
     failedToLoad: boolean = false;
     failMessage: string = '';
 
-    tenantId: number = Number(this.activatedRoute.snapshot.paramMap.get('tenantId'));
+    tenantId: number;
     publicId = this.activatedRoute.snapshot.paramMap.get('publicId');
     preventRedirect: boolean = Boolean(this.activatedRoute.snapshot.queryParamMap.get('preventRedirect'));
     usePortal = !!this.activatedRoute.snapshot.queryParamMap.get('usePortal');
     isTestMode: boolean = this.activatedRoute.snapshot.url[0]?.path === 'member-portal';
+    discordAvatar: string | null;
     tenantLogo: string = '';
     discordPopup: Window;
     discordUserId: string | null;
@@ -190,6 +191,7 @@ export class MemberPortalComponent implements OnInit, OnDestroy {
 
 
         console.log('Tenant ID:', this.appSessionService.tenantId);
+        this.tenantId = this.appSessionService.tenantId;
         this.discordUserId = this.appSessionService.user?.discordUserId;
         this.discordUserName = this.appSessionService.user?.discordUserName;
         this.discordUserUpdated = true; // Prevent reload dialog
@@ -769,7 +771,7 @@ export class MemberPortalComponent implements OnInit, OnDestroy {
                     vault: true
                 })).subscribe(res => {
                     console.log(res);
-                    
+                    this.discordAvatar = res.additionalData["PhotoUrl"];
                     this.discordUserIdForPreview = res.additionalData["Id"];
                     this.discordUserNameForPreview = res.additionalData["Username"];
                 });
@@ -802,9 +804,9 @@ export class MemberPortalComponent implements OnInit, OnDestroy {
             },
             body: JSON.stringify({
                 tenantId: this.tenantId,
-                publicId: this.publicId,
                 discordUserId: this.discordUserIdForPreview,
-                discordUserName: this.discordUserNameForPreview
+                discordUserName: this.discordUserNameForPreview,
+                discordLogoUrl: this.discordAvatar
             })
         })
             .then(response => {
@@ -1044,11 +1046,6 @@ END:VCALENDAR`;
 
 
     openReferralSettingsDialog() {
-        console.log('Opening dialog with:');
-        console.log('- isDarkMode:', this.isDarkMode);
-        console.log('- discordUserId:', this.discordUserId);
-        console.log('- User object:', this.appSessionService.user);
-
         const dialogRef = this.dialog.open(ReferralSettingsDialogComponent, {
             maxWidth: '42rem',
             panelClass: 'referral-settings-dialog-panel',

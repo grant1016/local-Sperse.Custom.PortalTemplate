@@ -189,7 +189,8 @@
                         <div class="discord-user-info">
                             <h4 [class]="isDarkMode?'text-white':'text-black'">Authorized Discord User:</h4>
                             <div class="discord-user-card" [class]="isDarkMode?'bg-[#020817]':'bg-[#f1f5f9]'">
-                                <div class="discord-avatar">{{discordUserNameForPreview?.charAt(0)?.toUpperCase()}}
+                                <div class="discord-avatar">
+                                    <img [src]="discordAvatar" class="w-full h-full rounded-full" />
                                 </div>
                                 <div class="discord-user-details">
                                     <p class="discord-username" [class]="isDarkMode?'text-white':'text-black'">
@@ -214,7 +215,9 @@
 
                     <div class="discord-connected  mt-[1rem]" *ngIf="discordUserId && discordUserName">
                         <div class="discord-success-card">
-                            <div class="discord-avatar">{{discordUserName?.charAt(0)?.toUpperCase()}}</div>
+                            <div class="discord-avatar">
+                                <img [src]="discordAvatar" class="w-full h-full rounded-full" />
+                            </div>
                             <div class="discord-success-info">
                                 <p class="discord-connected-text">Connected as @{{discordUserName}}</p>
                                 <p class="discord-ready-text">✓ Ready for Discord access</p>
